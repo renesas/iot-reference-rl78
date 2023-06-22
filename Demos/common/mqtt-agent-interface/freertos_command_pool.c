@@ -28,6 +28,9 @@
  * @file freertos_command_pool.c
  * @brief Implements functions to obtain and release commands.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section const const_demos
+#endif
 
 /* Standard includes. */
 #include <string.h>
@@ -143,3 +146,6 @@ bool Agent_ReleaseCommand( MQTTAgentCommand_t * pCommandToRelease )
 
     return structReturned;
 }
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section
+#endif
