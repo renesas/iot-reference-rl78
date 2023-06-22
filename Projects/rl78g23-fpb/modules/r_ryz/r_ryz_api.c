@@ -836,16 +836,16 @@ RELEASE_MUTEX:
  *                WIFI_ERR_TAKE_MUTEX
  *                WIFI_ERR_MODULE_COM
  *********************************************************************************************************************/
-int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * data, uint32_t length, uint32_t timeout_ms)
+int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * p_data, uint32_t length, uint32_t timeout_ms)
 {
-    int32_t         api_ret = WIFI_SUCCESS;
-    uint32_t        recvcnt;
+    int32_t         api_ret;
     OS_TICK         tick_tmp;
     static uint32_t sockid = 0;
     static uint32_t send_len = 0;
-    static uint32_t rcv_len = 0;
+    static uint32_t received_len = 0;
     static uint32_t ring_len = 0;
     static uint32_t ack_wait_len = 0;
+    static uint32_t read_len = 0;
 
     /* Connect access point? */
     if (0 != R_RYZ_IsConnected())
@@ -854,7 +854,7 @@ int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * data, uint32_t leng
     }
 
     /* Check parameters */
-    if ((socket_number >= s_sockets_max) || (NULL == data) || (0 == length))
+    if ((socket_number >= s_sockets_max) || (NULL == p_data) || (0 == length))
     {
         return WIFI_ERR_PARAMETER;
     }
@@ -868,7 +868,6 @@ int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * data, uint32_t leng
     /*
      * Receive
      */
-    recvcnt = 0;
     g_sock_tbl[socket_number].timer_rx.threshold = OS_WRAP_MS_TO_TICKS(timeout_ms);
     if (0 < timeout_ms)
     {
@@ -880,22 +879,14 @@ int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * data, uint32_t leng
         if (AT_OK == at_exec("AT+SQNSI=%d\r", socket_number + 1))
         {
             if (DATA_FOUND == at_read("+SQNSI: %d,%lu,%lu,%lu,%lu\r\n",
-                                      &sockid, &send_len, &rcv_len, &ring_len, &ack_wait_len))
+                                      &sockid, &send_len, &received_len, &ring_len, &ack_wait_len))
             {
-                if (0 != ring_len)
+                if (0 < ring_len)
                 {
-                    DBG_PRINTF("RING!!!!  %lu\n", ring_len);
-                    if (AT_OK == at_exec("AT+SQNSRECV=%d,%d\r", socket_number + 1, length))
+                    if (length <= ring_len)
                     {
-                        if (DATA_FOUND == at_read("+SQNSRECV: %d,%lu\r\n", &sockid, &rcv_len))
-                        {
-                            memcpy(data + recvcnt, at_get_current_line(), rcv_len);
-                            recvcnt += rcv_len;
-                            if (recvcnt >= length)
-                            {
-                                break;
-                            }
-                        }
+                        read_len = length;
+                        break;
                     }
                 }
             }
@@ -907,14 +898,24 @@ int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * data, uint32_t leng
             tick_tmp = os_wrap_tickcount_get() - g_sock_tbl[socket_number].timer_rx.tick_sta;
             if (g_sock_tbl[socket_number].timer_rx.threshold <= tick_tmp)
             {
+                /* timeout */
+                read_len = ring_len;
                 break;
             }
         }
         os_wrap_sleep(50, UNIT_TICK);
     }
-    api_ret = recvcnt;
 
-RELEASE_MUTEX:
+    api_ret = 0;
+    if (AT_OK == at_exec("AT+SQNSRECV=%d,%d\r", socket_number + 1, read_len))
+    {
+        if (DATA_FOUND == at_read("+SQNSRECV: %d,%lu\r\n", &sockid, &read_len))
+        {
+            memcpy(p_data, at_get_current_line(), read_len);
+            api_ret = read_len;
+        }
+    }
+
     mutex_give(MUTEX_TX|MUTEX_RX);
     return api_ret;
 }

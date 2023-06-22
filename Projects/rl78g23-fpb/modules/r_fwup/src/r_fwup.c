@@ -807,14 +807,6 @@ static e_fwup_err_t write_area(e_fwup_area_t area, uint8_t **p_buf,
         return (FWUP_ERR_FLASH);
     }
     FWUP_LOG_DBG(MSG_WRITE_OK, start_addr + s_wrote_counter, write_size_tmp);
-#ifndef TOMO
-    uint8_t *buf = *p_buf;
-
-    FWUP_LOG_DBG("%02x %02x %02x %02x %02x %02x %02x %02x ... %02x %02x %02x %02x %02x %02x %02x %02x",
-            buf[7],buf[6],buf[5],buf[4],buf[3],buf[2],buf[1],buf[0],
-            buf[write_size_tmp-1],buf[write_size_tmp-2],buf[write_size_tmp-3],buf[write_size_tmp-4],buf[write_size_tmp-5],buf[write_size_tmp-6],buf[write_size_tmp-7],buf[write_size_tmp-8]);
-#else
-#endif
 
     s_wrote_counter += write_size_tmp;
     *p_buf += write_size_tmp;

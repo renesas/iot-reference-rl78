@@ -131,7 +131,7 @@ static BaseType_t xIsNetworkUp = pdFALSE;
  */
 void main( void )
 {
-	Processing_Before_Start_Kernel();
+    Processing_Before_Start_Kernel();
     vTaskStartScheduler();
 
     while(1)

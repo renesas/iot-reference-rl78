@@ -74,14 +74,14 @@
             <item id="externalclock"/>
         </option>
         <option enabled="false" id="cmbhsstabletime" selection="18">
-            <item id="8" input="" value="256"/>
-            <item id="9" input="" value="512"/>
-            <item id="10" input="" value="1024"/>
-            <item id="11" input="" value="2048"/>
-            <item id="13" input="" value="8192"/>
-            <item id="15" input="" value="32768"/>
-            <item id="17" input="" value="131072"/>
-            <item id="18" input="" value="262144"/>
+            <item id="8" input="" value="51.2"/>
+            <item id="9" input="" value="102.4"/>
+            <item id="10" input="" value="204.8"/>
+            <item id="11" input="" value="409.6"/>
+            <item id="13" input="" value="1638.4"/>
+            <item id="15" input="" value="6553.6"/>
+            <item id="17" input="" value="26214.4"/>
+            <item id="18" input="" value="52428.8"/>
         </option>
         <option enabled="false" id="hssfrequency" selection="textinputitem">
             <item id="textinputitem" input="5" value="5"/>
@@ -206,9 +206,9 @@
         <Item bank="0" id="SAU1_INTST3" priority="3"/>
         <Item bank="0" id="SAU1_INTCSI30" priority="3"/>
         <Item bank="0" id="SAU1_INTIIC30" priority="3"/>
-        <Item bank="0" id="SAU1_INTSR3" priority="2"/>
-        <Item bank="0" id="SAU1_INTCSI31" priority="2"/>
-        <Item bank="0" id="SAU1_INTIIC31" priority="2"/>
+        <Item bank="0" id="SAU1_INTSR3" priority="3"/>
+        <Item bank="0" id="SAU1_INTCSI31" priority="3"/>
+        <Item bank="0" id="SAU1_INTIIC31" priority="3"/>
         <Item bank="0" id="TAU1_INTTM13" priority="3"/>
         <Item bank="0" id="TAU0_INTTM04" priority="3"/>
         <Item bank="0" id="TAU0_INTTM05" priority="3"/>
@@ -1211,7 +1211,7 @@
                         <item id="153600" input="153600" vlaue="0"/>
                         <item id="312500" input="312500" vlaue="0"/>
                     </option>
-                    <option enabled="true" id="rxPriority" selection="Level2">
+                    <option enabled="true" id="rxPriority" selection="Level3">
                         <item id="Level0" input="" vlaue="0"/>
                         <item id="Level1" input="" vlaue="0"/>
                         <item id="Level2" input="" vlaue="0"/>
