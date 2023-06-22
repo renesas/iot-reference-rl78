@@ -75,10 +75,7 @@
 /* Include platform abstraction header. */
 #include "ota_pal.h"
 
-#include "store.h"
-
 #include "mqtt_agent_task.h"
-extern KeyValueStore_t gKeyValueStore;
 
 /*------------- Demo configurations -------------------------*/
 
@@ -175,12 +172,12 @@ extern KeyValueStore_t gKeyValueStore;
 /**
  * @brief Stack size required for OTA agent task.
  */
-#define OTA_AGENT_TASK_STACK_SIZE                   ( 5000U )
+#define OTA_AGENT_TASK_STACK_SIZE                   ( 1600U )
 
 /**
  * @brief Priority required for OTA agent task.
  */
-#define OTA_AGENT_TASK_PRIORITY                     ( tskIDLE_PRIORITY )
+#define OTA_AGENT_TASK_PRIORITY                     ( tskIDLE_PRIORITY + 1)
 
 /**
  * @brief The timeout for waiting for the agent to get suspended after closing the
@@ -196,7 +193,7 @@ extern KeyValueStore_t gKeyValueStore;
  * @brief ThingName which is used as the client identifier for MQTT connection.
  * Thing name is retrieved  at runtime from a key value store.
  */
-static char * pcThingName = NULL;
+static char __far * pcThingName = NULL;
 static size_t xThingNameLength = 0U;
 
 /**
@@ -536,8 +533,13 @@ static OtaEventData_t * prvOTAEventBufferGet( void )
  * @param[in] pData Data associated with the event.
  * @return None.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static void otaAppCallback( OtaJobEvent_t event,
+                            void * pData )
+#else
 static void otaAppCallback( OtaJobEvent_t event,
                             const void * pData )
+#endif
 {
     OtaErr_t err = OtaErrUninitialized;
 
@@ -824,7 +826,7 @@ static OtaMqttStatus_t prvMQTTSubscribe( const char * pTopicFilter,
     MQTTStatus_t mqttStatus;
     uint32_t ulNotifiedValue;
     MQTTAgentSubscribeArgs_t xSubscribeArgs = { 0 };
-    MQTTSubscribeInfo_t xSubscribeInfo = { 0 };
+    MQTTSubscribeInfo_t xSubscribeInfo = { MQTTQoS0, NULL, 0 };
     BaseType_t result;
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xApplicationDefinedContext = { 0 };
@@ -835,7 +837,7 @@ static OtaMqttStatus_t prvMQTTSubscribe( const char * pTopicFilter,
 
     xSubscribeInfo.pTopicFilter = pTopicFilter;
     xSubscribeInfo.topicFilterLength = topicFilterLength;
-    xSubscribeInfo.qos = ucQoS;
+    xSubscribeInfo.qos = (MQTTQoS_t)ucQoS;
     xSubscribeArgs.pSubscribeInfo = &xSubscribeInfo;
     xSubscribeArgs.numSubscriptions = 1;
 
@@ -904,14 +906,14 @@ static OtaMqttStatus_t prvMQTTPublish( const char * const pacTopic,
     OtaMqttStatus_t otaRet = OtaMqttSuccess;
     BaseType_t result;
     MQTTStatus_t mqttStatus = MQTTBadParameter;
-    MQTTPublishInfo_t publishInfo = { 0 };
+    MQTTPublishInfo_t publishInfo = { MQTTQoS0, 0, };
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
     uint32_t ulNotifiedValue;
 
     publishInfo.pTopicName = pacTopic;
     publishInfo.topicNameLength = topicLen;
-    publishInfo.qos = qos;
+    publishInfo.qos = (MQTTQoS_t)qos;
     publishInfo.pPayload = pMsg;
     publishInfo.payloadLength = msgSize;
 
@@ -975,7 +977,7 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
     MQTTStatus_t mqttStatus;
     uint32_t ulNotifiedValue;
     MQTTAgentSubscribeArgs_t xSubscribeArgs = { 0 };
-    MQTTSubscribeInfo_t xSubscribeInfo = { 0 };
+    MQTTSubscribeInfo_t xSubscribeInfo = { MQTTQoS0, NULL, 0 };
     BaseType_t result;
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xApplicationDefinedContext = { 0 };
@@ -986,7 +988,7 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
 
     xSubscribeInfo.pTopicFilter = pTopicFilter;
     xSubscribeInfo.topicFilterLength = topicFilterLength;
-    xSubscribeInfo.qos = ucQoS;
+    xSubscribeInfo.qos = (MQTTQoS_t)ucQoS;
     xSubscribeArgs.pSubscribeInfo = &xSubscribeInfo;
     xSubscribeArgs.numSubscriptions = 1;
 
@@ -1244,7 +1246,11 @@ static BaseType_t prvRunOTADemo( void )
         while( ( state = OTA_GetState() ) != OtaAgentStateStopped )
         {
             /* Get OTA statistics for currently executing job. */
+#ifndef TOMO
+            if( state < OtaAgentStateCreatingFile )
+#else
             if( state != OtaAgentStateSuspended )
+#endif
             {
                 OTA_GetStatistics( &otaStatistics );
 
@@ -1311,7 +1317,7 @@ static void vOtaDemoTask( void * pvParam )
     ( void ) pvParam;
 
 #if defined(__TEST__)
-    pcThingName = clientcredentialIOT_THING_NAME ;
+    pcThingName = (char __far *)clientcredentialIOT_THING_NAME ;
     xThingNameLength = strlen(pcThingName);
 #else
     xThingNameLength = gKeyValueStore.table[KVS_CORE_THING_NAME].valueLength;
@@ -1359,13 +1365,14 @@ static void vOtaDemoTask( void * pvParam )
         /* Cleanup semaphore created for buffer operations. */
         vSemaphoreDelete( xBufferSemaphore );
     }
-
+#if defined(__TEST__)
+#else
     if( pcThingName != NULL )
-	{
-		vPortFree( pcThingName );
-		pcThingName = NULL;
-	}
-
+    {
+        vPortFree( pcThingName );
+        pcThingName = NULL;
+    }
+#endif
     vTaskDelete( NULL );
 }
 
@@ -1384,7 +1391,11 @@ void vStartOtaDemo( void )
                  "OTA Demo Task",          /* Text name for the task - only used for debugging. */
                  democonfigDEMO_STACKSIZE, /* Size of stack (in words, not bytes) to allocate for the task. */
                  NULL,                     /* Optional - task parameter - not used in this case. */
+#ifndef TOMO
+                 tskIDLE_PRIORITY,         /* Task priority, must be between 0 and configMAX_PRIORITIES - 1. */
+#else
                  tskIDLE_PRIORITY + 1,     /* Task priority, must be between 0 and configMAX_PRIORITIES - 1. */
+#endif
                  NULL );                   /* Optional - used to pass out a handle to the created task. */
 }
 

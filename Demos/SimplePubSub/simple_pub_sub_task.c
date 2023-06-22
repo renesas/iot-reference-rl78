@@ -112,7 +112,7 @@
  * this demo this can be a task number, when more than one tasks are publishing within a device.
  *
  */
-#define mqttexampleLOOPBACK_TOPIC_FORMAT                  "pubsub_demo/%s/task_%lu"
+#define mqttexampleLOOPBACK_TOPIC_FORMAT                  "pubsub_demo/%s/task_%d"
 
 /**
  * @brief Format for the topic to which demo task sends PUBLISH messages to broker.
@@ -147,11 +147,11 @@
  * Number of subscribe publish demo tasks to be spawned is configurable.
  */
 #define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
-#define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 2048 )
+#define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 1200 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 /*-----------------------------------------------------------*/
-#define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 6144 )
-#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
+//#define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 1300 )
+//#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
 
 /**
@@ -254,6 +254,8 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
                                        size_t xPayloadLength,
                                        int32_t lNumTries );
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
 /**
  * @brief Retrieves the thing name from key store to use in demo.
  *
@@ -261,6 +263,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
  *         NULL if thing name not found.
  */
 static char * prvGetThingNameFromKeyStore( void );
+#endif
 
 /**
  * @brief The function that implements the task demonstrated by this file.
@@ -364,7 +367,7 @@ static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
 {
     MQTTStatus_t xCommandStatus;
     MQTTAgentSubscribeArgs_t xSubscribeArgs = { 0 };
-    MQTTSubscribeInfo_t xSubscribeInfo = { 0 };
+    MQTTSubscribeInfo_t xSubscribeInfo = { MQTTQoS0, 0, 0 };
     MQTTAgentCommandContext_t xCommandContext = { 0UL };
     MQTTAgentCommandInfo_t xCommandParams = { 0UL };
     uint32_t ulNotifiedValue = 0U;
@@ -434,7 +437,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
                                        size_t xPayloadLength,
                                        int32_t lNumRetries )
 {
-    MQTTPublishInfo_t xPublishInfo = { 0UL };
+    MQTTPublishInfo_t xPublishInfo = { MQTTQoS0, 0UL, };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
     MQTTStatus_t xCommandStatus;
     MQTTAgentCommandInfo_t xCommandParams = { 0UL };
@@ -521,7 +524,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
             ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY );
         }
     }
-    LogInfo(( "---------Start PubSub Demo Task  %u---------\r\n", ulTaskNumber ));
+    LogInfo(( "---------Start PubSub Demo Task %u---------", ulTaskNumber ));
 
     if( xStatus == pdPASS )
     {
@@ -529,7 +532,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
         xInTopicLength = snprintf( cInTopicBuf,
                                    mqttexampleINPUT_TOPIC_BUFFER_LENGTH,
                                    mqttexampleINPUT_TOPIC_FORMAT,
-								   clientcredentialIOT_THING_NAME,
+                                   clientcredentialIOT_THING_NAME,
                                    ulTaskNumber );
 
         /*  Assert if the topic buffer is enough to hold the required topic. */
@@ -552,7 +555,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
         }
         else
         {
-            LogError( ( "Successfully subscribed to topic: %.*s",
+            LogInfo( ( "Successfully subscribed to topic: %.*s",
                         xInTopicLength,
                         cInTopicBuf ) );
         }
@@ -564,7 +567,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
         xOutTopicLength = snprintf( cOutTopicBuf,
                                     mqttexampleOUTPUT_TOPIC_BUFFER_LENGTH,
                                     mqttexampleOUTPUT_TOPIC_FORMAT,
-									clientcredentialIOT_THING_NAME,
+                                    clientcredentialIOT_THING_NAME,
                                     ulTaskNumber );
 
         /*  Assert if the topic buffer is enough to hold the required topic. */
@@ -577,8 +580,8 @@ void vSimpleSubscribePublishTask( void * pvParameters )
              * the task name and an incrementing number. */
             xPayloadLength = snprintf( cPayloadBuf,
                                        mqttexampleSTRING_BUFFER_LENGTH,
-                                       "Task %lu publishing message %d",
-                                       ulTaskNumber,
+                                       "Task %d publishing message %d",
+                                       ( int ) ulTaskNumber,
                                        ( int ) ulPublishCount );
 
             /* Assert if the buffer length is not enough to hold the message.*/
@@ -626,7 +629,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
         /* Delete the task if it is complete. */
         LogInfo( ( "Task %u completed.", ulTaskNumber ) );
     }
-    LogInfo(( "---------Finish PubSub Demo Task %u---------\r\n", ulTaskNumber ));
+    LogInfo(( "---------Finish PubSub Demo Task %u---------", ulTaskNumber ));
     vTaskDelete( NULL );
 }
 
@@ -658,6 +661,6 @@ BaseType_t xStartSimplePubSubTasks( uint32_t ulNumPubsubTasks,
 void vStartSimplePubSubDemo( void  )
 {
     xStartSimplePubSubTasks( appmainMQTT_NUM_PUBSUB_TASKS,
-                                       appmainMQTT_PUBSUB_TASK_STACK_SIZE,
-                                       appmainMQTT_PUBSUB_TASK_PRIORITY );
+                             appmainMQTT_PUBSUB_TASK_STACK_SIZE,
+                             appmainMQTT_PUBSUB_TASK_PRIORITY );
 }
