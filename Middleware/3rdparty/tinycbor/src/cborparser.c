@@ -1057,9 +1057,17 @@ _cbor_value_get_string_chunk(const CborValue *value, const void **bufferptr,
  * function. The choice is to optimize for memcpy, which is used in the base
  * parser API (cbor_value_copy_string), while memcmp is used in convenience API
  * only. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+typedef uintptr_t (*IterateFunction)(char __far *, const uint8_t *, size_t);
+#else
 typedef uintptr_t (*IterateFunction)(char *, const uint8_t *, size_t);
+#endif
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static uintptr_t iterate_noop(char __far *dest, const uint8_t *src, size_t len)
+#else
 static uintptr_t iterate_noop(char *dest, const uint8_t *src, size_t len)
+#endif
 {
     (void)dest;
     (void)src;
@@ -1067,18 +1075,31 @@ static uintptr_t iterate_noop(char *dest, const uint8_t *src, size_t len)
     return true;
 }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static uintptr_t iterate_memcmp(char __far *s1, const uint8_t *s2, size_t len)
+#else
 static uintptr_t iterate_memcmp(char *s1, const uint8_t *s2, size_t len)
+#endif
 {
     return memcmp(s1, (const char *)s2, len) == 0;
 }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static uintptr_t iterate_memcpy(char __far *dest, const uint8_t *src, size_t len)
+#else
 static uintptr_t iterate_memcpy(char *dest, const uint8_t *src, size_t len)
+#endif
 {
     return (uintptr_t)memcpy(dest, src, len);
 }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static CborError iterate_string_chunks(const CborValue *value, char __far *buffer, size_t *buflen,
+                                       bool *result, CborValue *next, IterateFunction func)
+#else
 static CborError iterate_string_chunks(const CborValue *value, char *buffer, size_t *buflen,
                                        bool *result, CborValue *next, IterateFunction func)
+#endif
 {
     CborError err;
     CborValue tmp;
@@ -1229,7 +1250,11 @@ CborError cbor_value_text_string_equals(const CborValue *value, const char *stri
     }
 
     len = strlen(string);
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    return iterate_string_chunks(&copy, CONST_CAST(char __far *, string), &len, result, NULL, iterate_memcmp);
+#else
     return iterate_string_chunks(&copy, CONST_CAST(char *, string), &len, result, NULL, iterate_memcmp);
+#endif
 }
 
 /**
@@ -1321,8 +1346,13 @@ CborError cbor_value_map_find_value(const CborValue *map, const char *string, Cb
         if (cbor_value_is_text_string(element)) {
             bool equals;
             size_t dummyLen = len;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+            err = iterate_string_chunks(element, CONST_CAST(char __far *, string), &dummyLen,
+                                        &equals, element, iterate_memcmp);
+#else
             err = iterate_string_chunks(element, CONST_CAST(char *, string), &dummyLen,
                                         &equals, element, iterate_memcmp);
+#endif
             if (err)
                 goto error;
             if (equals)

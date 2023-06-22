@@ -198,7 +198,11 @@ typedef struct MQTTSubscribeInfo
     /**
      * @brief Topic filter to subscribe to.
      */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    const char __far * pTopicFilter;
+#else
     const char * pTopicFilter;
+#endif
 
     /**
      * @brief Length of subscription topic filter.

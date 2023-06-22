@@ -1708,8 +1708,13 @@ static DocParseErr_t extractParameter( JsonDocParam_t docParam,
     else if( ModelParamTypeUInt32 == docParam.modelParamType )
     {
         uint32_t * pUint32 = pParamAdd;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        char __far * pEnd;
+        const char __far * pStart = pValueInJson;
+#else
         char * pEnd;
         const char * pStart = pValueInJson;
+#endif
         errno = 0;
 
         *pUint32 = ( uint32_t ) strtoul( pStart, &pEnd, 0 );

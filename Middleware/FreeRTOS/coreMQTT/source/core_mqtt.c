@@ -22,6 +22,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section const const_coreMqtt
+#endif
+
 /**
  * @file core_mqtt.c
  * @brief Implements the user-facing functions in core_mqtt.h.
@@ -3310,5 +3314,7 @@ const char * MQTT_Status_strerror( MQTTStatus_t status )
 
     return str;
 }
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section
+#endif
 /*-----------------------------------------------------------*/

@@ -22,6 +22,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section const const_coreMqtt
+#endif
+
 /**
  * @file core_mqtt_serializer.c
  * @brief Implements the user-facing functions in core_mqtt_serializer.h.
@@ -2680,5 +2684,7 @@ MQTTStatus_t MQTT_ProcessIncomingPacketTypeAndLength( const uint8_t * pBuffer,
 
     return status;
 }
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section
+#endif
 /*-----------------------------------------------------------*/

@@ -248,8 +248,13 @@ static void prvLoggingPrintfCommon( uint8_t usLoggingLevel,
             /* Add metadata of task name and tick count if config is enabled. */
             #if ( configLOGGING_INCLUDE_TIME_AND_TASK_NAME == 1 )
                 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                    const char __far * pcTaskName;
+                    const char __far * pcNoTask = "None";
+#else
                     const char * pcTaskName;
                     const char * pcNoTask = "None";
+#endif
                     static BaseType_t xMessageNumber = 0;
 
                     /* Add a time stamp and the name of the calling task to the

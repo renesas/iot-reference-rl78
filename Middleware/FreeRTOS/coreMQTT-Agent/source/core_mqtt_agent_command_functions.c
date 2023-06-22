@@ -25,6 +25,10 @@
  * @brief Implements functions to process MQTT agent commands.
  */
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section const const_coreMqtt
+#endif
+
 /* Standard includes. */
 #include <string.h>
 #include <stdio.h>
@@ -241,5 +245,7 @@ MQTTStatus_t MQTTAgentCommand_Terminate( MQTTAgentContext_t * pMqttAgentContext,
 
     return ret;
 }
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section
+#endif
 /*-----------------------------------------------------------*/

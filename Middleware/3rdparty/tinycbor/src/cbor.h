@@ -120,7 +120,10 @@ typedef enum CborKnownTags {
     CborCOSE_EncryptTag            = 96,
     CborCOSE_MacTag                = 97,
     CborCOSE_SignTag               = 98,
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     CborSignatureTag               = 55799
+#endif
 } CborKnownTags;
 
 /* #define the constants so we can check with #ifdef */
@@ -145,7 +148,11 @@ typedef enum CborKnownTags {
 #define CborCOSE_EncryptTag CborCOSE_EncryptTag
 #define CborCOSE_MacTag CborCOSE_MacTag
 #define CborCOSE_SignTag CborCOSE_SignTag
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#define CborSignatureTag (55579L)
+#else
 #define CborSignatureTag CborSignatureTag
+#endif
 
 /* Error API */
 
@@ -375,10 +382,18 @@ CBOR_INLINE_API CborError cbor_value_get_int64(const CborValue *value, int64_t *
     return CborNoError;
 }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+CBOR_INLINE_API CborError cbor_value_get_int(const CborValue *value, int32_t *result)
+#else
 CBOR_INLINE_API CborError cbor_value_get_int(const CborValue *value, int *result)
+#endif
 {
     assert(cbor_value_is_integer(value));
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    *result = (int32_t) _cbor_value_extract_int64_helper(value);
+#else
     *result = (int) _cbor_value_extract_int64_helper(value);
+#endif
     if (value->flags & CborIteratorFlag_NegativeInteger)
         *result = -*result - 1;
     return CborNoError;
@@ -519,7 +534,39 @@ CBOR_INLINE_API CborError cbor_value_get_double(const CborValue *value, double *
 }
 
 /* Validation API */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+/* Bit mapping:
+ *  bits 0-7 (8 bits):      canonical format
+ *  bits 8-11 (4 bits):     canonical format & strict mode
+ *  bits 12-20 (8 bits):    strict mode
+ *  bits 21-31 (10 bits):   other
+ */
+#define CborValidateShortestIntegrals       (0x0001L)
+#define CborValidateShortestFloatingPoint   (0x0002L)
+#define CborValidateShortestNumbers         (long)(CborValidateShortestIntegrals | CborValidateShortestFloatingPoint)
+#define CborValidateNoIndeterminateLength   (0x0100L)
+#define CborValidateMapIsSorted             (long)(0x0200L | CborValidateNoIndeterminateLength)
+#define CborValidateCanonicalFormat         (0x0fffL)
+#define CborValidateMapKeysAreUnique        (long)(0x1000L | CborValidateMapIsSorted)
+#define CborValidateTagUse                  (0x2000L)
+#define CborValidateUtf8                    (0x4000L)
+#define CborValidateStrictMode              (0xfff00L)
+#define CborValidateMapKeysAreString        (0x00100000L)
+#define CborValidateNoUndefined             (0x00200000L)
+#define CborValidateNoTags                  (0x00400000L)
+#define CborValidateFiniteFloatingPoint     (0x00800000L)
+/* unused                                   (0x01000000L) */
+/* unused                                   (0x02000000L) */
+#define CborValidateNoUnknownSimpleTypesSA  (0x04000000L)
+#define CborValidateNoUnknownSimpleTypes    (long)(0x08000000L | CborValidateNoUnknownSimpleTypesSA,
+#define CborValidateNoUnknownTagsSA         (0x10000000L)
+#define CborValidateNoUnknownTagsSR         (long)(0x20000000L | CborValidateNoUnknownTagsSA)
+#define CborValidateNoUnknownTags           (long)(0x40000000L | CborValidateNoUnknownTagsSR)
+#define CborValidateCompleteData            (0x80000000L)
 
+#define CborValidateStrictest               (long)~0U,
+#define CborValidateBasic                   (0L)
+#else
 enum CborValidationFlags {
     /* Bit mapping:
      *  bits 0-7 (8 bits):      canonical format
@@ -560,6 +607,7 @@ enum CborValidationFlags {
     CborValidateStrictest                   = (int)~0U,
     CborValidateBasic                       = 0
 };
+#endif
 
 CBOR_API CborError cbor_value_validate(const CborValue *it, uint32_t flags);
 
