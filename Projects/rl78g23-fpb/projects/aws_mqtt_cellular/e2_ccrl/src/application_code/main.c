@@ -98,16 +98,17 @@ extern void vStartSimplePubSubDemo( void  );
 #define LED_PORT                                  (P5_bit.no0)
 
 /* APN settings */
-#ifdef TOMO
-#define USIM_APN                            "plus.acs.jp"
-#define USIM_USER_ID                        "ym"
-#define USIM_PSWD                           "ym"
-#define USIM_AUTH                           (2)                  /* 1:PAP 2:CHAP */
-#else
-#define USIM_APN                            "mmtmobile.jp"
-#define USIM_USER_ID                        "nipponsim@dhacorp"
-#define USIM_PSWD                           "dhacorp"
-#define USIM_AUTH                           (2)                  /* 1:PAP 2:CHAP */
+#define DEMO_SIM_SELECT     (0)
+#if (DEMO_SIM_SELECT == 0)
+#define USIM_APN                                  "plus.acs.jp"
+#define USIM_USER_ID                              "ym"
+#define USIM_PSWD                                 "ym"
+#define USIM_AUTH                                 (2)                  /* 1:PAP 2:CHAP */
+#elif  (DEMO_SIM_SELECT == 1)
+#define USIM_APN                                  "mmtmobile.jp"
+#define USIM_USER_ID                              "nipponsim@dhacorp"
+#define USIM_PSWD                                 "dhacorp"
+#define USIM_AUTH                                 (2)                  /* 1:PAP 2:CHAP */
 #endif
 
 
@@ -121,7 +122,6 @@ void vApplicationDaemonTaskStartupHook( void );
  */
 void prvMiscInitialization( void );
 static BaseType_t xPlatformNetworkUp( void );
-static BaseType_t xIsNetworkUp = pdFALSE;
 
 /*-----------------------------------------------------------*/
 
@@ -262,7 +262,7 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
  * configTOTAL_HEAP_SIZE configuration constant in FreeRTOSConfig.h.
  *
  */
-    void vApplicationMallocFailedHook()
+    void vApplicationMallocFailedHook( void )
     {
         configPRINT_STRING( ( "ERROR: Malloc failed to allocate memory\r\n" ) );
         taskDISABLE_INTERRUPTS();
@@ -329,12 +329,10 @@ static BaseType_t xPlatformNetworkUp( void )
 FUNC_END:
     if (pdTRUE == ret)
     {
-        xIsNetworkUp = pdTRUE;
         configPRINTF(("Connecting Access Point is OK.\r\n "));
     }
     else
     {
-        xIsNetworkUp = pdFALSE;
         configPRINTF(("Connecting Access Point is failed.\r\n "));
     }
 
