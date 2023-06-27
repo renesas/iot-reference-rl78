@@ -1,30 +1,42 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
-/**********************************************************************************************************************
- * File Name    : r_byteq.c
- * Version      : 0.01
- * Description  : .
- *********************************************************************************************************************/
+/***********************************************************************************************************************
+* DISCLAIMER
+* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No 
+* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all 
+* applicable laws, including copyright laws. 
+* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
+* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
+* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM 
+* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES 
+* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS 
+* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of 
+* this software. By using this software, you agree to the additional terms and conditions found by accessing the 
+* following link:
+* http://www.renesas.com/disclaimer 
+*
+* Copyright (C) 2013 Renesas Electronics Corporation. All rights reserved.
+***********************************************************************************************************************/
+/***********************************************************************************************************************
+* File Name    : r_byteq.c
+* Description  : Functions for using byte queues/circular buffers. 
+************************************************************************************************************************
+* History : DD.MM.YYYY Version Description  
+*         : 24.07.2013 1.00     Initial Release
+*         : 11.21.2014 1.20     Removed dependency to BSP
+*         : 30.09.2015 1.50     Added dependency to BSP
+*         : 29.01.2016 1.60     Fixed the initial setting process in the R_LONGQ_Open function.
+*                               Fixed a program according to the Renesas coding rules.
+*         : 01.06.2018 1.70     Added the comment to while statement.
+*         : 07.02.2019 1.80     Deleted the inline expansion of the R_BYTEQ_GetVersion function.
+*         : 10.06.2020 1.81     Modified comment of API function to Doxygen style.
+*         : 31.03.2021 1.90     Updated for queue protection in R_BYTEQ_Put, R_BYTEQ_Get, R_BYTEQ_Flush,
+*                               R_BYTEQ_Used, R_BYTEQ_Unused functions.
+*         : 29.10.2021 2.00     Updated for critical section protection in R_BYTEQ_Put, R_BYTEQ_Get functions.
+***********************************************************************************************************************/
 
-/**********************************************************************************************************************
+/***********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
-**********************************************************************************************************************/
+***********************************************************************************************************************/
 /* Used functions of malloc() and the free() */
 #include <stdlib.h>
 
@@ -36,24 +48,17 @@ Includes   <System Includes> , "Project Includes"
 #include "r_byteq_if.h"
 #include "r_byteq_config.h"
 
-/**********************************************************************************************************************
+/***********************************************************************************************************************
 Typedef definitions
-**********************************************************************************************************************/
-#define R_BSP_GET_PSW()    (__get_psw())
-#define R_BSP_SET_PSW(x)    (__set_psw(x))
-#define R_BSP_EVENACCESS_SFR
+***********************************************************************************************************************/
 
-#define R_BSP_NOP()                         ( BSP_NOP() )
-#define R_BSP_InterruptsDisable()           ( BSP_DISABLE_INTERRUPT() )
-#define R_BSP_InterruptsEnable()            ( BSP_ENABLE_INTERRUPT() )
-
-/**********************************************************************************************************************
+/***********************************************************************************************************************
 Macro definitions
-**********************************************************************************************************************/
+***********************************************************************************************************************/
 
-/**********************************************************************************************************************
+/***********************************************************************************************************************
 Private global variables and functions
-**********************************************************************************************************************/
+***********************************************************************************************************************/
 
 /* QUEUE CONTROL BLOCK ALLOCATIONS */
 
@@ -62,33 +67,28 @@ static byteq_ctrl_t     g_qcb[BYTEQ_CFG_MAX_CTRL_BLKS];
 #endif
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Open
-* Description  : Allocates or assigns a queue control block for the buffer 
-*                pointed to by p_buf (see BYTEQ_CFG_USE_HEAP_FOR_CTRL_BLKS in
-*                config.h). Initializes the queue to an empty state and 
-*                provides a Handle to its control structure in p_hdl which is
-*                then used as a queue ID for the other API functions.
-* Arguments    : p_buf -
-*                    Pointer to byte buffer.
-*                size -
-*                    Buffer size in bytes.
-*                p_hdl -
-*                    Pointer to a handle for queue (value set here)
-* Return Value : SCI_SUCCESS -
-*                    queue initialized successfully
-*                BYTEQ_ERR_NULL_PTR
-*                    received null ptr; missing required argument
-*                BYTEQ_ERR_INVALID_ARG
-*                    argument is not valid for parameter
-*                BYTEQ_ERR_MALLOC_FAIL
-*                    can't allocate memory for ctrl block; increase heap
-*                BYTEQ_ERR_NO_MORE_CTRL_BLKS
-*                    no more control blocks, increase BYTEQ_CFG_MAX_CTRL_BLKS
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function allocates and initializes a queue control block for a 
+*        buffer provided by the user. A queue handle is provided for use with 
+*        other API functions. 
+* @param[in] p_buf Pointer to byte buffer.
+* @param[in] size Buffer size in bytes.
+* @param[in,out] p_hdl Pointer to a handle for queue (value set here)
+* @retval    BYTEQ_SUCCESS: Successful; queue initialized
+* @retval    BYTEQ_ERR_NULL_PTR: p_buf is NULL
+* @retval    BYTEQ_ERR_INVALID_ARG: Size is less than or equal to 1.
+* @retval    BYTEQ_ERR_MALLOC_FAIL: Cannot allocate control block. Increase heap size.
+* @retval    BYTEQ_ERR_NO_MORE_CTRL_BLKS: Cannot assign control block. Increase BYTEQ_MAX_CTRL_BLKS in config.h.
+* @details   This function allocates or assigns a queue control block for the 
+*            buffer pointed to by \e p_buf. Initializes the queue to an empty state and provides a Handle to its control 
+*            structure in \e p_hdl which is then used as a queue ID for the other API functions.
+* @note      None
+*/
 byteq_err_t R_BYTEQ_Open(uint8_t * const        p_buf,
-                        uint16_t const         size,
-                        byteq_hdl_t * const    p_hdl)
+                         uint16_t const         size,
+                         byteq_hdl_t * const    p_hdl)
 {
     byteq_ctrl_t    *p_qcb = 0;
 #if (BYTEQ_CFG_USE_HEAP_FOR_CTRL_BLKS == 0)
@@ -169,25 +169,18 @@ byteq_err_t R_BYTEQ_Open(uint8_t * const        p_buf,
 }
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Put
-* Description  : This function adds a byte of data to the queue.
-*
-* NOTE: This function does not disable/enable interrupts. If the queue is
-*       accessed from both the interrupt and application level, the app must
-*       disable/enable interrupts before/after calling this routine.
-*
-* Arguments    : hdl - 
-*                    Handle for queue.
-*                byte -
-*                    Byte to add to queue.
-* Return Value : BYTEQ_SUCCESS -
-*                    Successful; byte sent or queued for transmit
-*                BYTEQ_ERR_NULL_PTR -
-*                    hdl is NULL
-*                BYTEQ_ERR_QUEUE_FULL -
-*                    Queue full; cannot add byte to queue.
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function adds a byte of data to the queue.
+* @param[in,out] hdl Handle for queue.
+* @param[in] byte Byte to add to queue.
+* @retval    BYTEQ_SUCCESS: Successful; byte added to queue
+* @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
+* @retval    BYTEQ_ERR_QUEUE_FULL: Queue full; cannot add byte to queue.
+* @details   This function adds the contents of \e byte to the queue associated with \e hdl.
+* @note      None
+*/
 byteq_err_t R_BYTEQ_Put(byteq_hdl_t const   hdl,
                         uint8_t const       byte)
 {
@@ -203,25 +196,52 @@ byteq_err_t R_BYTEQ_Put(byteq_hdl_t const   hdl,
         return BYTEQ_ERR_QUEUE_FULL;        // return if queue is full
     }
 
+#if ((BYTEQ_CFG_CRITICAL_SECTION == 1)||(BYTEQ_CFG_PROTECT_QUEUE == 1))
+    uint8_t    psw_bit_i_val;
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#endif
+
+#if (BYTEQ_CFG_CRITICAL_SECTION == 1)
+    if(0 != psw_bit_i_val)
+    {
+        R_BSP_InterruptsDisable();
+        /* load byte into queue */
+        hdl->buffer[hdl->in_index++] = byte;    // add byte
+        R_BSP_InterruptsEnable();
+
+        R_BSP_InterruptsDisable();
+        if (hdl->in_index >= hdl->size)         // adjust index
+        {
+            hdl->in_index = 0;
+        }
+        R_BSP_InterruptsEnable();
+    } 
+    else
+    {
+        /* load byte into queue */
+        hdl->buffer[hdl->in_index++] = byte;    // add byte
+        if (hdl->in_index >= hdl->size)         // adjust index
+        {
+            hdl->in_index = 0;
+        }
+    }
+#else
     /* load byte into queue */
     hdl->buffer[hdl->in_index++] = byte;    // add byte
     if (hdl->in_index >= hdl->size)         // adjust index
     {
         hdl->in_index = 0;
     }
+#endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
-    uint32_t    psw_bit_i_val;
-
-    /* Get current value bit I of PSW register. */
-    psw_bit_i_val = (R_BSP_GET_PSW() & 0x0080); /* for RL78 */
-
     if(0 != psw_bit_i_val)
     {
         R_BSP_InterruptsDisable();
         hdl->count++;                           // adjust count
         R_BSP_InterruptsEnable();
-    }
+    } 
     else
     {
         hdl->count++;                           // adjust count
@@ -234,27 +254,20 @@ byteq_err_t R_BYTEQ_Put(byteq_hdl_t const   hdl,
 }
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Get
-* Description  : This function removes a byte of data from the queue.
-*
-* NOTE: This function does not disable/enable interrupts. If the queue is
-*       accessed from both the interrupt and application level, the app must
-*       disable/enable interrupts before/after calling this routine.
-*
-* Arguments    : hdl - 
-*                    Handle for queue.
-*                p_byte -
-*                    Pointer to load byte to.
-* Return Value : BYTEQ_SUCCESS -
-*                    Successful; byte sent or queued for transmit
-*                BYTEQ_ERR_NULL_PTR - 
-*                    hdl is NULL
-*                BYTEQ_ERR_INVALID_ARG - 
-*                    p_byte is NULL
-*                BYTEQ_ERR_QUEUE_EMPTY -
-*                    Queue empty; no data available to fetch
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function removes a byte of data from the queue.
+* @param[in,out] hdl Handle for queue.
+* @param[in,out] p_byte Pointer to load byte to.
+* @retval  BYTEQ_SUCCESS: Successful; byte removed from queue
+* @retval  BYTEQ_ERR_NULL_PTR: hdl is NULL.
+* @retval  BYTEQ_ERR_INVALID_ARG: p_byte is NULL.
+* @retval  BYTEQ_ERR_QUEUE_EMPTY: Queue empty; no data available to fetch
+* @details This function removes the oldest byte of data in the queue associated with \e hdl and loads it into the 
+*          location pointed to by \e p_byte.
+* @note    None
+*/
 byteq_err_t R_BYTEQ_Get(byteq_hdl_t const   hdl,
                         uint8_t * const     p_byte)
 {
@@ -274,18 +287,43 @@ byteq_err_t R_BYTEQ_Get(byteq_hdl_t const   hdl,
         return BYTEQ_ERR_QUEUE_EMPTY;       // return if queue empty        
     }
 
+#if ((BYTEQ_CFG_CRITICAL_SECTION == 1)||(BYTEQ_CFG_PROTECT_QUEUE == 1))
+    uint8_t    psw_bit_i_val;
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#endif
+
+#if (BYTEQ_CFG_CRITICAL_SECTION == 1)
+    if(0 != psw_bit_i_val)
+    {
+        R_BSP_InterruptsDisable();
+        *p_byte = hdl->buffer[hdl->out_index++]; // get byte
+        R_BSP_InterruptsEnable();
+
+        R_BSP_InterruptsDisable();
+        if (hdl->out_index >= hdl->size)        // adjust index
+        {
+            hdl->out_index = 0;
+        }
+        R_BSP_InterruptsEnable();
+    } 
+    else
+    {
+        *p_byte = hdl->buffer[hdl->out_index++]; // get byte
+        if (hdl->out_index >= hdl->size)        // adjust index
+        {
+            hdl->out_index = 0;
+        }
+    }
+#else
     *p_byte = hdl->buffer[hdl->out_index++]; // get byte
     if (hdl->out_index >= hdl->size)        // adjust index
     {
         hdl->out_index = 0;
     }
+#endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
-    uint32_t    psw_bit_i_val;
-
-    /* Get current value bit I of PSW register. */
-    psw_bit_i_val = (R_BSP_GET_PSW() & 0x0080); /* for RL78 */
-
     if(0 != psw_bit_i_val)
     {
         R_BSP_InterruptsDisable();
@@ -301,24 +339,19 @@ byteq_err_t R_BYTEQ_Get(byteq_hdl_t const   hdl,
 #endif
 
     return BYTEQ_SUCCESS;
-}        
+}
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Flush
-* Description  : This function resets a queue to an empty state.
-*
-* NOTE: This function does not disable/enable interrupts. If the queue is
-*       accessed from both the interrupt and application level, the app must
-*       disable/enable interrupts before/after calling this routine.
-*
-* Arguments    : hdl - 
-*                    Handle for queue.
-* Return Value : BYTEQ_SUCCESS -
-*                    Successful; queue is reset to en ampty state
-*                BYTEQ_ERR_NULL_PTR - 
-*                    hdl is NULL
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function resets a queue to an empty state.
+* @param[in,out] hdl Handle for queue.
+* @retval    BYTEQ_SUCCESS: Successful; queue reset
+* @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
+* @details   This function resets the queue identified by \e hdl to an empty state.
+* @note      None
+*/
 byteq_err_t R_BYTEQ_Flush(byteq_hdl_t const hdl)
 {
 #if (BYTEQ_CFG_PARAM_CHECKING_ENABLE == 1)
@@ -329,10 +362,10 @@ byteq_err_t R_BYTEQ_Flush(byteq_hdl_t const hdl)
 #endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
-    uint32_t    psw_bit_i_val;
+    uint8_t    psw_bit_i_val;
 
     /* Get current value bit I of PSW register. */
-    psw_bit_i_val = (R_BSP_GET_PSW() & 0x0080);
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
 
     if(0 != psw_bit_i_val)
     {
@@ -365,22 +398,21 @@ byteq_err_t R_BYTEQ_Flush(byteq_hdl_t const hdl)
 }
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Used
-* Description  : This function provides the number of data bytes in the queue.
-* Arguments    : hdl - 
-*                    Handle for queue.
-*                p_cnt -
-*                    Pointer to load queue data count to.
-* Return Value : BYTEQ_SUCCESS -
-*                    Successful; *p_cnt loaded with number of bytes in queue
-*                BYTEQ_ERR_NULL_PTR - 
-*                    hdl is NULL
-*                BYTEQ_ERR_INVALID_ARG - 
-*                    p_cnt is NULL
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function provides the number of data bytes in the queue.
+* @param[in] hdl Handle for queue.
+* @param[in,out] p_cnt Pointer to load queue data count to.
+* @retval    BYTEQ_SUCCESS: Successful; *p_cnt loaded with the number of bytes in the queue
+* @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
+* @retval    BYTEQ_ERR_INVALID_ARG: p_cnt is NULL.
+* @details   This function loads the number of bytes in the queue associated with \e hdl and into the location pointed 
+*            to by \e p_cnt.
+* @note      None
+*/
 byteq_err_t R_BYTEQ_Used(byteq_hdl_t const  hdl,
-                        uint16_t * const   p_cnt)
+                         uint16_t * const   p_cnt)
 {
 #if (BYTEQ_CFG_PARAM_CHECKING_ENABLE == 1)
     if (NULL == hdl)
@@ -394,10 +426,10 @@ byteq_err_t R_BYTEQ_Used(byteq_hdl_t const  hdl,
 #endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
-    uint32_t    psw_bit_i_val;
+    uint8_t    psw_bit_i_val;
 
     /* Get current value bit I of PSW register. */
-    psw_bit_i_val = (R_BSP_GET_PSW() & 0x0080);
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
 
     if(0 != psw_bit_i_val)
     {
@@ -416,24 +448,21 @@ byteq_err_t R_BYTEQ_Used(byteq_hdl_t const  hdl,
 }
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Unused
-* Description  : This function provides the number of data bytes available 
-*                for storage in the queue.
-* Arguments    : hdl - 
-*                    Handle for queue.
-*                p_cnt -
-*                    Pointer to load queue unused byte count to.
-* Return Value : BYTEQ_SUCCESS -
-*                    Successful; *p_cnt loaded with number of bytes available in
-*                    queue
-*                BYTEQ_ERR_NULL_PTR - 
-*                    hdl is NULL
-*                BYTEQ_ERR_INVALID_ARG - 
-*                    p_cnt is NULL
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function provides the number of data bytes available for storage in the queue.
+* @param[in] hdl Handle for queue.
+* @param[in,out] p_cnt Pointer to load queue unused byte count to.
+* @retval    BYTEQ_SUCCESS: Successful; *p_cnt loaded with the number of bytes not used in the queue
+* @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
+* @retval    BYTEQ_ERR_INVALID_ARG: p_cnt is NULL.
+* @details   This function loads the number of unused bytes in the queue associated with \e hdl and into the location 
+*            pointed to by \e p_cnt.
+* @note      None
+*/
 byteq_err_t R_BYTEQ_Unused(byteq_hdl_t const  hdl,
-                        uint16_t * const   p_cnt)
+                           uint16_t * const   p_cnt)
 {
 #if (BYTEQ_CFG_PARAM_CHECKING_ENABLE == 1)
     if (NULL == hdl)
@@ -447,19 +476,21 @@ byteq_err_t R_BYTEQ_Unused(byteq_hdl_t const  hdl,
 #endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
-    uint32_t    psw_bit_i_val;
+    uint8_t    psw_bit_i_val;
 
     /* Get current value bit I of PSW register. */
-    psw_bit_i_val = (R_BSP_GET_PSW() & 0x0080);
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
 
     if(0 != psw_bit_i_val)
     {
+        /* Get p_cnt. */
         R_BSP_InterruptsDisable();
         *p_cnt = (uint16_t) (hdl->size - hdl->count);
         R_BSP_InterruptsEnable();
     }
     else
     {
+        /* Get p_cnt. */
         *p_cnt = (uint16_t) (hdl->size - hdl->count);
     }
 #else
@@ -470,23 +501,20 @@ byteq_err_t R_BYTEQ_Unused(byteq_hdl_t const  hdl,
 }
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_Close
-* Description  : If the control block associated with this Handle was allocated 
-*                dynamically at run time (BYTEQ_CFG_USE_HEAP_FOR_CTRL_BLKS set to 1
-*                in config.h), then that memory is free()d by this function. If 
-*                the control block was statically allocated at compile time 
-*                (BYTEQ_CFG_USE_HEAP_FOR_CTRL_BLKS set to 0 in config.h), then this
-*                function marks the control block as available for use by another 
-*                buffer. Nothing is done to the contents of the buffer referenced 
-*                by this Handle.
-* Arguments    : hdl - 
-*                    handle for queue
-* Return Value : BYTEQ_SUCCESS -
-*                    Successful; control block freed
-*                BYTEQ_ERR_NULL_PTR -
-*                    hdl is NULL.
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function releases the queue control block associated with a handle.
+* @param[in,out] hdl Handle for queue.
+* @retval    BYTEQ_SUCCESS: Successful; control block released.
+* @retval    BYTEQ_ERR_NULL_PTR: hdl is NULL.
+* @details   If the control block associated with this Handle was allocated dynamically at run time 
+*            (BYTEQ_USE_HEAP_FOR_CTRL_BLKS set to 1 in config.h), then that memory is freed by this function. If the 
+*            control block was statically allocated at compile time (BYTEQ_USE_HEAP_FOR_CTRL_BLKS set to 0 in config.h),
+*            then this function marks the control block as available for use by another buffer. Nothing is done to the 
+*            contents of the buffer referenced by this Handle.
+* @note      None
+*/
 byteq_err_t R_BYTEQ_Close(byteq_hdl_t const hdl)
 {
 #if (BYTEQ_CFG_PARAM_CHECKING_ENABLE == 1)
@@ -506,14 +534,15 @@ byteq_err_t R_BYTEQ_Close(byteq_hdl_t const hdl)
 }
 
 
-/*****************************************************************************
+/***********************************************************************************************************************
 * Function Name: R_BYTEQ_GetVersion
-* Description  : Returns the version of this module. The version number is
-*                encoded such that the top two bytes are the major version
-*                number and the bottom two bytes are the minor version number.
-* Arguments    : none
-* Return Value : version number
-******************************************************************************/
+*******************************************************************************************************************/ /**
+* @brief This function returns the driver version number at runtime.
+* @return Version number.
+* @details Returns the version of this module. The version number is encoded such that the top 2 bytes are the major 
+*          version number and the bottom 2 bytes are the minor version number.
+* @note    None
+*/
 uint32_t  R_BYTEQ_GetVersion(void)
 {
 

@@ -1,6 +1,4 @@
 /**********************************************************************************************************************
-#include <r_ryz_os_wrap.h>
-#include <r_ryz_private.h>
  * DISCLAIMER
  * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
  * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
@@ -16,16 +14,16 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
- * File Name    : r_wifi_sx_ulpgn_atcmd.c
+ * File Name    : r_ryz_atcmd.c
  * Version      : 1.0
  * Description  : AT command functions definition.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : DD.MM.2021 1.00     First Release
+ *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -157,10 +155,9 @@ void at_send(const char *cmd, ...)
  *********************************************************************************************************************/
 e_rslt_code_t at_recv(void)
 {
-    sci_err_t sci_ercd;
     uint8_t   data;
     uint32_t  i;
-    uint32_t  start_pos = 0;
+    uint32_t  line_start = 0;
     uint16_t  cnt;
     e_rslt_code_t ret = AT_INTERNAL_ERROR;
 
@@ -168,21 +165,8 @@ e_rslt_code_t at_recv(void)
     tick_count_start(at_resp_timeout_get(), NULL);
     while (1)
     {
-        /* timeout? */
-        if (TICK_EXPIERD == tick_count_check())
-        {
-            ret = AT_INTERNAL_TIMEOUT;
-            break;
-        }
-
         /* read data from SCI's BYTEQ */
-        sci_ercd = R_SCI_Receive(g_uart_tbl.sci_hdl, &data, 1);
-        if (SCI_ERR_INSUFFICIENT_DATA == sci_ercd)
-        {
-            continue;
-        }
-
-        if (SCI_SUCCESS == sci_ercd)
+        if (SCI_SUCCESS == R_SCI_Receive(g_uart_tbl.sci_hdl, &data, 1))
         {
             /* Buffer full? */
             if (RESP_BUF_MAX <= s_rcv_cnt)
@@ -202,7 +186,7 @@ e_rslt_code_t at_recv(void)
 #if DEBUG_ATCMD != 0
                 DBG_PRINTF("%s", &s_resp_buf[start_pos]);
 #endif
-                /* Check for match */
+                /* Matching response code. */
                 for (i = 0;; i++ )
                 {
                     /* Not match? */
@@ -210,7 +194,7 @@ e_rslt_code_t at_recv(void)
                     {
                         break;
                     }
-                    if (0 == strncmp((const char *)&s_resp_buf[start_pos],
+                    if (0 == strncmp((const char *)&s_resp_buf[line_start],
                                      (const char *)s_rtncode[i].p_text,
                                      strlen((const char *)s_rtncode[i].p_text)))
                     {
@@ -221,7 +205,7 @@ e_rslt_code_t at_recv(void)
                     }
                 }
                 /* set pointer to next line */
-                start_pos = s_rcv_cnt;
+                line_start = s_rcv_cnt;
             }
             else
             {
@@ -237,6 +221,13 @@ e_rslt_code_t at_recv(void)
                     }
                 }
             }
+        }
+
+        /* timeout? */
+        if (TICK_EXPIERD == tick_count_check())
+        {
+            ret = AT_INTERNAL_TIMEOUT;
+            break;
         }
     }
 

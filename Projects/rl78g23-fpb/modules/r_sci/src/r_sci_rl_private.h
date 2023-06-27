@@ -108,6 +108,11 @@ Macro definitions
 /* RDR/FRDR register read access */
 #define SCI_RDR(byte)                     GetReg_RXD(hdl->channel, (byte));
 
+
+#define FIT_NO_FUNC                 ((void (*)(void *))0x10000000)  /* Reserved space on RX */
+#define FIT_NO_PTR                  ((void *)0x10000000)            /* Reserved space on RX */
+
+
 /*****************************************************************************
 Typedef definitions
 ******************************************************************************/

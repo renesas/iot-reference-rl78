@@ -62,16 +62,13 @@ static sci_err_t sci_receive_async_data (sci_hdl_t const hdl, uint8_t *p_dst, ui
 static sci_err_t sci_receive_async_data3 (sci_hdl_t const hdl, uint8_t *p_dst, uint16_t const length);
 #endif
 
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-static sci_err_t sci_init_sync (sci_hdl_t const hdl, sci_sync_sspi_t * const p_cfg, uint8_t * const p_priority);
-static sci_err_t sci_send_sync_data (sci_hdl_t const hdl, uint8_t *p_src, uint8_t *p_dst, uint16_t const length, bool save_rx_data);
-static sci_err_t sci_receive_sync_data (sci_hdl_t const hdl, uint8_t *p_dst, uint16_t const length);
-#endif
-
 static void power_on (uint8_t channel);
 static void power_off (uint8_t channel);
 static void sci_receive (sci_hdl_t const hdl);
+#ifndef TOMO
+#else
 static void sci_receive3 (sci_hdl_t const hdl);
+#endif
 static void sci_error (sci_hdl_t const hdl);
 
 /* queue buffers */
@@ -187,13 +184,6 @@ sci_err_t R_SCI_Open(uint8_t const      chan,
         err = sci_init_async(g_handles[chan], (sci_uart_t *)p_cfg, &priority);
 #endif
     }
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-    else
-    {
-        /* Casting sci_cfg_t type to sci_sync_sspi_t type is valid */
-        err = sci_init_sync(g_handles[chan], (sci_sync_sspi_t *)p_cfg, &priority);
-    }
-#endif
 
     if (SCI_SUCCESS != err)
     {
@@ -411,103 +401,6 @@ static sci_err_t sci_init_async(sci_hdl_t const      hdl,
 
 #endif /* End of SCI_CFG_ASYNC_INCLUDED */
 
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-/*****************************************************************************
-* Function Name: sci_init_sync
-* Description  : This function initializes the control block and SYNC/SSPI
-*                registers for an SCI channel.
-*
-* NOTE: p_cfg is checked to be non-NULL prior to this function.
-*       The TE and RE bits in SCR must be 0 prior to calling this function.
-*
-* Arguments    : hdl -
-*                    handle for channel (ptr to chan control block)
-*                p_cfg -
-*                    ptr to SSPI configuration argument structure
-*                p_priority -
-*                    pointer to location to load interrupt priority into
-* Return Value : SCI_SUCCESS -
-*                    channel initialized successfully
-*                SCI_ERR_INVALID_ARG -
-*                    element of p_cfg contains illegal value
-******************************************************************************/
-static sci_err_t sci_init_sync(sci_hdl_t const         hdl,
-                                sci_sync_sspi_t * const p_cfg,
-                                uint8_t * const         p_priority)
-{
-    sci_err_t   err = SCI_SUCCESS;
-    int32_t     bit_err;
-
-
-    /* Check arguments */
-
-#if SCI_CFG_PARAM_CHECKING_ENABLE
-    if ((SCI_MODE_SSPI == hdl->mode)
-            && (SCI_SPI_MODE_0 != p_cfg->spi_mode) && (SCI_SPI_MODE_1 != p_cfg->spi_mode)
-            && (SCI_SPI_MODE_2 != p_cfg->spi_mode) && (SCI_SPI_MODE_3 != p_cfg->spi_mode))
-    {
-        return SCI_ERR_INVALID_ARG;
-    }
-    else if ((SCI_MODE_SYNC == hdl->mode) && (SCI_SPI_MODE_OFF != p_cfg->spi_mode))
-    {
-        return SCI_ERR_INVALID_ARG;
-    }
-    else
-    {
-        /* Do Nothing */
-    }
-
-    if (0 == p_cfg->bit_rate)
-    {
-        return SCI_ERR_INVALID_ARG;
-    }
-
-    if ((0 == p_cfg->int_priority) || (p_cfg->int_priority > BSP_MCU_IPL_MAX))
-    {
-        return SCI_ERR_INVALID_ARG;
-    }
-#endif
-
-    /* Initialize channel control block flags */
-    hdl->tx_idle = true;
-    hdl->tx_dummy = false;
-
-    /* Configure SMR for SSPI/SYNC mode */
-    hdl->rom->regs->SMR.BYTE = 0x80;
-    hdl->rom->regs->SCMR.BIT.SMIF = 0;          /* default */
-    hdl->rom->regs->SIMR1.BIT.IICM = 0;         /* default */
-
-    /* Configure SPI register for clock polarity/phase and single master */
-    if (SCI_MODE_SSPI == hdl->mode)
-    {
-        hdl->rom->regs->SPMR.BYTE = p_cfg->spi_mode;
-    }
-    else    /* synchronous operation */
-    {
-        hdl->rom->regs->SPMR.BYTE = 0;
-    }
-
-    /* Configure data inversion */
-    hdl->rom->regs->SCMR.BIT.SINV = (uint8_t)((true == p_cfg->invert_data) ? 1 : 0);
-
-    /* Configure bit order */
-    hdl->rom->regs->SCMR.BIT.SDIR = (uint8_t)((true == p_cfg->msb_first) ? 1 : 0);
-
-
-    /* SETUP CLOCK FOR BIT RATE */
-
-    /* Use internal clock for bit rate (master) */
-    bit_err = sci_init_bit_rate(hdl, hdl->pclk_speed, p_cfg->bit_rate);
-    if (1000 == bit_err)
-    {
-        err = SCI_ERR_INVALID_ARG;      /* impossible bit rate; 100% error */
-    }
-
-    *p_priority = p_cfg->int_priority;
-    return err;
-} /* End of function sci_init_sync() */
-#endif /* End of SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED */
-
 
 /*****************************************************************************
 * Function Name: R_SCI_Send
@@ -562,13 +455,6 @@ sci_err_t R_SCI_Send(sci_hdl_t const hdl, uint8_t SCI_FAR *p_src, uint16_t const
         err = sci_send_async_data(hdl, p_src, length);
 #endif
     }
-    else
-    {
-        /* SSPI or SYNC */
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-        err = sci_send_sync_data(hdl, p_src, NULL, length, false);
-#endif
-    }
 
     return err;
 } /* End of function R_SCI_Send() */
@@ -616,16 +502,10 @@ static sci_err_t sci_send_async_data(sci_hdl_t const hdl, uint8_t SCI_FAR *p_src
     /* WAIT_LOOP */
     for (cnt = 0; cnt < length; cnt++)
     {
-#if (SCI_CFG_USE_CIRCULAR_BUFFER == 1)
-        byteq_err = sci_put_byte(hdl, *p_src++);
-
-        /* Allow TX interrupt occur */
-        ENABLE_TXI_INT;
-#else
         R_BSP_InterruptsDisable();      //RYZ014
         byteq_err = sci_put_byte(hdl, *p_src++);
         R_BSP_InterruptsEnable();      //RYZ014
-#endif
+
         if (BYTEQ_SUCCESS != byteq_err)
         {
             /* If the return value is not BYTEQ_SUCCESS. */
@@ -658,117 +538,6 @@ static byteq_err_t sci_put_byte(sci_hdl_t const hdl, uint8_t const byte)
 {
     return R_BYTEQ_Put(hdl->u_tx_data.que, byte);
 } /* End of function sci_put_byte() */
-
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-/*****************************************************************************
-* Function Name: sci_send_sync_data
-* Description  : This function determines if the channel referenced by the
-*                handle is not busy, and begins the data transfer process
-*                (both sending and receiving data).
-*
-* Arguments    : hdl -
-*                    handle for channel (ptr to chan control block)
-*                p_src -
-*                    ptr to data to transmit
-*                p_dst -
-*                    ptr to buffer to store receive data (optional)
-*                length -
-*                    number of bytes to send and possibly receive
-*                save_rx_data -
-*                    true if data clocked in should be saved to p_dst.
-* Return Value : SCI_SUCCESS -
-*                    data transfer started
-*                SCI_ERR_XCVR_BUSY -
-*                    channel currently busy
-******************************************************************************/
-static sci_err_t sci_send_sync_data(sci_hdl_t const hdl, uint8_t *p_src, uint8_t *p_dst,
-                                    uint16_t const length, bool save_rx_data)
-{
-#if SCI_CFG_FIFO_INCLUDED
-    uint8_t cnt;
-    uint8_t thresh_cnt;
-#endif
-
-    if (true == hdl->tx_idle)
-    {
-        if (true == save_rx_data)
-        {
-            hdl->u_rx_data.buf = p_dst;
-        }
-        hdl->save_rx_data  = save_rx_data;
-
-        hdl->u_tx_data.buf = p_src;
-        hdl->tx_cnt        = length;
-        hdl->rx_cnt        = length;
-        hdl->tx_idle       = false;
-        hdl->tx_dummy      = false;
-        hdl->tx_cnt--;
-        SCI_TDR(*hdl->u_tx_data.buf++);    /* start transmit */
-        return SCI_SUCCESS;
-    }
-
-    return SCI_ERR_XCVR_BUSY;
-} /* End of function sci_send_sync_data() */
-#endif /* SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED */
-
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-/*****************************************************************************
-* Function Name: R_SCI_SendReceive
-* Description  : This function determines if the channel referenced by the
-*                handle is not busy, and begins the data transfer process
-*                (both sending and receiving data).
-*
-* Arguments    : hdl -
-*                    handle for channel (ptr to chan control block)
-*                p_src -
-*                    ptr to data to transmit
-*                p_dst -
-*                    ptr to buffer to store received data
-*                length -
-*                    number of bytes to send/receive
-* Return Value : SCI_SUCCESS -
-*                    data transfer started
-*                SCI_ERR_NULL_PTR -
-*                    hdl, p_src or p_dst is NULL
-*                SCI_ERR_BAD_MODE -
-*                    channel mode not currently supported
-*                SCI_ERR_XCVR_BUSY -
-*                    channel currently busy
-*                SCI_ERR_INVALID_ARG
-*                    length is out of range
-******************************************************************************/
-sci_err_t R_SCI_SendReceive(sci_hdl_t const hdl,
-                            uint8_t         *p_src,
-                            uint8_t         *p_dst,
-                            uint16_t const  length)
-{
-    sci_err_t   err;
-
-#if SCI_CFG_PARAM_CHECKING_ENABLE
-    /* Check arguments */
-    if ((((NULL == hdl)   || (FIT_NO_PTR == hdl))    /* Check if hdl is available or not   */
-    ||   ((NULL == p_src) || (FIT_NO_PTR == p_src))) /* Check if p_src is available or not */
-    ||   ((NULL == p_dst) || (FIT_NO_PTR == p_dst))) /* Check if p_dst is available or not */
-    {
-        return SCI_ERR_NULL_PTR;
-    }
-
-    if ((SCI_MODE_SSPI != hdl->mode) && (SCI_MODE_SYNC != hdl->mode))
-    {
-        return SCI_ERR_BAD_MODE;
-    }
-
-    if (0 == length)
-    {
-        return SCI_ERR_INVALID_ARG;
-    }
-#endif
-
-    err = sci_send_sync_data(hdl, p_src, p_dst, length, true);
-
-    return err;
-} /* End of function R_SCI_SendReceive() */
-#endif /* End of SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED */
 
 #if (SCI_CFG_ASYNC_INCLUDED)
 /*****************************************************************************
@@ -882,13 +651,6 @@ sci_err_t R_SCI_Receive(sci_hdl_t const hdl, uint8_t *p_dst, uint16_t const leng
         }
 #endif
     }
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-    else
-    {
-        /* mode is SSPI/SYNC */
-        err = sci_receive_sync_data(hdl, p_dst, length);
-    }
-#endif
 
     return err;
 } /* End of function R_SCI_Receive() */
@@ -929,14 +691,11 @@ static sci_err_t sci_receive_async_data(sci_hdl_t const hdl, uint8_t *p_dst, uin
     /* WAIT_LOOP */
     for (cnt = 0; cnt < length; cnt++)
     {
-#if (SCI_CFG_USE_CIRCULAR_BUFFER == 1)
-        byteq_err = R_BYTEQ_Get(hdl->u_rx_data.que, p_dst++);
-#else
         /* Disable RXI Interrupt */
         DISABLE_RXI_INT;
         byteq_err = R_BYTEQ_Get(hdl->u_rx_data.que, p_dst++);
         ENABLE_RXI_INT;
-#endif
+
         if (BYTEQ_SUCCESS != byteq_err)
         {
             err = SCI_ERR_INSUFFICIENT_DATA;
@@ -964,10 +723,13 @@ static sci_err_t sci_receive_async_data(sci_hdl_t const hdl, uint8_t *p_dst, uin
                     SCI_CFG_UART2_RTS_PORT = 0;
                     break;
 #endif
+#ifndef TOMO
+#else
 #if (SCI_CFG_UART3_FLOW_CTRL_ENABLE)
                 case 3:
                     SCI_CFG_UART3_RTS_PORT = 0;
                     break;
+#endif
 #endif
                 default:
                     break;
@@ -978,42 +740,6 @@ static sci_err_t sci_receive_async_data(sci_hdl_t const hdl, uint8_t *p_dst, uin
 } /* End of function sci_receive_async_data() */
 
 #endif /* SCI_CFG_ASYNC_INCLUDED */
-
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-/*****************************************************************************
-* Function Name: sci_receive_sync_data
-* Description  : This function determines if the channel referenced by the
-*                handle is not busy, and dummy data send.
-* Arguments    : hdl -
-*                    handle for channel (ptr to chan control block)
-*                p_dst -
-*                    ptr to buffer to load data into
-*                length - 
-*                    number of bytes to read
-* Return Value : SCI_SUCCESS -
-*                    requested number of byte loaded into p_dst
-*                SCI_ERR_XCVR_BUSY -
-*                    channel currently busy
-******************************************************************************/
-static sci_err_t sci_receive_sync_data(sci_hdl_t const hdl, uint8_t *p_dst, uint16_t const length)
-{
-    /* IF TRANCEIVER NOT IN USE, START DUMMY TRANSMIT TO CLOCK IN DATA */
-    if (true == hdl->tx_idle)
-    {
-        hdl->u_rx_data.buf = p_dst;
-        hdl->save_rx_data  = true;               /* save the data clocked in */
-        hdl->tx_idle       = false;
-        hdl->tx_cnt        = length;
-        hdl->rx_cnt        = length;
-        hdl->tx_dummy      = true;
-        hdl->tx_cnt--;
-        SCI_TDR(SCI_CFG_DUMMY_TX_BYTE);    /* start transfer */
-        return SCI_SUCCESS;
-    }
-
-    return SCI_ERR_XCVR_BUSY;
-} /* End of function sci_receive_sync_data() */
-#endif /* End of SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED */
 
 /*****************************************************************************
 * Function Name: sci_receive
@@ -1031,8 +757,7 @@ static void sci_receive(sci_hdl_t const hdl)
     SCI_RDR(&byte);
 
 #if defined(__CCRL__) || defined(__ICCRL78__)
-#if (SCI_CFG_UART0_FLOW_CTRL_ENABLE || SCI_CFG_UART1_FLOW_CTRL_ENABLE || \
-        SCI_CFG_UART2_FLOW_CTRL_ENABLE || SCI_CFG_UART3_FLOW_CTRL_ENABLE)
+#if (SCI_CFG_UART0_FLOW_CTRL_ENABLE || SCI_CFG_UART1_FLOW_CTRL_ENABLE ||  SCI_CFG_UART2_FLOW_CTRL_ENABLE)
     uint16_t byteq_free = 0;
     R_BYTEQ_Unused(hdl->u_rx_data.que, &byteq_free);
     if (SCI_CFG_UART_RX_BUFFER_THRESH >= byteq_free)
@@ -1090,51 +815,6 @@ static void sci_receive(sci_hdl_t const hdl)
         }
 #endif
     }
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-    else
-    {
-        hdl->rx_cnt--;
-
-        /* Place byte in buffer if Receive() or SendReceive() */
-        if (true == hdl->save_rx_data)
-        {
-            *hdl->u_rx_data.buf++ = byte;
-        }
-
-        /* See if more bytes to transfer */
-        if (0 < hdl->rx_cnt)
-        {
-            if (0 < hdl->tx_cnt)
-            {
-                /* send another byte */
-                if (true == hdl->tx_dummy)
-                {
-                    hdl->tx_cnt--;
-                    SCI_TDR(SCI_CFG_DUMMY_TX_BYTE);
-                }
-                else
-                {
-                    hdl->tx_cnt--;
-                    SCI_TDR(*hdl->u_tx_data.buf++);
-                }
-            }
-        }
-        else
-        {
-            hdl->tx_idle = true;
-
-            /* Do callback if available */
-            if ((NULL != hdl->callback) && (FIT_NO_FUNC != hdl->callback))
-            {
-                args.hdl = hdl;
-                args.event = SCI_EVT_XFER_DONE;
-
-                /* Casting to void type is valid */
-                hdl->callback((void *)&args);
-            }
-        }
-    }
-#endif /* End of SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED */
 } /* End of function sci_receive() */
 
 /*****************************************************************************
@@ -1158,7 +838,40 @@ void rxi_handler(sci_hdl_t const hdl)
 ******************************************************************************/
 void rxi_handler3(sci_hdl_t const hdl)
 {
+#ifndef SCI_RYZ014A
+    sci_cb_args_t   args;
+    uint8_t         byte;
+
+    /* Read byte */
+    byte = RXD3;
+
+#if (SCI_CFG_ASYNC_INCLUDED)
+    if (SCI_MODE_ASYNC == hdl->mode)
+    {
+        /* Place byte in queue */
+        if (BYTEQ_SUCCESS == R_BYTEQ_Put(hdl->u_rx_data.que, byte))
+        {
+            args.event = SCI_EVT_RX_CHAR;
+        }
+        else
+        {
+            args.event = SCI_EVT_RXBUF_OVFL;
+        }
+
+#if (SCI_CFG_UART3_FLOW_CTRL_ENABLE == 1)
+        uint16_t byteq_free;
+        R_BYTEQ_Unused(hdl->u_rx_data.que, &byteq_free);
+        if (SCI_CFG_UART_RX_BUFFER_THRESH >= byteq_free)
+        {
+            SCI_CFG_UART3_RTS_PORT = 1;
+        }
+#endif /* (SCI_CFG_UART3_FLOW_CTRL_ENABLE) */
+    }
+
+#endif /* (SCI_CFG_ASYNC_INCLUDED) */
+#else
     sci_receive3(hdl);
+#endif
 } /* End of function rxi_handler3() */
 
 
@@ -1300,13 +1013,6 @@ sci_err_t R_SCI_Control(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
                 err = sci_async_cmds(hdl, cmd, p_args);
 #endif
             }
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-            else
-            {
-                /* SSPI/SYNC-SPECIFIC COMMANDS */
-                err = sci_sync_cmds(hdl, cmd, p_args);
-            }
-#endif
             break;
     }
     return err;
@@ -1372,7 +1078,8 @@ uint32_t  R_SCI_GetVersion(void)
     return version;
 } /* End of function R_SCI_GetVersion() */
 
-
+#ifndef SCI_RYZ014A
+#else
 static void sci_receive3(sci_hdl_t const hdl)
 {
     sci_cb_args_t   args;
@@ -1380,17 +1087,6 @@ static void sci_receive3(sci_hdl_t const hdl)
 
     /* Read byte */
     byte = RXD3;
-
-#if defined(__CCRL__) || defined(__ICCRL78__)
-#if (SCI_CFG_UART3_FLOW_CTRL_ENABLE == 1)
-    uint16_t byteq_free = 0;
-    R_BYTEQ_Unused(hdl->u_rx_data.que, &byteq_free);
-    if (SCI_CFG_UART_RX_BUFFER_THRESH >= byteq_free)
-    {
-        SCI_CFG_UART3_RTS_PORT = 1;
-    }
-#endif /* (SCI_CFG_UART3_FLOW_CTRL_ENABLE) */
-#endif /* defined__CCRL__ || defined__ICCRL78__ */
 
 #if (SCI_CFG_ASYNC_INCLUDED)
     if (SCI_MODE_ASYNC == hdl->mode)
@@ -1405,6 +1101,19 @@ static void sci_receive3(sci_hdl_t const hdl)
             args.event = SCI_EVT_RXBUF_OVFL;
         }
 
+#if defined(__CCRL__) || defined(__ICCRL78__)
+#if (SCI_CFG_UART3_FLOW_CTRL_ENABLE == 1)
+        uint16_t byteq_free = 0;
+        R_BYTEQ_Unused(hdl->u_rx_data.que, &byteq_free);
+        if (SCI_CFG_UART_RX_BUFFER_THRESH >= byteq_free)
+        {
+            SCI_CFG_UART3_RTS_PORT = 1;
+        }
+#endif /* (SCI_CFG_UART3_FLOW_CTRL_ENABLE) */
+#endif /* defined__CCRL__ || defined__ICCRL78__ */
+
+#ifndef TOMO
+#else
         /* Do callback if available */
         if ((NULL != hdl->callback) && (FIT_NO_FUNC != hdl->callback))
         {
@@ -1414,10 +1123,11 @@ static void sci_receive3(sci_hdl_t const hdl)
             /* Casting to void type is valid */
             hdl->callback((void *)&args);
         }
+#endif
     }
 #endif /* (SCI_CFG_ASYNC_INCLUDED) */
 } /* End of function sci_receive() */
-
+#endif
 
 #if (SCI_CFG_ASYNC_INCLUDED)
 /*****************************************************************************
@@ -1454,14 +1164,10 @@ static sci_err_t sci_receive_async_data3(sci_hdl_t const hdl, uint8_t *p_dst, ui
     /* WAIT_LOOP */
     for (cnt = 0; cnt < length; cnt++)
     {
-#if (SCI_CFG_USE_CIRCULAR_BUFFER == 1)
-        byteq_err = R_BYTEQ_Get(hdl->u_rx_data.que, p_dst++);
-#else
         /* Disable RXI Interrupt */
         R_BSP_InterruptsDisable();
         byteq_err = R_BYTEQ_Get(hdl->u_rx_data.que, p_dst++);
         R_BSP_InterruptsEnable();
-#endif
 
         if (BYTEQ_SUCCESS != byteq_err)
         {
@@ -1469,10 +1175,9 @@ static sci_err_t sci_receive_async_data3(sci_hdl_t const hdl, uint8_t *p_dst, ui
             break;
         }
 
-        uint16_t byteq_free = 0;
-        R_BYTEQ_Unused(hdl->u_rx_data.que, &byteq_free);
-
 #if (SCI_CFG_UART3_FLOW_CTRL_ENABLE)
+        uint16_t byteq_free;
+        R_BYTEQ_Unused(hdl->u_rx_data.que, &byteq_free);
         if (SCI_CFG_UART_RX_BUFFER_THRESH < byteq_free)
         {
             SCI_CFG_UART3_RTS_PORT = 0;

@@ -149,9 +149,6 @@ extern const sci_hdl_t g_sci_handles[];
 #if (SCI_CFG_ASYNC_INCLUDED)
 extern const SCI_FAR baud_divisor_t async_baud[];
 #endif
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-extern const baud_divisor_t sync_baud[];
-#endif
 
 #if (SCI_CFG_CH0_INCLUDED)
 extern sci_ch_ctrl_t           ch0_ctrl;
@@ -188,12 +185,6 @@ extern void sci_init_register(sci_hdl_t const hdl);
 extern sci_err_t sci_async_cmds(sci_hdl_t const hdl,
                                 sci_cmd_t const cmd,
                                 void            *p_args);
-#endif
-
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-extern sci_err_t sci_sync_cmds(sci_hdl_t const hdl,
-                               sci_cmd_t const cmd,
-                               void            *p_args);
 #endif
 
 extern sci_err_t sci_mcu_param_check(uint8_t const chan);

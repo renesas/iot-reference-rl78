@@ -130,17 +130,8 @@ int32_t sci_init_bit_rate(sci_hdl_t const hdl, uint32_t const pclk, uint32_t con
         num_divisors = NUM_DIVISORS_ASYNC;
 #endif
     }
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-    else
-    {
-        /* SYNC or SSPI */
-        p_baud_info = sync_baud;
-        num_divisors = NUM_DIVISORS_SYNC;
-    }
-#endif
 
     ratio = (pclk / baud);
-
     for (i = 0; i < num_divisors; i++)
     {
         if (ratio > (uint32_t)(p_baud_info[i].divisor * 256))
@@ -210,7 +201,9 @@ sci_err_t sci_async_cmds(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
 #if SCI_CFG_PARAM_CHECKING_ENABLE
     /* Check parameters */
     if ((NULL == p_args)
-            && ((SCI_CMD_TX_Q_BYTES_FREE == cmd) || (SCI_CMD_RX_Q_BYTES_AVAIL_TO_READ == cmd)|| (SCI_CMD_COMPARE_RECEIVED_DATA == cmd)))
+            && ((SCI_CMD_TX_Q_BYTES_FREE == cmd) ||
+                (SCI_CMD_RX_Q_BYTES_AVAIL_TO_READ == cmd)||
+                (SCI_CMD_COMPARE_RECEIVED_DATA == cmd)))
     {
         return SCI_ERR_NULL_PTR;
     }
@@ -256,151 +249,6 @@ sci_err_t sci_async_cmds(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
     return err;
 }
 #endif /* End of SCI_CFG_ASYNC_INCLUDED */
-
-#if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-/*****************************************************************************
-* Function Name: sci_sync_cmds
-* Description  : This function performs special software operations specific
-*                to the SSPI and SYNC protocols.
-*
-* Arguments    : hdl -
-*                    handle for channel (ptr to chan control block)
-*                cmd -
-*                    command to run
-*                p_args -
-*                    pointer argument(s) specific to command
-* Return Value : SCI_SUCCESS -
-*                    Command completed successfully.
-*                SCI_ERR_NULL_PTR -
-*                    p_args is NULL when required for cmd
-*                SCI_ERR_INVALID_ARG -
-*                    The cmd value or p_args contains an invalid value.
-*                    May be due to mode channel is operating in.
-******************************************************************************/
-sci_err_t sci_sync_cmds(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
-{
-    sci_spi_mode_t  spi_mode;
-    sci_cb_args_t   args;
-    sci_err_t       err = SCI_SUCCESS;
-
-    switch (cmd)
-    {
-        case (SCI_CMD_CHECK_XFER_DONE):
-        {
-            if (false == hdl->tx_idle)
-            {
-                err = SCI_ERR_XFER_NOT_DONE;
-            }
-        break;
-        }
-
-        case (SCI_CMD_XFER_LSB_FIRST):
-        {
-            hdl->rom->regs->SCR.BYTE &= (~SCI_EN_XCVR_MASK);
-            SCI_SCR_DUMMY_READ;
-            hdl->rom->regs->SCMR.BIT.SDIR = 0;
-            SCI_IR_TXI_CLEAR;
-            hdl->rom->regs->SCR.BYTE |= SCI_EN_XCVR_MASK;
-        break;
-        }
-
-        case (SCI_CMD_XFER_MSB_FIRST):
-        {
-            hdl->rom->regs->SCR.BYTE &= (~SCI_EN_XCVR_MASK);
-            SCI_SCR_DUMMY_READ;
-            hdl->rom->regs->SCMR.BIT.SDIR = 1;
-            SCI_IR_TXI_CLEAR;
-            hdl->rom->regs->SCR.BYTE |= SCI_EN_XCVR_MASK;
-        break;
-        }
-
-        case (SCI_CMD_INVERT_DATA):
-        {
-            hdl->rom->regs->SCR.BYTE &= (~SCI_EN_XCVR_MASK);
-            SCI_SCR_DUMMY_READ;
-            hdl->rom->regs->SCMR.BIT.SINV ^= 1;
-            SCI_IR_TXI_CLEAR;
-            hdl->rom->regs->SCR.BYTE |= SCI_EN_XCVR_MASK;
-        break;
-        }
-
-        case (SCI_CMD_ABORT_XFER):
-        {
-            /* Disable receive interrupts in ICU and peripheral */
-            DISABLE_RXI_INT;
-            DISABLE_ERI_INT;
-
-            hdl->rom->regs->SCR.BYTE &= (~(SCI_SCR_REI_MASK | SCI_SCR_RE_MASK | SCI_SCR_TE_MASK));
-
-            hdl->tx_cnt = 0;
-            hdl->tx_dummy = false;
-            hdl->tx_idle = true;
-
-            /* Do callback if available */
-            if ((NULL != hdl->callback) && (FIT_NO_FUNC != hdl->callback))
-            {
-                args.hdl = hdl;
-                args.event = SCI_EVT_XFER_ABORTED;
-
-                /* Casting pointer to void* is valid */
-                hdl->callback((void *)&args);
-            }
-
-            *hdl->rom->ir_rxi = 0;                  /* clear rxi interrupt flag */
-            (*hdl->rom->icu_grp) &= (~hdl->rom->eri_ch_mask);  /* clear eri interrupt flag */
-
-            ENABLE_ERI_INT;                         /* enable rx err interrupts in ICU */
-            ENABLE_RXI_INT;                         /* enable receive interrupts in ICU */
-
-            /* Enable receive interrupt in peripheral after rcvr or will get "extra" interrupt */
-            hdl->rom->regs->SCR.BYTE |= (SCI_SCR_RE_MASK | SCI_SCR_TE_MASK);
-            hdl->rom->regs->SCR.BYTE |= SCI_SCR_REI_MASK;
-        break;
-        }
-
-        case (SCI_CMD_CHANGE_SPI_MODE):
-        {
-    #if SCI_CFG_PARAM_CHECKING_ENABLE
-
-            if (SCI_MODE_SSPI != hdl->mode)
-            {
-                return SCI_ERR_INVALID_ARG;
-            }
-
-            /* Check parameters */
-            if ((NULL == p_args ) || (FIT_NO_PTR == p_args))
-            {
-                return SCI_ERR_NULL_PTR;
-            }
-
-            /* Casting pointer void* type is valid */
-            spi_mode = *((sci_spi_mode_t *)p_args);
-
-            if ((SCI_SPI_MODE_0 != spi_mode) && (SCI_SPI_MODE_1 != spi_mode)
-                    && (SCI_SPI_MODE_2 != spi_mode) && (SCI_SPI_MODE_3 != spi_mode))
-            {
-                return SCI_ERR_INVALID_ARG;
-            }
-    #endif
-            hdl->rom->regs->SCR.BYTE &= (~SCI_EN_XCVR_MASK);
-            SCI_SCR_DUMMY_READ;
-            hdl->rom->regs->SPMR.BYTE &= 0x3F;      /* clear previous mode */
-            hdl->rom->regs->SPMR.BYTE |= (*((uint8_t *)p_args));
-            SCI_IR_TXI_CLEAR;
-            hdl->rom->regs->SCR.BYTE |= SCI_EN_XCVR_MASK;
-        break;
-        }
-
-        default:
-        {
-            err = SCI_ERR_INVALID_ARG;
-        break;
-        }
-    }
-
-    return err;
-}
-#endif /* End of SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED */
 
 /*****************************************************************************
 ISRs

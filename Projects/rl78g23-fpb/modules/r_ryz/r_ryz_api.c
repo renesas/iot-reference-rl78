@@ -909,7 +909,7 @@ int32_t R_RYZ_ReceiveSocket(uint8_t socket_number, uint8_t * p_data, uint32_t le
     api_ret = 0;
     if (AT_OK == at_exec("AT+SQNSRECV=%d,%d\r", socket_number + 1, read_len))
     {
-        if (DATA_FOUND == at_read("+SQNSRECV: %d,%lu\r\n", &sockid, &read_len))
+        if (DATA_FOUND == at_read("+SQNSRECV: %lu,%lu\r\n", &sockid, &read_len))
         {
             memcpy(p_data, at_get_current_line(), read_len);
             api_ret = read_len;

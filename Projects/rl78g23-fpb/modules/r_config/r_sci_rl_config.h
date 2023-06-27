@@ -41,7 +41,7 @@ Configuration Options
 /* SPECIFY WHETHER TO INCLUDE CODE FOR API PARAMETER CHECKING */
 /* Setting to BSP_CFG_PARAM_CHECKING_ENABLE utilizes the system default setting */
 /* Setting to 1 includes parameter checking; 0 compiles out parameter checking */
-#define SCI_CFG_PARAM_CHECKING_ENABLE   (BSP_CFG_PARAM_CHECKING_ENABLE)
+#define SCI_CFG_PARAM_CHECKING_ENABLE   (0)
 
 /* SPECIFY WHETHER TO INCLUDE CODE FOR DIFFERENT SCI MODES */
 /* Setting an equate to 1 includes code specific to that mode. */
