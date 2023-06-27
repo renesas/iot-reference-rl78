@@ -580,7 +580,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
              * the task name and an incrementing number. */
             xPayloadLength = snprintf( cPayloadBuf,
                                        mqttexampleSTRING_BUFFER_LENGTH,
-                                       "Task %d publishing message %d",
+                                       "Task %zu publishing message %zu",
                                        ( int ) ulTaskNumber,
                                        ( int ) ulPublishCount );
 
