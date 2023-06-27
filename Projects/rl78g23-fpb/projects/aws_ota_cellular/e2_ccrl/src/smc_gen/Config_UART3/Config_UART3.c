@@ -69,9 +69,9 @@ void R_Config_UART3_Create(void)
     /* Set INTST3 low priority */
     STPR13 = 1U;
     STPR03 = 1U;
-    /* Set INTSR3 low priority */
+    /* Set INTSR3 level2 priority */
     SRPR13 = 1U;
-    SRPR03 = 1U;
+    SRPR03 = 0U;
     /* Set INTSRE3 low priority */
     SREPR13 = 1U;
     SREPR03 = 1U;

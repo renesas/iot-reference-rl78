@@ -206,9 +206,9 @@
         <Item bank="0" id="SAU1_INTST3" priority="3"/>
         <Item bank="0" id="SAU1_INTCSI30" priority="3"/>
         <Item bank="0" id="SAU1_INTIIC30" priority="3"/>
-        <Item bank="0" id="SAU1_INTSR3" priority="3"/>
-        <Item bank="0" id="SAU1_INTCSI31" priority="3"/>
-        <Item bank="0" id="SAU1_INTIIC31" priority="3"/>
+        <Item bank="0" id="SAU1_INTSR3" priority="2"/>
+        <Item bank="0" id="SAU1_INTCSI31" priority="2"/>
+        <Item bank="0" id="SAU1_INTIIC31" priority="2"/>
         <Item bank="0" id="TAU1_INTTM13" priority="3"/>
         <Item bank="0" id="TAU0_INTTM04" priority="3"/>
         <Item bank="0" id="TAU0_INTTM05" priority="3"/>
@@ -1211,7 +1211,7 @@
                         <item id="153600" input="153600" vlaue="0"/>
                         <item id="312500" input="312500" vlaue="0"/>
                     </option>
-                    <option enabled="true" id="rxPriority" selection="Level3">
+                    <option enabled="true" id="rxPriority" selection="Level2">
                         <item id="Level0" input="" vlaue="0"/>
                         <item id="Level1" input="" vlaue="0"/>
                         <item id="Level2" input="" vlaue="0"/>
