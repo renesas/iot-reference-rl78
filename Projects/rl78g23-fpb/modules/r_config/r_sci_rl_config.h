@@ -107,4 +107,6 @@ Configuration Options
  */
 #define SCI_CFG_UART_RX_BUFFER_THRESH    (20)
 
+#define SCI_CFG_ENABLE_ISR_VECTOR        (0)
+
 #endif /* R_SCI_RL_CONFIG_H */

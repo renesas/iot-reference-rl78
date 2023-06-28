@@ -80,8 +80,8 @@ _vPortTickISR:
 ;/* Install the interrupt handlers */
 
 ;   /* 32bit interval timer */
-    _vPortTickISR   .VECTOR 0x38
+;    _vPortTickISR   .VECTOR 0x38
 
 ;   /* brk */
-    _vPortYield     .VECTOR 0x7E
+;    _vPortYield     .VECTOR 0x7E
 
