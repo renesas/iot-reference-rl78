@@ -73,7 +73,7 @@ static const char pOtaJobStatusTopicTemplate[] = MQTT_API_THINGS "%s"MQTT_API_JO
 static const char pOtaStreamDataTopicTemplate[] = MQTT_API_THINGS "%s"MQTT_API_STREAMS "%s"MQTT_API_DATA_CBOR; /*!< Topic template to receive data over a stream. */
 static const char pOtaGetStreamTopicTemplate[] = MQTT_API_THINGS "%s"MQTT_API_STREAMS "%s"MQTT_API_GET_CBOR;   /*!< Topic template to request next data over a stream. */
 
-static const char pOtaGetNextJobMsgTemplate[] = "{\"clientToken\":\"%u:%s\"}";                                 /*!< Used to specify client token id to authenticate job. */
+static const char pOtaGetNextJobMsgTemplate[] = "{\"clientToken\":\"%lu:%s\"}";                                 /*!< Used to specify client token id to authenticate job. */
 static const char pOtaStringReceive[] = "\"receive\"";                                                         /*!< Used to build the job receive template. */
 
 /** We map all of the above status cases to one of these status strings.

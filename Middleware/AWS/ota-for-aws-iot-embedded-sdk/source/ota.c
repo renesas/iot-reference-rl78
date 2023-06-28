@@ -1721,7 +1721,7 @@ static DocParseErr_t extractParameter( JsonDocParam_t docParam,
 
         if( ( errno == 0 ) && ( pEnd == &pValueInJson[ valueLength ] ) )
         {
-            LogInfo( ( "Extracted parameter: [key: value]=[%s: %u]",
+            LogInfo( ( "Extracted parameter: [key: value]=[%s: %lu]",
                        docParam.pSrcKey, *pUint32 ) );
         }
         else

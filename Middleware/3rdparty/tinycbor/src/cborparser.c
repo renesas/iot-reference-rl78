@@ -1213,8 +1213,13 @@ CborError _cbor_value_copy_string(const CborValue *value, void *buffer,
                                  size_t *buflen, CborValue *next)
 {
     bool copied_all;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    CborError err = iterate_string_chunks(value, (char __far *)buffer, buflen, &copied_all, next,
+                                          buffer ? iterate_memcpy : iterate_noop);
+#else
     CborError err = iterate_string_chunks(value, (char*)buffer, buflen, &copied_all, next,
                                           buffer ? iterate_memcpy : iterate_noop);
+#endif
     return err ? err :
                  copied_all ? CborNoError : CborErrorOutOfMemory;
 }
