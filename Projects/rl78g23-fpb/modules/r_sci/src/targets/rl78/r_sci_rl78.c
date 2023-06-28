@@ -287,7 +287,7 @@ void sci1_txi1_isr(void)
  * Function Name: sci2_txi2_isr
  * Description  : TXI interrupt routines for SCI2 channel
  ******************************************************************************/
-#pragma interrupt sci2_txi2_isr(vect=INTST2, enable=true) //RYZ014
+#pragma interrupt sci2_txi2_isr(vect=INTST2)
 void sci2_txi2_isr(void)
 {
     txi_handler(&ch2_ctrl);
@@ -299,7 +299,7 @@ void sci2_txi2_isr(void)
  * Function Name: sci3_txi3_isr
  * Description  : TXI interrupt routines for SCI3 channel
  ******************************************************************************/
-#pragma interrupt sci3_txi3_isr(vect=INTST3, enable=true) //RYZ014
+#pragma interrupt sci3_txi3_isr(vect=INTST3)
 void sci3_txi3_isr(void)
 {
     txi_handler(&ch3_ctrl);
@@ -340,7 +340,7 @@ void sci1_rxi1_isr(void)
  * Function Name: sci2_rxi2_isr
  * Description  : RXI interrupt routines for SCI2 channel
  ******************************************************************************/
-#pragma interrupt sci2_rxi2_isr(vect=INTSR2, enable=true)
+#pragma interrupt sci2_rxi2_isr(vect=INTSR2)
 void sci2_rxi2_isr(void)
 {
     rxi_handler(&ch2_ctrl);
@@ -395,7 +395,7 @@ void sci1_eri1_isr(void)
 * Function name: sci2_eri2_isr
 * Description  : ERI interrupt routines for SCI2 channel.
 ******************************************************************************/
-#pragma interrupt sci2_eri2_isr(vect=INTSRE2, enable=true) //RYZ014
+#pragma interrupt sci2_eri2_isr(vect=INTSRE2)
 void sci2_eri2_isr(void)
 {
     eri_handler(&ch2_ctrl);

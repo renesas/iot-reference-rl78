@@ -94,7 +94,8 @@ static void uart_port_close (void);
 
 /* SCI callback functions for HSUART */
 static void uart_callback (void * pArgs);
-static void cb_sci_err (sci_cb_evt_t event);
+//static void cb_sci_err (sci_cb_evt_t event);
+static void cb_sci_err(sci_cb_args_t * p_args);
 
 /* SCI configurations */
 static const st_sci_conf_t s_sci_cfg[] =
@@ -1701,7 +1702,7 @@ static void uart_callback(void * pArgs)
     }
     else
     {
-        cb_sci_err(p_args->event);
+        cb_sci_err(p_args);
     }
 }
 /**********************************************************************************************************************
@@ -1714,22 +1715,23 @@ static void uart_callback(void * pArgs)
  * Arguments    : event
  * Return Value : none
  *********************************************************************************************************************/
-static void cb_sci_err(sci_cb_evt_t event)
+//static void cb_sci_err(sci_cb_evt_t event)
+static void cb_sci_err(sci_cb_args_t * p_args)
 {
-    if (SCI_EVT_RXBUF_OVFL == event)
+    if (SCI_EVT_RXBUF_OVFL == p_args->event)
     {
         /* From RXI interrupt; rx queue is full */
-        post_err_event(WIFI_EVENT_SERIAL_RXQ_OVF_ERR, 0);
+        R_BSP_NOP();
     }
-    else if (SCI_EVT_OVFL_ERR == event)
+    else if (SCI_EVT_OVFL_ERR == p_args->event)
     {
         /* From receiver overflow error interrupt */
-        post_err_event(WIFI_EVENT_SERIAL_OVF_ERR, 0);
+        R_BSP_NOP();
     }
-    else if (SCI_EVT_FRAMING_ERR == event)
+    else if (SCI_EVT_FRAMING_ERR == p_args->event)
     {
         /* From receiver framing error interrupt */
-        post_err_event(WIFI_EVENT_SERIAL_FLM_ERR, 0);
+        R_BSP_NOP();
     }
     else
     {
