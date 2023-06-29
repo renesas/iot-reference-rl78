@@ -92,16 +92,22 @@
 #define S_C_CH_FAR                  static C_CH_FAR
 #define S_C_U8_FAR                  static C_U8_FAR
 
+#if (BSP_CFG_RTOS_USED == 1)
 #include "FreeRTOS.h"
 #include "iot_logging_task.h"
+#define FWUP_DBG_PRINTF             vLoggingPrintf
+#else
+#define FWUP_DBG_PRINTF             printf
+#endif
+
 #if (FWUP_CFG_PRINTF_DISABLE == 1)
 #define FWUP_LOG_ERR(...)
 #define FWUP_LOG_INFO(...)
 #define FWUP_LOG_DBG(...)
 #else
-#define FWUP_LOG_ERR                printf
-#define FWUP_LOG_INFO               printf
-#define FWUP_LOG_DBG                vLoggingPrintf //printf
+#define FWUP_LOG_ERR                FWUP_DBG_PRINTF
+#define FWUP_LOG_INFO               FWUP_DBG_PRINTF
+#define FWUP_LOG_DBG                FWUP_DBG_PRINTF
 #endif /* (FWUP_CFG_PRINTF_DISABLE == 1) */
 
 
