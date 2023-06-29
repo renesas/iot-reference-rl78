@@ -143,7 +143,7 @@ void main( void )
 
 void main_task( void * pvParameters )
 {
-//    prvSetCertificateProfile();
+    prvSetCertificateProfile();
 
     if (pdTRUE == xPlatformNetworkUp())
     {
