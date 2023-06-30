@@ -250,12 +250,12 @@
         <pinItem allocation="1" comments="" direction="O" id="P142" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="2" comments="" direction="I" id="P141" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="125" comments="" direction="O" id="P00" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="28" comments="" direction="None" id="XT1" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="27" comments="" direction="None" id="XT2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="67" comments="" direction="O" id="P50" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="22" comments="" direction="None" id="TOOL0" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="128" comments="" direction="None" id="RxD3" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="78" comments="" direction="None" id="RxD2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="28" comments="" direction="None" id="XT1" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="27" comments="" direction="None" id="XT2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="67" comments="" direction="O" id="P50" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
     </tool>
     <tool id="Summary" version="1.0.0.0">
         <option id="com.renesas.smc.code.path" value="src\smc_gen"/>
@@ -1280,7 +1280,7 @@
                 <item enabled="true" id="unused"/>
                 <item enabled="true" id="used"/>
             </option>
-            <option enabled="true" id="trace" selection="used">
+            <option enabled="true" id="trace" selection="unused">
                 <item enabled="true" id="unused"/>
                 <item enabled="true" id="used"/>
             </option>

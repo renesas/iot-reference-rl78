@@ -1281,7 +1281,7 @@
                 <item enabled="true" id="unused"/>
                 <item enabled="true" id="used"/>
             </option>
-            <option enabled="true" id="trace" selection="used">
+            <option enabled="true" id="trace" selection="unused">
                 <item enabled="true" id="unused"/>
                 <item enabled="true" id="used"/>
             </option>

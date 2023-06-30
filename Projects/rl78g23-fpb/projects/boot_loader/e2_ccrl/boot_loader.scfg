@@ -74,14 +74,14 @@
             <item id="externalclock"/>
         </option>
         <option enabled="false" id="cmbhsstabletime" selection="18">
-            <item id="8" input="" value="256"/>
-            <item id="9" input="" value="512"/>
-            <item id="10" input="" value="1024"/>
-            <item id="11" input="" value="2048"/>
-            <item id="13" input="" value="8192"/>
-            <item id="15" input="" value="32768"/>
-            <item id="17" input="" value="131072"/>
-            <item id="18" input="" value="262144"/>
+            <item id="8" input="" value="51.2"/>
+            <item id="9" input="" value="102.4"/>
+            <item id="10" input="" value="204.8"/>
+            <item id="11" input="" value="409.6"/>
+            <item id="13" input="" value="1638.4"/>
+            <item id="15" input="" value="6553.6"/>
+            <item id="17" input="" value="26214.4"/>
+            <item id="18" input="" value="52428.8"/>
         </option>
         <option enabled="false" id="hssfrequency" selection="textinputitem">
             <item id="textinputitem" input="5" value="5"/>
@@ -245,12 +245,12 @@
         <Item bank="0" id="TAU1_INTTM17" priority="3"/>
     </tool>
     <tool id="Pins" version="1.0.1.0">
-        <pinItem allocation="79" comments="" direction="None" id="TxD2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="28" comments="" direction="None" id="XT1" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="27" comments="" direction="None" id="XT2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="38" comments="" direction="O" id="P61" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="79" comments="" direction="None" id="TxD2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="22" comments="" direction="None" id="TOOL0" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="78" comments="" direction="None" id="RxD2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="28" comments="" direction="None" id="XT1" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="27" comments="" direction="None" id="XT2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
     </tool>
     <tool id="Summary" version="1.0.0.0">
         <option id="com.renesas.smc.code.path" value="src\smc_gen"/>
@@ -732,7 +732,7 @@
                 <item enabled="true" id="unused"/>
                 <item enabled="true" id="used"/>
             </option>
-            <option enabled="true" id="trace" selection="used">
+            <option enabled="true" id="trace" selection="unused">
                 <item enabled="true" id="unused"/>
                 <item enabled="true" id="used"/>
             </option>
