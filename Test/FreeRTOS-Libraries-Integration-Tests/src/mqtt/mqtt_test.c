@@ -342,7 +342,7 @@ static int32_t failedRecv( NetworkContext_t * pNetworkContext,
  * with the "clean session" flag set to 0 to create a persistent session
  * with the broker.
  */
-static void startPersistentSession();
+static void startPersistentSession( void );
 
 /**
  * @brief Helper function to resume connection in persistent session
@@ -350,7 +350,7 @@ static void startPersistentSession();
  * It resumes the session with the broker by establishing a new connection
  * with the "clean session" flag set to 0.
  */
-static void resumePersistentSession();
+static void resumePersistentSession( void );
 
 
 /**
@@ -539,7 +539,7 @@ static int32_t failedRecv( NetworkContext_t * pNetworkContext,
 
 /*-----------------------------------------------------------*/
 
-static void startPersistentSession()
+static void startPersistentSession( void )
 {
     /* Terminate TLS session and TCP network connection to discard the current MQTT session
      * that was created as a "clean session". */
@@ -560,7 +560,7 @@ static void startPersistentSession()
 
 /*-----------------------------------------------------------*/
 
-static void resumePersistentSession()
+static void resumePersistentSession( void )
 {
     /* Create a new TLS+TCP network connection with the server. */
     TEST_ASSERT_EQUAL( NETWORK_CONNECT_SUCCESS, ( *testParam.pNetworkConnect )( testParam.pNetworkContext,
