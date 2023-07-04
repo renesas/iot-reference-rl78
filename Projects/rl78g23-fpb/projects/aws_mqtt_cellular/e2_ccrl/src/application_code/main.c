@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /* Logging includes. */
 #include "iot_logging_task.h"
 #include "r_smc_entry.h"
-#include "serial_term_uart.h"
+#include "rl78_serial_term_uart.h"
 
 /* FreeRTOS+TCP includes. */
 #include "FreeRTOSIPConfig.h"

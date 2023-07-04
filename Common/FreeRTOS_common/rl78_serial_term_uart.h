@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "r_smc_entry.h"
-#include "rl78_wrapper_com.h"
+#include "rl78_bsp_wrapper.h"
 #include "r_sci_rl_if.h"
 
 /**********************************************************************************************************************

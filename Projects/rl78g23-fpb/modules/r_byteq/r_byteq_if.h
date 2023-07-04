@@ -46,7 +46,7 @@ Includes   <System Includes> , "Project Includes"
 #include "platform.h"
 #include "r_byteq_config.h"
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#include "rl78_wrapper_com.h"
+#include "rl78_bsp_wrapper.h"
 #endif
 
 /***********************************************************************************************************************

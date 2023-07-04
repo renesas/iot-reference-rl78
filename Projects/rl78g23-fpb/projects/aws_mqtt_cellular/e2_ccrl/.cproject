@@ -23,7 +23,7 @@
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415." name="/" resourcePath="">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.122221706" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.757605491" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
-							<builder autoBuildTarget="all" buildPath="${workspace_loc:/aws_mqtt_cellular}/HardwareDebug" cleanBuildTarget="clean" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.builder.432449308" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.builder"/>
+							<builder autoBuildTarget="all" buildPath="${workspace_loc:/aws_mqtt_cellular}/HardwareDebug" cleanBuildTarget="clean" enableAutoBuild="false" enableCleanBuild="false" enabledIncrementalBuild="true" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.builder.432449308" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.builder"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1893049989" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm">
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.option.include.2092602113" name="インクルード・ファイルを検索するフォルダ (-I)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.option.include" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;"/>
@@ -68,8 +68,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_UART2}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_UART3}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Common/FreeRTOS_common/rl78/}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Common/FreeRTOS_common/rl78/compiler_support/ccrl}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Common/FreeRTOS_common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Common/FreeRTOS_common/compiler_support/ccrl}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/FreeRTOS/backoffAlgorithm/source/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/FreeRTOS/coreMQTT/source/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/FreeRTOS/coreMQTT/source/interface}&quot;"/>
@@ -243,26 +243,6 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1605397972" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1945393916"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.479325966" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1626588016"/>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.756175871" name="/" resourcePath="Common">
-						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.478895909" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.463308369" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1893049989">
-								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1080998912" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
-							</tool>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.117995111" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.696610498"/>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1646818211" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.179479743"/>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1545431358" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1651441824"/>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1500872816" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.114328442">
-								<inputType id="Base.Compiler.ccrl.C.inputType.355950593" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
-								<inputType id="Base.Compiler.ccrl.Cpp.inputType.1383427729" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
-							</tool>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1895283004" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.2051055678">
-								<inputType id="Base.Assembler.ccrl.inputType.1617411312" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
-							</tool>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1750568402" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1945393916"/>
-							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.130504956" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1626588016"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
