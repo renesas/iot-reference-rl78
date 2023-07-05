@@ -263,7 +263,7 @@ ISRs
  * Function Name: sci0_txi0_isr
  * Description  : TXI interrupt routines for SCI0 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci0_txi0_isr(vect=INTST0)
 #endif
 void sci0_txi0_isr(void)
@@ -277,7 +277,7 @@ void sci0_txi0_isr(void)
  * Function Name: sci1_txi1_isr
  * Description  : TXI interrupt routines for SCI1 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci1_txi1_isr(vect=INTST1)
 #endif
 void sci1_txi1_isr(void)
@@ -291,7 +291,7 @@ void sci1_txi1_isr(void)
  * Function Name: sci2_txi2_isr
  * Description  : TXI interrupt routines for SCI2 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci2_txi2_isr(vect=INTST2)
 #endif
 void sci2_txi2_isr(void)
@@ -305,7 +305,7 @@ void sci2_txi2_isr(void)
  * Function Name: sci3_txi3_isr
  * Description  : TXI interrupt routines for SCI3 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci3_txi3_isr(vect=INTST3)
 #endif
 void sci3_txi3_isr(void)
@@ -324,7 +324,7 @@ void sci3_txi3_isr(void)
  * Function Name: sci0_rxi0_isr
  * Description  : RXI interrupt routines for SCI0 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci0_rxi0_isr(vect=INTSR0)
 #endif
 void sci0_rxi0_isr(void)
@@ -338,7 +338,7 @@ void sci0_rxi0_isr(void)
  * Function Name: sci1_rxi1_isr
  * Description  : RXI interrupt routines for SCI1 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci1_rxi1_isr(vect=INTSR1)
 #endif
 void sci1_rxi1_isr(void)
@@ -352,7 +352,7 @@ void sci1_rxi1_isr(void)
  * Function Name: sci2_rxi2_isr
  * Description  : RXI interrupt routines for SCI2 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci2_rxi2_isr(vect=INTSR2)
 #endif
 void sci2_rxi2_isr(void)
@@ -366,7 +366,7 @@ void sci2_rxi2_isr(void)
  * Function Name: sci3_rxi3_isr
  * Description  : RXI interrupt routines for SCI3 channel
  ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci3_rxi3_isr(vect=INTSR3)
 #endif
 void sci3_rxi3_isr(void)
@@ -387,7 +387,7 @@ void sci3_rxi3_isr(void)
 * Function name: sci0_eri0_isr
 * Description  : ERI interrupt routines for SCI0 channel.
 ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci0_eri0_isr(vect=INTSRE0)
 #endif
 void sci0_eri0_isr(void)
@@ -401,7 +401,7 @@ void sci0_eri0_isr(void)
 * Function name: sci1_eri1_isr
 * Description  : ERI interrupt routines for SCI1 channel.
 ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci1_eri1_isr(vect=INTSRE1)
 #endif
 void sci1_eri1_isr(void)
@@ -415,7 +415,7 @@ void sci1_eri1_isr(void)
 * Function name: sci2_eri2_isr
 * Description  : ERI interrupt routines for SCI2 channel.
 ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci2_eri2_isr(vect=INTSRE2)
 #endif
 void sci2_eri2_isr(void)
@@ -429,7 +429,7 @@ void sci2_eri2_isr(void)
 * Function name: sci3_eri3_isr
 * Description  : ERI interrupt routines for SCI3 channel.
 ******************************************************************************/
-#if (SCI_CFG_ENABLE_ISR_VECTOR == 1)
+#ifndef USE_BOOTLOADER_V2
 #pragma interrupt sci3_eri3_isr(vect=INTSRE3)
 #endif
 void sci3_eri3_isr(void)

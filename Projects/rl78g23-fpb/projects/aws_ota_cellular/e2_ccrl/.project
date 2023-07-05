@@ -360,6 +360,15 @@
 			</matcher>
 		</filter>
 		<filter>
+			<id>1688516659287</id>
+			<name>Middleware/FreeRTOS/FreeRTOS-Kernel/portable/MemMang</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-heap_4*</arguments>
+			</matcher>
+		</filter>
+		<filter>
 			<id>1686294340012</id>
 			<name>Middleware/FreeRTOS/FreeRTOS-Kernel/portable/Renesas</name>
 			<type>9</type>

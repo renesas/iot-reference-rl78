@@ -61,7 +61,7 @@ usr_vect   .cseg at 0x00001300
            .db4     0xffffffff      ;vect=0x32
            .db4     0xffffffff      ;vect=0x34
            .db4     0xffffffff      ;vect=0x36
-           br       !!_vPortTickISR  ;vect=0x38
+           br       !!_vPortTickISR ;vect=0x38
            .db4     0xffffffff      ;vect=0x3A
            br       !!_sci3_txi3_isr;vect=0x3C
            br       !!_sci3_rxi3_isr;vect=0x3E
@@ -96,4 +96,4 @@ usr_vect   .cseg at 0x00001300
            .db4     0xffffffff      ;vect=0x78
            .db4     0xffffffff      ;vect=0x7A
            .db4     0xffffffff      ;vect=0x7C
-           br       !!_vPortYield;vect=0x7E
+           br       !!_vPortYield   ;vect=0x7E

@@ -98,7 +98,7 @@ extern void vStartSimplePubSubDemo( void  );
 #define LED_PORT                                  (P5_bit.no0)
 
 /* APN settings */
-#define DEMO_SIM_SELECT     (0)
+#define DEMO_SIM_SELECT     (1)
 #if (DEMO_SIM_SELECT == 0)
 #define USIM_APN                                  "plus.acs.jp"
 #define USIM_USER_ID                              "ym"

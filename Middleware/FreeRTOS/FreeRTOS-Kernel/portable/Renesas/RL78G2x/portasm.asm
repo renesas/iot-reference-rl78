@@ -77,6 +77,7 @@ _vPortTickISR:
     portRESTORE_CONTEXT
     reti
 
+$IFNDEF USE_BOOTLOADER_V2
 ;/* Install the interrupt handlers */
 
 ;   /* 32bit interval timer */
@@ -84,4 +85,5 @@ _vPortTickISR:
 
 ;   /* brk */
     _vPortYield     .VECTOR 0x7E
+$ENDIF
 
