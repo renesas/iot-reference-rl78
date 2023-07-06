@@ -96,6 +96,10 @@
  */
 #define TEST_MQTT_RETAIN_TOPIC                  MQTT_TEST_CLIENT_IDENTIFIER "/iot/integration/testretain"
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#define TEST_MQTT_RETAIN_TOPIC_LENGTH           ( sizeof( TEST_MQTT_RETAIN_TOPIC ) - 1 )
+#endif
+
 /**
  * @brief Length of sample topic filter.
  */
@@ -164,6 +168,10 @@
  * @brief The MQTT message published in this example.
  */
 #define MQTT_EXAMPLE_MESSAGE                "Hello World!"
+
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#define MQTT_EXAMPLE_MESSAGE_LENGTH         ( sizeof( MQTT_EXAMPLE_MESSAGE ) - 1 )
+#endif
 
 /*-----------------------------------------------------------*/
 
@@ -447,10 +455,23 @@ static void establishMqttSession( MQTTContext_t * pContext,
     connectInfo.passwordLength = 0U;
 
     /* LWT Info. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char lwt_topic_buf[TEST_MQTT_LWT_TOPIC_LENGTH + 1] = {0};
+    char payload_buf[MQTT_EXAMPLE_MESSAGE_LENGTH + 1] = {0};
+
+    snprintf(lwt_topic_buf, sizeof(lwt_topic_buf), TEST_MQTT_LWT_TOPIC, TEST_MQTT_LWT_TOPIC_LENGTH);
+    snprintf(payload_buf, sizeof(payload_buf), MQTT_EXAMPLE_MESSAGE, MQTT_EXAMPLE_MESSAGE_LENGTH);
+
+    lwtInfo.pTopicName = lwt_topic_buf;
+    lwtInfo.topicNameLength = TEST_MQTT_LWT_TOPIC_LENGTH;
+    lwtInfo.pPayload = payload_buf;
+    lwtInfo.payloadLength = MQTT_EXAMPLE_MESSAGE_LENGTH;
+#else
     lwtInfo.pTopicName = TEST_MQTT_LWT_TOPIC;
     lwtInfo.topicNameLength = TEST_MQTT_LWT_TOPIC_LENGTH;
     lwtInfo.pPayload = MQTT_EXAMPLE_MESSAGE;
     lwtInfo.payloadLength = strlen( MQTT_EXAMPLE_MESSAGE );
+#endif
     lwtInfo.qos = MQTTQoS0;
     lwtInfo.dup = false;
     lwtInfo.retain = false;
@@ -727,6 +748,10 @@ static MQTTStatus_t publishToTopic( MQTTContext_t * pContext,
 {
     assert( pContext != NULL );
     MQTTPublishInfo_t publishInfo;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char payload_buf[MQTT_EXAMPLE_MESSAGE_LENGTH + 1] = {0};
+    snprintf(payload_buf, sizeof(payload_buf), MQTT_EXAMPLE_MESSAGE, MQTT_EXAMPLE_MESSAGE_LENGTH);
+#endif
 
     publishInfo.retain = setRetainFlag;
 
@@ -734,8 +759,13 @@ static MQTTStatus_t publishToTopic( MQTTContext_t * pContext,
     publishInfo.dup = isDuplicate;
     publishInfo.pTopicName = pTopic;
     publishInfo.topicNameLength = strlen( pTopic );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    publishInfo.pPayload = payload_buf;
+    publishInfo.payloadLength = MQTT_EXAMPLE_MESSAGE_LENGTH;
+#else
     publishInfo.pPayload = MQTT_EXAMPLE_MESSAGE;
     publishInfo.payloadLength = strlen( MQTT_EXAMPLE_MESSAGE );
+#endif
 
     /* Get a new packet id. */
     globalPublishPacketIdentifier = packetId;
@@ -820,10 +850,19 @@ TEST( MqttTest, MQTT_Subscribe_Publish_With_Qos_0 )
 {
     MQTTStatus_t xMQTTStatus;
     uint32_t entryTime;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char topic_buf[TEST_MQTT_TOPIC_LENGTH + 1] = {0};
+#endif
 
     /* Subscribe to a topic with Qos 0. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    snprintf(topic_buf, sizeof(topic_buf), TEST_MQTT_TOPIC, TEST_MQTT_TOPIC_LENGTH);
+    TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
+                           &context, topic_buf, MQTTQoS0 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
                            &context, TEST_MQTT_TOPIC, MQTTQoS0 ) );
+#endif
 
     /* Assert that this flag is not set before MQTT_ProcessLoop is called.
      * It will be set when a SUBACK is received. */
@@ -848,7 +887,11 @@ TEST( MqttTest, MQTT_Subscribe_Publish_With_Qos_0 )
     /* Publish to the same topic, that we subscribed to, with Qos 0. */
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic(
                            &context,
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                           topic_buf,
+#else
                            TEST_MQTT_TOPIC,
+#endif
                            false, /* setRetainFlag */
                            false, /* isDuplicate */
                            MQTTQoS0,
@@ -920,10 +963,20 @@ TEST( MqttTest, MQTT_Subscribe_Publish_With_Qos_1 )
 {
     MQTTStatus_t xMQTTStatus;
     uint32_t entryTime;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char topic_buf[TEST_MQTT_TOPIC_LENGTH + 1] = {0};
+
+    snprintf(topic_buf, sizeof(topic_buf), TEST_MQTT_TOPIC, TEST_MQTT_TOPIC_LENGTH);
+#endif
 
     /* Subscribe to a topic with Qos 1. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
+                           &context, topic_buf, MQTTQoS1 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
                            &context, TEST_MQTT_TOPIC, MQTTQoS1 ) );
+#endif
 
     /* Assert that this flag is not set before MQTT_ProcessLoop is called or
      * else the test will return a flase positive. This flag should be set when
@@ -957,7 +1010,11 @@ TEST( MqttTest, MQTT_Subscribe_Publish_With_Qos_1 )
     /* Publish to the same topic, that we subscribed to, with Qos 1. */
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic(
                            &context,
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                           topic_buf,
+#else
                            TEST_MQTT_TOPIC,
+#endif
                            false, /* setRetainFlag */
                            false, /* isDuplicate */
                            MQTTQoS1,
@@ -1012,8 +1069,13 @@ TEST( MqttTest, MQTT_Subscribe_Publish_With_Qos_1 )
                               incomingInfo.payloadLength );
 
     /* Un-subscribe from a topic with Qos 1. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, unsubscribeFromTopic(
+                           &context, topic_buf, MQTTQoS1 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, unsubscribeFromTopic(
                            &context, TEST_MQTT_TOPIC, MQTTQoS1 ) );
+#endif
 
     /* Expect an UNSUBACK from the broker for the unsubscribe operation. */
     entryTime = FRTest_GetTimeMs();
@@ -1055,6 +1117,13 @@ TEST( MqttTest, MQTT_Connect_LWT )
     MQTTContext_t secondMqttContext;
     MQTTStatus_t xMQTTStatus;
     uint32_t entryTime;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char topic_buf[TEST_MQTT_TOPIC_LENGTH + 1] = {0};
+    char lwt_topic_buf[TEST_MQTT_LWT_TOPIC_LENGTH + 1] = {0};
+
+    snprintf(topic_buf, sizeof(topic_buf), TEST_MQTT_TOPIC, TEST_MQTT_TOPIC_LENGTH);
+    snprintf(lwt_topic_buf, sizeof(lwt_topic_buf), TEST_MQTT_LWT_TOPIC, TEST_MQTT_LWT_TOPIC_LENGTH);
+#endif
 
     /* Establish a second TCP connection with the server endpoint, then
      * a TLS session. The server info and credentials can be reused. */
@@ -1067,8 +1136,13 @@ TEST( MqttTest, MQTT_Connect_LWT )
     establishMqttSession( &secondMqttContext, testParam.pSecondNetworkContext, true, &sessionPresent );
 
     /* Subscribe to LWT Topic. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
+                           &context, lwt_topic_buf, MQTTQoS0 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
                            &context, TEST_MQTT_LWT_TOPIC, MQTTQoS0 ) );
+#endif
 
     /* Wait for the SUBACK response from the broker for the subscribe request. */
     entryTime = FRTest_GetTimeMs();
@@ -1138,8 +1212,13 @@ TEST( MqttTest, MQTT_Connect_LWT )
                               incomingInfo.payloadLength );
 
     /* Un-subscribe from a topic with Qos 0. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, unsubscribeFromTopic(
+                           &context, topic_buf, MQTTQoS0 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, unsubscribeFromTopic(
                            &context, TEST_MQTT_TOPIC, MQTTQoS0 ) );
+#endif
 
     /* We expect an UNSUBACK from the broker for the unsubscribe operation. */
     TEST_ASSERT_FALSE( receivedUnsubAck );
@@ -1226,6 +1305,10 @@ TEST( MqttTest, MQTT_Resend_Unacked_Publish_QoS1 )
 {
     MQTTStatus_t xMQTTStatus;
     uint32_t entryTime;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char topic_buf[TEST_MQTT_TOPIC_LENGTH + 1] = {0};
+    snprintf(topic_buf, sizeof(topic_buf), TEST_MQTT_TOPIC, TEST_MQTT_TOPIC_LENGTH);
+#endif
 
     /* Start a persistent session with the broker. */
     startPersistentSession();
@@ -1234,7 +1317,11 @@ TEST( MqttTest, MQTT_Resend_Unacked_Publish_QoS1 )
      * outgoing PUBLISH record in the context. */
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic(
                            &context,
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                           topic_buf,
+#else
                            TEST_MQTT_TOPIC,
+#endif
                            false, /* setRetainFlag */
                            false, /* isDuplicate */
                            MQTTQoS1,
@@ -1284,7 +1371,11 @@ TEST( MqttTest, MQTT_Resend_Unacked_Publish_QoS1 )
     /* Resend the PUBLISH packet that didn't complete in the previous connection. */
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic(
                            &context,
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                           topic_buf,
+#else
                            TEST_MQTT_TOPIC,
+#endif
                            false, /* setRetainFlag */
                            true,  /* isDuplicate */
                            MQTTQoS1,
@@ -1336,14 +1427,23 @@ TEST( MqttTest, MQTT_Restore_Session_Duplicate_Incoming_Publish_Qos1 )
 {
     MQTTStatus_t xMQTTStatus;
     uint32_t entryTime;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char topic_buf[TEST_MQTT_TOPIC_LENGTH + 1] = {0};
+    snprintf(topic_buf, sizeof(topic_buf), TEST_MQTT_TOPIC, TEST_MQTT_TOPIC_LENGTH);
+#endif
 
     /* Start a persistent session with the broker. */
     startPersistentSession();
 
     /* Subscribe to a topic from which we will be receiving an incomplete incoming
      * QoS 2 PUBLISH transaction in this connection. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
+                           &context, topic_buf, MQTTQoS1 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
                            &context, TEST_MQTT_TOPIC, MQTTQoS1 ) );
+#endif
     TEST_ASSERT_FALSE( receivedSubAck );
     
     entryTime = FRTest_GetTimeMs();
@@ -1374,7 +1474,11 @@ TEST( MqttTest, MQTT_Restore_Session_Duplicate_Incoming_Publish_Qos1 )
     /* Publish to the same topic with Qos 1 (so that the broker can re-publish it back to us). */
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic(
                            &context,
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                           topic_buf,
+#else
                            TEST_MQTT_TOPIC,
+#endif
                            false, /* setRetainFlag */
                            false, /* isDuplicate */
                            MQTTQoS1,
@@ -1443,14 +1547,31 @@ TEST( MqttTest, MQTT_Publish_With_Retain_Flag )
 {
     MQTTStatus_t xMQTTStatus;
     uint32_t entryTime;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char topic_buf[TEST_MQTT_TOPIC_LENGTH + 1] = {0};
+    char retain_topic_buf[TEST_MQTT_RETAIN_TOPIC_LENGTH + 1] = {0};
+
+    snprintf(topic_buf, sizeof(topic_buf), TEST_MQTT_TOPIC, TEST_MQTT_TOPIC_LENGTH);
+    snprintf(retain_topic_buf, sizeof(retain_topic_buf), TEST_MQTT_RETAIN_TOPIC, TEST_MQTT_RETAIN_TOPIC_LENGTH);
+#endif
 
     /* Publish to a topic with the "retain" flag set. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic( &context,
+                                                    retain_topic_buf,
+                                                    true,  /* setRetainFlag */
+                                                    false, /* isDuplicate */
+                                                    MQTTQoS1,
+                                                    MQTT_GetPacketId( &context ) ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic( &context,
                                                     TEST_MQTT_RETAIN_TOPIC,
                                                     true,  /* setRetainFlag */
                                                     false, /* isDuplicate */
                                                     MQTTQoS1,
                                                     MQTT_GetPacketId( &context ) ) );
+#endif
+
     /* Complete the QoS 1 PUBLISH operation. */
     TEST_ASSERT_FALSE( receivedPubAck );
 
@@ -1481,8 +1602,13 @@ TEST( MqttTest, MQTT_Publish_With_Retain_Flag )
 
     /* Subscribe to the same topic that we published the message to.
      * The broker should send the "retained" message with the "retain" flag set. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
+                           &context, retain_topic_buf, MQTTQoS1 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
                            &context, TEST_MQTT_RETAIN_TOPIC, MQTTQoS1 ) );
+#endif
     TEST_ASSERT_FALSE( receivedSubAck );
 
     TEST_ASSERT_FALSE( receivedRetainedMessage );
@@ -1523,12 +1649,21 @@ TEST( MqttTest, MQTT_Publish_With_Retain_Flag )
     receivedRetainedMessage = false;
 
     /* Publish to another topic with the "retain" flag set to 0. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic( &context,
+                                                    topic_buf,
+                                                    false, /* setRetainFlag */
+                                                    false, /* isDuplicate */
+                                                    MQTTQoS1,
+                                                    MQTT_GetPacketId( &context ) ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, publishToTopic( &context,
                                                     TEST_MQTT_TOPIC,
                                                     false, /* setRetainFlag */
                                                     false, /* isDuplicate */
                                                     MQTTQoS1,
                                                     MQTT_GetPacketId( &context ) ) );
+#endif
 
     /* Complete the QoS 1 PUBLISH operation. */
     TEST_ASSERT_FALSE( receivedPubAck );
@@ -1559,8 +1694,13 @@ TEST( MqttTest, MQTT_Publish_With_Retain_Flag )
     /* Again, subscribe to the same topic that we just published to.
      * We don't expect the broker to send the message to us (as we
      * PUBLISHed without a retain flag set). */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
+                           &context, topic_buf, MQTTQoS1 ) );
+#else
     TEST_ASSERT_EQUAL( MQTTSuccess, subscribeToTopic(
                            &context, TEST_MQTT_TOPIC, MQTTQoS1 ) );
+#endif
     TEST_ASSERT_FALSE( receivedSubAck );
 
     entryTime = FRTest_GetTimeMs();
