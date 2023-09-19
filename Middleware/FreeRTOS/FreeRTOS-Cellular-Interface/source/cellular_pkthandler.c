@@ -145,8 +145,15 @@ static CellularPktStatus_t urcParseToken( CellularContext_t * pContext,
      * function. */
     if( *pSavePtr == '+' )
     {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        pSavePtr = strstr( pSavePtr, ":" );
+        pSavePtr++;
+        pTokenPtr++;
+        pTokenPtr = strtok( pTokenPtr, ":" );
+#else
         pSavePtr++;
         pTokenPtr = strtok_r( pSavePtr, ":", &pSavePtr );
+#endif
 
         if( pTokenPtr == NULL )
         {

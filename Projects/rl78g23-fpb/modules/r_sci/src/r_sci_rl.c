@@ -866,6 +866,16 @@ void rxi_handler3(sci_hdl_t const hdl)
             SCI_CFG_UART3_RTS_PORT = 1;
         }
 #endif /* (SCI_CFG_UART3_FLOW_CTRL_ENABLE) */
+
+        /* Do callback if available */
+        if ((NULL != hdl->callback) && (FIT_NO_FUNC != hdl->callback))
+        {
+            args.hdl = hdl;
+            args.byte = byte;
+
+            /* Casting to void type is valid */
+            hdl->callback((void *)&args);
+        }
     }
 
 #endif /* (SCI_CFG_ASYNC_INCLUDED) */

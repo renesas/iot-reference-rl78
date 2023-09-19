@@ -150,9 +150,6 @@
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        ( 1200 )
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 /*-----------------------------------------------------------*/
-//#define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 1300 )
-//#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
-
 
 /**
  * @brief Defines the structure to use as the command callback context in this
@@ -254,8 +251,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
                                        size_t xPayloadLength,
                                        int32_t lNumTries );
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#else
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /**
  * @brief Retrieves the thing name from key store to use in demo.
  *
@@ -617,8 +613,8 @@ void vSimpleSubscribePublishTask( void * pvParameters )
 
             /* Add a little randomness into the delay so the tasks don't remain
              * in lockstep. */
-            xTicksToDelay = pdMS_TO_TICKS( mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS ) +
-                            ( xTaskGetTickCount() % 0xff );
+            xTicksToDelay = pdMS_TO_TICKS( mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS ) + 
+                             ( xTaskGetTickCount() % 0xff );
 
             if( xWaitForMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED, xTicksToDelay ) == pdTRUE )
             {

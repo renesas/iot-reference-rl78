@@ -31,7 +31,7 @@
  *
  * @todo Set this to the fully-qualified DNS name of your MQTT broker.
  */
-#define clientcredentialMQTT_BROKER_ENDPOINT         ""
+#define clientcredentialMQTT_BROKER_ENDPOINT         "a3lklnx40j1phd-ats.iot.ap-northeast-1.amazonaws.com"
 
 /*
  * @brief Host name.
@@ -43,7 +43,7 @@
  * by software, such as a production serial number, rather
  * than a hard coded constant.
  */
-#define clientcredentialIOT_THING_NAME               ""
+#define clientcredentialIOT_THING_NAME               "rx-ota-firm-things-rx65n-rsk"
 
 /*
  * @brief Port number the MQTT broker is using.
@@ -60,13 +60,13 @@
  *
  * @todo If you are using Wi-Fi, set this to your network name.
  */
-#define clientcredentialWIFI_SSID                    ""
+#define clientcredentialWIFI_SSID                    "ASUS_10"
 
 /*
  * @brief Password needed to join Wi-Fi network.
  * @todo If you are using WPA, set this to your network password.
  */
-#define clientcredentialWIFI_PASSWORD                ""
+#define clientcredentialWIFI_PASSWORD                "energy_3754"
 
 /*
  * @brief Wi-Fi network security type.

@@ -106,8 +106,7 @@
 #include "mqtt_agent_task.h"
 #include "backoff_algorithm.h"
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#else
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #include "store.h"
 #endif
 
@@ -395,8 +394,9 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect );
  * @return NULL if value not found, pointer to the NULL terminated string value
  *         if found.
  */
-//static char * prvKVStoreGetString( KVStoreKey_t xKey );
-
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+static char * prvKVStoreGetString( KVStoreKey_t xKey );
+#endif
 
 static void prvMQTTAgentTask( void * pvParameters );
 /*-----------------------------------------------------------*/
@@ -602,8 +602,7 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     BackoffAlgorithmContext_t xReconnectParams = { 0 };
     uint16_t usNextRetryBackOff = 0U;
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#else
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #ifdef democonfigUSE_AWS_IOT_CORE_BROKER
 
     /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
@@ -662,6 +661,7 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 
     xConnected = ( xNetworkStatus == TLS_TRANSPORT_SUCCESS ) ? pdPASS : pdFAIL;
 #endif
+
 		if( !xConnected )
 		{
 			/* Get back-off value (in milliseconds) for the next connection retry. */
@@ -853,8 +853,7 @@ void prvMQTTAgentTask( void * pvParameters )
     BaseType_t xStatus = pdPASS;
     MQTTStatus_t xMQTTStatus = MQTTBadParameter;
     MQTTContext_t * pMqttContext = &( xGlobalMqttAgentContext.mqttContext );
-#if defined(__TEST__)
-#else
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     extern KeyValueStore_t gKeyValueStore ;
 #endif
     ( void ) pvParameters;
@@ -865,10 +864,15 @@ void prvMQTTAgentTask( void * pvParameters )
     /* Initialization of timestamp for MQTT. */
     ulGlobalEntryTimeMs = prvGetTimeMs();
 
-#if defined(__TEST__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     pcThingName = clientcredentialIOT_THING_NAME ;
     pcBrokerEndpoint = clientcredentialMQTT_BROKER_ENDPOINT;
     pcRootCA = (char __far *)democonfigROOT_CA_PEM;
+#else
+#if defined(__TEST__)
+    pcThingName = clientcredentialIOT_THING_NAME ;
+    pcBrokerEndpoint = clientcredentialMQTT_BROKER_ENDPOINT;
+    pcRootCA = democonfigROOT_CA_PEM;
 #else
     /* Load broker endpoint and thing name for client connection, from the key store. */
     if (gKeyValueStore.table[ KVS_CORE_THING_NAME ].valueLength > 0)
@@ -893,7 +897,7 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
 #endif
-
+#endif /* defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) */
 
 
     /* Initialize the MQTT context with the buffer and transport interface. */

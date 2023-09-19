@@ -31,6 +31,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_UART2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;"/>
 								</option>
 								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1033929784" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
 							</tool>
@@ -74,7 +76,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/src/etc/RFD}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/src/etc/RFD/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/src/etc/RFD/include/rfd}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/src/etc/tinycrypt/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/src/etc/tinycrypt/lib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.langFileC.981395160" name="Cソース・ファイルの言語規格 (-lang)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.langFileC" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.langFileC.c99" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.goptimize.976528119" name="リンク時にモジュール間最適化の対象にする (-goptimize)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.goptimize" value="true" valueType="boolean"/>
@@ -102,6 +106,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/general}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_PORT}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/Config_UART2}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen/r_pincfg}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/smc_gen}&quot;"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.assembler.option.goptimize.116699766" name="リンク時にモジュール間最適化の対象にする (-goptimize)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.assembler.option.goptimize" value="true" valueType="boolean"/>
 								<inputType id="Base.Assembler.ccrl.inputType.378103237" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
@@ -195,7 +201,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/RFD/source/common/r_rfd_common_get_api.c|src/RFD/source/common/r_rfd_common_extension_api.c|src/RFD/source/extraarea|src/tinycrypt/source/hmac.c|src/tinycrypt/source/hmac_prng.c|src/tinycrypt/source/ecc_platform_specific.c|src/tinycrypt/source/ecc_dh.c|src/tinycrypt/source/ctr_prng.c|src/tinycrypt/source/ctr_mode.c|src/tinycrypt/source/cmac_mode.c|src/tinycrypt/source/ccm_mode.c|src/tinycrypt/source/cbc_mode.c|src/tinycrypt/source/aes_encrypt.c|src/tinycrypt/source/aes_decrypt.c|src/etc/RFD/source/common/r_rfd_common_get_api.c|src/etc/RFD/source/common/r_rfd_common_extension_api.c|src/etc/RFD/source/extraarea|src/etc/tinycrypt/source/hmac.c|src/etc/tinycrypt/source/hmac_prng.c|src/etc/tinycrypt/source/ecc_platform_specific.c|src/etc/tinycrypt/source/ecc_dh.c|src/etc/tinycrypt/source/ctr_prng.c|src/etc/tinycrypt/source/ctr_mode.c|src/etc/tinycrypt/source/cmac_mode.c|src/etc/tinycrypt/source/ccm_mode.c|src/etc/tinycrypt/source/cbc_mode.c|src/etc/tinycrypt/source/aes_encrypt.c|src/etc/tinycrypt/source/aes_decrypt.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+						<entry excluding="src/etc/tinycrypt/lib/source/hmac.c|src/etc/tinycrypt/lib/source/hmac_prng.c|src/etc/tinycrypt/lib/source/ecc_platform_specific.c|src/etc/tinycrypt/lib/source/ecc_dh.c|src/etc/tinycrypt/lib/source/ctr_prng.c|src/etc/tinycrypt/lib/source/ctr_mode.c|src/etc/tinycrypt/lib/source/cmac_mode.c|src/etc/tinycrypt/lib/source/ccm_mode.c|src/etc/tinycrypt/lib/source/cbc_mode.c|src/etc/tinycrypt/lib/source/aes_encrypt.c|src/etc/tinycrypt/lib/source/aes_decrypt.c|src/RFD/source/common/r_rfd_common_get_api.c|src/RFD/source/common/r_rfd_common_extension_api.c|src/RFD/source/extraarea|src/tinycrypt/source/hmac.c|src/tinycrypt/source/hmac_prng.c|src/tinycrypt/source/ecc_platform_specific.c|src/tinycrypt/source/ecc_dh.c|src/tinycrypt/source/ctr_prng.c|src/tinycrypt/source/ctr_mode.c|src/tinycrypt/source/cmac_mode.c|src/tinycrypt/source/ccm_mode.c|src/tinycrypt/source/cbc_mode.c|src/tinycrypt/source/aes_encrypt.c|src/tinycrypt/source/aes_decrypt.c|src/etc/RFD/source/common/r_rfd_common_get_api.c|src/etc/RFD/source/common/r_rfd_common_extension_api.c|src/etc/RFD/source/extraarea|src/etc/tinycrypt/source/hmac.c|src/etc/tinycrypt/source/hmac_prng.c|src/etc/tinycrypt/source/ecc_platform_specific.c|src/etc/tinycrypt/source/ecc_dh.c|src/etc/tinycrypt/source/ctr_prng.c|src/etc/tinycrypt/source/ctr_mode.c|src/etc/tinycrypt/source/cmac_mode.c|src/etc/tinycrypt/source/ccm_mode.c|src/etc/tinycrypt/source/cbc_mode.c|src/etc/tinycrypt/source/aes_encrypt.c|src/etc/tinycrypt/source/aes_decrypt.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

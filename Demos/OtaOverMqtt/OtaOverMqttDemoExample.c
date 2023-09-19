@@ -75,7 +75,14 @@
 /* Include platform abstraction header. */
 #include "ota_pal.h"
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#include "store.h"
+#endif
+
 #include "mqtt_agent_task.h"
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+extern KeyValueStore_t gKeyValueStore;
+#endif
 
 /*------------- Demo configurations -------------------------*/
 
@@ -100,7 +107,7 @@
  * to be posted to the MQTT agent should the MQTT agent's command queue be full.
  * Tasks wait in the Blocked state, so don't use any CPU time.
  */
-#define MQTT_AGENT_SEND_BLOCK_TIME_MS               	 ( 200U )
+#define MQTT_AGENT_SEND_BLOCK_TIME_MS                    ( 200U )
 
 /**
  * @brief The common prefix for all OTA topics.
@@ -193,7 +200,11 @@
  * @brief ThingName which is used as the client identifier for MQTT connection.
  * Thing name is retrieved  at runtime from a key value store.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 static char __far * pcThingName = NULL;
+#else
+static char * pcThingName = NULL;
+#endif
 static size_t xThingNameLength = 0U;
 
 /**
@@ -1246,11 +1257,7 @@ static BaseType_t prvRunOTADemo( void )
         while( ( state = OTA_GetState() ) != OtaAgentStateStopped )
         {
             /* Get OTA statistics for currently executing job. */
-#ifndef TOMO
-            if( state < OtaAgentStateCreatingFile )
-#else
             if( state != OtaAgentStateSuspended )
-#endif
             {
                 OTA_GetStatistics( &otaStatistics );
 
@@ -1316,8 +1323,12 @@ static void vOtaDemoTask( void * pvParam )
 
     ( void ) pvParam;
 
-#if defined(__TEST__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     pcThingName = (char __far *)clientcredentialIOT_THING_NAME ;
+    xThingNameLength = strlen(pcThingName);
+#else
+#if defined(__TEST__)
+    pcThingName = clientcredentialIOT_THING_NAME ;
     xThingNameLength = strlen(pcThingName);
 #else
     xThingNameLength = gKeyValueStore.table[KVS_CORE_THING_NAME].valueLength;
@@ -1329,6 +1340,7 @@ static void vOtaDemoTask( void * pvParam )
     {
         xReturnStatus = pdFAIL;
     }
+#endif
 #endif
 
     LogInfo( ( "OTA over MQTT demo, Application version %u.%u.%u",
@@ -1365,7 +1377,8 @@ static void vOtaDemoTask( void * pvParam )
         /* Cleanup semaphore created for buffer operations. */
         vSemaphoreDelete( xBufferSemaphore );
     }
-#if defined(__TEST__)
+
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #else
     if( pcThingName != NULL )
     {
@@ -1373,6 +1386,7 @@ static void vOtaDemoTask( void * pvParam )
         pcThingName = NULL;
     }
 #endif
+
     vTaskDelete( NULL );
 }
 

@@ -184,7 +184,7 @@ void Processing_Before_Start_Kernel(void)
     /*
      * task creation
      */
-    if (pdPASS != xTaskCreate(main_task, "MAIN_TASK", 768, NULL, 3, NULL))
+    if (pdPASS != xTaskCreate(main_task, "MAIN_TASK", 2000, NULL, 3, NULL))
     {
         while(1)
         {

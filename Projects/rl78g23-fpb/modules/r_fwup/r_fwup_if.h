@@ -19,14 +19,21 @@
 /**********************************************************************************************************************
 * File Name    : r_fwup_if.h
 * Description  : Functions for using Firmware update.
+***********************************************************************************************************************
+* History : DD.MM.YYYY Version Description
+*         : 20.07.2023 2.00    First Release
+*         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
+*                              Fixed log messages.
+*                              Add parameter checking.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
 Includes   <System Includes> , "Project Includes"
 **********************************************************************************************************************/
+#include <stdio.h>
+#include <string.h>
 #include "platform.h"
 #include "r_fwup_config.h"
-#include "r_fwup_private.h"
 
 #ifndef R_FWUP_IF_H
 #define R_FWUP_IF_H
@@ -36,7 +43,7 @@ Macro definitions
 **********************************************************************************************************************/
 /* Version Number of API. */
 #define FWUP_VERSION_MAJOR                  (2)
-#define FWUP_VERSION_MINOR                  (00)
+#define FWUP_VERSION_MINOR                  (01)
 
 /* for FWUP_CFG_FUNCTION_MODE */
 #define FWUP_FUNC_BOOTLOADER                (0)
@@ -47,6 +54,71 @@ Macro definitions
 #define FWUP_SINGLE_BANK_W_BUFFER           (1)
 #define FWUP_SINGLE_BANK_WO_BUFFER          (2)
 #define FWUP_SINGLE_BANK_W_BUFFER_EXT       (3)
+
+/* __far */
+#if defined(__RX)
+  #define FWUP_FAR
+  #define FWUP_FAR_FUNC
+#else
+  #if (__ICCRL78__)
+    #define FWUP_FAR                __far
+    #define FWUP_FAR_FUNC           __far_func
+  #else
+    #define FWUP_FAR                __far
+    #define FWUP_FAR_FUNC           __far
+  #endif /* defined(__ICCRL78__) */
+#endif /* defined(__RX) */
+
+#define CH_FAR                      char FWUP_FAR
+#define C_CH_FAR                    const char FWUP_FAR
+#define C_U8_FAR                    const uint8_t FWUP_FAR
+#define S_C_CH_FAR                  static C_CH_FAR
+#define S_C_U8_FAR                  static C_U8_FAR
+
+/* Stdlib*/
+#if defined(__RX)
+  #define STRCMP(s1, s2)                  ( strcmp((s1), (s2)) )
+  #if !defined(STRSTR)
+    #define STRSTR(s1, s2)                ( strstr((s1), (s2)) )
+  #endif
+  #define STRLEN(s)                       ( strlen((s)) )
+  #define MEMCMP(s1, s2, n)               ( memcmp((s1), (s2), (n)) )
+  #define MEMCPY(s1, s2, n)               ( memcpy((s1), (s2), (n)) )
+#else
+  #if defined(__ICCRL78__)
+    #define STRCMP(s1, s2)                ( strcmp((s1), (s2)) )
+    #if !defined(STRSTR)
+      #define STRSTR(s1, s2)              ( strstr((s1), (s2)) )
+    #endif
+    #define STRLEN(s)                     ( strlen((s)) )
+    #define MEMCMP(s1, s2, n)             ( memcmp((s1), (s2), (n)) )
+    #define MEMCPY(s1, s2, n)             ( memcpy((s1), (s2), (n)) )
+  #elif defined (__CCRL__)
+    #define STRCMP(s1, s2)                ( _COM_strcmp_ff((s1), (s2)) )
+    #if !defined(STRSTR)
+      #define STRSTR(s1, s2)              ( _COM_strstr_ff((s1), (s2)) )
+    #endif
+    #define STRLEN(s)                     ( _COM_strlen_f((s)) )
+    #define MEMCMP(s1, s2, n)             ( _COM_memcmp_ff((s1), (s2), (n)) )
+    #define MEMCPY(s1, s2, n)             ( _COM_memcpy_ff((s1), (s2), (n)) )
+  #elif defined (__llvm__)
+    #define STRCMP(s1, s2)                ( _COM_strcmp_ff((s1), (s2)) )
+    #if !defined(STRSTR)
+      #define STRSTR(s1, s2)              ( _COM_strstr_ff((s1), (s2)) )
+    #endif
+    #define STRLEN(s)                     ( _COM_strlen_f((s)) )
+    #define MEMCMP(s1, s2, n)             ( _COM_memcmp_ff((s1), (s2), (n)) )
+    #define MEMCPY(s1, s2, n)             ( _COM_memcpy_ff((s1), (s2), (n)) )
+  #endif /* defined(__ICCRL78__) */
+#endif /* defined(__RX) */
+
+#if (BSP_CFG_RTOS_USED == 1)
+#include "FreeRTOS.h"
+#include "iot_logging_task.h"
+#define FWUP_DBG_PRINTF             vLoggingPrintf
+#else
+#define FWUP_DBG_PRINTF             printf
+#endif
 
 /**********************************************************************************************************************
 Typedef definitions
@@ -86,7 +158,12 @@ e_fwup_err_t R_FWUP_WriteImageHeader (e_fwup_area_t area,
                                       uint8_t FWUP_FAR *p_sig_type,
                                       uint8_t FWUP_FAR *p_sig,
                                       uint32_t sig_size);
+#define FWUP_OFFSET
+#ifndef FWUP_OFFSET
 e_fwup_err_t R_FWUP_WriteImageProgram (e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_size);
+#else
+e_fwup_err_t R_FWUP_WriteImageProgram (e_fwup_area_t area, uint8_t *p_buf, uint32_t offset, uint32_t buf_size);
+#endif
 e_fwup_err_t R_FWUP_WriteImage (e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_size);
 e_fwup_err_t R_FWUP_VerifyImage (e_fwup_area_t area);
 e_fwup_err_t R_FWUP_ActivateImage (void);

@@ -40,12 +40,7 @@
 #include "ota_demo_config.h"
 
 /* Renesas RL78 driver include */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #include "r_fwup_if.h"
-#else
-#include "iot_crypto.h"
-#include "core_pkcs11.h"
-#endif
 
 /* Specify the OTA signature algorithm we support on this platform. */
 const char OTA_JsonFileSignatureKey[ OTA_FILE_SIG_KEY_STR_MAX_LENGTH ] = "sig-sha256-ecdsa";
@@ -105,13 +100,13 @@ static OtaImageState_t s_OtaImageState;
 OtaPalStatus_t otaPal_CreateFileForRx( OtaFileContext_t * const pFileContext )
 {
     static uint8_t hdl;
-    OtaPalMainStatus_t eResult = OtaPalUninitialized;
+    OtaPalMainStatus_t eResult;
+
+    LogDebug( ( "otaPal_CreateFileForRx is called." ) );
 
     s_OtaImageState = OtaImageStateUnknown;
 
-    LogInfo( ( "otaPal_CreateFileForRx is called." ) );
-
-    if(( pFileContext == NULL ) || ( pFileContext->pFilePath == NULL ))
+    if (pFileContext->pFilePath == NULL)
     {
         eResult = OtaPalNullFileContext;
     }
@@ -135,14 +130,11 @@ OtaPalStatus_t otaPal_CreateFileForRx( OtaFileContext_t * const pFileContext )
 
 OtaPalStatus_t otaPal_Abort( OtaFileContext_t * const pFileContext )
 {
-    LogInfo( ( "otaPal_Abort is called." ) );
-    OtaPalMainStatus_t eResult = OtaPalAbortFailed;
+    LogDebug( ( "otaPal_Abort is called." ) );
+    OtaPalMainStatus_t eResult;
 
-    if( pFileContext != NULL )
-    {
-        pFileContext->pFile = NULL;
-        eResult = OtaPalSuccess;
-    }
+    pFileContext->pFile = NULL;
+    eResult = OtaPalSuccess;
 
     return OTA_PAL_COMBINE_ERR( eResult, 0 );
 }
@@ -154,9 +146,9 @@ int16_t otaPal_WriteBlock( OtaFileContext_t * const pFileContext,
                            uint8_t * const pData,
                            uint32_t ulBlockSize )
 {
-    LogInfo( ( "otaPal_WriteBlock is called." ) );
+    LogDebug( ( "otaPal_WriteBlock is called." ) );
 
-    if (FWUP_ERR_FLASH == R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulBlockSize))
+    if (FWUP_ERR_FLASH == R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+512, ulBlockSize))
     {
         return 0;
     }
@@ -168,12 +160,7 @@ OtaPalStatus_t otaPal_CloseFile( OtaFileContext_t * const pFileContext )
 {
     OtaPalMainStatus_t eResult = OtaPalSignatureCheckFailed;
 
-    LogInfo( ( "otaPal_CloseFile is called." ) );
-    if( pFileContext->pSignature == NULL )
-    {
-        s_OtaImageState = OtaImageStateAborted;
-        goto FUNC_END;
-    }
+    LogDebug( ( "otaPal_CloseFile is called." ) );
 
     eResult = OTA_PAL_MAIN_ERR( otaPal_CheckFileSignature( pFileContext ) );
     if (OtaPalSuccess == eResult)
@@ -184,8 +171,6 @@ OtaPalStatus_t otaPal_CloseFile( OtaFileContext_t * const pFileContext )
     {
         s_OtaImageState = OtaImageStateRejected;
     }
-
-FUNC_END:
     R_FWUP_Close();
     pFileContext->pFile = NULL;
     return OTA_PAL_COMBINE_ERR( eResult, 0 );
@@ -194,25 +179,26 @@ FUNC_END:
 
 static OtaPalStatus_t otaPal_CheckFileSignature( OtaFileContext_t * const pFileContext )
 {
-    OtaPalMainStatus_t eResult = OtaPalUninitialized;
+    OtaPalMainStatus_t eResult;
     uint8_t sig[64];
     uint16_t idx;
 
     /*
-     * pFileContext->pSignature->data includes some ASN1 tags.
+     * pFileContext->pSignature->data includes ASN1 tags(^^^) so need to remove it.
      * 30 46 02 21 00 32byte(R) 02 21 00 32byte(S)
      * ^^^^^^^^^^^^^^           ^^^^^^^^
-     * need to remove ^.
-     *
-     * pFileContext->pSignature->size = 0x47(71 byte)
      */
-    LogInfo( ( "otaPal_CheckFileSignature is called.  signature size = %d", pFileContext->pSignature->size ) );
+    LogDebug( ( "otaPal_CheckFileSignature is called.  signature size = %d", pFileContext->pSignature->size ) );
+
+    /* SIG(R) */
     idx = 3;
     if (0x21 == pFileContext->pSignature->data[idx++])
     {
         idx++; /* Skip 0x00 */
     }
     memcpy(sig, &pFileContext->pSignature->data[idx], 32);
+
+    /* SIG(S) */
     idx += 32;
     idx++;
     if (0x21 == pFileContext->pSignature->data[idx++])
@@ -221,6 +207,7 @@ static OtaPalStatus_t otaPal_CheckFileSignature( OtaFileContext_t * const pFileC
     }
     memcpy(sig+32, &pFileContext->pSignature->data[idx], 32);
 
+    /* Write signature to header part. */
     R_FWUP_WriteImageHeader(FWUP_AREA_BUFFER, (uint8_t __far *)OTA_JsonFileSignatureKey, sig, 64);
     if (FWUP_SUCCESS == R_FWUP_VerifyImage(FWUP_AREA_BUFFER))
     {
@@ -249,7 +236,7 @@ OtaPalStatus_t otaPal_ResetDevice( OtaFileContext_t * const pFileContext )
 {
     ( void ) pFileContext;
 
-    LogInfo( ( "otaPal_ResetDevice is called." ) );
+    LogDebug( ( "otaPal_ResetDevice is called." ) );
 
     /* We shouldn't actually get here if the board supports the auto reset.
      * But, it doesn't hurt anything if we do although someone will need to
@@ -261,7 +248,7 @@ OtaPalStatus_t otaPal_ResetDevice( OtaFileContext_t * const pFileContext )
 
 OtaPalStatus_t otaPal_ActivateNewImage( OtaFileContext_t * const pFileContext )
 {
-    LogInfo( ( "otaPal_ActivateNewImage is called." ) );
+    LogDebug( ( "otaPal_ActivateNewImage is called." ) );
 
     /* reset for self testing */
     R_FWUP_ActivateImage();
@@ -273,7 +260,7 @@ OtaPalStatus_t otaPal_ActivateNewImage( OtaFileContext_t * const pFileContext )
 OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileContext,
                                              OtaImageState_t eState )
 {
-    LogInfo( ( "otaPal_SetPlatformImageState is called.  OtaImageState_t = %d", eState) );
+    LogDebug( ( "otaPal_SetPlatformImageState is called.  OtaImageState_t = %d", eState) );
 
     s_OtaImageState = eState;
     return OTA_PAL_COMBINE_ERR( OtaPalSuccess, 0 );
@@ -282,7 +269,7 @@ OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileConte
 
 OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileContext )
 {
-    OtaPalImageState_t ePalState = OtaPalImageStateUnknown;
+    OtaPalImageState_t ePalState;
 
     switch (s_OtaImageState)
     {
@@ -299,8 +286,8 @@ OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileC
             ePalState = OtaPalImageStateInvalid;
             break;
     }
-    LogInfo( ( "otaPal_GetPlatformImageState is called.  OtaPalImageState_t = %d",ePalState ) );
-    return ePalState; /*lint !e64 !e480 !e481 I/O calls and return type are used per design. */
+    LogDebug( ( "otaPal_GetPlatformImageState is called.  OtaPalImageState_t = %d",ePalState ) );
+    return ePalState;
 }
 /*-----------------------------------------------------------*/
 

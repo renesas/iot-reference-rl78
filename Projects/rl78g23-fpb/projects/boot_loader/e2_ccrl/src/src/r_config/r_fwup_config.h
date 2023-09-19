@@ -14,14 +14,17 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2013-2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 * File Name     : r_fwup_config.h
 * Description   : Configures the Firmware update module.
 ************************************************************************************************************************
 * History : DD.MM.YYYY Version Description
-*           30.11.2020 1.00    Initial Release
+*         : 20.07.2023 2.00    First Release
+*         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
+*                              Fixed log messages.
+*                              Add parameter checking.
 ***********************************************************************************************************************/
 #include "platform.h"
 
@@ -58,6 +61,7 @@ Configuration Options
 
 /* Internal flash */
 #define FWUP_CFG_CF_BLK_SIZE                        (2048U)         /* Code flash block size       */
+#define FWUP_CFG_CF_W_UNIT_SIZE                     (128U)             /* Code flash write unit size  */
 
 /* External flash */
 #define FWUP_CFG_EXT_BUF_AREA_ADDR_L                (0x00000U)      /* External Buffer area Start address */

@@ -30,7 +30,6 @@
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
 #include <string.h>
-#include "r_ryz_if.h"
 #include "aws_clientcredential_keys.h"
 #include "iot_default_root_certificates.h"
 
