@@ -103,7 +103,7 @@ extern volatile uint16_t usCriticalNesting;                                     
 
 /* Task utilities. */
 #define portYIELD()     __brk()
-#define portYIELD_FROM_ISR( xHigherPriorityTaskWoken ) if( xHigherPriorityTaskWoken ) vTaskSwitchContext()
+#define portYIELD_FROM_ISR( x )    if( x != pdFALSE ) portYIELD()
 #define portNOP()       __nop()
 /*-----------------------------------------------------------*/
 
