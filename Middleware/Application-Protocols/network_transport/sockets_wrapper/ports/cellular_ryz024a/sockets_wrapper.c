@@ -905,6 +905,12 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
 
     if( retConnect == TCP_SOCKETS_ERRNO_NONE )
     {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        strncpy(serverAddress.ipAddress.ipAddress, pHostName, sizeof(serverAddress.ipAddress.ipAddress));
+        serverAddress.ipAddress.ipAddressType = CELLULAR_IP_ADDRESS_V4;
+        serverAddress.port = port;
+        retConnect = prvCellularSocketRegisterCallback( cellularSocketHandle, pCellularSocketContext );
+#else
         cellularSocketStatus = Sockets_GetHostByName(pHostName, (const uint8_t *)serverAddress.ipAddress.ipAddress);
         if( cellularSocketStatus == CELLULAR_SUCCESS )
         {
@@ -918,6 +924,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
         {
             IotLogDebug( "Failed Get Host By Name." );
         }
+#endif
     }
 
     /* Setup cellular socket recv AT command default timeout. */

@@ -983,15 +983,6 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
 
         uint8_t protocol = (CELLULAR_SOCKET_PROTOCOL_TCP == socketHandle->socketProtocol) ? 0 : 1;
 
-#ifndef TOMO
-        snprintf(cmdBuf,
-                 CELLULAR_AT_CMD_MAX_SIZE,
-                 "AT+SQNSD=%u,%d,%d,\"a3lklnx40j1phd-ats.iot.ap-northeast-1.amazonaws.com\",0,%d,1,0",
-                 RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId),
-                 protocol,
-                 socketHandle->remoteSocketAddress.port,
-                 socketHandle->localPort);
-#else
         snprintf(cmdBuf,
                  CELLULAR_AT_CMD_MAX_SIZE,
                  "AT+SQNSD=%u,%d,%d,\"%s\",0,%d,1,0",
@@ -1000,7 +991,6 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
                  socketHandle->remoteSocketAddress.port,
                  socketHandle->remoteSocketAddress.ipAddress.ipAddress,
                  socketHandle->localPort);
-#endif
 
         pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
                                                               atReqSocketConnect,

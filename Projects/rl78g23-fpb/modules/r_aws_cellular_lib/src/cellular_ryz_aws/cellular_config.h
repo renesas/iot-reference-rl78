@@ -20,10 +20,11 @@ extern "C" {
 #define CELLULAR_APN_MAX_SIZE                               (64)
 #define CELLULAR_PDN_USERNAME_MAX_SIZE                      (32)
 #define CELLULAR_PDN_PASSWORD_MAX_SIZE                      (32)
-#define CELLULAR_IP_ADDRESS_MAX_SIZE                        (60)
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#define CELLULAR_IP_ADDRESS_MAX_SIZE                        (128)
 #define CELLULAR_AT_CMD_MAX_SIZE                            (500)
 #else
+#define CELLULAR_IP_ADDRESS_MAX_SIZE                        (60)
 #define CELLULAR_AT_CMD_MAX_SIZE                            (2000)
 #endif
 #define CELLULAR_NUM_SOCKET_MAX                             (6)
