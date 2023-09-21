@@ -557,14 +557,12 @@ static BaseType_t prvSetupSocketRecvTimeout( cellularSocketWrapper_t * pCellular
     uint32_t receiveTimeoutMs = 0;
     CellularSocketHandle_t cellularSocketHandle = NULL;
 
-#ifdef TOMO
     if( pCellularSocketContext == NULL )
     {
         retSetSockOpt = TCP_SOCKETS_ERRNO_EINVAL;
     }
     else
     {
-#endif
         cellularSocketHandle = pCellularSocketContext->cellularSocketHandle;
 
         if( receiveTimeout >= UINT32_MAX_MS_TICKS )
@@ -583,29 +581,18 @@ static BaseType_t prvSetupSocketRecvTimeout( cellularSocketWrapper_t * pCellular
             receiveTimeoutMs = TICKS_TO_MS( receiveTimeout );
         }
 
-#ifndef TOMO
-        socketStatus = Cellular_CommonSocketSetSockOpt( CellularHandle,
-                                                        cellularSocketHandle,
-                                                        CELLULAR_SOCKET_OPTION_LEVEL_TRANSPORT,
-                                                        CELLULAR_SOCKET_OPTION_RECV_TIMEOUT,
-                                                        ( const uint8_t * ) &receiveTimeoutMs,
-                                                        sizeof( uint32_t ) );
-#else
         socketStatus = Cellular_SocketSetSockOpt( CellularHandle,
                                                   cellularSocketHandle,
                                                   CELLULAR_SOCKET_OPTION_LEVEL_TRANSPORT,
                                                   CELLULAR_SOCKET_OPTION_RECV_TIMEOUT,
                                                   ( const uint8_t * ) &receiveTimeoutMs,
                                                   sizeof( uint32_t ) );
-#endif
 
         if( socketStatus != CELLULAR_SUCCESS )
         {
             retSetSockOpt = TCP_SOCKETS_ERRNO_EINVAL;
         }
-#ifdef TOMO
     }
-#endif
 
     return retSetSockOpt;
 #endif
@@ -1476,12 +1463,6 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
 
 static CellularError_t Sockets_GetHostByName( const char * pcHostName , const uint8_t * addr)
 {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    return Cellular_GetHostByName( CellularHandle,
-                                   RM_CELLULAR_RYZ_DEFAULT_BEARER_CONTEXT_ID,
-                                   pcHostName,
-                                   ( char * ) addr );
-#else
     CellularError_t ret;
 
     ret = Cellular_GetHostByName(CellularHandle, RM_CELLULAR_RYZ_DEFAULT_BEARER_CONTEXT_ID,
@@ -1489,7 +1470,6 @@ static CellularError_t Sockets_GetHostByName( const char * pcHostName , const ui
                                     (char *)addr);
 
     return ret;
-#endif
 }
 
 /*-----------------------------------------------------------*/
