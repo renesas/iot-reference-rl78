@@ -84,8 +84,13 @@
  * <b>Default value:</b> `5000`
  */
 #ifndef MQTT_PINGRESP_TIMEOUT_MS
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+/* Wait 240 seconds by default for a ping response. */
+    #define MQTT_PINGRESP_TIMEOUT_MS    ( 240000U )
+#else
 /* Wait 5 seconds by default for a ping response. */
     #define MQTT_PINGRESP_TIMEOUT_MS    ( 5000U )
+#endif
 #endif
 
 /**
@@ -170,7 +175,11 @@
  * @note Specified in bytes.  Must be large enough to hold the maximum
  * anticipated MQTT payload.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#define MQTT_AGENT_NETWORK_BUFFER_SIZE               ( 1400 )
+#else
 #define MQTT_AGENT_NETWORK_BUFFER_SIZE               ( 5000 )
+#endif
 
 /**
  * @brief The maximum duration between non-empty network reads while
