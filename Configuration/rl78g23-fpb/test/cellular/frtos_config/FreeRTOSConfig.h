@@ -1,6 +1,7 @@
 /*
  * FreeRTOS Kernel V10.3.0
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2023 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -26,7 +27,6 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-//#include "serial_term_uart.h"
 
 /* Unity includes. */
 #if defined(FREERTOS_ENABLE_UNIT_TESTS)
@@ -55,7 +55,7 @@
 #define configMAX_PRIORITIES                       (7)
 #define configTICK_RATE_HZ                         (( TickType_t ) 1000)
 #define configMINIMAL_STACK_SIZE                   (128)
-#define configTOTAL_HEAP_SIZE_N                    (25)
+#define configTOTAL_HEAP_SIZE_N                    (24)
 #define configTOTAL_HEAP_SIZE                      (( size_t ) ( configTOTAL_HEAP_SIZE_N * 1024 ))
 #define configMAX_TASK_NAME_LEN                    (12)
 #define configUSE_TRACE_FACILITY                   1
@@ -87,7 +87,7 @@
 #define configUSE_TIMERS                           1
 #define configTIMER_TASK_PRIORITY                  (6)
 #define configTIMER_QUEUE_LENGTH                   5
-#define configTIMER_TASK_STACK_DEPTH               (configMINIMAL_STACK_SIZE)
+#define configTIMER_TASK_STACK_DEPTH               (configMINIMAL_STACK_SIZE * 2)
 
 /* The interrupt priority used by the kernel itself for the tick interrupt and
 the pended interrupt.  This would normally be the lowest priority. */
@@ -175,7 +175,7 @@ extern void vLoggingPrintf( const char * pcFormat, ... );
 extern void vLoggingPrint( const char * pcMessage );
 #define configPRINT( X )     vLoggingPrint( X )
 
-#ifndef TOMO
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 extern void uart_string_printf(__far char * pString );
 #define configPRINT_STRING( X )    uart_string_printf( X )
 #else
@@ -186,7 +186,7 @@ extern void vOutputString( const char * pcMessage );
 
 /* Sets the length of the buffers into which logging messages are written - so
  * also defines the maximum length of each log message. */
-#define configLOGGING_MAX_MESSAGE_LENGTH            192
+#define configLOGGING_MAX_MESSAGE_LENGTH            256
 
 /* Set to 1 to prepend each log message with a message number, the task name,
  * and a time stamp. */
@@ -238,19 +238,19 @@ extern void vOutputString( const char * pcMessage );
  * to and from a real network connection on the host PC.  See the
  * configNETWORK_INTERFACE_TO_USE definition above for information on how to
  * configure the real network connection to use. */
-#define configMAC_ADDR0                      0x01
-#define configMAC_ADDR1                      0x12
-#define configMAC_ADDR2                      0x13
-#define configMAC_ADDR3                      0x10
-#define configMAC_ADDR4                      0x15
-#define configMAC_ADDR5                      0x11
+#define configMAC_ADDR0                      0x74
+#define configMAC_ADDR1                      0x90
+#define configMAC_ADDR2                      0x50
+#define configMAC_ADDR3                      0x00
+#define configMAC_ADDR4                      0x79
+#define configMAC_ADDR5                      0x03
 
 /* Default IP address configuration.  Used in ipconfigUSE_DHCP is set to 0, or
  * ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
 #define configIP_ADDR0                       192
 #define configIP_ADDR1                       168
-#define configIP_ADDR2                       0
-#define configIP_ADDR3                       200
+#define configIP_ADDR2                       11
+#define configIP_ADDR3                       12
 
 /* Default gateway IP address configuration.  Used in ipconfigUSE_DHCP is set to
  * 0, or ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
@@ -284,7 +284,7 @@ uint32_t ulRand(void);
 #define configRAND32()    ulRand()
 
 /* The platform FreeRTOS is running on. */
-#define configPLATFORM_NAME    "RenesasRX65N"
+#define configPLATFORM_NAME    "RenesasRL78"
 
 /* Header required for the tracealyzer recorder library. */
 //#include "trcRecorder.h"
