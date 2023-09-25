@@ -14,16 +14,14 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_sci_rl78_private.h
- * Version      : 0.0
- * Description  : .
- *********************************************************************************************************************/
-/**********************************************************************************************************************
+ * Description  : r_sci wrapper for rl78.
+ **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
-
+ *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
 #ifndef R_SCI_RL78_PRIVATE_H
 #define R_SCI_RL78_PRIVATE_H
@@ -98,7 +96,6 @@ typedef struct st_sci_ch_rom
 } sci_ch_rom_t;
 
 /* CHANNEL CONTROL BLOCK */
-
 typedef struct st_sci_ch_ctrl       /* SCI channel control (for handle) */
 {
     uint16_t        channel;
@@ -133,7 +130,6 @@ typedef struct st_sci_ch_ctrl       /* SCI channel control (for handle) */
 
 
 /* BAUD DIVISOR INFO */
-
 typedef struct st_baud_divisor
 {
     uint16_t    divisor;  // clock divisor
@@ -151,19 +147,19 @@ extern const SCI_FAR baud_divisor_t async_baud[];
 #endif
 
 #if (SCI_CFG_CH0_INCLUDED)
-extern sci_ch_ctrl_t           ch0_ctrl;
+extern sci_ch_ctrl_t ch0_ctrl;
 #endif
 
 #if (SCI_CFG_CH1_INCLUDED)
-extern sci_ch_ctrl_t           ch1_ctrl;
+extern sci_ch_ctrl_t ch1_ctrl;
 #endif
 
 #if (SCI_CFG_CH2_INCLUDED)
-extern sci_ch_ctrl_t           ch2_ctrl;
+extern sci_ch_ctrl_t ch2_ctrl;
 #endif
 
 #if (SCI_CFG_CH3_INCLUDED)
-extern sci_ch_ctrl_t           ch3_ctrl;
+extern sci_ch_ctrl_t ch3_ctrl;
 #endif
 
 /*****************************************************************************

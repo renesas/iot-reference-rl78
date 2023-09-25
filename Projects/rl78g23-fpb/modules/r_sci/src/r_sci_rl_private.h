@@ -14,16 +14,14 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_sci_rl_private.h
- * Version      : 0.0
- * Description  : .
- *********************************************************************************************************************/
-/**********************************************************************************************************************
+ * Description  : r_sci wrapper for rl78.
+ **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
-
+ *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
 #ifndef R_SCI_RL_PRIVATE_H
 #define R_SCI_RL_PRIVATE_H
@@ -90,7 +88,14 @@ Macro definitions
     #define SCI_CFG_DATA_MATCH_INCLUDED (1)
 #endif
 
+/* SSR register read access */
 #define SCI_SSR          GetReg_SSR(hdl->channel)
+
+/* TDR/FTDR register write access */
+#define SCI_TDR(byte)    SetReg_TXD(hdl->channel, (byte));
+
+/* RDR/FRDR register read access */
+#define SCI_RDR(byte)    GetReg_RXD(hdl->channel, (byte));
 
 /* SCR register dummy read */
 #define SCI_SCR_DUMMY_READ                \
@@ -102,19 +107,13 @@ Macro definitions
 /* Interrupt Request register flag clear */
 #define SCI_IR_TXI_CLEAR (*hdl->rom->ir_txi = 0)
 
-/* TDR/FTDR register write access */
-#define SCI_TDR(byte)                     SetReg_TXD(hdl->channel, (byte));
-
-/* RDR/FRDR register read access */
-#define SCI_RDR(byte)                     GetReg_RXD(hdl->channel, (byte));
-
-
-#define FIT_NO_FUNC                 ((void (*)(void *))0x10000000)  /* Reserved space on RX */
-#define FIT_NO_PTR                  ((void *)0x10000000)            /* Reserved space on RX */
-
+/* Reserved space on RX */
+#define FIT_NO_FUNC      ((void (*)(void *))0x10000000)
+#define FIT_NO_PTR       ((void *)0x10000000)
 
 /*****************************************************************************
 Typedef definitions
 ******************************************************************************/
+
 #endif /* R_SCI_RL_PRIVATE_H */
 

@@ -17,13 +17,13 @@
 * Copyright (C) 2016-2019 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 /**********************************************************************************************************************
-* File Name    : r_sci_rl78.c
-* Description  : Functions for using SCI on the RL78 device.
-*                [Note] This module is a wrapper module for the firmware update library to use SAU.(UART only)
-*                       This module is a provisional implementation.
+ * File Name    : r_sci_rl78.c
+ * Description  : Functions for using SCI on the RL78 device.
+ *                [Note] This module is a wrapper module for the firmware update library to use SAU.(UART only)
+ *                       This module is a provisional implementation.
 ***********************************************************************************************************************
-* History : DD.MM.YYYY Version Description
-
+ * History : DD.MM.YYYY Version Description
+ *         : DD.MM.YYYY 1.00     First Release
 ***********************************************************************************************************************/
 
 /**********************************************************************************************************************

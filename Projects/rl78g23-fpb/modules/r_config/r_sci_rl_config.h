@@ -14,25 +14,22 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_sci_rl_config.h
- * Version      : 0.0
- * Description  : .
- *********************************************************************************************************************/
-/**********************************************************************************************************************
+ * Description  : Configures the SCI module..
+ **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
-
+ *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
+#ifndef R_SCI_RL_CONFIG_H
+#define R_SCI_RL_CONFIG_H
 
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
 #include "platform.h"
-
-#ifndef R_SCI_RL_CONFIG_H
-#define R_SCI_RL_CONFIG_H
 
 /***********************************************************************************************************************
 Configuration Options
@@ -45,30 +42,30 @@ Configuration Options
 
 /* SPECIFY WHETHER TO INCLUDE CODE FOR DIFFERENT SCI MODES */
 /* Setting an equate to 1 includes code specific to that mode. */
-#define SCI_CFG_ASYNC_INCLUDED  (1)
-#define SCI_CFG_SYNC_INCLUDED   (0)
-#define SCI_CFG_SSPI_INCLUDED   (0)
+#define SCI_CFG_ASYNC_INCLUDED          (1)
+#define SCI_CFG_SYNC_INCLUDED           (0)
+#define SCI_CFG_SSPI_INCLUDED           (0)
 
 /* SPECIFY BYTE VALUE TO TRANSMIT WHILE CLOCKING IN DATA IN SSPI MODES */
-#define SCI_CFG_DUMMY_TX_BYTE   (0xFF)
+#define SCI_CFG_DUMMY_TX_BYTE           (0xFF)
 
 /* SPECIFY CHANNELS TO INCLUDE SOFTWARE SUPPORT FOR 1=included, 0=not */
-#define SCI_CFG_CH0_INCLUDED    (0)
-#define SCI_CFG_CH1_INCLUDED    (0)
-#define SCI_CFG_CH2_INCLUDED    (1)
-#define SCI_CFG_CH3_INCLUDED    (1)
+#define SCI_CFG_CH0_INCLUDED            (0)
+#define SCI_CFG_CH1_INCLUDED            (0)
+#define SCI_CFG_CH2_INCLUDED            (1)
+#define SCI_CFG_CH3_INCLUDED            (1)
 
 /* SPECIFY ASYNC MODE TX QUEUE BUFFER SIZES (will not allocate if chan not enabled */
-#define SCI_CFG_CH0_TX_BUFSIZ   (80)
-#define SCI_CFG_CH1_TX_BUFSIZ   (80)
-#define SCI_CFG_CH2_TX_BUFSIZ   (128)
-#define SCI_CFG_CH3_TX_BUFSIZ   (128)
+#define SCI_CFG_CH0_TX_BUFSIZ           (80)
+#define SCI_CFG_CH1_TX_BUFSIZ           (80)
+#define SCI_CFG_CH2_TX_BUFSIZ           (128)
+#define SCI_CFG_CH3_TX_BUFSIZ           (128)
 
 /* SPECIFY ASYNC MODE RX QUEUE BUFFER SIZES (will not allocate if chan not enabled */
-#define SCI_CFG_CH0_RX_BUFSIZ   (80)
-#define SCI_CFG_CH1_RX_BUFSIZ   (80)
-#define SCI_CFG_CH2_RX_BUFSIZ   (128)
-#define SCI_CFG_CH3_RX_BUFSIZ   (128)
+#define SCI_CFG_CH0_RX_BUFSIZ           (80)
+#define SCI_CFG_CH1_RX_BUFSIZ           (80)
+#define SCI_CFG_CH2_RX_BUFSIZ           (80)
+#define SCI_CFG_CH3_RX_BUFSIZ           (128)
 
 /* 
 * ENABLE TRANSMIT END INTERRUPT (ASYNCHRONOUS)
@@ -88,23 +85,23 @@ Configuration Options
 * The following settings are used for follow control to prevent overflow of
 * the receive buffer when receiving UART.
 */
-#define SCI_CFG_UART0_FLOW_CTRL_ENABLE   (0)
-#define SCI_CFG_UART1_FLOW_CTRL_ENABLE   (0)
-#define SCI_CFG_UART2_FLOW_CTRL_ENABLE   (0)
-#define SCI_CFG_UART3_FLOW_CTRL_ENABLE   (1)
+#define SCI_CFG_UART0_FLOW_CTRL_ENABLE  (0)
+#define SCI_CFG_UART1_FLOW_CTRL_ENABLE  (0)
+#define SCI_CFG_UART2_FLOW_CTRL_ENABLE  (0)
+#define SCI_CFG_UART3_FLOW_CTRL_ENABLE  (1)
 
 #define SCI_CFG_UART0_CTS_PORT
 #define SCI_CFG_UART1_CTS_PORT
-#define SCI_CFG_UART2_CTS_PORT           (P1_bit.no6)
-#define SCI_CFG_UART3_CTS_PORT           (P14_bit.no1)
+#define SCI_CFG_UART2_CTS_PORT          (P1_bit.no6)
+#define SCI_CFG_UART3_CTS_PORT          (P14_bit.no1)
 #define SCI_CFG_UART0_RTS_PORT
 #define SCI_CFG_UART1_RTS_PORT
-#define SCI_CFG_UART2_RTS_PORT           (P1_bit.no5)
-#define SCI_CFG_UART3_RTS_PORT           (P14_bit.no2)
+#define SCI_CFG_UART2_RTS_PORT          (P1_bit.no5)
+#define SCI_CFG_UART3_RTS_PORT          (P14_bit.no2)
 
 /*
  * Threshold for free receive buffer to set RTS high.
  */
-#define SCI_CFG_UART_RX_BUFFER_THRESH    (20)
+#define SCI_CFG_UART_RX_BUFFER_THRESH   (20)
 
 #endif /* R_SCI_RL_CONFIG_H */
