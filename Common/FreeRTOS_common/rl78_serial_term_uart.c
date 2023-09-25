@@ -45,50 +45,7 @@ sci_hdl_t sci_handle;
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
-static void sci_callback(void *pArgs);
 static uint8_t  s_cmd_buf[256];
-
-/**********************************************************************************************************************
- * Function Name: sci_serial_term_callback
- * Description  : This is an SCI Async Mode callback function.
- * Arguments    : pArgs -
- *                pointer to sci_cb_p_args_t structure cast to as void. Structure contains event as associated data.
- * Return Value : none
- *********************************************************************************************************************/
-static void sci_callback(void *pArgs)
-{
-    sci_cb_args_t *p_args;
-
-    p_args = (sci_cb_args_t*) pArgs;
-
-    if (SCI_EVT_RX_CHAR == p_args->event)
-    {
-        R_BSP_NOP();
-    }
-    else if (SCI_EVT_RXBUF_OVFL == p_args->event)
-    {
-        R_BSP_NOP();
-    }
-    else if (SCI_EVT_OVFL_ERR == p_args->event)
-    {
-        R_BSP_NOP();
-    }
-    else if (SCI_EVT_FRAMING_ERR == p_args->event)
-    {
-        R_BSP_NOP();
-    }
-    else if (SCI_EVT_PARITY_ERR == p_args->event)
-    {
-        R_BSP_NOP();
-    }
-    else
-    {
-        /* Do nothing */
-    }
-}
-/**********************************************************************************************************************
- * End of function sci_serial_term_callback
- *********************************************************************************************************************/
 
 /**********************************************************************************************************************
  * Function Name: uart_config
@@ -100,7 +57,7 @@ void uart_config(void)
 {
     sci_cfg_t sci_config;
 
-    if (SCI_SUCCESS != R_SCI_Open(SERIAL_TERM_CH, SCI_MODE_ASYNC, &sci_config, sci_callback, &sci_handle))
+    if (SCI_SUCCESS != R_SCI_Open(SERIAL_TERM_CH, SCI_MODE_ASYNC, &sci_config, NULL, &sci_handle))
     {
         R_BSP_NOP();
     }
