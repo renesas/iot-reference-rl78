@@ -72,7 +72,7 @@
 		<link>
 			<name>src/helper</name>
 			<type>2</type>
-			<locationURI>copy_PARENT1/helper</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/helper</locationURI>
 		</link>
 		<link>
 			<name>src/modules</name>

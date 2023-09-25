@@ -46,7 +46,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 extern bool setupCellular( void );
 
 #ifndef TOMO
-#define ENABLE_OTA_UPDATE_DEMO 1
+//#define ENABLE_OTA_UPDATE_DEMO 1
 #if (ENABLE_OTA_UPDATE_DEMO == 1)
 #define START_DEMO_FUNC   vStartOtaDemo
 #else

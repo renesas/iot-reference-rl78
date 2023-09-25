@@ -43,8 +43,10 @@
 /* Demo Specific configs. */
 #include "demo_config.h"
 
-/*-----------------------------------------------------------*/
+/* Write certificate */
+#include "cert_profile_helper.h"
 
+/*-----------------------------------------------------------*/
 
 #define CELLULAR_SIM_CARD_WAIT_INTERVAL_MS       ( 1000UL )
 #define CELLULAR_MAX_SIM_RETRY                   ( 5U )
@@ -53,18 +55,6 @@
 #define CELLULAR_PDN_CONNECT_WAIT_INTERVAL_MS    ( 1000UL )
 
 #define CELLULAR_PDN_CONTEXT_NUM                 ( CELLULAR_PDN_CONTEXT_ID_MAX - CELLULAR_PDN_CONTEXT_ID_MIN + 1U )
-
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#define ROOTCA_PEM1_NVM_IDX             (17)
-#define ROOTCA_PEM2_NVM_IDX             (18)
-#define ROOTCA_PEM3_NVM_IDX             (19)
-#define CLIENT_CERT_NVM_IDX             (0)
-#define CLIENT_PRIVATEKEY_NVM_IDX       (0)
-#define CFG_ROOT_CA_PEM1                tlsVERISIGN_ROOT_CERTIFICATE_PEM
-#define CFG_ROOT_CA_PEM2                tlsATS1_ROOT_CERTIFICATE_PEM
-#define CFG_ROOT_CA_PEM3                tlsSTARFIELD_ROOT_CERTIFICATE_PEM
-#endif
 
 /*-----------------------------------------------------------*/
 
@@ -76,33 +66,6 @@ CellularHandle_t CellularHandle = NULL;
 uint8_t CellularSocketPdnContextId = RM_CELLULAR_RYZ_DEFAULT_BEARER_CONTEXT_ID;
 
 /*-----------------------------------------------------------*/
-
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-static void write_certificate(void)
-{
-    /* Write certificate */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              ROOTCA_PEM2_NVM_IDX,
-                              (const uint8_t *)CFG_ROOT_CA_PEM2,
-                              strlen((const char *)CFG_ROOT_CA_PEM2));
-
-    /* Certificate */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              CLIENT_CERT_NVM_IDX,
-                              (const uint8_t *)keyCLIENT_CERTIFICATE_PEM,
-                              strlen((const char *)keyCLIENT_CERTIFICATE_PEM));
-
-    /* Private key */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
-                              CLIENT_PRIVATEKEY_NVM_IDX,
-                              (const uint8_t *)keyCLIENT_PRIVATE_KEY_PEM,
-                              strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
-}
-#endif
 
 bool setupCellular (void);
 
@@ -160,7 +123,7 @@ bool setupCellular(void)
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     /* Write certificate to RYZ. */
-    write_certificate();
+    prvWriteCertificateToModule(CellularHandle);
 #endif
 
     /* wait until SIM is ready */

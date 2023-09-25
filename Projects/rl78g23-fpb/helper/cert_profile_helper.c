@@ -18,10 +18,8 @@
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : cert_profile_helper.c
- * Version      : 1.0
- * Description  : .
- *********************************************************************************************************************/
-/**********************************************************************************************************************
+ * Description  : write certificate to cellular module.
+ **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
@@ -48,50 +46,34 @@
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
- * Function Name: prvSetCertificateProfile
+ * Function Name: prvWriteCertificateToModule
  * Description  : Sets the host address to the certificate profile that matches the specified Id.
  * Arguments    : none
  * Return Value : none
  *********************************************************************************************************************/
-void prvSetCertificateProfile(void)
+void prvWriteCertificateToModule(CellularHandle_t hdl)
 {
-     if (WIFI_SUCCESS != R_RYZ_Open())
-     {
-         R_RYZ_Open();
-     }
-
-    /* CA */
-    R_RYZ_WriteCertificate(WRITE_CERTIFICATE,
-                           ROOTCA_PEM1_NVM_IDX,
-                           (const uint8_t *)CFG_ROOT_CA_PEM1,
-                           strlen((const char *)CFG_ROOT_CA_PEM1));
-
-    R_RYZ_WriteCertificate(WRITE_CERTIFICATE,
-                           ROOTCA_PEM2_NVM_IDX,
-                           (const uint8_t *)CFG_ROOT_CA_PEM2,
-                           strlen((const char *)CFG_ROOT_CA_PEM2));
-
-    R_RYZ_WriteCertificate(WRITE_CERTIFICATE,
-                           ROOTCA_PEM3_NVM_IDX,
-                           (const uint8_t *)CFG_ROOT_CA_PEM3,
-                           strlen((const char *)CFG_ROOT_CA_PEM3));
+    /* Write certificate */
+    Cellular_WriteCertificate(hdl,
+                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
+                              ROOTCA_PEM2_NVM_IDX,
+                              (const uint8_t *)CFG_ROOT_CA_PEM2,
+                              strlen((const char *)CFG_ROOT_CA_PEM2));
 
     /* Certificate */
-    R_RYZ_WriteCertificate(WRITE_CERTIFICATE,
-                           CLIENT_CERT_NVM_IDX,
-                           (const uint8_t *)keyCLIENT_CERTIFICATE_PEM,
-                           strlen((const char *)keyCLIENT_CERTIFICATE_PEM));
+    Cellular_WriteCertificate(hdl,
+                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
+                              CLIENT_CERT_NVM_IDX,
+                              (const uint8_t *)keyCLIENT_CERTIFICATE_PEM,
+                              strlen((const char *)keyCLIENT_CERTIFICATE_PEM));
 
     /* Private key */
-    R_RYZ_WriteCertificate(WRITE_PRIVATEKEY,
-                           CLIENT_PRIVATEKEY_NVM_IDX,
-                           (const uint8_t *)keyCLIENT_PRIVATE_KEY_PEM,
-                           strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
-
-    R_RYZ_Close();
-    BSP_NOP();
-    BSP_NOP();
+    Cellular_WriteCertificate(hdl,
+                              AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
+                              CLIENT_PRIVATEKEY_NVM_IDX,
+                              (const uint8_t *)keyCLIENT_PRIVATE_KEY_PEM,
+                              strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
 }
 /**********************************************************************************************************************
- * End of Function prvSetCertificateProfile
+ * End of Function prvWriteCertificateToModule
  *********************************************************************************************************************/
