@@ -18,10 +18,8 @@
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : serial_term_uart.h
- * Version      : 1.0
  * Description  : .
- *********************************************************************************************************************/
-/**********************************************************************************************************************
+ **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
  *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
@@ -52,19 +50,19 @@
 #define RL78_FAR_FUNC           __far_func
 #endif
 
-#define SERIAL_TERM_CH      	(2)
+#define SERIAL_TERM_CH          (2)
 
 #if (SERIAL_TERM_CH == 1)
-#define REG_SSR             	(SSR02)
-#define REG_STMK            	(STMK1)
-#define REG_TXD             	(TXD1)
-#define UART_START_FUNC     	(R_Config_UART1_Start)
+#define REG_SSR                 (SSR02)
+#define REG_STMK                (STMK1)
+#define REG_TXD                 (TXD1)
+#define UART_START_FUNC         (R_Config_UART1_Start)
 #endif
 #if (SERIAL_TERM_CH == 2)
-#define REG_SSR             	(SSR10)
-#define REG_STMK            	(STMK2)
-#define REG_TXD             	(TXD2)
-#define UART_START_FUNC     	(R_Config_UART2_Start)
+#define REG_SSR                 (SSR10)
+#define REG_STMK                (STMK2)
+#define REG_TXD                 (TXD2)
+#define UART_START_FUNC         (R_Config_UART2_Start)
 #endif
 
 /**********************************************************************************************************************

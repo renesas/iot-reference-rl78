@@ -14,16 +14,14 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2021 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : serial_term_uart.c
- * Version      : 1.0
  * Description  : .
- *********************************************************************************************************************/
-/**********************************************************************************************************************
+ **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : 01.01.2018 1.00     First Release
+ *         : DD.MM.YYYY 1.00     First Release
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -47,15 +45,14 @@ sci_hdl_t sci_handle;
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
-#ifdef TOMO
-#else
 static void sci_callback(void *pArgs);
+static uint8_t  s_cmd_buf[256];
 
 /**********************************************************************************************************************
  * Function Name: sci_serial_term_callback
  * Description  : This is an SCI Async Mode callback function.
  * Arguments    : pArgs -
- *                 pointer to sci_cb_p_args_t structure cast to as void. Structure contains event as associated data.
+ *                pointer to sci_cb_p_args_t structure cast to as void. Structure contains event as associated data.
  * Return Value : none
  *********************************************************************************************************************/
 static void sci_callback(void *pArgs)
@@ -92,7 +89,6 @@ static void sci_callback(void *pArgs)
 /**********************************************************************************************************************
  * End of function sci_serial_term_callback
  *********************************************************************************************************************/
-#endif
 
 /**********************************************************************************************************************
  * Function Name: uart_config
@@ -102,16 +98,12 @@ static void sci_callback(void *pArgs)
  *********************************************************************************************************************/
 void uart_config(void)
 {
-#ifdef TOMO
-	UART_START_FUNC();
-#else
     sci_cfg_t sci_config;
 
     if (SCI_SUCCESS != R_SCI_Open(SERIAL_TERM_CH, SCI_MODE_ASYNC, &sci_config, sci_callback, &sci_handle))
     {
         R_BSP_NOP();
     }
-#endif
 }
 /**********************************************************************************************************************
  * End of function uart_config
@@ -124,7 +116,6 @@ void uart_config(void)
  *                  Pointer type log output character string.
  * Return Value : none
  *********************************************************************************************************************/
-#ifndef TOMO
 void uart_string_printf(RL78_FAR char *pString)
 {
     sci_err_t sci_error;
@@ -162,56 +153,19 @@ void uart_string_printf(RL78_FAR char *pString)
         R_BSP_NOP();
     }
 }
-#else
-void uart_string_printf(SCI_FAR char *pString)
-{
-    sci_err_t sci_error;
-
-    uint16_t retry = 0xffff;
-    uint16_t str_length;
-    uint16_t transmit_length;
-
-    str_length = (uint16_t) strlen(pString);
-
-    while ((retry > 0) && (str_length > 0))
-    {
-
-        sci_error = R_SCI_Control (serial_term_sci_handle, SCI_CMD_TX_Q_BYTES_FREE, &transmit_length);
-
-        if (transmit_length > str_length)
-        {
-            transmit_length = str_length;
-        }
-
-        sci_error = R_SCI_Send (serial_term_sci_handle, (uint8_t SCI_FAR*) pString, transmit_length);
-
-        if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
-        {
-            /* retry if previous transmission still in progress or tx buffer is insufficient. */
-            retry--;
-        }
-        else
-        {
-            str_length -= transmit_length;
-            pString += transmit_length;
-        }
-
-    }
-
-    if (SCI_SUCCESS != sci_error)
-    {
-        R_BSP_NOP();
-    }
-
-}
-#endif
 /**********************************************************************************************************************
  * End of function uart_string_printf
  *********************************************************************************************************************/
 
-
-#ifndef TOMO
-static uint8_t  s_cmd_buf[256];
+/**********************************************************************************************************************
+ * Function Name: uart_printf
+ * Description  : Sends the specified character string on the set UART channel.
+ * Arguments    : pString-
+ *                  Pointer type log output character string.
+ *                ...
+ *                  format
+ * Return Value : none
+ *********************************************************************************************************************/
 void uart_printf(RL78_FAR char *pString, ...)
 {
     sci_err_t sci_error;
@@ -255,8 +209,9 @@ void uart_printf(RL78_FAR char *pString, ...)
         R_BSP_NOP();
     }
 }
-#endif
-
+/**********************************************************************************************************************
+ * End of function uart_printf
+ *********************************************************************************************************************/
 
 /**********************************************************************************************************************
  * Function Name: putchar
