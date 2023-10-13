@@ -57,7 +57,6 @@
 
 /* Library config includes. */
 #include "ota_config.h"
-#include "ota_demo_config.h"
 
 /* MQTT library includes. */
 #include "core_mqtt_agent.h"

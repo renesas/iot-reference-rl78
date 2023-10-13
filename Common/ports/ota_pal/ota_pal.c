@@ -1,4 +1,5 @@
 /*
+#include <ota_demo_config_.h>
  * FreeRTOS OTA PAL for Renesas RX65N-RSK V2.0.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
@@ -37,9 +38,6 @@
 #include "ota_pal.h"
 
 /* OTA PAL test config file include. */
-#include "ota_demo_config.h"
-
-/* Renesas RL78 driver include */
 #include "r_fwup_if.h"
 
 /* Specify the OTA signature algorithm we support on this platform. */
