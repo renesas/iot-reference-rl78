@@ -269,6 +269,7 @@ OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileC
 {
     OtaPalImageState_t ePalState;
 
+    /* OtaImageState_t into OtaPalImageState_t */
     switch (s_OtaImageState)
     {
         case OtaImageStateTesting:
@@ -277,7 +278,7 @@ OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileC
         case OtaImageStateAccepted:
             ePalState = OtaPalImageStateValid;
             break;
-        case OtaPalImageStateUnknown:
+        case OtaImageStateUnknown:
             ePalState = OtaPalImageStateValid;
             break;
         default:
