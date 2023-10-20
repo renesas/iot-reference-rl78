@@ -259,9 +259,53 @@ OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileConte
                                              OtaImageState_t eState )
 {
     LogDebug( ( "otaPal_SetPlatformImageState is called.  OtaImageState_t = %d", eState) );
+    OtaPalMainStatus_t eResult = OtaPalUninitialized;
+
+    if (OtaImageStateTesting  == s_OtaImageState)
+    {
+        switch( eState )
+        {
+            case OtaImageStateAccepted:
+                eResult = OtaPalSuccess;
+                break;
+            case OtaImageStateRejected:
+                eResult = OtaPalSuccess;
+                break;
+            case OtaImageStateAborted:
+                eResult = OtaPalSuccess;
+                break;
+            case OtaImageStateTesting:
+                eResult = OtaPalSuccess;
+                break;
+            default:
+                eResult = OtaPalBadImageState;
+                break;
+        }
+    }
+    else
+    {
+        switch( eState )
+        {
+            case OtaImageStateAccepted:
+                eResult = OtaPalCommitFailed;
+                break;
+            case OtaImageStateRejected:
+                eResult = OtaPalSuccess;
+                break;
+            case OtaImageStateAborted:
+                eResult = OtaPalSuccess;
+                break;
+            case OtaImageStateTesting:
+                eResult = OtaPalSuccess;
+                break;
+            default:
+                eResult = OtaPalBadImageState;
+                break;
+        }
+    }
 
     s_OtaImageState = eState;
-    return OTA_PAL_COMBINE_ERR( OtaPalSuccess, 0 );
+    return OTA_PAL_COMBINE_ERR( eResult, 0 );
 }
 /*-----------------------------------------------------------*/
 
