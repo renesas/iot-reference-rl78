@@ -707,6 +707,7 @@ CellularError_t aws_cellular_psm_config (CellularContext_t * p_context, const ui
  **************************************************************************************************************/
 void aws_cellular_psm_conf_fail (CellularContext_t * p_context, const uint8_t phase);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /***************************************************************************************************************
  * Function Name  @fn            aws_cellular_rts_active
  * Description    @details       Set the RTS pin to High output.
@@ -728,5 +729,6 @@ void aws_cellular_rts_active (CellularContext_t * p_context, BaseType_t semaphor
  *                                  Processing was not executed.
  **************************************************************************************************************/
 BaseType_t aws_cellular_rts_deactive (CellularContext_t * p_context);
+#endif
 
 #endif /* AWS_CELLULAR_IF_H */

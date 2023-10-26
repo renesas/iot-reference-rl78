@@ -63,6 +63,15 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
     uint8_t    phase      = 0;
     BaseType_t rtos_ret   = pdFALSE;
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    CellularAtReq_t atReqpsmconfig;
+    atReqpsmconfig.pAtCmd       = (char *)cmdBuf;
+    atReqpsmconfig.atCmdType    = CELLULAR_AT_NO_RESULT;
+    atReqpsmconfig.pAtRspPrefix = NULL;
+    atReqpsmconfig.respCallback = NULL;
+    atReqpsmconfig.pData        = NULL;
+    atReqpsmconfig.dataLen      = 0;
+#else
     CellularAtReq_t atReqpsmconfig =
     {
         (char *)cmdBuf, //cast
@@ -72,6 +81,7 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
         NULL,
         0,
     };
+#endif
 
     if (1 == mode)
     {
@@ -231,6 +241,15 @@ void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t pha
 
     uint8_t    cmdBuf[32] = {'\0'};
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    CellularAtReq_t atReqpsmconfig;
+    atReqpsmconfig.pAtCmd       = (char *)cmdBuf;
+    atReqpsmconfig.atCmdType    = CELLULAR_AT_NO_RESULT;
+    atReqpsmconfig.pAtRspPrefix = NULL;
+    atReqpsmconfig.respCallback = NULL;
+    atReqpsmconfig.pData        = NULL;
+    atReqpsmconfig.dataLen      = 0;
+#else
     CellularAtReq_t atReqpsmconfig =
     {
         (char *)cmdBuf, //cast
@@ -240,6 +259,7 @@ void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t pha
         NULL,
         0,
     };
+#endif
 
     if ((phase & RM_PSM_PHASE_6) == RM_PSM_PHASE_6)
     {
@@ -511,6 +531,7 @@ void aws_cellular_rts_hw_flow_disable(void)
  *********************************************************************************************************************/
 #endif  /* AWS_CELLULAR_CFG_CTS_SW_CTRL == 1 */
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_rts_active
  ************************************************************************************************/
@@ -563,3 +584,4 @@ BaseType_t aws_cellular_rts_deactive(CellularContext_t * p_context)
 /**********************************************************************************************************************
  * End of function aws_cellular_rts_deactive
  *********************************************************************************************************************/
+#endif

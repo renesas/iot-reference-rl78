@@ -33,13 +33,17 @@
 CellularError_t Cellular_Cleanup (CellularHandle_t cellularHandle)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonCleanup(cellularHandle);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -53,14 +57,18 @@ CellularError_t Cellular_RegisterUrcNetworkRegistrationEventCallback (
     void                                   * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret =  Cellular_CommonRegisterUrcNetworkRegistrationEventCallback(cellularHandle,
                                                                       networkRegistrationCallback,
                                                                       pCallbackContext);
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -73,13 +81,17 @@ CellularError_t Cellular_RegisterUrcPdnEventCallback (CellularHandle_t          
                                                       void                        * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonRegisterUrcPdnEventCallback(cellularHandle, pdnEventCallback, pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -92,13 +104,17 @@ CellularError_t Cellular_RegisterUrcGenericCallback (CellularHandle_t           
                                                      void                       * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonRegisterUrcGenericCallback(cellularHandle, genericCallback, pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -111,13 +127,17 @@ CellularError_t Cellular_RegisterUrcSignalStrengthChangedCallback(CellularHandle
                                                                   void * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonRegisterUrcSignalStrengthChangedCallback(cellularHandle, signalStrengthChangedCallback, pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -130,13 +150,17 @@ CellularError_t Cellular_RegisterModemEventCallback (CellularHandle_t           
                                                      void                       * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonRegisterModemEventCallback(cellularHandle, modemEventCallback, pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -153,9 +177,11 @@ CellularError_t Cellular_ATCommandRaw (CellularHandle_t                         
                                        uint16_t                                    dataLen)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonATCommandRaw(cellularHandle,
                                        pATCommandPrefix,
@@ -165,7 +191,9 @@ CellularError_t Cellular_ATCommandRaw (CellularHandle_t                         
                                        pData,
                                        dataLen);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -181,9 +209,11 @@ CellularError_t Cellular_CreateSocket (CellularHandle_t         cellularHandle,
                                        CellularSocketHandle_t * pSocketHandle)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonCreateSocket(cellularHandle,
                                        pdnContextId,
@@ -192,7 +222,9 @@ CellularError_t Cellular_CreateSocket (CellularHandle_t         cellularHandle,
                                        socketProtocol,
                                        pSocketHandle);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -208,9 +240,11 @@ CellularError_t Cellular_SocketSetSockOpt (CellularHandle_t            cellularH
                                            uint32_t                    optionValueLength)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonSocketSetSockOpt(cellularHandle,
                                            socketHandle,
@@ -219,7 +253,9 @@ CellularError_t Cellular_SocketSetSockOpt (CellularHandle_t            cellularH
                                            pOptionValue,
                                            optionValueLength);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -233,16 +269,20 @@ CellularError_t Cellular_SocketRegisterDataReadyCallback (CellularHandle_t      
                                                           void                            * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonSocketRegisterDataReadyCallback(cellularHandle,
                                                           socketHandle,
                                                           dataReadyCallback,
                                                           pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -256,16 +296,20 @@ CellularError_t Cellular_SocketRegisterSocketOpenCallback (CellularHandle_t     
                                                            void                       * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonSocketRegisterSocketOpenCallback(cellularHandle,
                                                            socketHandle,
                                                            socketOpenCallback,
                                                            pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -279,13 +323,17 @@ CellularError_t Cellular_SocketRegisterClosedCallback (CellularHandle_t         
                                                        void                         * pCallbackContext)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonSocketRegisterClosedCallback(cellularHandle, socketHandle, closedCallback, pCallbackContext);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -296,13 +344,17 @@ CellularError_t Cellular_SocketRegisterClosedCallback (CellularHandle_t         
 CellularError_t Cellular_RfOn (CellularHandle_t cellularHandle)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonRfOn(cellularHandle);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -313,13 +365,17 @@ CellularError_t Cellular_RfOn (CellularHandle_t cellularHandle)
 CellularError_t Cellular_RfOff (CellularHandle_t cellularHandle)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonRfOff(cellularHandle);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -333,13 +389,17 @@ CellularError_t Cellular_GetIPAddress (CellularHandle_t cellularHandle,
                                        uint32_t         bufferLength)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonGetIPAddress(cellularHandle, contextId, pBuffer, bufferLength);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -350,13 +410,17 @@ CellularError_t Cellular_GetIPAddress (CellularHandle_t cellularHandle,
 CellularError_t Cellular_GetModemInfo (CellularHandle_t cellularHandle, CellularModemInfo_t * pModemInfo)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonGetModemInfo(cellularHandle, pModemInfo);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -367,13 +431,17 @@ CellularError_t Cellular_GetModemInfo (CellularHandle_t cellularHandle, Cellular
 CellularError_t Cellular_GetRegisteredNetwork (CellularHandle_t cellularHandle, CellularPlmnInfo_t * pNetworkInfo)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonGetRegisteredNetwork(cellularHandle, pNetworkInfo);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -384,13 +452,17 @@ CellularError_t Cellular_GetRegisteredNetwork (CellularHandle_t cellularHandle, 
 CellularError_t Cellular_GetNetworkTime (CellularHandle_t cellularHandle, CellularTime_t * pNetworkTime)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonGetNetworkTime(cellularHandle, pNetworkTime);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -401,13 +473,17 @@ CellularError_t Cellular_GetNetworkTime (CellularHandle_t cellularHandle, Cellul
 CellularError_t Cellular_GetPsmSettings (CellularHandle_t cellularHandle, CellularPsmSettings_t * pPsmSettings)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonGetPsmSettings(cellularHandle, pPsmSettings);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -419,13 +495,17 @@ CellularError_t Cellular_GetEidrxSettings (CellularHandle_t              cellula
                                            CellularEidrxSettingsList_t * pEidrxSettingsList)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonGetEidrxSettings(cellularHandle, pEidrxSettingsList);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
@@ -437,13 +517,17 @@ CellularError_t Cellular_SetEidrxSettings(CellularHandle_t cellularHandle,
                                           const CellularEidrxSettings_t * pEidrxSettings)
 {
     CellularError_t ret;
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t      semaphore_ret = 0;
 
     semaphore_ret = aws_cellular_rts_deactive((CellularContext_t *)cellularHandle);
+#endif
 
     ret = Cellular_CommonSetEidrxSettings(cellularHandle, pEidrxSettings);
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     aws_cellular_rts_active((CellularContext_t *)cellularHandle, semaphore_ret);
+#endif
 
     return ret;
 }
