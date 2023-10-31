@@ -3356,7 +3356,7 @@ CellularError_t Cellular_SetPdnConfig (CellularHandle_t            cellularHandl
                 (pPdnConfig->pdnContextType == CELLULAR_PDN_CONTEXT_IPV6))
         {
             /* IPv6 address format setting */
-            atReqSetPdn.pAtCmd = "AT+CGPIAF=1,0,1,0";
+            (void)snprintf(cmdBuf, sizeof(cmdBuf), "AT+CGPIAF=1,0,1,0");
             pktStatus = _Cellular_AtcmdRequestWithCallback(pContext, atReqSetPdn);
         }
 
