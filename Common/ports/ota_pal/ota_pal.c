@@ -144,9 +144,11 @@ int16_t otaPal_WriteBlock( OtaFileContext_t * const pFileContext,
                            uint8_t * const pData,
                            uint32_t ulBlockSize )
 {
+    e_fwup_err_t err;
     LogDebug( ( "otaPal_WriteBlock is called." ) );
 
-    if (FWUP_ERR_FLASH == R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+512, ulBlockSize))
+    err = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+512, ulBlockSize);
+    if ((FWUP_SUCCESS != err) && (FWUP_PROGRESS != err))
     {
         return 0;
     }
