@@ -60,13 +60,13 @@
  *
  * @todo If you are using Wi-Fi, set this to your network name.
  */
-#define clientcredentialWIFI_SSID                    "ASUS_10"
+#define clientcredentialWIFI_SSID                    ""
 
 /*
  * @brief Password needed to join Wi-Fi network.
  * @todo If you are using WPA, set this to your network password.
  */
-#define clientcredentialWIFI_PASSWORD                "energy_3754"
+#define clientcredentialWIFI_PASSWORD                ""
 
 /*
  * @brief Wi-Fi network security type.
