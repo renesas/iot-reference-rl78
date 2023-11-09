@@ -21,10 +21,10 @@
  * Description  : Functions for the Firmware update module.
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version Description
- *         : 20.07.2023 2.00    First Release
- *         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
- *                              Fixed log messages.
+ *         : 31.03.2023 2.00    First Release
+ *         : 20.11.2023 2.01    Fixed log messages.
  *                              Add parameter checking.
+ *                              Added arguments to R_FWUP_WriteImageProgram API.
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -141,11 +141,8 @@ e_fwup_err_t r_fwup_wrap_flash_erase(uint32_t addr, uint32_t num_blocks)
     /**** Start user code ****/
 #if defined(__RX)
     uint32_t blk_addr;
-#if (FLASH_TYPE == FLASH_TYPE_1)
-    blk_addr = addr;
-#else
-    blk_addr = addr + (FWUP_CFG_CF_BLK_SIZE * (num_blocks - 1));
-#endif
+
+    blk_addr = (addr + (FWUP_CFG_CF_BLK_SIZE * num_blocks) - 1) & 0xffffc000;
     r_fwup_wrap_disable_interrupt();
     flash_err_t ret = R_FLASH_Erase((flash_block_address_t )blk_addr, num_blocks);
     r_fwup_wrap_enable_interrupt();
@@ -228,7 +225,6 @@ e_fwup_err_t r_fwup_wrap_flash_write(uint32_t src_addr, uint32_t dest_addr, uint
     {
         return (FWUP_ERR_FLASH);
     }
-
     return (FWUP_SUCCESS);
 #endif /* defined(__RX) */
     /**** End user code   ****/
@@ -304,7 +300,6 @@ e_fwup_err_t r_fwup_wrap_ext_flash_open(void)
 {
     /**** Start user code ****/
 #if defined(__RX)
-    return (FWUP_SUCCESS);
 #else
     R_QSPI_FLASH_Init_Driver();
     if (0 != R_QSPI_FLASH_Set_4byte_Address_Mode(FLASH_DEV0))
@@ -349,7 +344,6 @@ e_fwup_err_t r_fwup_wrap_ext_flash_erase(uint32_t addr, uint32_t num_sectors)
 {
     /**** Start user code ****/
 #if defined(__RX)
-    return (FWUP_SUCCESS);
 #else
     int32_t  ret;
     uint32_t sector_addr;
@@ -389,7 +383,6 @@ e_fwup_err_t r_fwup_wrap_ext_flash_write(uint32_t src_addr, uint32_t dest_addr, 
 {
     /**** Start user code ****/
 #if defined(__RX)
-    return (FWUP_SUCCESS);
 #else
     r_qspi_flash_info_t flash_info_w;
     int32_t ret;
@@ -427,7 +420,6 @@ e_fwup_err_t r_fwup_wrap_ext_flash_read(uint32_t buf_addr, uint32_t src_addr, ui
 {
     /**** Start user code ****/
 #if defined(__RX)
-    return (FWUP_SUCCESS);
 #else
     r_qspi_flash_info_t flash_info_r;
 

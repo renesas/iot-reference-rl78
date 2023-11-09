@@ -21,10 +21,10 @@
  * Description  : Functions for the Firmware update module.
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version Description
- *         : 20.07.2023 2.00    First Release
- *         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
- *                              Fixed log messages.
+ *         : 31.03.2023 2.00    First Release
+ *         : 20.11.2023 2.01    Fixed log messages.
  *                              Add parameter checking.
+ *                              Added arguments to R_FWUP_WriteImageProgram API.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
@@ -85,18 +85,22 @@ static e_fwup_err_t write_image_prog (e_fwup_area_t area, uint8_t *p_buf, uint32
 static e_fwup_err_t write_image_offset_prog (e_fwup_area_t area, uint8_t *p_buf, uint32_t offset, uint32_t buf_size);
 static e_fwup_err_t erase_area (e_fwup_area_t area);
 static e_fwup_err_t write_area (e_fwup_area_t area, uint8_t **p_buf, uint32_t *p_bufsz, uint32_t offset, uint32_t size);
-static e_fwup_err_t write_area_offset (e_fwup_area_t area, uint8_t **p_buf, uint32_t *p_bufsz, uint32_t offset, uint32_t size, uint32_t *write_offset, uint32_t *write_size);
+static e_fwup_err_t write_area_offset (e_fwup_area_t area, uint8_t **p_buf, uint32_t *p_bufsz, uint32_t offset, uint32_t size, uint32_t *p_write_offset, uint32_t *p_write_size);
 static void read_area (e_fwup_area_t area, uint32_t * p_buf, uint32_t area_offset, uint32_t size);
 static e_fwup_err_t copy_to_main_area (void);
 static int32_t sha256_update (e_fwup_area_t area, void * vp_ctx, uint32_t area_offset, uint32_t datalen);
 static uint8_t * hash_sha256 (e_fwup_area_t area);
-static uint32_t get_flash_writeAdress(e_fwup_area_t area, uint32_t buf_sz_tmp, uint32_t rsu_offset, uint32_t *write_offset, uint32_t *write_address, uint32_t *write_size);
+static uint32_t get_flash_write_addr(e_fwup_area_t area, uint32_t buf_sz_tmp, uint32_t rsu_offset, uint32_t *p_write_offset, uint32_t *p_write_address, uint32_t *p_write_size);
 
 /*
  * variables
  */
 /* Magic code */
+#if (FWUP_CFG_FWUPV1_COMPATIBLE == 0)
 S_C_CH_FAR BOOT_LOADER_MAGIC_CODE[] = "RELFWV2";
+#else
+S_C_CH_FAR BOOT_LOADER_MAGIC_CODE[] = "Renesas";
+#endif
 
 #if (FWUP_CFG_PRINTF_DISABLE == 0)
 /* for debug logging */
@@ -118,6 +122,9 @@ static uint8_t s_img_header_write_flg = 0;
 static uint8_t s_prg_list_write_flg = 0;
 static uint8_t s_img_prog_write_flg = 0;
 
+/* counter */
+static uint32_t s_wrote_counter = 0;
+
 /*
  * API
  */
@@ -135,6 +142,14 @@ e_fwup_err_t R_FWUP_Open(void)
     {
         return (FWUP_ERR_FLASH);
     }
+
+    s_image_size = 0;
+    s_write_current_size = 0;
+    s_initial_rcv_flg = 0;
+    s_img_header_write_flg = 0;
+    s_prg_list_write_flg = 0;
+    s_img_prog_write_flg = 0;
+    s_wrote_counter = 0;
 
 #if (FWUP_CFG_UPDATE_MODE == FWUP_SINGLE_BANK_W_BUFFER_EXT)
     /* Open external flash */
@@ -274,25 +289,6 @@ e_fwup_err_t R_FWUP_WriteImageHeader(e_fwup_area_t area, uint8_t FWUP_FAR *p_sig
  End of function R_FWUP_WriteImageHeader
  *********************************************************************************************************************/
 
-#ifndef FWUP_OFFSET
-/**********************************************************************************************************************
- * Function Name: R_FWUP_WriteImageProgram
- * Description  : write image program
- * Arguments    : area           : FWUP_AREA_MAIN/FWUP_AREA_BUFFER
- *                p_buf          : Image program
- *                buf_size       : buffer size
- * Return Value : FWUP_SUCCESS   : updated image program
- *                FWUP_PROGRESS  : need more image program data
- *                FWUP_ERR_FLASH : flash write error
- *********************************************************************************************************************/
-e_fwup_err_t R_FWUP_WriteImageProgram(e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_size)
-{
-    return (write_image_prog(area, p_buf, buf_size));
-}
-/**********************************************************************************************************************
- End of function R_FWUP_WriteImageProgram
- *********************************************************************************************************************/
-#else
 /**********************************************************************************************************************
  * Function Name: R_FWUP_WriteImageProgram
  * Description  : write image program
@@ -317,7 +313,6 @@ e_fwup_err_t R_FWUP_WriteImageProgram(e_fwup_area_t area, uint8_t *p_buf, uint32
 /**********************************************************************************************************************
  End of function R_FWUP_WriteImageProgram
  *********************************************************************************************************************/
-#endif
 
 /**********************************************************************************************************************
  * Function Name: R_FWUP_WriteImage
@@ -325,9 +320,9 @@ e_fwup_err_t R_FWUP_WriteImageProgram(e_fwup_area_t area, uint8_t *p_buf, uint32
  * Arguments    : area             : FWUP_AREA_MAIN/FWUP_AREA_BUFFER
  *                p_buf            : User program data
  *                buf_size         : buffer size
- * Return Value : FWUP_SUCCESS   : updated image file
- *                FWUP_PROGRESS  : need more image file data
- *                FWUP_ERR_FLASH : flash write error
+ * Return Value : FWUP_SUCCESS     : updated image file
+ *                FWUP_PROGRESS    : need more image file data
+ *                FWUP_ERR_FLASH   : flash write error
  *                FWUP_ERR_FAILURE : invalid parameter
  *********************************************************************************************************************/
 e_fwup_err_t R_FWUP_WriteImage(e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_size)
@@ -381,7 +376,7 @@ e_fwup_err_t R_FWUP_WriteImage(e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_
 /**********************************************************************************************************************
  * Function Name: R_FWUP_VerifyImage
  * Description  : verify image program
- * Arguments    : area            : FWUP_AREA_MAIN/FWUP_AREA_BUFFER
+ * Arguments    : area             : FWUP_AREA_MAIN/FWUP_AREA_BUFFER
  * Return Value : FWUP_SUCCESS     : success
  *                FWUP_ERR_VERIFY  : validation failed
  *                FWUP_ERR_FAILURE : invalid parameter
@@ -426,8 +421,12 @@ e_fwup_err_t R_FWUP_VerifyImage(e_fwup_area_t area)
 e_fwup_err_t R_FWUP_ActivateImage(void)
 {
 #if (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK)
+ #if (FWUP_CFG_FWUPV1_COMPATIBLE == 0)
     /* Bank swap. */
     return (r_fwup_wrap_bank_swap());
+ #else
+    return (FWUP_SUCCESS);
+ #endif /* (FWUP_CFG_FWUPV1_COMPATIBLE == 0) */
 #else
  #if (FWUP_CFG_FUNCTION_MODE == FWUP_FUNC_BOOTLOADER)
     /* Copy buffer area to main area. */
@@ -451,7 +450,8 @@ void R_FWUP_ExecImage(void)
 {
     uint32_t vect_addr;
 
-    vect_addr = *(uint32_t*)(FWUP_CFG_MAIN_AREA_ADDR_L + (FWUP_CFG_AREA_SIZE - 4U));
+    FWUP_SET_PSW(0);
+    vect_addr = FWUP_CFG_MAIN_AREA_ADDR_L + sizeof(st_fw_ctrlblk_t);
     r_fwup_wrap_disable_interrupt();
     ((void (*)(void))vect_addr)();
 }
@@ -673,6 +673,7 @@ static e_fwup_err_t write_image_prog(e_fwup_area_t area, uint8_t *p_buf, uint32_
     uint32_t buf_sz_tmp = buf_size;
     st_fw_desc_t dc;
     e_fwup_area_t area_tmp = area;
+    e_fwup_area_t area_tmp_bak;
     static uint8_t fw_cnt = 0;
     uint32_t area_offset;
 
@@ -733,6 +734,7 @@ static e_fwup_err_t write_image_prog(e_fwup_area_t area, uint8_t *p_buf, uint32_
         while(1)
         {
             /* Get N, addr, size */
+            area_tmp_bak = area_tmp;
             read_area(area_tmp, (uint32_t *)&dc, sizeof(st_fw_header_t), sizeof(st_fw_desc_t));
             if ((FWUP_CFG_DF_ADDR_L <= dc.fw[fw_cnt].addr) &&
                 (dc.fw[fw_cnt].addr < (FWUP_CFG_DF_ADDR_L + FWUP_DF_NUM_BYTES)))
@@ -770,6 +772,7 @@ static e_fwup_err_t write_image_prog(e_fwup_area_t area, uint8_t *p_buf, uint32_
             {
                 return (FWUP_PROGRESS);
             }
+            area_tmp = area_tmp_bak;
         }
     }
 
@@ -806,6 +809,7 @@ static e_fwup_err_t write_image_offset_prog(e_fwup_area_t area, uint8_t *p_buf, 
     uint32_t buf_sz_tmp = buf_size;
     st_fw_desc_t dc;
     e_fwup_area_t area_tmp = area;
+    e_fwup_area_t area_tmp_bak;
     static uint8_t fw_cnt = 0;
     uint32_t area_offset;
     uint32_t rsu_offset = 0;
@@ -876,16 +880,44 @@ static e_fwup_err_t write_image_offset_prog(e_fwup_area_t area, uint8_t *p_buf, 
     /* write user program */
     if (0 == s_img_prog_write_flg)
     {
+        /* offset < 0x200 */
+        if (offset < sizeof(st_fw_header_t))
+        {
+            return (FWUP_ERR_FAILURE);
+        }
+        /* 0x200 < offset < 0x300 */
+        if ((offset > sizeof(st_fw_header_t)) && (offset < (sizeof(st_fw_header_t) + sizeof(st_fw_desc_t))))
+        {
+            return (FWUP_ERR_FAILURE);
+        }
+        /* The following processing assumes an offset of 0x200 or 0x300 or higher. */
         if (offset != sizeof(st_fw_header_t))
         {
             rsu_offset = offset - sizeof(st_fw_header_t) - sizeof(st_fw_desc_t);
         }
         /* Get N, addr, size */
+        area_tmp_bak = area_tmp;
         read_area(area_tmp, (uint32_t *)&dc, sizeof(st_fw_header_t), sizeof(st_fw_desc_t));
-        fw_cnt = get_flash_writeAdress(area_tmp, buf_sz_tmp, rsu_offset, &write_offset, &write_address, &write_size);
+        fw_cnt = get_flash_write_addr(area_tmp, buf_sz_tmp, rsu_offset, &write_offset, &write_address, &write_size);
         if (fw_cnt < FWUP_IMAGE_BLOCKS)
         {
-            area_offset = get_offset_from_install_area(write_address);
+            if ((FWUP_CFG_DF_ADDR_L <= write_address) &&
+                (write_address < (FWUP_CFG_DF_ADDR_L + FWUP_DF_NUM_BYTES)))
+            {
+                /* DF*/
+                area_offset = write_address - FWUP_CFG_DF_ADDR_L;
+                area_tmp = FWUP_AREA_DATA_FLASH;
+            }
+            else
+            {
+                /* CF : Flash address -> install area offset */
+                area_offset = get_offset_from_install_area(write_address);
+#if (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK)
+                area_tmp = FWUP_AREA_BUFFER;
+#else
+                area_tmp = area;
+#endif /* (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK) */
+            }
             ret_val = write_area_offset(area_tmp, &p_buf_tmp, &buf_sz_tmp, area_offset, dc.fw[fw_cnt].size, &write_offset, &write_size);
             if (FWUP_ERR_FLASH == ret_val)
             {
@@ -911,17 +943,15 @@ static e_fwup_err_t write_image_offset_prog(e_fwup_area_t area, uint8_t *p_buf, 
                         return (FWUP_PROGRESS);
                     }
                 }
-            }
-            if (FWUP_SUCCESS == ret_val)
-            {
-                /* Next part */
-                if (++fw_cnt >= dc.n)
+                else
                 {
-                    if ((0 < buf_sz_tmp) || (s_image_size < s_write_current_size))
+                    /* Next part */
+                    if (++fw_cnt >= dc.n)
                     {
                         return (FWUP_ERR_FAILURE);
                     }
                 }
+                area_tmp = area_tmp_bak;
             }
         }
         else
@@ -932,6 +962,7 @@ static e_fwup_err_t write_image_offset_prog(e_fwup_area_t area, uint8_t *p_buf, 
         while(1)
         {
             /* Get N, addr, size */
+            area_tmp_bak = area_tmp;
             read_area(area_tmp, (uint32_t *)&dc, sizeof(st_fw_header_t), sizeof(st_fw_desc_t));
             if ((FWUP_CFG_DF_ADDR_L <= dc.fw[fw_cnt].addr) &&
                 (dc.fw[fw_cnt].addr < (FWUP_CFG_DF_ADDR_L + FWUP_DF_NUM_BYTES)))
@@ -976,16 +1007,20 @@ static e_fwup_err_t write_image_offset_prog(e_fwup_area_t area, uint8_t *p_buf, 
                     }
                     break;
                 }
+                else
+                {
+                    /* Next part */
+                    if (++fw_cnt >= dc.n)
+                    {
+                        return (FWUP_ERR_FAILURE);
+                    }
+                }
             }
             else
             {
                 return (ret_val);
             }
-            /* Next part */
-            if (++fw_cnt >= dc.n)
-            {
-                return (FWUP_ERR_FAILURE);
-            }
+            area_tmp = area_tmp_bak;
         }
     }
 
@@ -1053,7 +1088,6 @@ static e_fwup_err_t write_area(e_fwup_area_t area, uint8_t **p_buf,
 {
     uint32_t start_addr = FWUP_CFG_MAIN_AREA_ADDR_L + offset;
     e_fwup_err_t (*pfunc)(uint32_t, uint32_t, uint32_t) = r_fwup_wrap_flash_write;
-    static uint32_t s_wrote_counter = 0;
     uint32_t write_size_tmp;
 
     if (FWUP_AREA_BUFFER == area)
@@ -1107,11 +1141,11 @@ static e_fwup_err_t write_area(e_fwup_area_t area, uint8_t **p_buf,
 /**********************************************************************************************************************
 * Function Name: read_area
 * Description  : read data from main area / buffer area.
-* Arguments    : area      : FWUP_AREA_MAIN/FWUP_AREA_BUFFER/FWUP_AREA_DATA_FLASH
+* Arguments    : area        : FWUP_AREA_MAIN/FWUP_AREA_BUFFER/FWUP_AREA_DATA_FLASH
 *                p_buf       : buffer pointer
 *                area_offset : FWUP_AREA_MAIN/FWUP_AREA_BUFFER : offset in area.
-*                          : FWUP_AREA_DATA_FLASH : flash address
-*                size      : read size
+*                            : FWUP_AREA_DATA_FLASH : flash address
+*                size        : read size
 * Return Value : none
 **********************************************************************************************************************/
 static void read_area(e_fwup_area_t area, uint32_t * p_buf, uint32_t area_offset, uint32_t size)
@@ -1138,7 +1172,6 @@ static void read_area(e_fwup_area_t area, uint32_t * p_buf, uint32_t area_offset
 /**********************************************************************************************************************
  End of function read_area
  *********************************************************************************************************************/
-
 
 /**********************************************************************************************************************
  * Function Name: copy_to_main_area
@@ -1269,18 +1302,18 @@ static uint8_t * hash_sha256(e_fwup_area_t area)
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
-* Function Name: get_flash_writeAdress
+* Function Name: get_flash_write_addr
 * Description  : Get flash write start address, offset from write start address, write size, descriptor index from rsu_offset.
-* Arguments    : area              : FWUP_AREA_MAIN/FWUP_AREA_BUFFER/FWUP_AREA_DATA_FLASH
-*                p_buf:(i/o)       : (i)image data's pointer ,  (o)left buffer
-*                buf_sz_tmp        :   buffer size
-*                rsu_offset        : Offset from the start address of the user program following Descriptor.
-*                write_offset:(o)  : Indicates the offset from Start Address[X].
-*                write_address:(o) : write start address.
-*                write_size:(o)    : Write size is Data Size[X] minus write_offset.
-* Return Value : dc_index          : Descriptor index
+* Arguments    : area                : FWUP_AREA_MAIN/FWUP_AREA_BUFFER/FWUP_AREA_DATA_FLASH
+*                p_buf:(i/o)         : (i)image data's pointer ,  (o)left buffer
+*                buf_sz_tmp          :   buffer size
+*                rsu_offset          : Offset from the start address of the user program following Descriptor.
+*                p_write_offset:(o)  : Indicates the offset from Start Address[X].
+*                p_write_address:(o) : write start address.
+*                p_write_size:(o)    : Write size is Data Size[X] minus write_offset.
+* Return Value : dc_index            : Descriptor index
 **********************************************************************************************************************/
-static uint32_t get_flash_writeAdress(e_fwup_area_t area, uint32_t buf_sz_tmp, uint32_t rsu_offset, uint32_t *write_offset, uint32_t *write_address, uint32_t *write_size)
+static uint32_t get_flash_write_addr(e_fwup_area_t area, uint32_t buf_sz_tmp, uint32_t rsu_offset, uint32_t *p_write_offset, uint32_t *p_write_address, uint32_t *p_write_size)
 {
     uint32_t dc_index = FWUP_IMAGE_BLOCKS;
     uint32_t rsu_index;
@@ -1296,7 +1329,7 @@ static uint32_t get_flash_writeAdress(e_fwup_area_t area, uint32_t buf_sz_tmp, u
         {
             if ((rsu_index + dc.fw[cnt].size) == rsu_offset)
             {
-                *write_offset = 0;
+                *p_write_offset = 0;
                 if ((cnt + 1) < dc.n)
                 {
                     cnt++;
@@ -1304,17 +1337,17 @@ static uint32_t get_flash_writeAdress(e_fwup_area_t area, uint32_t buf_sz_tmp, u
             }
             else
             {
-                *write_offset = rsu_offset - rsu_index;
+                *p_write_offset = rsu_offset - rsu_index;
             }
-            if (dc.fw[cnt].size > (*write_offset + buf_sz_tmp))
+            if (dc.fw[cnt].size > (*p_write_offset + buf_sz_tmp))
             {
-                *write_size = buf_sz_tmp;
+                *p_write_size = buf_sz_tmp;
             }
             else
             {
-                *write_size = dc.fw[cnt].size - *write_offset;
+                *p_write_size = dc.fw[cnt].size - *p_write_offset;
             }
-            *write_address = dc.fw[cnt].addr + *write_offset;
+            *p_write_address = dc.fw[cnt].addr + *p_write_offset;
             dc_index = cnt;
             break;
         }
@@ -1324,25 +1357,25 @@ static uint32_t get_flash_writeAdress(e_fwup_area_t area, uint32_t buf_sz_tmp, u
 
 }
 /**********************************************************************************************************************
- End of function get_flash_writeAdress
+ End of function get_flash_write_addr
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
  * Function Name: write_area_offset
  * Description  : Write firmware data to designated area.
- * Arguments    : area             : FWUP_AREA_MAIN/FWUP_AREA_BUFFER/FWUP_AREA_DATA_FLASH
- *                p_buf:(i/o)      : (i)image data's pointer ,  (o)left buffer
- *                p_bufsz:(i/o)    : (i)buffer size,            (o)left buffer size
- *                offset           : write offset from install area. (not flash address!!!)
- *                size             : write size
- *                write_offset:(o) : Indicates the offset from Start Address[X].
- *                write_size:(o)   : Write size is Data Size[X] minus write_offset.
- * Return Value : FWUP_SUCCESS     : done     (enough buffer)
- *                FWUP_PROGRESS    : progress (not enough buffer)
- *                FWUP_ERR_FLASH   : flash write error
+ * Arguments    : area               : FWUP_AREA_MAIN/FWUP_AREA_BUFFER/FWUP_AREA_DATA_FLASH
+ *                p_buf:(i/o)        : (i)image data's pointer ,  (o)left buffer
+ *                p_bufsz:(i/o)      : (i)buffer size,            (o)left buffer size
+ *                offset             : write offset from install area. (not flash address!!!)
+ *                size               : write size
+ *                p_write_offset:(o) : Indicates the offset from Start Address[X].
+ *                p_write_size:(o)   : Write size is Data Size[X] minus write_offset.
+ * Return Value : FWUP_SUCCESS       : done     (enough buffer)
+ *                FWUP_PROGRESS      : progress (not enough buffer)
+ *                FWUP_ERR_FLASH     : flash write error
  *********************************************************************************************************************/
 static e_fwup_err_t write_area_offset(e_fwup_area_t area, uint8_t **p_buf,
-                               uint32_t *p_bufsz, uint32_t offset, uint32_t size, uint32_t *write_offset, uint32_t *write_size)
+                               uint32_t *p_bufsz, uint32_t offset, uint32_t size, uint32_t *p_write_offset, uint32_t *p_write_size)
 {
     uint32_t start_addr = FWUP_CFG_MAIN_AREA_ADDR_L + offset;
     e_fwup_err_t (*pfunc)(uint32_t, uint32_t, uint32_t) = r_fwup_wrap_flash_write;
@@ -1362,32 +1395,32 @@ static e_fwup_err_t write_area_offset(e_fwup_area_t area, uint8_t **p_buf,
     }
 
     /* Is buffer enough? */
-    if (size > (*write_offset + (*p_bufsz)))
+    if (size > (*p_write_offset + (*p_bufsz)))
     {
         /* not enough */
-        *write_size = *p_bufsz;
+        *p_write_size = *p_bufsz;
     }
     else
     {
         /* enough */
-        *write_size = size - *write_offset;
+        *p_write_size = size - *p_write_offset;
     }
 
     /* Write firmware */
-    if (FWUP_SUCCESS != pfunc((uint32_t)*p_buf, start_addr, *write_size))
+    if (FWUP_SUCCESS != pfunc((uint32_t)*p_buf, start_addr, *p_write_size))
     {
         return (FWUP_ERR_FLASH);
     }
-    FWUP_LOG_DBG(MSG_WRITE_OK, start_addr, *write_size);
-    s_write_current_size += *write_size;
+    FWUP_LOG_DBG(MSG_WRITE_OK, start_addr, *p_write_size);
+    s_write_current_size += *p_write_size;
 
-    *p_buf += *write_size;
-    *p_bufsz -= *write_size;
-    if (size > *write_offset + *write_size )
+    *p_buf += *p_write_size;
+    *p_bufsz -= *p_write_size;
+    if (size > *p_write_offset + *p_write_size )
     {
         return (FWUP_PROGRESS);
     }
-    *write_offset = 0;
+    *p_write_offset = 0;
     return (FWUP_SUCCESS);
 }
 /**********************************************************************************************************************

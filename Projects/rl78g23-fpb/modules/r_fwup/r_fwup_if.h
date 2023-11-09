@@ -21,10 +21,10 @@
 * Description  : Functions for using Firmware update.
 ***********************************************************************************************************************
 * History : DD.MM.YYYY Version Description
-*         : 20.07.2023 2.00    First Release
-*         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
-*                              Fixed log messages.
+*         : 31.03.2023 2.00    First Release
+*         : 20.11.2023 2.01    Fixed log messages.
 *                              Add parameter checking.
+*                              Added arguments to R_FWUP_WriteImageProgram API.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -112,14 +112,19 @@ Macro definitions
   #endif /* defined(__ICCRL78__) */
 #endif /* defined(__RX) */
 
-#if (BSP_CFG_RTOS_USED == 1)
-#include "FreeRTOS.h"
-#include "iot_logging_task.h"
-#define FWUP_DBG_PRINTF             vLoggingPrintf
+/* PSW */
+#if defined(__RX)
+#define FWUP_SET_PSW                R_BSP_SET_PSW
+#define FWUP_GET_PSW                R_BSP_GET_PSW
 #else
-#define FWUP_DBG_PRINTF             printf
+  #if defined(__ICCRL78__)
+  #define FWUP_SET_PSW              __set_interrupt_state
+  #define FWUP_GET_PSW              __get_interrupt_state
+  #elif defined (__CCRL__)
+  #define FWUP_SET_PSW              __set_psw
+  #define FWUP_GET_PSW              __get_psw
+  #endif
 #endif
-
 /**********************************************************************************************************************
 Typedef definitions
 **********************************************************************************************************************/
@@ -158,12 +163,7 @@ e_fwup_err_t R_FWUP_WriteImageHeader (e_fwup_area_t area,
                                       uint8_t FWUP_FAR *p_sig_type,
                                       uint8_t FWUP_FAR *p_sig,
                                       uint32_t sig_size);
-#define FWUP_OFFSET
-#ifndef FWUP_OFFSET
-e_fwup_err_t R_FWUP_WriteImageProgram (e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_size);
-#else
 e_fwup_err_t R_FWUP_WriteImageProgram (e_fwup_area_t area, uint8_t *p_buf, uint32_t offset, uint32_t buf_size);
-#endif
 e_fwup_err_t R_FWUP_WriteImage (e_fwup_area_t area, uint8_t *p_buf, uint32_t buf_size);
 e_fwup_err_t R_FWUP_VerifyImage (e_fwup_area_t area);
 e_fwup_err_t R_FWUP_ActivateImage (void);

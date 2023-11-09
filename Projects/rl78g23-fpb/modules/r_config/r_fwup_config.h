@@ -21,10 +21,10 @@
 * Description   : Configures the Firmware update module.
 ************************************************************************************************************************
 * History : DD.MM.YYYY Version Description
-*         : 20.07.2023 2.00    First Release
-*         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
-*                              Fixed log messages.
+*         : 31.03.2023 2.00    First Release
+*         : 20.11.2023 2.01    Fixed log messages.
 *                              Add parameter checking.
+*                              Added arguments to R_FWUP_WriteImageProgram API.
 ***********************************************************************************************************************/
 #include "platform.h"
 
@@ -71,6 +71,9 @@ Configuration Options
 #define FWUP_CFG_DF_ADDR_L                          (0xF1000U)      /* DF Start address    */
 #define FWUP_CFG_DF_BLK_SIZE                        (256U)          /* DF Block size       */
 #define FWUP_CFG_DF_NUM_BLKS                        (32U)           /* DF number of blocks */
+
+/* FWUP v1 compatible */
+#define FWUP_CFG_FWUPV1_COMPATIBLE                  (0)             /* 0:Disable, 1:Enable */
 
 /* Select the algorithm of signature verification.
     0 = ECDSA. (default)

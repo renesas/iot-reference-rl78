@@ -19,6 +19,12 @@
 /***********************************************************************************************************************
 * File Name     : r_fwup_config.h
 * Description   : Configures the Firmware update module.
+************************************************************************************************************************
+* History : DD.MM.YYYY Version Description
+*         : 31.03.2023 2.00    First Release
+*         : 20.11.2023 2.01    Fixed log messages.
+*                              Add parameter checking.
+*                              Added arguments to R_FWUP_WriteImageProgram API.
 ***********************************************************************************************************************/
 #include "platform.h"
 
@@ -43,12 +49,13 @@ Configuration Options
 #define FWUP_CFG_FUNCTION_MODE                      (0)
 
 /* Area configuration */
-#define FWUP_CFG_MAIN_AREA_ADDR_L                   (0xFFE00000U)      /* Main area start address     */
-#define FWUP_CFG_BUF_AREA_ADDR_L                    (0xFFF00000U)      /* Buffer area start address   */
-#define FWUP_CFG_AREA_SIZE                          (0xF0000U)         /* Install area size           */
+#define FWUP_CFG_MAIN_AREA_ADDR_L                   (0xFFFC0000U)      /* Main area start address     */
+#define FWUP_CFG_BUF_AREA_ADDR_L                    (0xFFF80000U)      /* Buffer area start address   */
+#define FWUP_CFG_AREA_SIZE                          (0x34000U)         /* Install area size           */
 
 /* Internal flash */
-#define FWUP_CFG_CF_BLK_SIZE                        (0x8000U)          /* Code flash block size       */
+#define FWUP_CFG_CF_BLK_SIZE                        (0x4000U)          /* Code flash block size       */
+#define FWUP_CFG_CF_W_UNIT_SIZE                     (128U)             /* Code flash write unit size  */
 
 /* External flash */
 #define FWUP_CFG_EXT_BUF_AREA_ADDR_L                (0x00000U)         /* External Buffer area Start address */
@@ -57,7 +64,10 @@ Configuration Options
 /* Data flash */
 #define FWUP_CFG_DF_ADDR_L                          (0x00100000)       /* DF Start address    */
 #define FWUP_CFG_DF_BLK_SIZE                        (64U)              /* DF Block size       */
-#define FWUP_CFG_DF_NUM_BLKS                        (512U)             /* DF number of blocks */
+#define FWUP_CFG_DF_NUM_BLKS                        (256U)             /* DF number of blocks */
+
+/* FWUP v1 compatible */
+#define FWUP_CFG_FWUPV1_COMPATIBLE                  (0)                /* 0:Disable, 1:Enable */
 
 /* Select the algorithm of signature verification.
     0 = ECDSA. (default)

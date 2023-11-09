@@ -21,10 +21,10 @@
  * Description  : Functions for using Firmware update.
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version Description
- *         : 20.07.2023 2.00    First Release
- *         : 31.08.2023 2.01    Added support RX660, RX66T, RX671, RX72N
- *                              Fixed log messages.
+ *         : 31.03.2023 2.00    First Release
+ *         : 20.11.2023 2.01    Fixed log messages.
  *                              Add parameter checking.
+ *                              Added arguments to R_FWUP_WriteImageProgram API.
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -41,14 +41,22 @@
 /**********************************************************************************************************************
  Macro definitions
  *********************************************************************************************************************/
+#if (BSP_CFG_RTOS_USED == 1)
+#include "FreeRTOS.h"
+#include "iot_logging_task.h"
+#define FWUP_PRINTF                 vLoggingPrintf
+#else
+#define FWUP_PRINTF                 printf
+#endif
+
 #if (FWUP_CFG_PRINTF_DISABLE == 1)
 #define FWUP_LOG_ERR(...)
 #define FWUP_LOG_INFO(...)
 #define FWUP_LOG_DBG(...)
 #else
-#define FWUP_LOG_ERR                FWUP_DBG_PRINTF
-#define FWUP_LOG_INFO               FWUP_DBG_PRINTF
-#define FWUP_LOG_DBG                FWUP_DBG_PRINTF
+#define FWUP_LOG_ERR                FWUP_PRINTF
+#define FWUP_LOG_INFO               FWUP_PRINTF
+#define FWUP_LOG_DBG                FWUP_PRINTF
 #endif /* (FWUP_CFG_PRINTF_DISABLE == 1) */
 
 
