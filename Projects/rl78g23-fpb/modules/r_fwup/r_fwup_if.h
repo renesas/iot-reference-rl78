@@ -112,19 +112,6 @@ Macro definitions
   #endif /* defined(__ICCRL78__) */
 #endif /* defined(__RX) */
 
-/* PSW */
-#if defined(__RX)
-#define FWUP_SET_PSW                R_BSP_SET_PSW
-#define FWUP_GET_PSW                R_BSP_GET_PSW
-#else
-  #if defined(__ICCRL78__)
-  #define FWUP_SET_PSW              __set_interrupt_state
-  #define FWUP_GET_PSW              __get_interrupt_state
-  #elif defined (__CCRL__)
-  #define FWUP_SET_PSW              __set_psw
-  #define FWUP_GET_PSW              __get_psw
-  #endif
-#endif
 /**********************************************************************************************************************
 Typedef definitions
 **********************************************************************************************************************/

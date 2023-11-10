@@ -450,7 +450,6 @@ void R_FWUP_ExecImage(void)
 {
     uint32_t vect_addr;
 
-    FWUP_SET_PSW(0);
     vect_addr = FWUP_CFG_MAIN_AREA_ADDR_L + sizeof(st_fw_ctrlblk_t);
     r_fwup_wrap_disable_interrupt();
     ((void (*)(void))vect_addr)();
