@@ -47,12 +47,14 @@
 #define REG_STMK            (STMK1)
 #define REG_TXD             (TXD1)
 #define UART_START_FUNC     (R_Config_UART1_Start)
+#define UART_STOP_FUNC      (R_Config_UART1_Stop)
 #endif
 #if (USE_UART_CH == 2)
 #define REG_SSR             (SSR10)
 #define REG_STMK            (STMK2)
 #define REG_TXD             (TXD2)
 #define UART_START_FUNC     (R_Config_UART2_Start)
+#define UART_STOP_FUNC      (R_Config_UART2_Stop)
 #endif
 
 /**********************************************************************************************************************

@@ -221,6 +221,7 @@ static void open_boot_loader(void)
 **********************************************************************************************************************/
 static void close_boot_loader(void)
 {
+    UART_STOP_FUNC();
     R_FWUP_Close();
     R_FWUP_SoftwareDelay(50, FWUP_DELAY_MILLISECS);
 }
