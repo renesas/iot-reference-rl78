@@ -131,6 +131,7 @@
  *
  * #define MQTT_CLIENT_CERTIFICATE NULL
  */
+#ifdef RL78_DBG
 #define MQTT_CLIENT_CERTIFICATE \
 "-----BEGIN CERTIFICATE-----\n"\
 "MIIDWTCCAkGgAwIBAgIUFeYR3JSsJbTOS7huEq++YBGgwtowDQYJKoZIhvcNAQEL\n"\
@@ -152,7 +153,9 @@
 "ZzOIZ0OdfnngY1eCT5SD/+MXfsxOYd3OqdMUqr74o+LZgz4TZ6hijN+0ujwG37W6\n"\
 "7qHumsC6fsEapoptgcfEpdERl4c9hJR45jHamDVhxZjitQD4klLA0gqTlBNL\n"\
 "-----END CERTIFICATE-----\n"
-
+#else
+#define MQTT_CLIENT_CERTIFICATE "PLACE_HOLDER"
+#endif
 
 	/**
  * @brief Client private key to connect to MQTT server.
@@ -163,6 +166,7 @@
 	 *
 	 * #define MQTT_CLIENT_PRIVATE_KEY  NULL
 	 */
+#ifdef RL78_DBG
 #define MQTT_CLIENT_PRIVATE_KEY  \
 "-----BEGIN RSA PRIVATE KEY-----\n"\
 "MIIEowIBAAKCAQEA3Fb7O7jQW4lgHmPE3AInUTWUCaR7kWeWHubEk9YbNf3xwxdg\n"\
@@ -191,13 +195,20 @@
 "fY9Dal2cBdQBr52idT7h828kILHI7riORQQ6bqk19Q4vwb0V2eMeQTt5B4XzhsW/\n"\
 "s/OlVUiygf0RgeoMVx/3GzZPfmTrB0cQ8XZ7mxCd2dgY9UXQ/oja\n"\
 "-----END RSA PRIVATE KEY-----\n"
+#else
+#define MQTT_CLIENT_PRIVATE_KEY "PLACE_HOLDER"
+#endif
 
 /**
  * @brief The IoT Thing name for the device for OTA test and MQTT test.
  *
  * #define IOT_THING_NAME  "PLACE_HOLDER"
  */
+#ifdef RL78_DBG
 #define IOT_THING_NAME                                   "rx-ota-firm-things-rx65n-rsk"
+#else
+#define IOT_THING_NAME "PLACE_HOLDER"
+#endif
 
 /**
  * @brief The MQTT client identifier used in MQTT test.  Each client identifier

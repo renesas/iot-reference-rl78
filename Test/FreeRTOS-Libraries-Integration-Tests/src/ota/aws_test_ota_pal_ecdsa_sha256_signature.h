@@ -44,6 +44,19 @@ static const int ucInvalidSignatureLength = 70;
 /**
  * @brief Valid signature matching the test block in the OTA PAL tests.
  */
+#ifndef RENESAS_IDT
+static const uint8_t ucValidSignature[] =
+{
+    0x30, 0x44,
+    0x02, 0x20,
+    0x66, 0x53, 0x9B, 0x15, 0x1E, 0x3D, 0xCD, 0x3E, 0x61, 0xBE, 0x32, 0x71, 0x30, 0xB8, 0x67, 0x6A,
+    0xBC, 0x07, 0xD4, 0x44, 0xC4, 0x8C, 0xDC, 0xB5, 0x87, 0xE3, 0xBE, 0x02, 0x6B, 0x17, 0x35, 0xFA,
+    0x02, 0x20,
+    0x31, 0x9C, 0x3E, 0x34, 0x21, 0x88, 0x19, 0x22, 0xBF, 0xEC, 0x58, 0x8C, 0x70, 0x8C, 0x08, 0x09,
+    0x99, 0x16, 0x91, 0xA9, 0x8B, 0x9D, 0xCE, 0x67, 0xA6, 0xA9, 0x87, 0x27, 0x00, 0xB8, 0xFC, 0x0C
+};
+static const int ucValidSignatureLength = 70;
+#else
 static const uint8_t ucValidSignature[] =
 {
     0x30, 0x44, 0x02, 0x20, 0x15, 0x6a, 0x68, 0x98, 0xf0, 0x4e, 0x1e, 0x12,
@@ -54,7 +67,15 @@ static const uint8_t ucValidSignature[] =
     0x17, 0x05, 0x47, 0xb2, 0xf6, 0x84, 0xd5, 0x68, 0x3e, 0x36
 };
 static const int ucValidSignatureLength = 70;
+#endif
 
+#ifndef RENESAS_IDT
+#define OTA_PAL_CODE_SIGNING_CERTIFICATE                             \
+"-----BEGIN PUBLIC KEY-----\n"                                       \
+"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKwbEshKaHHhtxmojJidJ/GX+1S/e\n" \
+"5uwH1jMq32opLTX6vfckKXG4/WvB9IqZB99O6BQ4wWj2qfwWrV9YXVytSA==\n"     \
+"-----END PUBLIC KEY-----\n"
+#else
 #define OTA_PAL_CODE_SIGNING_CERTIFICATE                             \
     "-----BEGIN CERTIFICATE-----\n"                                      \
     "MIIBXDCCAQOgAwIBAgIJAPMhJT8l0C6AMAoGCCqGSM49BAMCMCExHzAdBgNVBAMM\n" \
@@ -66,4 +87,6 @@ static const int ucValidSignatureLength = 70;
     "83Oq8sOXhSyJCWAN63gc4vp9//RFCXh/hUXPYcTWAiBgmQ5JV2MZH01Upi2lMflN\n" \
     "YLbC+lYscwcSlB2tECUbJA==\n"                                         \
     "-----END CERTIFICATE-----\n"
+#endif
+
 #endif /* ifndef AWS_TEST_PAL_ECDSA_SHA256_SIGNATURE_H_ */
