@@ -52,7 +52,7 @@
 #endif
 
 #ifndef LIBRARY_LOG_LEVEL
-#define LIBRARY_LOG_LEVEL    LOG_NONE
+#define LIBRARY_LOG_LEVEL    LOG_INFO
 #endif
 
 #include "iot_logging_task.h"

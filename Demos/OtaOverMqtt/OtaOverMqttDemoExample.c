@@ -1404,11 +1404,7 @@ void vStartOtaDemo( void )
                  "OTA Demo Task",          /* Text name for the task - only used for debugging. */
                  democonfigDEMO_STACKSIZE, /* Size of stack (in words, not bytes) to allocate for the task. */
                  NULL,                     /* Optional - task parameter - not used in this case. */
-#ifndef TOMO
                  tskIDLE_PRIORITY,         /* Task priority, must be between 0 and configMAX_PRIORITIES - 1. */
-#else
-                 tskIDLE_PRIORITY + 1,     /* Task priority, must be between 0 and configMAX_PRIORITIES - 1. */
-#endif
                  NULL );                   /* Optional - used to pass out a handle to the created task. */
 }
 
