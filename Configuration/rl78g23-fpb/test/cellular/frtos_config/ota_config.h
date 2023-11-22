@@ -55,7 +55,6 @@
 #endif
 
 #include "logging_stack.h"
-#include "ota_demo_config.h"
 /************ End of logging configuration ****************/
 
 /**
@@ -181,6 +180,21 @@
  */
 
 #define configOTA_PRIMARY_DATA_PROTOCOL    ( OTA_DATA_OVER_MQTT )
+
+/**
+ * @file ota_config_defaults.h
+ * @brief This represents the default values for the configuration macros
+ * for the OTA library.
+ *
+ * @note This file SHOULD NOT be modified. If custom values are needed for
+ * any configuration macro, an ota_config.h file should be provided to
+ * the OTA library to override the default values defined in this file.
+ * To use the custom config file, the OTA_DO_NOT_USE_CUSTOM_CONFIG preprocessor
+ * macro SHOULD NOT be set.
+ */
+
+#ifndef OTA_CONFIG_DEFAULTS_H
+#define OTA_CONFIG_DEFAULTS_H
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
@@ -539,4 +553,5 @@
 #endif
 /* *INDENT-ON* */
 
+#endif /* ifndef OTA_CONFIG_DEFAULTS_H */
 #endif /* _OTA_CONFIG_H */

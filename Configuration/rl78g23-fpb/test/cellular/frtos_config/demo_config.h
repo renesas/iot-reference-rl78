@@ -48,11 +48,11 @@
 
 /* Logging configuration for the Demo. */
 #ifndef LIBRARY_LOG_NAME
-#define LIBRARY_LOG_NAME    "MQTTDemo"
+#define LIBRARY_LOG_NAME    "OTADemo"
 #endif
 
 #ifndef LIBRARY_LOG_LEVEL
-#define LIBRARY_LOG_LEVEL    LOG_NONE
+#define LIBRARY_LOG_LEVEL    LOG_INFO
 #endif
 
 #include "iot_logging_task.h"
@@ -244,8 +244,6 @@
 #include "core_mqtt.h" /* Include coreMQTT header for MQTT_LIBRARY_VERSION macro. */
 #define democonfigMQTT_LIB    "core-mqtt@"MQTT_LIBRARY_VERSION
 
-#define democonfigDISABLE_SNI       ( pdFALSE )
-
 /**
  * @brief ALPN (Application-Layer Protocol Negotiation) protocol name for AWS IoT MQTT.
  *
@@ -316,5 +314,80 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 1 )
+#define appmainPROVISIONING_MODE                  ( 0 )
+
+/**
+ * @brief Certificate used for validating code signing signatures in the OTA PAL.
+ */
+#ifndef otapalconfigCODE_SIGNING_CERTIFICATE
+    #define otapalconfigCODE_SIGNING_CERTIFICATE    "Insert code signing certificate..."
+#endif
+
+/**
+ * @brief Major version of the firmware.
+ *
+ * This is used in the OTA demo to set the appFirmwareVersion variable that is
+ * declared in the ota_appversion32.h file in the OTA library.
+ */
+#ifndef APP_VERSION_MAJOR
+    #define APP_VERSION_MAJOR    0
+#endif
+
+/**
+ * @brief Minor version of the firmware.
+ *
+ * This is used in the OTA demo to set the appFirmwareVersion variable that is
+ * declared in the ota_appversion32.h file in the OTA library.
+ */
+#ifndef APP_VERSION_MINOR
+    #define APP_VERSION_MINOR    9
+#endif
+
+/**
+ * @brief Build version of the firmware.
+ *
+ * This is used in the OTA demo to set the appFirmwareVersion variable that is
+ * declared in the ota_appversion32.h file in the OTA library.
+ */
+#ifndef APP_VERSION_BUILD
+    #define APP_VERSION_BUILD    2
+#endif
+
+/**
+ * @brief Server's root CA certificate.
+ *
+ * This certificate is used to identify the AWS IoT server and is publicly
+ * available. Refer to the AWS documentation available in the link below for
+ * information about the Server Root CAs.
+ * https://docs.aws.amazon.com/iot/latest/developerguide/server-authentication.html#server-authentication-certs
+ *
+ * @note The TI C3220 Launchpad board requires that the Root CA have its
+ * certificate self-signed. As mentioned in the above link, the Amazon Root CAs
+ * are cross-signed by the Starfield Root CA. Thus, ONLY the Starfield Root CA
+ * can be used to connect to the ATS endpoints on AWS IoT for the TI board.
+ *
+ * @note This certificate should be PEM-encoded.
+ *
+ * Must include the PEM header and footer:
+ * "-----BEGIN CERTIFICATE-----\n"\
+ * "...base64 data...\n"\
+ * "-----END CERTIFICATE-----\n"
+ *
+ */
+#define democonfigROOT_CA_PEM                   tlsSTARFIELD_ROOT_CERTIFICATE_PEM
+
+#ifdef RL78_DEL
+/**
+ * @brief The length of the queue used to hold commands for the agent.
+ */
+#define MQTT_AGENT_COMMAND_QUEUE_LENGTH             ( 25 )
+
+/**
+ * @brief The number of command structures to allocate in the pool
+ * for the agent.
+ */
+#define MQTT_COMMAND_CONTEXTS_POOL_SIZE             ( 10 )
+
+
+#endif
 #endif /* DEMO_CONFIG_H */

@@ -41,32 +41,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "aws_clientcredential.h"
 #include "demo_config.h"
 #include "mqtt_agent_task.h"
-//#include "cert_profile_helper.h"
 
-extern bool setupCellular( void );
-
-#ifndef TOMO
-//#define ENABLE_OTA_UPDATE_DEMO 1
 #if (ENABLE_OTA_UPDATE_DEMO == 1)
 #define START_DEMO_FUNC   vStartOtaDemo
 #else
 #define START_DEMO_FUNC   vStartSimplePubSubDemo
 #endif
+
 extern void START_DEMO_FUNC( void );
-#else
-extern void vStartSimplePubSubDemo( void  );
-
-#if (ENABLE_OTA_UPDATE_DEMO == 1)
-    extern void vStartOtaDemo( void );
-#endif
-
-#if (ENABLE_FLEET_PROVISIONING_DEMO == 1)
-    extern void vStartFleetProvisioningDemo(void);
-#endif
-#endif /* TOMO */
-
+extern bool setupCellular( void );
 extern void prvQualificationTestTask( void * pvParameters );
-
 
 /**
  * @brief Flag which enables OTA update task in background along with other demo tasks.
@@ -80,6 +64,8 @@ extern void prvQualificationTestTask( void * pvParameters );
  */
 #define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 1600 )
 #define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY )
+
+#define IDLE_TASK_STACK_SIZE                      ( configMINIMAL_STACK_SIZE * 2 )
 
 /**
  * @brief Stack size and priority for MQTT agent task.
@@ -96,29 +82,13 @@ extern void prvQualificationTestTask( void * pvParameters );
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 #endif
 
-#define appmainTEST_TASK_STACK_SIZE               3000//( 1300 )
+#define appmainTEST_TASK_STACK_SIZE               ( 3000 )
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
-
 
 /* Logging Task Defines. */
 #define mainLOGGING_TASK_STACK_SIZE               ( configMINIMAL_STACK_SIZE * 2 )
 #define mainLOGGING_MESSAGE_QUEUE_LENGTH          ( 15 )
-#define LED_PORT                                  (P5_bit.no0)
-
-/* APN settings */
-#define DEMO_SIM_SELECT     (1)
-#if (DEMO_SIM_SELECT == 0)
-#define USIM_APN                                  "plus.acs.jp"
-#define USIM_USER_ID                              "ym"
-#define USIM_PSWD                                 "ym"
-#define USIM_AUTH                                 (2)                  /* 1:PAP 2:CHAP */
-#elif  (DEMO_SIM_SELECT == 1)
-#define USIM_APN                                  "mmtmobile.jp"
-#define USIM_USER_ID                              "nipponsim@dhacorp"
-#define USIM_PSWD                                 "dhacorp"
-#define USIM_AUTH                                 (2)                  /* 1:PAP 2:CHAP */
-#endif
-
+#define LED_PORT                                  ( P5_bit.no0 )
 
 /**
  * @brief Application task startup hook.
@@ -181,18 +151,11 @@ void main_task( void * pvParameters )
         xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );
         vStartMQTTAgent(appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
 
-#ifndef TOMO
         START_DEMO_FUNC();
-#else
-        vStartSimplePubSubDemo();
-        #if (ENABLE_OTA_UPDATE_DEMO == 1)
-        vStartOtaDemo();
-        #endif
-#endif
     }
 #endif
 
-    while(1)
+    while( 1 )
     {
     	LED_PORT ^= 1;
         vTaskDelay(5000);
@@ -232,7 +195,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
      * function then they must be declared static - otherwise they will be allocated on
      * the stack and so not exists after this function exits. */
     static StaticTask_t xIdleTaskTCB;
-    static StackType_t uxIdleTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+    static StackType_t uxIdleTaskStack[ IDLE_TASK_STACK_SIZE ];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle
      * task's state will be stored. */
@@ -244,7 +207,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
     /* Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.
      * Note that, as the array is necessarily of type StackType_t,
      * configMINIMAL_STACK_SIZE is specified in words, not bytes. */
-    *pulIdleTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+    *pulIdleTaskStackSize = IDLE_TASK_STACK_SIZE;
 }
 /*-----------------------------------------------------------*/
 
@@ -335,39 +298,5 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 
 static BaseType_t xPlatformNetworkUp( void )
 {
-#ifndef TOMO
-    return ((BaseType_t)setupCellular());
-#else
-    BaseType_t ret = pdFALSE;
-    uint32_t   ip_addr;
-
-    if (WIFI_SUCCESS != R_RYZ_Open())
-    {
-        goto FUNC_END;
-    }
-
-    if (WIFI_SUCCESS != R_RYZ_ConnectAP(USIM_APN, USIM_USER_ID, USIM_PSWD, USIM_AUTH))
-    {
-        goto FUNC_END;
-    }
-    for (uint8_t i = 0; i < 5; i++)
-    {
-        if (WIFI_SUCCESS == R_RYZ_DnsQuery(clientcredentialMQTT_BROKER_ENDPOINT, &ip_addr))
-        {
-            ret = pdTRUE;
-            break;
-        }
-    }
-FUNC_END:
-    if (pdTRUE == ret)
-    {
-        configPRINTF(("Connecting Access Point is OK.\r\n "));
-    }
-    else
-    {
-        configPRINTF(("Connecting Access Point is failed.\r\n "));
-    }
-
-    return ret;
-#endif
+    return ( (BaseType_t)setupCellular() );
 }
