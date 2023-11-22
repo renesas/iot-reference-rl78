@@ -6,7 +6,8 @@
     <intAttribute key="com.renesas.cdt.core.connectionTimeout" value="30"/>
     <stringAttribute key="com.renesas.cdt.core.initCommands" value=""/>
     <stringAttribute key="com.renesas.cdt.core.ipAddress" value="localhost"/>
-    <stringAttribute key="com.renesas.cdt.core.jtagDeviceId" value="com.renesas.hardwaredebug.rl78.e2"/>
+    <stringAttribute key="com.renesas.cdt.core.jtagDevice" value="COM Port (RL78)"/>
+    <stringAttribute key="com.renesas.cdt.core.jtagDeviceId" value="com.renesas.hardwaredebug.rl78.serial"/>
     <listAttribute key="com.renesas.cdt.core.listGDBExe">
         <listEntry value="rl78-elf-gdb"/>
     </listAttribute>
@@ -23,7 +24,7 @@
     <stringAttribute key="com.renesas.cdt.core.secondGDBExe" value="green_dsp-elf-gdb"/>
     <booleanAttribute key="com.renesas.cdt.core.secondGDBSupport" value="false"/>
     <intAttribute key="com.renesas.cdt.core.secondGdbPortNumber" value="61237"/>
-    <stringAttribute key="com.renesas.cdt.core.serverParam" value="-g E2LITE  -t R7F100GSN -uConnectionTimeout= 30 -umFreq= &quot;0&quot; -usFreq= &quot;0&quot; -umClock= &quot;1&quot; -w &quot;0&quot; -usupplyVoltage= &quot;0&quot; -ucommMethod= &quot;0&quot; -uSelfCodeSet= 0 -usecurityID= &quot;00000000000000000000&quot; -usecurityIdSize &quot;10&quot; -upermitFlash= 1 -uuseWideVoltageMode= 1 -ueraseRom= 1 -uresetOnReload= 1 -ustopTimerEmu= 0 -ustopSerialEmu= 0 -umaskInternalResetSignal= 0 -umaskTargetResetSignal= 0 -n 0 -uverifyOnWritingMemory= 1 -uAllowRRMDMM= 0 -uRelayBreak= 0"/>
+    <stringAttribute key="com.renesas.cdt.core.serverParam" value="-g COMPORT -t R7F100GSN -uConnectionTimeout= 30 -umFreq= &quot;0&quot; -usFreq= &quot;0&quot; -umClock= &quot;1&quot; -uComPort= &quot;COM7&quot; -uResetControl= 0 -uComBaudRate= &quot;0&quot; -uSelfCodeSet= 0 -usecurityID= &quot;00000000000000000000&quot; -usecurityIdSize &quot;10&quot; -upermitFlash= 1 -uuseWideVoltageMode= 1 -ueraseRom= 1 -uresetOnReload= 1 -ustopTimerEmu= 0 -ustopSerialEmu= 0 -umaskInternalResetSignal= 0 -n 0 -uverifyOnWritingMemory= 1 -uAllowRRMDMM= 0 -uRelayBreak= 0"/>
     <booleanAttribute key="com.renesas.cdt.core.setResume" value="true"/>
     <booleanAttribute key="com.renesas.cdt.core.setStopAt" value="true"/>
     <booleanAttribute key="com.renesas.cdt.core.startServer" value="true"/>
@@ -79,11 +80,31 @@
     <booleanAttribute key="com.renesas.hardwaredebug.rl78.e2.hook_enable_Stop" value="false"/>
     <booleanAttribute key="com.renesas.hardwaredebug.rl78.e2.hook_enable_start" value="false"/>
     <stringAttribute key="com.renesas.hardwaredebug.rl78.e2.hook_start_func" value="0x0"/>
-    <booleanAttribute key="com.renesas.hardwaredebug.timemeasurement" value="true"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.allowRRMDMM" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.comBaudRate" value="Auto"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.eraseFlash" value="true"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.functional.safety" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.main.clock.freq" value="0"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.mask.internal.reset.signal" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.monitor.clock" value="1"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.options.SerialRL78DebugToolSettingsTree.resetAfterReload" value="true"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.permit.flash.programming" value="true"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.permit.rewrite.programmer.security.id" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.programmer.security.id" value="FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.resetControl" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.security.id" value="00000000000000000000"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.selfProgramming" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.serial.comPort" value="COM7"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.stopSerialEmu" value="false"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.stopTimerEmu" value="false"/>
+    <stringAttribute key="com.renesas.hardwaredebug.rl78.serial.sub.clock.freq" value="0"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.use.wide.voltage.mode" value="true"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.rl78.serial.verify.on.writing.to.memory" value="true"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.timemeasurement" value="false"/>
     <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="0"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
-    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="C:\git\ryz024a\iot-reference-rl78\Projects\rl78g23-fpb\projects\aws_ryz024a_rl78g23-fpb\HardwareDebug_OTA\aws_ryz024a_rl78g23-fpb_ota.x"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="C:\git\ryz024a\temp\iot-reference-rl78\Projects\rl78g23-fpb\projects\aws_ryz024a_rl78g23-fpb\HardwareDebug_OTA\aws_ryz024a_rl78g23-fpb_ota.x"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value="0"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value=""/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
@@ -94,7 +115,7 @@
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
-    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="C:\git\ryz024a\iot-reference-rl78\Projects\rl78g23-fpb\projects\aws_ryz024a_rl78g23-fpb\HardwareDebug_OTA\aws_ryz024a_rl78g23-fpb_ota.x"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="C:\git\ryz024a\temp\iot-reference-rl78\Projects\rl78g23-fpb\projects\aws_ryz024a_rl78g23-fpb\HardwareDebug_OTA\aws_ryz024a_rl78g23-fpb_ota.x"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value="0"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForSymbols" value="false"/>
