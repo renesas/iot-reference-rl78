@@ -33,9 +33,9 @@
 /***********************************************************************************************************************
  * Configuration Options
  **********************************************************************************************************************/
-#define AWS_CELLULAR_CFG_AP_NAME                "mmtmobile.jp"      /* Access point name */
-#define AWS_CELLULAR_CFG_AP_USERID              "nipponsim@dhacorp" /* Login ID */
-#define AWS_CELLULAR_CFG_AP_PASSWORD            "dhacorp"           /* Access point password */
+#define AWS_CELLULAR_CFG_AP_NAME                "ppsim.jp"          /* Access point name */
+#define AWS_CELLULAR_CFG_AP_USERID              "pp@sim"            /* Login ID */
+#define AWS_CELLULAR_CFG_AP_PASSWORD            "jpn"               /* Access point password */
 #define AWS_CELLULAR_CFG_PIN_CODE               0000                /* SIM card PIN code */
 #define AWS_CELLULAR_CFG_AUTH_TYPE              (2)                 /* Authentication protocol type (0=None,1=PAP,2=CHAP)*/
 
