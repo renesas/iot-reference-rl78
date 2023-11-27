@@ -129,6 +129,7 @@
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.D.1476790861" name="プリプロセッサ・マクロの定義 (-D)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.D" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__TEST__"/>
 									<listOptionValue builtIn="false" value="__LITTLE_ENDIAN__"/>
+									<listOptionValue builtIn="false" value="R_RFD_MCU_FLASH_T01_CATEGORY01"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.1082484491" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.1764491326" name="未使用static関数の削除を行う (-Odelete_static_func)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.yes" valueType="enumerated"/>
@@ -177,16 +178,14 @@
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.debugMonitor.1977325071" name="OCDモニタのメモリ領域を確保する (-debug_monitor)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.debugMonitor" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.noneLinkageOrderList.979416892" name="なし(リンク順序のリスト)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.noneLinkageOrderList" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Kernel/portable/Renesas/RL78G2x\portasm.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/application_code\branch.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/smc_gen/r_bsp/board/generic_rl78_g23\stkinit.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/smc_gen/r_bsp/mcu/all\cstart.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/smc_gen/r_bsp/mcu/all\r_bsp_common_ccrl.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common/rl78\rl78_wrapper_com.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common/rl78\serial_term_uart.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common\rl78_bsp_wrapper.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common\rl78_serial_term_uart.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Common/ports/ota_pal\ota_pal.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Demos/OtaOverMqtt\OtaOverMqttDemoExample.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Demos/OtaOverMqtt\subscription_manager.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Demos/SimplePubSub\simple_pub_sub_task.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Demos/common/Mqtt_Demo_Helpers\mqtt_demo_helpers.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Demos/common/mqtt-agent-interface\freertos_agent_message.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Demos/common/mqtt-agent-interface\freertos_command_pool.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Demos/mqtt_agent\mqtt_agent_task.obj&quot;"/>
@@ -196,12 +195,18 @@
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_base64.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_cbor.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_http.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_interface.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_mqtt.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os\ota_os_freertos.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\Middleware/Application-Protocols/network_transport/sockets_wrapper/ports/cellular_ryz014a\sockets_wrapper.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/Application-Protocols/network_transport/sockets_wrapper/ports/cellular_ryz024a\sockets_wrapper.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/Application-Protocols/network_transport/using_plaintext\transport_plaintext.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_3gpp_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_3gpp_urc_handler.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_at_core.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_common.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_common_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_pkthandler.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Cellular-Interface/source\cellular_pktio.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Kernel\croutine.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Kernel\event_groups.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/FreeRTOS-Kernel\list.obj&quot;"/>
@@ -219,16 +224,49 @@
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent_command_functions.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/logging\iot_logging_task_dynamic_buffers.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Common\test_framework.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src/mqtt\mqtt_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src/ota\ota_pal_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src\qualification_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src/transport_interface\transport_interface_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Unity/extras/fixture/src\unity_fixture.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Unity/extras/memory/src\unity_memory.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Unity/src\unity.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test\integration_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/application_code\cellular_setup.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/application_code\main.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/frtos_startup\freertos_object_init.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/frtos_startup\freertos_start.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/helper\cert_profile_helper.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/helper\r_trng.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/helper\trng_helper.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/source/codeflash\r_rfd_code_flash_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/source/common\r_rfd_common_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/source/common\r_rfd_common_control_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/source/dataflash\r_rfd_data_flash_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/userown\r_rfd_common_userown.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc\base64_decode.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc\rfd_wrapper.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\ecc.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\ecc_dsa.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\sha256.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\utils.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api/private\aws_cellular_closesocket.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api/private\aws_cellular_hardreset.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api/private\aws_cellular_psm_config.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api\r_aws_cellular_close.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api\r_aws_cellular_open.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_comm_uart_aws\r_aws_cellular_comm_uart.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_platform_aws\cellular_platform.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz_api.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz_urc_handler.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz_wrapper.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_byteq\r_byteq.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_ryz\r_ryz_api.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_ryz\r_ryz_atcmd.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_ryz\r_ryz_os_wrap.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup_wrap_com.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup_wrap_flash.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup_wrap_verify.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_sci/src\r_sci_rl.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_sci/src/targets/rl78\r_sci_rl78.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_sci/src/targets/rl78\r_sci_rl78_data.obj&quot;"/>

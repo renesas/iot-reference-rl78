@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_common_control_api.c
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Common Flash Control program
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -57,17 +57,17 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_CheckCFDFSeqEndStep1(void)
     /* Local variable definitions */
     e_rfd_ret_t l_e_ret_value;
     uint8_t     l_u08_fsasth_value;
-
+    
     /* Set local variables */
     l_e_ret_value      = R_RFD_ENUM_RET_STS_OK;
     l_u08_fsasth_value = R_RFD_REG_U08_FSASTH;
-
+    
     /* SQEND bit is valid */
     if (0u != (l_u08_fsasth_value & R_RFD_VALUE_U08_MASK1_FSASTH_SQEND))
     {
         /* Set return value */
         l_e_ret_value = R_RFD_ENUM_RET_STS_OK;
-
+        
         /* Set the value for FSSQ register */
         R_RFD_REG_U08_FSSQ = R_RFD_VALUE_U08_FSSQ_CLEAR;
     }
@@ -77,7 +77,7 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_CheckCFDFSeqEndStep1(void)
         /* Set return value */
         l_e_ret_value = R_RFD_ENUM_RET_STS_BUSY;
     }
-
+    
     return (l_e_ret_value);
 }
 
@@ -161,11 +161,11 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_CheckCFDFSeqEndStep2(void)
     /* Local variable definitions */
     e_rfd_ret_t l_e_ret_value;
     uint8_t     l_u08_fsasth_value;
-
+    
     /* Set local variables */
     l_e_ret_value      = R_RFD_ENUM_RET_STS_OK;
     l_u08_fsasth_value = R_RFD_REG_U08_FSASTH;
-
+    
     /* SQEND bit is invalid */
     if (0u == (l_u08_fsasth_value & R_RFD_VALUE_U08_MASK1_FSASTH_SQEND))
     {
@@ -178,7 +178,7 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_CheckCFDFSeqEndStep2(void)
         /* Set return value */
         l_e_ret_value = R_RFD_ENUM_RET_STS_BUSY;
     }
-
+    
     return (l_e_ret_value);
 }
 
@@ -256,10 +256,10 @@ R_RFD_FAR_FUNC void R_RFD_GetSeqErrorStatus(uint8_t __near * onp_u08_error_statu
 {
     /* Local variable definitions */
     uint8_t l_u08_fsastl_value;
-
+    
     /* Set local variables */
     l_u08_fsastl_value = R_RFD_REG_U08_FSASTL;
-
+    
     /* Write to parameter */
     * onp_u08_error_status = l_u08_fsastl_value & R_RFD_VALUE_U08_MASK1_FSASTL_ERROR_FLAG;
 }
@@ -357,6 +357,8 @@ R_RFD_FAR_FUNC void R_RFD_ForceReset(void)
     .DB 255
     #elif (COMPILER_IAR == COMPILER)
     __asm("DC8 0xFF");
+    #elif (COMPILER_LLVM == COMPILER)
+    __asm(".byte 0xFF");
     #endif
 }
 

@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_extra_area_security_api.c
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Extra Area Control program
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************

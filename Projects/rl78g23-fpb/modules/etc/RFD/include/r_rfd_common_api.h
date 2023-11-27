@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_common_api.h
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : API definition of Common Flash Control
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 #ifndef R_RFD_COMMON_API_H
@@ -42,6 +42,7 @@
 
 extern uint8_t g_u08_change_interrupt_vector_flag;
 extern uint8_t g_u08_cpu_frequency;
+extern uint8_t g_u08_fset_cpu_frequency;
 
 extern R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_Init(uint8_t i_u08_cpu_frequency);
 extern R_RFD_FAR_FUNC void        R_RFD_SetDataFlashAccessMode(e_rfd_df_access_t i_e_df_access);

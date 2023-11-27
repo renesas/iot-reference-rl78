@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_common_extension_api.c
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Common Flash Control program
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -54,13 +54,13 @@ R_RFD_FAR_FUNC void R_RFD_SetBootAreaImmediately(e_rfd_boot_cluster_t i_e_boot_c
     if (R_RFD_ENUM_BOOT_CLUSTER_1 == i_e_boot_cluster)
     {
         /* Boot cluster 1 */
-        R_RFD_REG_U08_FSSET = R_RFD_VALUE_U08_FSSET_BOOT_CLUSTER_1 | g_u08_cpu_frequency;
+        R_RFD_REG_U08_FSSET = R_RFD_VALUE_U08_FSSET_BOOT_CLUSTER_1 | g_u08_fset_cpu_frequency;
     }
     /* Specified boot cluster is boot cluster 0 or other */
     else
     {
         /* Boot cluster 0 */
-        R_RFD_REG_U08_FSSET = R_RFD_VALUE_U08_FSSET_BOOT_CLUSTER_0 | g_u08_cpu_frequency;
+        R_RFD_REG_U08_FSSET = R_RFD_VALUE_U08_FSSET_BOOT_CLUSTER_0 | g_u08_fset_cpu_frequency;
     }
 }
 

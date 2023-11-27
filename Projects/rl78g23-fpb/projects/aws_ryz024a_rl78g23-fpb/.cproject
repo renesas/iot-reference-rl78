@@ -125,6 +125,7 @@
 									<listOptionValue builtIn="false" value="__TEST__"/>
 									<listOptionValue builtIn="false" value="__LITTLE_ENDIAN__"/>
 									<listOptionValue builtIn="false" value="USE_BOOTLOADER_V2=0"/>
+									<listOptionValue builtIn="false" value="R_RFD_MCU_FLASH_T01_CATEGORY01"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.449324093" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.1016255075" name="未使用static関数の削除を行う (-Odelete_static_func)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.yes" valueType="enumerated"/>
@@ -568,6 +569,7 @@
 									<listOptionValue builtIn="false" value="__TEST__"/>
 									<listOptionValue builtIn="false" value="__LITTLE_ENDIAN__"/>
 									<listOptionValue builtIn="false" value="USE_BOOTLOADER_V2=0"/>
+									<listOptionValue builtIn="false" value="R_RFD_MCU_FLASH_T01_CATEGORY01"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.2001746142" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.306555828" name="未使用static関数の削除を行う (-Odelete_static_func)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.yes" valueType="enumerated"/>
@@ -634,6 +636,7 @@
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/3rdparty/tinycbor/src\cborencoder.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/3rdparty/tinycbor/src\cborencoder_close_container_checked.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/3rdparty/tinycbor/src\cborparser.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Middleware/3rdparty/tinycbor/src\cborparser_dup_string.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_base64.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/AWS/ota-for-aws-iot-embedded-sdk/source\ota_cbor.obj&quot;"/>
@@ -670,6 +673,7 @@
 									<listOptionValue builtIn="false" value="&quot;.\src/application_code\main.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/frtos_startup\freertos_object_init.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/frtos_startup\freertos_start.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/helper\cert_profile_helper.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/helper\r_trng.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/helper\trng_helper.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/source/codeflash\r_rfd_code_flash_api.obj&quot;"/>
@@ -679,12 +683,13 @@
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/RFD/userown\r_rfd_common_userown.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc\base64_decode.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc\rfd_wrapper.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/source\ecc.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/source\ecc_dsa.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/source\sha256.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/source\utils.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\ecc.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\ecc_dsa.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\sha256.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/etc/tinycrypt/lib/source\utils.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api/private\aws_cellular_closesocket.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api/private\aws_cellular_hardreset.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api/private\aws_cellular_psm_config.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api\r_aws_cellular_close.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/api\r_aws_cellular_open.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_comm_uart_aws\r_aws_cellular_comm_uart.obj&quot;"/>

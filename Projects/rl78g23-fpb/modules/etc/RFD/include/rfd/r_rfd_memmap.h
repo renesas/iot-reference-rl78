@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_memmap.h
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Memory map header file
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 #include "r_rfd_compiler.h"
@@ -98,4 +98,41 @@
     #elif defined (R_RFD_END_SECTION_RFD_DATA)
         #undef  R_RFD_END_SECTION_RFD_DATA
     #endif  /* Section definition for IAR */
+#elif (COMPILER_LLVM == COMPILER)
+    /* Section definition for Common Component */
+    #if defined (R_RFD_START_SECTION_RFD_CMN)
+        #undef  R_RFD_START_SECTION_RFD_CMN
+        #pragma clang section text="RFD_CMN"
+    #elif defined (R_RFD_END_SECTION_RFD_CMN)
+        #undef  R_RFD_END_SECTION_RFD_CMN
+        #pragma clang section text=".text"
+    /* Section definition for Code Flash Component */
+    #elif defined (R_RFD_START_SECTION_RFD_CF)
+        #undef  R_RFD_START_SECTION_RFD_CF
+        #pragma clang section text="RFD_CF"
+    #elif defined (R_RFD_END_SECTION_RFD_CF)
+        #undef  R_RFD_END_SECTION_RFD_CF
+        #pragma clang section text=".text"
+    /* Section definition for Data Flash Component */
+    #elif defined (R_RFD_START_SECTION_RFD_DF)
+        #undef  R_RFD_START_SECTION_RFD_DF
+        #pragma clang section text="RFD_DF"
+    #elif defined (R_RFD_END_SECTION_RFD_DF)
+        #undef  R_RFD_END_SECTION_RFD_DF
+        #pragma clang section text=".text"
+    /* Section definition for Extra Area Component */
+    #elif defined (R_RFD_START_SECTION_RFD_EX)
+        #undef  R_RFD_START_SECTION_RFD_EX
+        #pragma clang section text="RFD_EX"
+    #elif defined (R_RFD_END_SECTION_RFD_EX)
+        #undef  R_RFD_END_SECTION_RFD_EX
+        #pragma clang section text=".text"
+    /* Section definition for Global Data for Common Component */
+    #elif defined (R_RFD_START_SECTION_RFD_DATA)
+        #undef  R_RFD_START_SECTION_RFD_DATA
+        #pragma clang section data="RFD_DATA"
+    #elif defined (R_RFD_END_SECTION_RFD_DATA)
+        #undef  R_RFD_END_SECTION_RFD_DATA
+        #pragma clang section data=".data"
+    #endif  /* Section definition for LLVM */
 #endif /* end of section definitions for each compiler */

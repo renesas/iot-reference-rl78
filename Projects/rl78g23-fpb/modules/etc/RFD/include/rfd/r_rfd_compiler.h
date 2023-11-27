@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_compiler.h
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Compiler dependent header file
 **********************************************************************************************************************/
 
@@ -24,17 +24,20 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 #ifndef R_RFD_COMPILER_H
 #define R_RFD_COMPILER_H
 
 /* Compiler definition */
-#define COMPILER_CC  (1)
-#define COMPILER_IAR (2)
+#define COMPILER_CC   (1)
+#define COMPILER_IAR  (2)
+#define COMPILER_LLVM (3)
 
-#if defined (__CCRL__)
+#if defined (__llvm__)
+    #define COMPILER COMPILER_LLVM
+#elif defined (__CCRL__)
     #define COMPILER COMPILER_CC
 #elif defined (__IAR_SYSTEMS_ICC__)
     #define COMPILER COMPILER_IAR
@@ -58,6 +61,13 @@
     #define R_RFD_ENABLE_INTERRUPT                   __enable_interrupt
     #define R_RFD_GET_PSW_IE_STATE                   __get_interrupt_state
     #define R_RFD_IS_PSW_IE_ENABLE(u08_psw_ie_state) (0u != ((u08_psw_ie_state) & 0x80u))
+#elif (COMPILER_LLVM == COMPILER)
+    #define R_RFD_FAR_FUNC                           __far
+    #define R_RFD_NO_OPERATION                       __nop
+    #define R_RFD_DISABLE_INTERRUPT                  __DI
+    #define R_RFD_ENABLE_INTERRUPT                   __EI
+    #define R_RFD_GET_PSW_IE_STATE                   (uint8_t)__builtin_rl78_pswie
+    #define R_RFD_IS_PSW_IE_ENABLE(u08_psw_ie_state) (0u != (u08_psw_ie_state))
 #else
     /* Unknown compiler error */
     #error  "Non-supported compiler."

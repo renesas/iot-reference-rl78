@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_common_api.c
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Common Flash Control program
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -45,8 +45,15 @@
 
 #define  R_RFD_START_SECTION_RFD_DATA
 #include "r_rfd_memmap.h"
-    /* CPU Frequency configuration */
+    /* CPU Frequency configuration for r_rfd_wait_count */
     uint8_t g_u08_cpu_frequency                = R_RFD_VALUE_U08_INIT_VARIABLE;
+#define  R_RFD_END_SECTION_RFD_DATA
+#include "r_rfd_memmap.h"
+
+#define  R_RFD_START_SECTION_RFD_DATA
+#include "r_rfd_memmap.h"
+    /* CPU Frequency configuration for FSET */
+    uint8_t g_u08_fset_cpu_frequency           = R_RFD_VALUE_U08_INIT_VARIABLE;
 #define  R_RFD_END_SECTION_RFD_DATA
 #include "r_rfd_memmap.h"
 
@@ -80,9 +87,22 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_Init(uint8_t i_u08_cpu_frequency)
     if ((R_RFD_VALUE_U08_FREQUENCY_LOWER_LIMIT <= i_u08_cpu_frequency) 
        && (R_RFD_VALUE_U08_FREQUENCY_UPPER_LIMIT >= i_u08_cpu_frequency))
     {
-        /* Adjust the sequencer frequency variable */
+        /* Adjust the CPU frequency variable for r_rfd_wait_count */
         g_u08_cpu_frequency = i_u08_cpu_frequency - R_RFD_VALUE_U08_FREQUENCY_ADJUST;
+        
+        /* Adjust the sequencer frequency variable */
+        g_u08_fset_cpu_frequency = g_u08_cpu_frequency;
     }
+#if (defined R_RFD_MCU_FLASH_T01_CATEGORY02)
+    else if (R_RFD_VALUE_U08_FREQUENCY_ADDITION == i_u08_cpu_frequency)
+    {
+        /* Adjust the CPU frequency variable for r_rfd_wait_count */
+        g_u08_cpu_frequency = R_RFD_VALUE_U08_FREQUENCY_ADDITION - R_RFD_VALUE_U08_FREQUENCY_ADJUST;
+        
+        /* Adjust the sequencer frequency variable */
+        g_u08_fset_cpu_frequency = R_RFD_VALUE_U08_FREQUENCY_FSET_ADDITION;
+    }
+#endif /* (defined R_RFD_MCU_FLASH_T01_CATEGORY02) */
     else
     {
         /* Set return value */
@@ -156,17 +176,17 @@ R_RFD_FAR_FUNC void R_RFD_ChangeInterruptVector(uint32_t i_u32_interrupt_vector_
 {
     /* Local variable definitions */
     uint8_t l_u08_set_flpmc_value;
-
+    
     /* Set local variables */
     l_u08_set_flpmc_value = R_RFD_VALUE_U08_FLPMC_MODE_UNPROGRAMMABLE_FWEDIS_ENABLE;
     
     R_RFD_HOOK_EnterCriticalSection();
-
+    
     /* FLPMC register FWEDIS bit disable */
     /* Start specific sequence for writing */
     R_RFD_REG_U08_PFCMD = R_RFD_VALUE_U08_PFCMD_SPECIFIC_SEQUENCE_WRITE;
     
-    /* Set unprogrammable mode (FWEDIS enable) */
+    /* Set non-programmable mode (FWEDIS enable) */
     R_RFD_REG_U08_FLPMC = l_u08_set_flpmc_value;
     R_RFD_REG_U08_FLPMC = ~l_u08_set_flpmc_value;
     R_RFD_REG_U08_FLPMC = l_u08_set_flpmc_value;
@@ -208,17 +228,17 @@ R_RFD_FAR_FUNC void R_RFD_RestoreInterruptVector(void)
 {
     /* Local variable definitions */
     uint8_t l_u08_set_flpmc_value;
-
+    
     /* Set local variables */
     l_u08_set_flpmc_value = R_RFD_VALUE_U08_FLPMC_MODE_UNPROGRAMMABLE_FWEDIS_DISABLE;
     
     R_RFD_HOOK_EnterCriticalSection();
-
+    
     /* FLPMC register FWEDIS bit disable */
     /* Start specific sequence for writing */
     R_RFD_REG_U08_PFCMD = R_RFD_VALUE_U08_PFCMD_SPECIFIC_SEQUENCE_WRITE;
     
-    /* Set unprogrammable mode (FWEDIS disable) */
+    /* Set non-programmable mode (FWEDIS disable) */
     R_RFD_REG_U08_FLPMC = l_u08_set_flpmc_value;
     R_RFD_REG_U08_FLPMC = ~l_u08_set_flpmc_value;
     R_RFD_REG_U08_FLPMC = l_u08_set_flpmc_value;
@@ -261,10 +281,10 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_SetFlashMemoryMode(e_rfd_flash_memory_mode_t i_
     e_rfd_ret_t l_e_ret_value;
     uint8_t     l_u08_fsset_value;
     uint8_t     l_u08_set_flpmc_value;
-
+    
     /* Local variables initialization */
     l_e_ret_value = R_RFD_ENUM_RET_STS_OK;
-
+    
     /* Set code flash programming mode */
     if (R_RFD_ENUM_FLASH_MODE_CODE_PROGRAMMING == i_e_flash_mode)
     {
@@ -277,50 +297,50 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_SetFlashMemoryMode(e_rfd_flash_memory_mode_t i_
         /* Data flash programming mode */
         l_u08_set_flpmc_value = R_RFD_VALUE_U08_FLPMC_MODE_DATA_FLASH_PROGRAMMING;
     }
-    /* Set unprogrammable mode */
+    /* Set non-programmable mode */
     else
     {
         /* When using R_RFD_ChangeInterruptVector() */
         if (R_RFD_VALUE_U08_SET_FWEDIS_FLAG_ON == g_u08_change_interrupt_vector_flag)
         {
-            /* Unprogrammable mode (FWEDIS enable) */
+            /* Non-programmable mode (FWEDIS enable) */
             l_u08_set_flpmc_value = R_RFD_VALUE_U08_FLPMC_MODE_UNPROGRAMMABLE_FWEDIS_ENABLE;
         }
         /* When not using R_RFD_ChangeInterruptVector() */
         else
         {
-            /* Unprogrammable mode (FWEDIS disable) */
+            /* Non-programmable mode (FWEDIS disable) */
             l_u08_set_flpmc_value = R_RFD_VALUE_U08_FLPMC_MODE_UNPROGRAMMABLE_FWEDIS_DISABLE;
         }
     }
-
+    
     R_RFD_HOOK_EnterCriticalSection();
-
+    
     /* Start specific sequence for writing */
     R_RFD_REG_U08_PFCMD = R_RFD_VALUE_U08_PFCMD_SPECIFIC_SEQUENCE_WRITE;
-
+    
     /* Set mode */
     R_RFD_REG_U08_FLPMC = l_u08_set_flpmc_value;
     R_RFD_REG_U08_FLPMC = ~l_u08_set_flpmc_value;
     R_RFD_REG_U08_FLPMC = l_u08_set_flpmc_value;
-
+    
     R_RFD_HOOK_ExitCriticalSection();
-
+    
     r_rfd_wait_count(15u);
-
+    
     /* Check mode */
     l_e_ret_value = R_RFD_CheckFlashMemoryMode(i_e_flash_mode);
-
+    
     /* Read from FSSET register */
     l_u08_fsset_value = R_RFD_REG_U08_FSSET;
-
+    
     if (R_RFD_ENUM_RET_STS_OK == l_e_ret_value)
     {
         if (R_RFD_ENUM_FLASH_MODE_UNPROGRAMMABLE != i_e_flash_mode)
         {
             /* Set frequency */
-            R_RFD_REG_U08_FSSET = (l_u08_fsset_value & R_RFD_VALUE_U08_MASK1_FSSET_TMSPMD_AND_TMBTSEL)
-                                  | g_u08_cpu_frequency;
+            R_RFD_REG_U08_FSSET = (l_u08_fsset_value & R_RFD_VALUE_U08_MASK1_FSSET_TMSPMD_AND_TMBTSEL) 
+                                  | g_u08_fset_cpu_frequency;
         }
         else
         {
@@ -331,7 +351,7 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_SetFlashMemoryMode(e_rfd_flash_memory_mode_t i_
     {
         l_e_ret_value = R_RFD_ENUM_RET_ERR_MODE_MISMATCHED;
     }
-
+    
     return (l_e_ret_value);
 }
 
@@ -470,6 +490,24 @@ R_RFD_FAR_FUNC void r_rfd_wait_count(uint8_t i_u08_count)
     __asm("BNZ   $-0x06");
     __asm("POP   AX");
     
+    #elif (COMPILER_LLVM == COMPILER)
+    /* LLVM compiler uses the register A as this function argument */
+    __asm("push ax");
+    
+    /* Calculate the counter of the waiting loop */
+    __asm("mov  x, !_g_u08_cpu_frequency");
+    __asm("inc  x");
+    __asm("mulu x");
+    __asm("shrw ax, 3");
+    __asm("incw ax");
+    
+    /* Start the waiting loop that has 8 clocks (1+1+1+1+4) */
+    __asm("nop");
+    __asm("nop");
+    __asm("decw  ax");
+    __asm("cmpw  ax, #0");
+    __asm("bnz   $.-0x06");
+    __asm("pop   ax");
     #endif
 }
 

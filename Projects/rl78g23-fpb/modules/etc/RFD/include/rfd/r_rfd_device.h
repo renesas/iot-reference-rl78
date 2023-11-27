@@ -2,8 +2,8 @@
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
     File Name       : r_rfd_device.h
-    Program Version : V1.00
-    Device(s)       : RL78/G23 microcontroller
+    Program Version : V1.20
+    Device(s)       : RL78/G2x microcontroller
     Description     : Device dependent header file
 **********************************************************************************************************************/
 
@@ -24,7 +24,7 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2021 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
 #ifndef R_RFD_DEVICE_H
@@ -91,6 +91,17 @@
 #define R_RFD_VALUE_U08_FREQUENCY_LOWER_LIMIT                    (1u)
 #define R_RFD_VALUE_U08_FREQUENCY_UPPER_LIMIT                    (32u)
 #define R_RFD_VALUE_U08_FREQUENCY_ADJUST                         (1u)
+
+#if ((defined R_RFD_MCU_FLASH_T01_CATEGORY01) && (defined R_RFD_MCU_FLASH_T01_CATEGORY02))
+#error "The macro R_RFD_MCU_FLASH_T01_CATEGORY* for RFD are multiply defined."
+#elif (defined R_RFD_MCU_FLASH_T01_CATEGORY01)
+#elif (defined R_RFD_MCU_FLASH_T01_CATEGORY02)
+#define R_RFD_VALUE_U08_FREQUENCY_ADDITION                       (48u)
+#define R_RFD_VALUE_U08_FREQUENCY_FSET_ADDITION                  (39u)
+#else
+#error "The macro R_RFD_MCU_FLASH_T01_CATEGORY* for RFD is not defined."
+#endif /* end of R_RFD_MCU_FLASH_T01_CATEGORY* check */
+
 #define R_RFD_VALUE_U08_SET_FWEDIS_FLAG_ON                       (0x55u)
 #define R_RFD_VALUE_U08_SET_FWEDIS_FLAG_OFF                      (0x00u)
 #define R_RFD_VALUE_U16_CODE_FLASH_BLOCK_ADDR_LOW                (0x001Fu)

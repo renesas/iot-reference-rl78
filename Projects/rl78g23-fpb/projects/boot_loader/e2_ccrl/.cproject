@@ -87,6 +87,7 @@
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.farRom.1174980335" name="メモリ・モデルで指定したROMデータに対するnear/far属性ををfarに設定する (-far_rom)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.farRom" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.D.1259619968" name="プリプロセッサ・マクロの定義 (-D)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.D" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__PRINTF_TINY__"/>
+									<listOptionValue builtIn="false" value="R_RFD_MCU_FLASH_T01_CATEGORY01"/>
 								</option>
 								<inputType id="Base.Compiler.ccrl.C.inputType.328258713" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
 								<inputType id="Base.Compiler.ccrl.Cpp.inputType.110941470" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
@@ -151,10 +152,10 @@
 									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/RFD/userown\r_rfd_common_userown.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/src/etc\base64_decode.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/src/etc\rfd_wrapper.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/source\ecc.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/source\ecc_dsa.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/source\sha256.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/source\utils.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/lib/source\ecc.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/lib/source\ecc_dsa.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/lib/source\sha256.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/src/etc/tinycrypt/lib/source\utils.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/src/r_fwup/src\r_fwup.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/src/r_fwup/src\r_fwup_wrap_com.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/src/r_fwup/src\r_fwup_wrap_flash.obj&quot;"/>
