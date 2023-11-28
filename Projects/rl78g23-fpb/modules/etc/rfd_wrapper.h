@@ -7,8 +7,8 @@
  * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
  * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
+ * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
  * this software. By using this software, you agree to the additional terms and conditions found by accessing the
  * following link:
@@ -18,9 +18,12 @@
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : rfd_wrapper.h
- * Version      :
- * Description  : .
+ * Description  : Functions for the wrapping Renesas Flash Driver(RFD).
+ **********************************************************************************************************************
+ * History : DD.MM.YYYY Version Description
+ *         : 27.12.2023 2.00    First Release
  *********************************************************************************************************************/
+
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
@@ -31,21 +34,21 @@
 #ifndef RFD_WRAPPER_HEADER_FILE
 #define RFD_WRAPPER_HEADER_FILE
 
-/***********************************************************************************************************************
-Macro definitions
-***********************************************************************************************************************/
+/**********************************************************************************************************************
+ Macro definitions
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
-Typedef definitions
-***********************************************************************************************************************/
+/**********************************************************************************************************************
+ Global Typedef definitions
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
-Exported global variables
-***********************************************************************************************************************/
+/**********************************************************************************************************************
+ External global variables
+ *********************************************************************************************************************/
 
-/***********************************************************************************************************************
-Exported global functions (to be accessed by other files)
-***********************************************************************************************************************/
+/**********************************************************************************************************************
+ Exported global functions
+ *********************************************************************************************************************/
 void rfd_wrap_code_copy(void);
 uint8_t rfd_wrap_flash_open (void);
 R_RFD_FAR_FUNC uint8_t rfd_wrap_cf_erase (uint16_t start_block_number, uint16_t erase_blocks);
