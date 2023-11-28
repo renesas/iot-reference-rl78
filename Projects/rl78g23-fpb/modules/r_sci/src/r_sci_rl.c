@@ -364,7 +364,7 @@ static sci_err_t sci_init_async(sci_hdl_t const      hdl,
                                 sci_uart_t * const   p_cfg,
                                 uint8_t * const      p_priority)
 {
-    sci_err_t   err=SCI_SUCCESS;
+    sci_err_t err = SCI_SUCCESS;
 
     /* Initialize channel control block flags */
     hdl->tx_idle = true;
@@ -441,7 +441,7 @@ static sci_err_t sci_send_async_data(sci_hdl_t const hdl, uint8_t SCI_FAR *p_src
 {
     sci_err_t   err = SCI_SUCCESS;
     uint16_t    cnt;
-    byteq_err_t byteq_err = BYTEQ_ERR_QUEUE_FULL;
+    byteq_err_t byteq_err;
 
     if (true != hdl->tx_idle)
     {
@@ -897,7 +897,7 @@ sci_err_t R_SCI_Control(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
 sci_err_t R_SCI_Close(sci_hdl_t const hdl)
 {
 #if (SCI_CFG_PARAM_CHECKING_ENABLE == 1)
-    /* Check argument hdl */
+    /* Check argument */
     if (NULL == hdl)
     {
         return SCI_ERR_NULL_PTR;
@@ -908,9 +908,9 @@ sci_err_t R_SCI_Close(sci_hdl_t const hdl)
     sci_disable_ints(hdl);
 
 #if (SCI_CFG_ASYNC_INCLUDED == 1)
-    /* Close BYTEQ */
     if (SCI_MODE_ASYNC == hdl->mode)
     {
+        /* Close BYTEQ */
         R_BYTEQ_Close(hdl->u_tx_data.que);
         R_BYTEQ_Close(hdl->u_rx_data.que);
     }

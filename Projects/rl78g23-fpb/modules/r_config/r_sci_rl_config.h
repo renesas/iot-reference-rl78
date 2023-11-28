@@ -43,8 +43,8 @@
 /* SPECIFY WHETHER TO INCLUDE CODE FOR DIFFERENT SCI MODES */
 /* Setting an equate to 1 includes code specific to that mode. */
 #define SCI_CFG_ASYNC_INCLUDED          (1)
-#define SCI_CFG_SYNC_INCLUDED           (0)
-#define SCI_CFG_SSPI_INCLUDED           (0)
+#define SCI_CFG_SYNC_INCLUDED           (0)   /* Not supported */
+#define SCI_CFG_SSPI_INCLUDED           (0)   /* Not supported */
 
 /* SPECIFY BYTE VALUE TO TRANSMIT WHILE CLOCKING IN DATA IN SSPI MODES */
 #define SCI_CFG_DUMMY_TX_BYTE           (0xFF)
