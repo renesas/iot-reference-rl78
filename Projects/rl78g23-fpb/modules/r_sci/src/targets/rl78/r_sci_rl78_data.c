@@ -7,8 +7,8 @@
  * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
  * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
+ * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
  * this software. By using this software, you agree to the additional terms and conditions found by accessing the
  * following link:
@@ -18,14 +18,14 @@
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_sci_rl78_data.c
- * Description  : r_sci wrapper for rl78.
+ * Description  : Wrap RL78 SAU driver to FIT modules(R_SCI).
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : DD.MM.YYYY 1.00     First Release
+ *         : 27.12.2023 1.00     First Release
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
-Includes   <System Includes> , "Project Includes"
+ Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
 #include "platform.h"
 #include "r_sci_rl78_private.h"
@@ -48,7 +48,7 @@ Includes   <System Includes> , "Project Includes"
 /* BAUD DIVISOR INFO */
 
 /* Asynchronous */
-#if (SCI_CFG_ASYNC_INCLUDED)
+#if (SCI_CFG_ASYNC_INCLUDED == 1)
 /* NOTE: diff than SCI async baud table, but should provide same results */
 const SCI_FAR baud_divisor_t async_baud[NUM_DIVISORS_ASYNC] =
 {
@@ -58,7 +58,7 @@ const SCI_FAR baud_divisor_t async_baud[NUM_DIVISORS_ASYNC] =
     {2,  1, 2},
     {1,  1, 2}
 };
-#endif
+#endif /* (SCI_CFG_ASYNC_INCLUDED == 1) */
 
 /* Synchronous and Simple SPI */
 /* BRR = (PCLK/(divisor * baud)) - 1 */
@@ -76,91 +76,88 @@ const baud_divisor_t sync_baud[NUM_DIVISORS_SYNC]=
 #endif
 
 /* CHANNEL MEMORY ALLOCATIONS */
-#if SCI_CFG_CH0_INCLUDED
-sci_ch_ctrl_t   ch0_ctrl = {0, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
-                            #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-                            , true, 0, 0, false
-                            #endif
-                            };
-#endif /* End of SCI_CFG_CH0_INCLUDED */
+#if (SCI_CFG_CH0_INCLUDED == 1)
+sci_ch_ctrl_t ch0_ctrl = {0, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
+                          #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
+                          , true, 0, 0, false
+                          #endif
+                         };
+#endif /* (SCI_CFG_CH0_INCLUDED == 1) */
 
-#if SCI_CFG_CH1_INCLUDED
-sci_ch_ctrl_t   ch1_ctrl = {1, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
-                            #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-                            , true, 0, 0, false
-                            #endif
-                            };
-#endif /* End of SCI_CFG_CH1_INCLUDED */
+#if (SCI_CFG_CH1_INCLUDED == 1)
+sci_ch_ctrl_t ch1_ctrl = {1, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
+                          #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
+                          , true, 0, 0, false
+                          #endif
+                         };
+#endif /* (SCI_CFG_CH1_INCLUDED == 1) */
 
-#if SCI_CFG_CH2_INCLUDED
-sci_ch_ctrl_t  ch2_ctrl = {2, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
-                            #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-                            , true, 0, 0, false
-                            #endif
-                            };
-#endif /* End of SCI_CFG_CH2_INCLUDED */
+#if (SCI_CFG_CH2_INCLUDED == 1)
+sci_ch_ctrl_t ch2_ctrl = {2, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
+                          #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
+                          , true, 0, 0, false
+                          #endif
+                         };
+#endif /* (SCI_CFG_CH2_INCLUDED == 1) */
 
-#if SCI_CFG_CH3_INCLUDED
-sci_ch_ctrl_t   ch3_ctrl = {3, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
-                            #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
-                            , true, 0, 0, false
-                            #endif
-                            };
-#endif  /* End of SCI_CFG_CH3_INCLUDED */
+#if (SCI_CFG_CH3_INCLUDED == 1)
+sci_ch_ctrl_t ch3_ctrl = {3, SCI_MODE_OFF, 0, NULL, NULL, NULL, true
+                          #if (SCI_CFG_SSPI_INCLUDED || SCI_CFG_SYNC_INCLUDED)
+                          , true, 0, 0, false
+                          #endif
+                         };
+#endif  /* (SCI_CFG_CH3_INCLUDED == 1) */
 
 /* SCI HANDLE-ARRAY DECLARATION */
 const sci_hdl_t SCI_FAR g_handles[SCI_NUM_CH] =
 {
-#if SCI_CFG_CH0_INCLUDED
+#if (SCI_CFG_CH0_INCLUDED == 1)
             &ch0_ctrl,
 #else
             NULL,
-#endif /**/
-#if SCI_CFG_CH1_INCLUDED
+#endif /* (SCI_CFG_CH0_INCLUDED == 1) */
+#if (SCI_CFG_CH1_INCLUDED == 1)
             &ch1_ctrl,
 #else
             NULL,
-#endif /**/
-#if SCI_CFG_CH2_INCLUDED
+#endif /* (SCI_CFG_CH1_INCLUDED == 1) */
+#if (SCI_CFG_CH2_INCLUDED == 1)
             &ch2_ctrl,
 #else
             NULL,
-#endif /**/
-#if SCI_CFG_CH3_INCLUDED
+#endif /* (SCI_CFG_CH2_INCLUDED == 1) */
+#if (SCI_CFG_CH3_INCLUDED == 1)
             &ch3_ctrl,
 #else
             NULL,
-#endif /**/
+#endif /* (SCI_CFG_CH3_INCLUDED == 1) */
 };
 
 void SetReg_TXD(uint8_t channel, uint8_t byte)
 {
     switch(channel)
     {
-#if (SCI_CFG_CH0_INCLUDED)
+#if (SCI_CFG_CH0_INCLUDED == 1)
         case 0:
             while(0 != SSR00 & 0x0020);
             TXD0 = (byte);
             break;
 #endif
-#if (SCI_CFG_CH1_INCLUDED)
+#if (SCI_CFG_CH1_INCLUDED == 1)
         case 1:
             while(0 != SSR02 & 0x0020);
             TXD1 = (byte);
             break;
 #endif
-#if (SCI_CFG_CH2_INCLUDED)
+#if (SCI_CFG_CH2_INCLUDED == 1)
         case 2:
             while(0 != SSR10 & 0x0020);
             TXD2 = (byte);
             break;
 #endif
-#if (SCI_CFG_CH3_INCLUDED)
+#if (SCI_CFG_CH3_INCLUDED == 1)
         case 3:
             while(0 != SSR12 & 0x0020);
-#if (SCI_CFG_UART3_FLOW_CTRL_ENABLE)
-            while(0 != SCI_CFG_UART3_CTS_PORT);
-#endif
             TXD3 = (byte);
             break;
 #endif
@@ -173,22 +170,22 @@ void GetReg_RXD(uint8_t channel, uint8_t *byte)
 {
     switch(channel)
     {
-#if (SCI_CFG_CH0_INCLUDED)
+#if (SCI_CFG_CH0_INCLUDED == 1)
         case 0:
             *byte = RXD0;
             break;
 #endif
-#if (SCI_CFG_CH1_INCLUDED)
+#if (SCI_CFG_CH1_INCLUDED == 1)
         case 1:
             *byte = RXD1;
             break;
 #endif
-#if (SCI_CFG_CH2_INCLUDED)
+#if (SCI_CFG_CH2_INCLUDED == 1)
         case 2:
             *byte = RXD2;
             break;
 #endif
-#if (SCI_CFG_CH3_INCLUDED)
+#if (SCI_CFG_CH3_INCLUDED == 1)
         case 3:
             *byte = RXD3;
             break;
@@ -202,22 +199,22 @@ void SetReg_SRMKn(uint8_t channel, uint8_t flag)
 {
     switch(channel)
     {
-#if (SCI_CFG_CH0_INCLUDED)
+#if (SCI_CFG_CH0_INCLUDED == 1)
         case 0:
             SRMK0 = flag;
             break;
 #endif
-#if (SCI_CFG_CH1_INCLUDED)
+#if (SCI_CFG_CH1_INCLUDED == 1)
         case 1:
             SRMK1 = flag;
             break;
 #endif
-#if (SCI_CFG_CH2_INCLUDED)
+#if (SCI_CFG_CH2_INCLUDED == 1)
         case 2:
             SRMK2 = flag;
             break;
 #endif
-#if (SCI_CFG_CH3_INCLUDED)
+#if (SCI_CFG_CH3_INCLUDED == 1)
         case 3:
             SRMK3 = flag;
             break;
@@ -231,22 +228,22 @@ void SetReg_SREMKn(uint8_t channel, uint8_t flag)
 {
     switch(channel)
     {
-#if (SCI_CFG_CH0_INCLUDED)
+#if (SCI_CFG_CH0_INCLUDED == 1)
         case 0:
             SREMK0 = flag;
             break;
 #endif
-#if (SCI_CFG_CH1_INCLUDED)
+#if (SCI_CFG_CH1_INCLUDED == 1)
         case 1:
             SREMK1 = flag;
             break;
 #endif
-#if (SCI_CFG_CH2_INCLUDED)
+#if (SCI_CFG_CH2_INCLUDED == 1)
         case 2:
             SREMK2 = flag;
             break;
 #endif
-#if (SCI_CFG_CH3_INCLUDED)
+#if (SCI_CFG_CH3_INCLUDED == 1)
         case 3:
             SREMK3 = flag;
             break;
@@ -261,25 +258,25 @@ uint16_t GetReg_SSR(uint8_t channel)
     uint16_t err_type;
     switch(channel)
     {
-#if (SCI_CFG_CH0_INCLUDED)
+#if (SCI_CFG_CH0_INCLUDED == 1)
         case 0:
             err_type = (uint8_t)(SSR01 & 0x0007U);
             SIR01 = err_type;
             break;
 #endif
-#if (SCI_CFG_CH1_INCLUDED)
+#if (SCI_CFG_CH1_INCLUDED == 1)
         case 1:
             err_type = (uint8_t)(SSR03 & 0x0007U);
             SIR03 = err_type;
             break;
 #endif
-#if (SCI_CFG_CH2_INCLUDED)
+#if (SCI_CFG_CH2_INCLUDED == 1)
         case 2:
             err_type = (uint8_t)(SSR11 & 0x0007U);
             SIR11 = err_type;
             break;
 #endif
-#if (SCI_CFG_CH3_INCLUDED)
+#if (SCI_CFG_CH3_INCLUDED == 1)
         case 3:
             err_type = (uint8_t)(SSR13 & 0x0007U);
             SIR13 = err_type;

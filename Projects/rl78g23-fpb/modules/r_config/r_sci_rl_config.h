@@ -7,8 +7,8 @@
  * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
  * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
+ * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
  * this software. By using this software, you agree to the additional terms and conditions found by accessing the
  * following link:
@@ -18,10 +18,10 @@
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_sci_rl_config.h
- * Description  : Configures the SCI module..
+ * Description  : Configures the wrapper for RL78 SAU driver.
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : DD.MM.YYYY 1.00     First Release
+ *         : 27.12.2023 1.00     First Release
  *********************************************************************************************************************/
 #ifndef R_SCI_RL_CONFIG_H
 #define R_SCI_RL_CONFIG_H
@@ -32,8 +32,8 @@
 #include "platform.h"
 
 /***********************************************************************************************************************
-Configuration Options
-***********************************************************************************************************************/
+ Configuration Options
+ **********************************************************************************************************************/
 
 /* SPECIFY WHETHER TO INCLUDE CODE FOR API PARAMETER CHECKING */
 /* Setting to BSP_CFG_PARAM_CHECKING_ENABLE utilizes the system default setting */
@@ -79,21 +79,19 @@ Configuration Options
 * for including the TEI code. The interrupt itself must be enabled using an
 * R_SCI_Control(hdl, SCI_CMD_EN_TEI, NULL) call.
 */
-#define SCI_CFG_TEI_INCLUDED    (1)      /* 1=included, 0=not */
+#define SCI_CFG_TEI_INCLUDED            (1)      /* 1=included, 0=not */
 
 /*
 * The following settings are used for follow control to prevent overflow of
 * the receive buffer when receiving UART.
 */
+/* 1=Enable , 0=Disable */
 #define SCI_CFG_UART0_FLOW_CTRL_ENABLE  (0)
 #define SCI_CFG_UART1_FLOW_CTRL_ENABLE  (0)
 #define SCI_CFG_UART2_FLOW_CTRL_ENABLE  (0)
 #define SCI_CFG_UART3_FLOW_CTRL_ENABLE  (1)
 
-#define SCI_CFG_UART0_CTS_PORT
-#define SCI_CFG_UART1_CTS_PORT
-#define SCI_CFG_UART2_CTS_PORT          (P1_bit.no6)
-#define SCI_CFG_UART3_CTS_PORT          (P14_bit.no1)
+/* If SCI_CFG_UARTx_FLOW_CTRL_ENABLE is '1', need to set I/O Port. */
 #define SCI_CFG_UART0_RTS_PORT
 #define SCI_CFG_UART1_RTS_PORT
 #define SCI_CFG_UART2_RTS_PORT          (P1_bit.no5)

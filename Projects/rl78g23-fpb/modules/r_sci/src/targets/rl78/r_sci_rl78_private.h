@@ -7,8 +7,8 @@
  * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
  * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
+ * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
  * this software. By using this software, you agree to the additional terms and conditions found by accessing the
  * following link:
@@ -18,28 +18,27 @@
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_sci_rl78_private.h
- * Description  : r_sci wrapper for rl78.
+ * Description  : Wrap RL78 SAU driver to FIT modules(R_SCI).
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : DD.MM.YYYY 1.00     First Release
+ *         : 27.12.2023 1.00     First Release
  *********************************************************************************************************************/
 #ifndef R_SCI_RL78_PRIVATE_H
 #define R_SCI_RL78_PRIVATE_H
 
-/***********************************************************************************************************************
-Includes   <System Includes> , "Project Includes"
-***********************************************************************************************************************/
+/**********************************************************************************************************************
+ Includes   <System Includes> , "Project Includes"
+ *********************************************************************************************************************/
 #include "rl78_bsp_wrapper.h"
 #include "r_sci_rl_if.h"
 
-#if (SCI_CFG_ASYNC_INCLUDED)
+#if (SCI_CFG_ASYNC_INCLUDED ==1)
 #include "r_byteq_if.h"
-#endif
+#endif /* (SCI_CFG_ASYNC_INCLUDED ==1) */
 
-/***********************************************************************************************************************
-Macro definitions
-***********************************************************************************************************************/
-
+/**********************************************************************************************************************
+ Macro definitions
+ *********************************************************************************************************************/
 /* Mask of all active channels */
 #define SCI_CFG_CH_INCLUDED_MASK   ((SCI_CFG_CH0_INCLUDED << 0)   |   \
                                     (SCI_CFG_CH1_INCLUDED << 1)   |   \
@@ -55,27 +54,25 @@ Macro definitions
                                     (SCI_CFG_CH11_INCLUDED << 11) |   \
                                     (SCI_CFG_CH12_INCLUDED << 12))
 
-/* SCI SCR register masks */
-
 /* SCI SSR register receiver error masks */
-#define SCI_SSR_ORER_MASK         (0x01U)     /* overflow error */
-#define SCI_SSR_FER_MASK          (0x04U)     /* framing error */
-#define SCI_SSR_PER_MASK          (0x02U)     /* parity err */
-#define SCI_RCVR_ERR_MASK         (SCI_SSR_ORER_MASK | SCI_SSR_FER_MASK | SCI_SSR_PER_MASK)
+#define SCI_SSR_ORER_MASK           (0x01U)     /* overflow error */
+#define SCI_SSR_FER_MASK            (0x04U)     /* framing error */
+#define SCI_SSR_PER_MASK            (0x02U)     /* parity err */
+#define SCI_RCVR_ERR_MASK           (SCI_SSR_ORER_MASK | SCI_SSR_FER_MASK | SCI_SSR_PER_MASK)
 
-#define ENABLE_RXI_INT            ( SetReg_SRMKn(hdl->channel, 0) )
-#define DISABLE_RXI_INT           ( SetReg_SRMKn(hdl->channel, 1) )
+#define ENABLE_RXI_INT              ( SetReg_SRMKn(hdl->channel, 0) )
+#define DISABLE_RXI_INT             ( SetReg_SRMKn(hdl->channel, 1) )
 #define ENABLE_TXI_INT
 #define DISABLE_TXI_INT
 
 #if (__CCRL__) || defined(__ICCRL78__)
-#define NUM_DIVISORS_ASYNC  (5)
+#define NUM_DIVISORS_ASYNC          (5)
 #endif
-#define NUM_DIVISORS_SYNC   (4)
+#define NUM_DIVISORS_SYNC           (4)
 
-/*****************************************************************************
-Typedef definitions
-******************************************************************************/
+/**********************************************************************************************************************
+ Global Typedef definitions
+ *********************************************************************************************************************/
 
 /* ROM INFO */
 typedef struct st_sci_ch_rom
@@ -137,9 +134,9 @@ typedef struct st_baud_divisor
     uint16_t    denominator;
 } baud_divisor_t;
 
-/*****************************************************************************
-Exported global variables and functions
-******************************************************************************/
+/**********************************************************************************************************************
+ External global variables
+ *********************************************************************************************************************/
 extern const sci_hdl_t g_sci_handles[];
 
 #if (SCI_CFG_ASYNC_INCLUDED)
@@ -162,52 +159,37 @@ extern sci_ch_ctrl_t ch2_ctrl;
 extern sci_ch_ctrl_t ch3_ctrl;
 #endif
 
-/*****************************************************************************
-Exported global functions
-******************************************************************************/
-#if SCI_CFG_TEI_INCLUDED
+/**********************************************************************************************************************
+ Exported global functions
+ *********************************************************************************************************************/
+#if (SCI_CFG_TEI_INCLUDED)
+extern void tei_handler(sci_hdl_t const hdl);
 extern void sci0_tei0_isr(void *cb_args);
 extern void sci1_tei1_isr(void *cb_args);
 extern void sci2_tei2_isr(void *cb_args);
 extern void sci3_tei3_isr(void *cb_args);
 #endif
 
-/* Macros to enable and disable ICU interrupts */
+extern void SetReg_TXD(uint8_t channel, uint8_t byte);
+extern void GetReg_RXD(uint8_t channel, uint8_t *byte);
 extern void SetReg_SRMKn(uint8_t channel, uint8_t flag);
 extern void SetReg_SREMKn(uint8_t channel, uint8_t flag);
 extern void sci_init_register(sci_hdl_t const hdl);
-
-#if (SCI_CFG_ASYNC_INCLUDED)
-extern sci_err_t sci_async_cmds(sci_hdl_t const hdl,
-                                sci_cmd_t const cmd,
-                                void            *p_args);
-#endif
-
-extern sci_err_t sci_mcu_param_check(uint8_t const chan);
-
-extern int32_t sci_init_bit_rate(sci_hdl_t const    hdl,
-                                 uint32_t const     pclk,
-                                 uint32_t const     baud);
-
-extern void sci_initialize_ints(sci_hdl_t const hdl,
-                                uint8_t const   priority);
-
-extern void sci_disable_ints(sci_hdl_t const hdl);
-
-#if (SCI_CFG_ASYNC_INCLUDED)
-extern void txi_handler(sci_hdl_t const hdl);
-#endif
-
-#if SCI_CFG_TEI_INCLUDED
-extern void tei_handler(sci_hdl_t const hdl);
-#endif
-
-extern void rxi_handler(sci_hdl_t const hdl);
-extern void rxi_handler3(sci_hdl_t const hdl);
-extern void eri_handler(sci_hdl_t const hdl);
 extern uint16_t GetReg_SSR(uint8_t channel);
-extern void SetReg_TXD(uint8_t channel, uint8_t byte);
-extern void GetReg_RXD(uint8_t channel, uint8_t *byte);
+
+#if (SCI_CFG_ASYNC_INCLUDED == 1)
+extern sci_err_t sci_async_cmds(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args);
+extern void txi_handler(sci_hdl_t const hdl);
+#endif /* (SCI_CFG_ASYNC_INCLUDED == 1) */
+
+#if (SCI_CFG_PARAM_CHECKING_ENABLE == 1)
+extern sci_err_t sci_mcu_param_check(uint8_t const chan);
+#endif /* (SCI_CFG_PARAM_CHECKING_ENABLE == 1) */
+
+extern void sci_initialize_ints(sci_hdl_t const hdl, uint8_t const priority);
+extern void sci_disable_ints(sci_hdl_t const hdl);
+extern void rxi_handler(sci_hdl_t const hdl);
+extern void eri_handler(sci_hdl_t const hdl);
 
 #endif /* R_SCI_RL78_PRIVATE_H */
 
