@@ -34,9 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "r_smc_entry.h"
 #include "rl78_serial_term_uart.h"
 
-/* FreeRTOS+TCP includes. */
-#include "FreeRTOSIPConfig.h"
-
 /* Demo includes */
 #include "aws_clientcredential.h"
 #include "demo_config.h"
