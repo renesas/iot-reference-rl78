@@ -1,7 +1,7 @@
 /*
-#include <ota_demo_config_.h>
- * FreeRTOS OTA PAL for Renesas RX65N-RSK V2.0.0
+ * FreeRTOS OTA PAL for Renesas RL78/G23-128p FPB
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2023 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -144,11 +144,9 @@ int16_t otaPal_WriteBlock( OtaFileContext_t * const pFileContext,
                            uint8_t * const pData,
                            uint32_t ulBlockSize )
 {
-    e_fwup_err_t err;
     LogDebug( ( "otaPal_WriteBlock is called." ) );
 
-    err = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+512, ulBlockSize);
-    if ((FWUP_SUCCESS != err) && (FWUP_PROGRESS != err))
+    if (FWUP_ERR_FLASH == R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+512, ulBlockSize))
     {
         return 0;
     }
@@ -334,9 +332,7 @@ OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileC
     LogDebug( ( "otaPal_GetPlatformImageState is called.  OtaPalImageState_t = %d",ePalState ) );
     return ePalState;
 }
-/*-----------------------------------------------------------*/
 
-/* Provide access to private members for testing. */
-#ifdef FREERTOS_ENABLE_UNIT_TESTS
-    #include "aws_ota_pal_test_access_define.h"
+#if (otaconfigMAX_NUM_BLOCKS_REQUEST != 1)
+#error otaconfigMAX_NUM_BLOCKS_REQUEST must be set to 1.
 #endif
