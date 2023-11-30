@@ -142,7 +142,7 @@ void main_task( void * pvParameters )
 #else
     if (pdTRUE == xPlatformNetworkUp())
     {
-        FreeRTOS_printf( ( "---------STARTING DEMO---------\r\n" ) );
+        configPRINT_STRING( ( "---------STARTING DEMO---------\r\n" ) );
 
         xMQTTAgentInit();
         xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );
