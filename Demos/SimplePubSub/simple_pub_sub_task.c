@@ -112,7 +112,7 @@
  * this demo this can be a task number, when more than one tasks are publishing within a device.
  *
  */
-#define mqttexampleLOOPBACK_TOPIC_FORMAT                  "pubsub_demo/%s/task_%d"
+#define mqttexampleLOOPBACK_TOPIC_FORMAT                  "pubsub_demo/%s/task_%u"
 
 /**
  * @brief Format for the topic to which demo task sends PUBLISH messages to broker.
@@ -435,7 +435,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
 {
     MQTTPublishInfo_t xPublishInfo = { MQTTQoS0, 0UL, };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
-    MQTTStatus_t xCommandStatus;
+    MQTTStatus_t xCommandStatus = MQTTSuccess;
     MQTTAgentCommandInfo_t xCommandParams = { 0UL };
     uint32_t ulNotifiedValue = 0U;
 
@@ -576,7 +576,7 @@ void vSimpleSubscribePublishTask( void * pvParameters )
              * the task name and an incrementing number. */
             xPayloadLength = snprintf( cPayloadBuf,
                                        mqttexampleSTRING_BUFFER_LENGTH,
-                                       "Task %zu publishing message %zu",
+                                       "Task %d publishing message %d",
                                        ( int ) ulTaskNumber,
                                        ( int ) ulPublishCount );
 

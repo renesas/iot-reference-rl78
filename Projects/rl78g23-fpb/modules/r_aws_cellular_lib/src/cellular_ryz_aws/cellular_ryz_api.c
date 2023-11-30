@@ -299,27 +299,6 @@ CellularError_t Cellular_GetSimCardInfo (CellularHandle_t cellularHandle, Cellul
     BaseType_t          semaphore_ret  = 0;
 #endif
 
-    atReqGetIccid.pAtCmd       = "AT+SQNCCID?";
-    atReqGetIccid.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqGetIccid.pAtRspPrefix = "+SQNCCID";
-    atReqGetIccid.respCallback = _Cellular_RecvFuncGetIccid;
-    atReqGetIccid.pData        = pSimCardInfo->iccid;
-    atReqGetIccid.dataLen      = CELLULAR_ICCID_MAX_SIZE + 1U;
-
-    atReqGetImsi.pAtCmd       = "AT+CIMI";
-    atReqGetImsi.atCmdType    = CELLULAR_AT_WO_PREFIX;
-    atReqGetImsi.pAtRspPrefix = NULL;
-    atReqGetImsi.respCallback = _Cellular_RecvFuncGetImsi;
-    atReqGetImsi.pData        = pSimCardInfo->imsi;
-    atReqGetImsi.dataLen      = CELLULAR_IMSI_MAX_SIZE + 1U;
-
-    atReqGetHplmn.pAtCmd       = "AT+CRSM=176,28514,0,0,0"; /* READ BINARY commmand. HPLMN Selector with Access Technology( 6F62 ). */
-    atReqGetHplmn.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqGetHplmn.pAtRspPrefix = "+CRSM";
-    atReqGetHplmn.respCallback = _Cellular_RecvFuncGetHplmn;
-    atReqGetHplmn.pData        = &pSimCardInfo->plmn;
-    atReqGetHplmn.dataLen      = (uint16_t) sizeof(CellularPlmnInfo_t);
-
 #if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* pContext is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
@@ -336,6 +315,27 @@ CellularError_t Cellular_GetSimCardInfo (CellularHandle_t cellularHandle, Cellul
     else
     {
 #endif
+        atReqGetIccid.pAtCmd       = "AT+SQNCCID?";
+        atReqGetIccid.atCmdType    = CELLULAR_AT_WITH_PREFIX;
+        atReqGetIccid.pAtRspPrefix = "+SQNCCID";
+        atReqGetIccid.respCallback = _Cellular_RecvFuncGetIccid;
+        atReqGetIccid.pData        = pSimCardInfo->iccid;
+        atReqGetIccid.dataLen      = CELLULAR_ICCID_MAX_SIZE + 1U;
+
+        atReqGetImsi.pAtCmd       = "AT+CIMI";
+        atReqGetImsi.atCmdType    = CELLULAR_AT_WO_PREFIX;
+        atReqGetImsi.pAtRspPrefix = NULL;
+        atReqGetImsi.respCallback = _Cellular_RecvFuncGetImsi;
+        atReqGetImsi.pData        = pSimCardInfo->imsi;
+        atReqGetImsi.dataLen      = CELLULAR_IMSI_MAX_SIZE + 1U;
+
+        atReqGetHplmn.pAtCmd       = "AT+CRSM=176,28514,0,0,0"; /* READ BINARY commmand. HPLMN Selector with Access Technology( 6F62 ). */
+        atReqGetHplmn.atCmdType    = CELLULAR_AT_WITH_PREFIX;
+        atReqGetHplmn.pAtRspPrefix = "+CRSM";
+        atReqGetHplmn.respCallback = _Cellular_RecvFuncGetHplmn;
+        atReqGetHplmn.pData        = &pSimCardInfo->plmn;
+        atReqGetHplmn.dataLen      = (uint16_t) sizeof(CellularPlmnInfo_t);
+
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
 #endif
