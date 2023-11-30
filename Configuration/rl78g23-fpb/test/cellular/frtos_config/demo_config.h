@@ -33,6 +33,7 @@
 #include "aws_clientcredential.h"
 #include "aws_clientcredential_keys.h"
 #include "iot_default_root_certificates.h"
+
 /**************************************************/
 /******* DO NOT CHANGE the following order ********/
 /**************************************************/
@@ -274,14 +275,14 @@
  * on. The current value is given as an example. Please update for your specific
  * operating system version.
  */
-#define democonfigOS_VERSION    "V10.4.3"
+#define democonfigOS_VERSION    "V10.5.1"
 
 /**
  * @brief The name of the hardware platform the application is running on. The
  * current value is given as an example. Please update for your specific
  * hardware platform.
  */
-#define democonfigHARDWARE_PLATFORM_NAME    "RL78G23"
+#define democonfigHARDWARE_PLATFORM_NAME    "RL78/G23"
 
 /**
  * @brief The MQTT metrics string expected by AWS IoT.
@@ -376,18 +377,16 @@
  */
 #define democonfigROOT_CA_PEM                   tlsSTARFIELD_ROOT_CERTIFICATE_PEM
 
-#ifdef RL78_DEL
+/**
+ * @brief Dimensions the buffer used to serialize and deserialize MQTT packets.
+ * @note Specified in bytes.  Must be large enough to hold the maximum
+ * anticipated MQTT payload.
+ */
+#define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 1400U )
+
 /**
  * @brief The length of the queue used to hold commands for the agent.
  */
-#define MQTT_AGENT_COMMAND_QUEUE_LENGTH             ( 25 )
+#define MQTT_AGENT_COMMAND_QUEUE_LENGTH         ( 25U )
 
-/**
- * @brief The number of command structures to allocate in the pool
- * for the agent.
- */
-#define MQTT_COMMAND_CONTEXTS_POOL_SIZE             ( 10 )
-
-
-#endif
 #endif /* DEMO_CONFIG_H */
