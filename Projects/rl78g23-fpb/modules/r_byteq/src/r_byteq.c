@@ -153,6 +153,7 @@ byteq_err_t R_BYTEQ_Open(uint8_t * const        p_buf,
     }
 #endif
 
+
     /* INITIALIZE QCB FIELDS */
 
     p_qcb->buffer = p_buf;
@@ -197,9 +198,15 @@ byteq_err_t R_BYTEQ_Put(byteq_hdl_t const   hdl,
     }
 
 #if ((BYTEQ_CFG_CRITICAL_SECTION == 1)||(BYTEQ_CFG_PROTECT_QUEUE == 1))
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     uint8_t    psw_bit_i_val;
     /* Get current value bit I of PSW register. */
     psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#else
+    uint32_t    psw_bit_i_val;
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x00010000);
+#endif
 #endif
 
 #if (BYTEQ_CFG_CRITICAL_SECTION == 1)
@@ -288,9 +295,15 @@ byteq_err_t R_BYTEQ_Get(byteq_hdl_t const   hdl,
     }
 
 #if ((BYTEQ_CFG_CRITICAL_SECTION == 1)||(BYTEQ_CFG_PROTECT_QUEUE == 1))
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     uint8_t    psw_bit_i_val;
     /* Get current value bit I of PSW register. */
     psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#else
+    uint32_t    psw_bit_i_val;
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x00010000);
+#endif
 #endif
 
 #if (BYTEQ_CFG_CRITICAL_SECTION == 1)
@@ -362,10 +375,17 @@ byteq_err_t R_BYTEQ_Flush(byteq_hdl_t const hdl)
 #endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     uint8_t    psw_bit_i_val;
 
     /* Get current value bit I of PSW register. */
     psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#else
+    uint32_t    psw_bit_i_val;
+    
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x00010000);
+#endif
 
     if(0 != psw_bit_i_val)
     {
@@ -426,10 +446,17 @@ byteq_err_t R_BYTEQ_Used(byteq_hdl_t const  hdl,
 #endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     uint8_t    psw_bit_i_val;
 
     /* Get current value bit I of PSW register. */
     psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#else
+    uint32_t    psw_bit_i_val;
+
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x00010000);
+#endif
 
     if(0 != psw_bit_i_val)
     {
@@ -476,15 +503,23 @@ byteq_err_t R_BYTEQ_Unused(byteq_hdl_t const  hdl,
 #endif
 
 #if (BYTEQ_CFG_PROTECT_QUEUE == 1)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     uint8_t    psw_bit_i_val;
 
     /* Get current value bit I of PSW register. */
     psw_bit_i_val = (R_BSP_GET_PSW() & 0x80);
+#else
+    uint32_t    psw_bit_i_val;
+
+    /* Get current value bit I of PSW register. */
+    psw_bit_i_val = (R_BSP_GET_PSW() & 0x00010000);
+#endif
 
     if(0 != psw_bit_i_val)
     {
-        /* Get p_cnt. */
         R_BSP_InterruptsDisable();
+
+        /* Get p_cnt. */
         *p_cnt = (uint16_t) (hdl->size - hdl->count);
         R_BSP_InterruptsEnable();
     }
@@ -545,7 +580,10 @@ byteq_err_t R_BYTEQ_Close(byteq_hdl_t const hdl)
 */
 uint32_t  R_BYTEQ_GetVersion(void)
 {
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     uint32_t const version = ((uint32_t)BYTEQ_VERSION_MAJOR << 16) | BYTEQ_VERSION_MINOR;
+#else
+    uint32_t const version = (BYTEQ_VERSION_MAJOR << 16) | BYTEQ_VERSION_MINOR;
+#endif
     return version;
 }
