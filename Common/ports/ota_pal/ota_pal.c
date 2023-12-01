@@ -31,13 +31,14 @@
 
 /* FreeRTOS include. */
 #include "FreeRTOS.h"
-#include "task.h"
 
 /* OTA library includes. */
 #include "ota.h"
+
+/* OTA PAL Port include. */
 #include "ota_pal.h"
 
-/* OTA PAL test config file include. */
+/* Renesas Drivers include */
 #include "r_fwup_if.h"
 
 /* Specify the OTA signature algorithm we support on this platform. */
@@ -71,6 +72,8 @@ const char OTA_JsonFileSignatureKey[ OTA_FILE_SIG_KEY_STR_MAX_LENGTH ] = "sig-sh
  */
 static OtaPalStatus_t otaPal_CheckFileSignature( OtaFileContext_t * const pFileContext );
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
 /**
  * @brief Read the specified signer certificate from the filesystem into a local buffer.
  *
@@ -85,8 +88,6 @@ static OtaPalStatus_t otaPal_CheckFileSignature( OtaFileContext_t * const pFileC
  * @return A pointer to the signer certificate in the file system. NULL if the certificate cannot be read.
  * This returned pointer is the responsibility of the caller; if the memory is allocated the caller must free it.
  */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#else
 static uint8_t * otaPal_ReadAndAssumeCertificate( const uint8_t * const pucCertName,
                                                   uint32_t * const ulSignerCertSize );
 #endif
@@ -332,7 +333,3 @@ OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileC
     LogDebug( ( "otaPal_GetPlatformImageState is called.  OtaPalImageState_t = %d",ePalState ) );
     return ePalState;
 }
-
-#if (otaconfigMAX_NUM_BLOCKS_REQUEST != 1)
-#error otaconfigMAX_NUM_BLOCKS_REQUEST must be set to 1.
-#endif

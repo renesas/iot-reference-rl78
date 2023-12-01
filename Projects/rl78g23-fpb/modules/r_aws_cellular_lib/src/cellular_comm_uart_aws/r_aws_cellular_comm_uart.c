@@ -173,10 +173,12 @@ static CellularCommInterfaceError_t aws_cellular_send (CellularCommInterfaceHand
                                                        uint32_t dataLength,
                                                        uint32_t timeoutMilliseconds,
                                                        uint32_t * pDataSentLength);
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static uint32_t                     aws_cellular_timeout_reconfig (st_aws_cellular_timeout_ctrl_t * const p_timeout);
 #if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
 static CellularCommInterfaceError_t aws_cellular_wait_bits (EventGroupHandle_t hdl, uint32_t timeout);
 #endif
+#endif /* defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__) */
 
 /*-----------------------------------------------------------*/
 
@@ -730,7 +732,7 @@ static CellularCommInterfaceError_t aws_cellular_send(CellularCommInterfaceHandl
 /************************************************************************
  * Function Name  @fn            aws_cellular_recv
  ***********************************************************************/
-#ifndef TOMO
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandle_t commInterfaceHandle,
                                                       uint8_t * pBuffer,
                                                       uint32_t bufferLength,
@@ -943,6 +945,7 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
  * End of function aws_cellular_recv
  **********************************************************************/
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /************************************************************************
  * Function Name  @fn            aws_cellular_timeout_reconfig
  ***********************************************************************/
@@ -1022,3 +1025,4 @@ static CellularCommInterfaceError_t aws_cellular_wait_bits(EventGroupHandle_t hd
  * End of function aws_cellular_wait_bits
  **********************************************************************/
 #endif /* AWS_CELLULAR_CFG_CTS_SW_CTRL == 1 */
+#endif /* defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__) */
