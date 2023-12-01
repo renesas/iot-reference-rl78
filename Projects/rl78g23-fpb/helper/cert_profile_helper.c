@@ -21,7 +21,7 @@
  * Description  : write certificate to cellular module.
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : DD.MM.YYYY 1.00     First Release
+ *         : 27.12.2023 1.00     First Release
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -48,7 +48,7 @@
 /**********************************************************************************************************************
  * Function Name: prvWriteCertificateToModule
  * Description  : Sets the host address to the certificate profile that matches the specified Id.
- * Arguments    : none
+ * Arguments    : hdl    cellular module handle.
  * Return Value : none
  *********************************************************************************************************************/
 void prvWriteCertificateToModule(CellularHandle_t hdl)

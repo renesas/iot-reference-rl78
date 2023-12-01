@@ -21,7 +21,7 @@
  * Description  : write certificate to cellular module.
  **********************************************************************************************************************
  * History : DD.MM.YYYY Version  Description
- *         : DD.MM.YYYY 1.00     First Release
+ *         : 27.12.2023 1.00     First Release
  *********************************************************************************************************************/
 #ifndef CERT_PROFILE_HELPER_H_
 #define CERT_PROFILE_HELPER_H_
