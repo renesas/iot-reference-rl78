@@ -1311,9 +1311,6 @@ static void vOtaDemoTask( void * pvParam )
     /* Return error status. */
     BaseType_t xReturnStatus = pdPASS;
 
-    /* Flag for MQTT init status. */
-    bool mqttInitialized = false;
-
     if (xGetMQTTAgentState () != MQTT_AGENT_STATE_CONNECTED)
     {
         (void ) xWaitForMQTTAgentState (MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY);

@@ -36,7 +36,9 @@
  **********************************************************************************************************************/
 static void cellular_ryz_urc_process_sqnsring(CellularContext_t * pContext, char * pInputLine);
 static void cellular_ryz_urc_process_sysstart(CellularContext_t * pContext, char * pInputLine);
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static void cellular_ryz_urc_process_shutdown(CellularContext_t * pContext, char * pInputLine);
+#endif
 static void cellular_ryz_urc_process_socket_shutdown(CellularContext_t * pContext, char * pInputLine);
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static void cellular_ryz_urc_process_csq(CellularContext_t * pContext, char * pInputLine);
@@ -217,6 +219,7 @@ static void cellular_ryz_urc_process_sysstart (CellularContext_t * pContext, cha
 #endif
 }
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static void cellular_ryz_urc_process_shutdown (CellularContext_t * pContext, char * pInputLine)
 {
     /* The token is the pInputLine. No need to process the pInputLine. */
@@ -245,6 +248,7 @@ static void cellular_ryz_urc_process_shutdown (CellularContext_t * pContext, cha
     }
 #endif
 }
+#endif
 
 static void cellular_ryz_urc_process_cereg (CellularContext_t * pContext, char * pInputLine)
 {
