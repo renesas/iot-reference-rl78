@@ -897,8 +897,7 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
 #endif
-#endif /* defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) */
-
+#endif
 
     /* Initialize the MQTT context with the buffer and transport interface. */
     if( xStatus == pdPASS )
@@ -951,8 +950,9 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
     prvSetMQTTAgentState( MQTT_AGENT_STATE_TERMINATED );
-#if defined(__TEST__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #else
+#if !defined(__TEST__)
     if( pcThingName != NULL )
    {
 	   vPortFree( pcThingName );
@@ -970,6 +970,7 @@ void prvMQTTAgentTask( void * pvParameters )
        vPortFree( pcRootCA );
        pcRootCA = NULL;
    }
+#endif
 #endif
 
    LogInfo( ( "---------MQTT Agent Task Finished---------\r\n" ) );
