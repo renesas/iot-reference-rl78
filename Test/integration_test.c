@@ -84,13 +84,15 @@ void prvTransportTestDelay( uint32_t delayMs );
 #else
 static NetworkCredentials_t xNetworkCredentials = { 0 };
 #endif
+#if ( MQTT_TEST_ENABLED == 1 )
 static TransportInterface_t xTransport = { 0 };
 static NetworkContext_t xSecondNetworkContext = { 0 };
 static NetworkContext_t xNetworkContext = { 0 };
+#endif /* ( MQTT_TEST_ENABLED == 1 ) */
 static uint32_t ulGlobalEntryTimeMs = 0;
 
 
-
+#if ( MQTT_TEST_ENABLED == 1 )
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
                                                           void * pvNetworkCredentials )
@@ -118,7 +120,6 @@ static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContex
     return NETWORK_CONNECT_SUCCESS;
 }
 
-
 static void prvTransportNetworkDisconnect( void * pNetworkContext )
 {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
@@ -127,6 +128,7 @@ static void prvTransportNetworkDisconnect( void * pNetworkContext )
     TLS_FreeRTOS_Disconnect( pNetworkContext );
 #endif
 }
+#endif /* ( MQTT_TEST_ENABLED == 1 )*/
 
 static void ThreadWrapper( void * pParam )
 {
