@@ -52,7 +52,7 @@
  *
  * #define MQTT_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define MQTT_SERVER_ENDPOINT   "a3lklnx40j1phd-ats.iot.ap-northeast-1.amazonaws.com"
+#define MQTT_SERVER_ENDPOINT   "PLACE_HOLDER"
 
 /**
  * @brief Port of the MQTT broker to connect to in mqtt test.
@@ -66,7 +66,7 @@
  *
  * #define ECHO_SERVER_ENDPOINT   "PLACE_HOLDER"
  */
-#define ECHO_SERVER_ENDPOINT    "192.168.1.1"
+#define ECHO_SERVER_ENDPOINT    "PLACE_HOLDER"
 
 /**
  * @brief Port of the echo server to connect to in transport interface test.
@@ -204,11 +204,7 @@
  *
  * #define IOT_THING_NAME  "PLACE_HOLDER"
  */
-#ifdef RL78_DBG
-#define IOT_THING_NAME                                   "rx-ota-firm-things-rx65n-rsk"
-#else
 #define IOT_THING_NAME "PLACE_HOLDER"
-#endif
 
 /**
  * @brief The MQTT client identifier used in MQTT test.  Each client identifier
