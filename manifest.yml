@@ -9,12 +9,6 @@ dependencies:
       type: "git"
       url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
       path: "/Middleware/FreeRTOS/FreeRTOS-Kernel"
-  - name: "FreeRTOS-Plus-TCP"
-    version: "V3.1.0"
-    repository:
-      type: "git"
-      url: "https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git"
-      path: "/Middleware/FreeRTOS/FreeRTOS-Plus-TCP"
   - name: "coreJSON"
     version: "v3.2.0"
     repository:
@@ -27,12 +21,6 @@ dependencies:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT.git"
       path: "/Middleware/FreeRTOS/coreMQTT"
-  - name: "corePKCS11"
-    version: "v3.5.0"
-    repository:
-      type: "git"
-      url: "https://github.com/FreeRTOS/corePKCS11.git"
-      path: "/Middleware/FreeRTOS/corePKCS11"
   - name: "backoffAlgorithm"
     version: "v1.3.0"
     repository:
@@ -45,24 +33,12 @@ dependencies:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT-Agent.git"
       path: "/Middleware/coreMQTT-Agent"
-  - name: "device-defender"
-    version: "v1.3.0"
-    repository:
-      type: "git"
-      url: "https://github.com/aws/Device-Defender-for-AWS-IoT-embedded-sdk.git"
-      path: "/Middleware/AWS/device-defender-for-aws-iot-embedded-sdk"
   - name: "ota"
     version: "v3.4.0"
     repository:
       type: "git"
       url: "https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git"
       path: "/Middleware/AWS/ota-for-aws-iot-embedded-sdk"
-  - name: "device-shadow"
-    version: "v1.3.0"
-    repository:
-      type: "git"
-      url: "https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git"
-      path: "/Middleware/AWS/device-shadow-for-aws-iot-embedded-sdk"
   - name: "mbedtls"
     version: "v2.28.1"
     repository:
