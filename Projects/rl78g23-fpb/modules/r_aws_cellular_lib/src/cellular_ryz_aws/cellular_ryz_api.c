@@ -1037,7 +1037,7 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
 
         snprintf(cmdBuf,
                  CELLULAR_AT_CMD_MAX_SIZE,
-                 "AT+SQNSD=%u,%d,%d,\"%s\",0,%d,1,0",
+                 "AT+SQNSD=%u,%u,%u,\"%s\",0,%d,1,0",
                  RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId),
                  protocol,
                  socketHandle->remoteSocketAddress.port,
