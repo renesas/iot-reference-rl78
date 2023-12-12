@@ -707,7 +707,7 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
                           const void * pvBuffer,
                           size_t xDataLength )
 {
-    uint8_t * buf = ( uint8_t * ) pvBuffer;
+    uint8_t __far * buf = ( uint8_t __far * ) pvBuffer;
     BaseType_t retSendLength = 0;
     uint32_t sentLength = 0;
     CellularError_t socketStatus = CELLULAR_SUCCESS;
