@@ -37,10 +37,6 @@
  * MQTT_Publish() API.
  */
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#pragma section const const_coreMqtt
-#endif
-
 /* Standard includes. */
 #include <string.h>
 #include <stdio.h>
@@ -1361,7 +1357,5 @@ MQTTStatus_t MQTTAgent_Terminate( const MQTTAgentContext_t * pMqttAgentContext,
 
     return statusReturn;
 }
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#pragma section
-#endif
+
 /*-----------------------------------------------------------*/
