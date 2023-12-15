@@ -251,12 +251,12 @@
         <pinItem allocation="1" comments="" direction="O" id="P142" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="2" comments="" direction="I" id="P141" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="125" comments="" direction="O" id="P00" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="22" comments="" direction="None" id="TOOL0" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="128" comments="" direction="None" id="RxD3" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
-        <pinItem allocation="78" comments="" direction="None" id="RxD2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="28" comments="" direction="None" id="XT1" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="27" comments="" direction="None" id="XT2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
         <pinItem allocation="67" comments="" direction="O" id="P50" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="22" comments="" direction="None" id="TOOL0" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="128" comments="" direction="None" id="RxD3" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
+        <pinItem allocation="78" comments="" direction="None" id="RxD2" isUsedBySoftware="true" locked="false" operationMode="" status="0"/>
     </tool>
     <tool id="Summary" version="1.0.0.0">
         <option id="com.renesas.smc.code.path" value="src\smc_gen"/>
@@ -909,7 +909,180 @@
             </allocator>
             <source description="コード生成に対応したコンポーネントは、設定に応じた周辺ドライバのコードを小さなコードサイズで出力します。" display="コード生成" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
         </configuration>
-        <configuration apiMode="FULL_API" id="74927470-ed51-4862-90cb-0356288e80d4" inuse="true" name="Config_UART2">
+        <configuration apiMode="FULL_API" id="9f08a0ac-ccc0-4da8-992c-c5b4cb40aac4" inuse="true" name="Config_UART3">
+            <allocatable id="UART3">
+                <allocatable id="transmit">
+                    <isocket id="CountingClock" selection="Clock.tool_clock_fCLK" value="3.2E7"/>
+                    <option enabled="true" id="Operation" selection="CK1">
+                        <item id="CK0" input="0" vlaue="0"/>
+                        <item id="CK1" input="1" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="Prescaler" selection="FCLK1">
+                        <item id="FCLK0" input="1" vlaue="0"/>
+                        <item id="FCLK1" input="2" vlaue="0"/>
+                        <item id="FCLK2" input="4" vlaue="0"/>
+                        <item id="FCLK3" input="8" vlaue="0"/>
+                        <item id="FCLK4" input="16" vlaue="0"/>
+                        <item id="FCLK5" input="32" vlaue="0"/>
+                        <item id="FCLK6" input="64" vlaue="0"/>
+                        <item id="FCLK7" input="128" vlaue="0"/>
+                        <item id="FCLK8" input="256" vlaue="0"/>
+                        <item id="FCLK9" input="512" vlaue="0"/>
+                        <item id="FCLK10" input="1024" vlaue="0"/>
+                        <item id="FCLK11" input="2048" vlaue="0"/>
+                        <item id="FCLK12" input="4096" vlaue="0"/>
+                        <item id="FCLK13" input="8192" vlaue="0"/>
+                        <item id="FCLK14" input="16384" vlaue="0"/>
+                        <item id="FCLK15" input="32768" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="transferSetting" selection="singleMode">
+                        <item id="singleMode" input="" vlaue="0"/>
+                        <item id="continuousMode" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="dataLength" selection="8bits">
+                        <item id="7bits" input="" vlaue="0"/>
+                        <item id="8bits" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="directionSetting" selection="lsb">
+                        <item id="lsb" input="" vlaue="0"/>
+                        <item id="msb" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="paritySetting" selection="none">
+                        <item id="none" input="" vlaue="0"/>
+                        <item id="zero" input="" vlaue="0"/>
+                        <item id="odd" input="" vlaue="0"/>
+                        <item id="even" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="stopBitSetting" selection="1bit">
+                        <item id="1bit" input="" vlaue="0"/>
+                        <item id="2bits" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="dataLevelSetting" selection="normal">
+                        <item id="normal" input="" vlaue="0"/>
+                        <item id="reverse" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="baudrateSetting" selection="input">
+                        <item id="input" input="115200" vlaue="68"/>
+                        <item id="9600" input="9600" vlaue="0"/>
+                        <item id="19200" input="19200" vlaue="0"/>
+                        <item id="31250" input="31250" vlaue="0"/>
+                        <item id="38400" input="38400" vlaue="0"/>
+                        <item id="76800" input="76800" vlaue="0"/>
+                        <item id="153600" input="153600" vlaue="0"/>
+                        <item id="312500" input="312500" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="txPriority" selection="Level3">
+                        <item id="Level0" input="" vlaue="0"/>
+                        <item id="Level1" input="" vlaue="0"/>
+                        <item id="Level2" input="" vlaue="0"/>
+                        <item id="Level3" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="txCallback" selection="enable">
+                        <item id="enable" input="" vlaue="0"/>
+                        <item id="disable" input="" vlaue="0"/>
+                    </option>
+                </allocatable>
+                <allocatable id="receive">
+                    <isocket id="CountingClock" selection="Clock.tool_clock_fCLK" value="3.2E7"/>
+                    <option enabled="true" id="Operation" selection="CK1">
+                        <item id="CK0" input="0" vlaue="0"/>
+                        <item id="CK1" input="1" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="Prescaler" selection="FCLK1">
+                        <item id="FCLK0" input="1" vlaue="0"/>
+                        <item id="FCLK1" input="2" vlaue="0"/>
+                        <item id="FCLK2" input="4" vlaue="0"/>
+                        <item id="FCLK3" input="8" vlaue="0"/>
+                        <item id="FCLK4" input="16" vlaue="0"/>
+                        <item id="FCLK5" input="32" vlaue="0"/>
+                        <item id="FCLK6" input="64" vlaue="0"/>
+                        <item id="FCLK7" input="128" vlaue="0"/>
+                        <item id="FCLK8" input="256" vlaue="0"/>
+                        <item id="FCLK9" input="512" vlaue="0"/>
+                        <item id="FCLK10" input="1024" vlaue="0"/>
+                        <item id="FCLK11" input="2048" vlaue="0"/>
+                        <item id="FCLK12" input="4096" vlaue="0"/>
+                        <item id="FCLK13" input="8192" vlaue="0"/>
+                        <item id="FCLK14" input="16384" vlaue="0"/>
+                        <item id="FCLK15" input="32768" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="dataLength" selection="8bits">
+                        <item id="7bits" input="" vlaue="0"/>
+                        <item id="8bits" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="directionSetting" selection="lsb">
+                        <item id="lsb" input="" vlaue="0"/>
+                        <item id="msb" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="paritySetting" selection="none">
+                        <item id="none" input="" vlaue="0"/>
+                        <item id="zero" input="" vlaue="0"/>
+                        <item id="odd" input="" vlaue="0"/>
+                        <item id="even" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="stopBitSetting" selection="1bit">
+                        <item id="1bit" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="dataLevelSetting" selection="normal">
+                        <item id="normal" input="" vlaue="0"/>
+                        <item id="reverse" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="baudrateSetting" selection="input">
+                        <item id="input" input="115200" vlaue="68"/>
+                        <item id="9600" input="9600" vlaue="0"/>
+                        <item id="19200" input="19200" vlaue="0"/>
+                        <item id="31250" input="31250" vlaue="0"/>
+                        <item id="38400" input="38400" vlaue="0"/>
+                        <item id="76800" input="76800" vlaue="0"/>
+                        <item id="153600" input="153600" vlaue="0"/>
+                        <item id="312500" input="312500" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="rxPriority" selection="Level2">
+                        <item id="Level0" input="" vlaue="0"/>
+                        <item id="Level1" input="" vlaue="0"/>
+                        <item id="Level2" input="" vlaue="0"/>
+                        <item id="Level3" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="rxErrorFunction" selection="enable">
+                        <item id="enable" input="" vlaue="0"/>
+                        <item id="disable" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="rxErrorPriority" selection="Level3">
+                        <item id="Level0" input="" vlaue="0"/>
+                        <item id="Level1" input="" vlaue="0"/>
+                        <item id="Level2" input="" vlaue="0"/>
+                        <item id="Level3" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="rxCallback" selection="enable">
+                        <item id="enable" input="" vlaue="0"/>
+                        <item id="disable" input="" vlaue="0"/>
+                    </option>
+                    <option enabled="true" id="rxErrorCallback" selection="enable">
+                        <item id="enable" input="" vlaue="0"/>
+                        <item id="disable" input="" vlaue="0"/>
+                    </option>
+                </allocatable>
+                <osocket id="SendSetting" value="SingleTransfer"/>
+                <osocket id="BothSetting" value="SingleTransfer"/>
+                <option enabled="true" id="Mode" selection="both">
+                    <item id="transmit" input="" vlaue="0"/>
+                    <item id="receive" input="" vlaue="0"/>
+                    <item id="both" input="" vlaue="0"/>
+                </option>
+            </allocatable>
+            <component description="非同期式シリアル通信(UART)インタフェースは、調歩同期式通信機能です。" detailDescription="" display="UART通信" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.5.0"/>
+            <allocator channelLevel0="3" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART通信" display="UART3" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator3" type="UART">
+                <context>
+                    <option enabled="true" id="Mode" selection="both">
+                        <item enabled="true" id="transmit"/>
+                        <item enabled="true" id="receive"/>
+                        <item enabled="true" id="both"/>
+                    </option>
+                </context>
+            </allocator>
+            <source description="コード生成に対応したコンポーネントは、設定に応じた周辺ドライバのコードを小さなコードサイズで出力します。" display="コード生成" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
+        </configuration>
+        <configuration apiMode="FULL_API" id="66056349-d305-4d6b-81f1-ccd492818701" inuse="true" name="Config_UART2">
             <allocatable id="UART2">
                 <allocatable id="transmit">
                     <isocket id="CountingClock" selection="Clock.tool_clock_fCLK" value="3.2E7"/>
@@ -1074,179 +1247,6 @@
             </allocatable>
             <component description="非同期式シリアル通信(UART)インタフェースは、調歩同期式通信機能です。" detailDescription="" display="UART通信" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.5.0"/>
             <allocator channelLevel0="2" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART通信" display="UART2" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator2" type="UART">
-                <context>
-                    <option enabled="true" id="Mode" selection="both">
-                        <item enabled="true" id="transmit"/>
-                        <item enabled="true" id="receive"/>
-                        <item enabled="true" id="both"/>
-                    </option>
-                </context>
-            </allocator>
-            <source description="コード生成に対応したコンポーネントは、設定に応じた周辺ドライバのコードを小さなコードサイズで出力します。" display="コード生成" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
-        </configuration>
-        <configuration apiMode="FULL_API" id="9f08a0ac-ccc0-4da8-992c-c5b4cb40aac4" inuse="true" name="Config_UART3">
-            <allocatable id="UART3">
-                <allocatable id="transmit">
-                    <isocket id="CountingClock" selection="Clock.tool_clock_fCLK" value="3.2E7"/>
-                    <option enabled="true" id="Operation" selection="CK1">
-                        <item id="CK0" input="0" vlaue="0"/>
-                        <item id="CK1" input="1" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="Prescaler" selection="FCLK1">
-                        <item id="FCLK0" input="1" vlaue="0"/>
-                        <item id="FCLK1" input="2" vlaue="0"/>
-                        <item id="FCLK2" input="4" vlaue="0"/>
-                        <item id="FCLK3" input="8" vlaue="0"/>
-                        <item id="FCLK4" input="16" vlaue="0"/>
-                        <item id="FCLK5" input="32" vlaue="0"/>
-                        <item id="FCLK6" input="64" vlaue="0"/>
-                        <item id="FCLK7" input="128" vlaue="0"/>
-                        <item id="FCLK8" input="256" vlaue="0"/>
-                        <item id="FCLK9" input="512" vlaue="0"/>
-                        <item id="FCLK10" input="1024" vlaue="0"/>
-                        <item id="FCLK11" input="2048" vlaue="0"/>
-                        <item id="FCLK12" input="4096" vlaue="0"/>
-                        <item id="FCLK13" input="8192" vlaue="0"/>
-                        <item id="FCLK14" input="16384" vlaue="0"/>
-                        <item id="FCLK15" input="32768" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="transferSetting" selection="singleMode">
-                        <item id="singleMode" input="" vlaue="0"/>
-                        <item id="continuousMode" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="dataLength" selection="8bits">
-                        <item id="7bits" input="" vlaue="0"/>
-                        <item id="8bits" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="directionSetting" selection="lsb">
-                        <item id="lsb" input="" vlaue="0"/>
-                        <item id="msb" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="paritySetting" selection="none">
-                        <item id="none" input="" vlaue="0"/>
-                        <item id="zero" input="" vlaue="0"/>
-                        <item id="odd" input="" vlaue="0"/>
-                        <item id="even" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="stopBitSetting" selection="1bit">
-                        <item id="1bit" input="" vlaue="0"/>
-                        <item id="2bits" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="dataLevelSetting" selection="normal">
-                        <item id="normal" input="" vlaue="0"/>
-                        <item id="reverse" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="baudrateSetting" selection="input">
-                        <item id="input" input="115200" vlaue="68"/>
-                        <item id="9600" input="9600" vlaue="0"/>
-                        <item id="19200" input="19200" vlaue="0"/>
-                        <item id="31250" input="31250" vlaue="0"/>
-                        <item id="38400" input="38400" vlaue="0"/>
-                        <item id="76800" input="76800" vlaue="0"/>
-                        <item id="153600" input="153600" vlaue="0"/>
-                        <item id="312500" input="312500" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="txPriority" selection="Level3">
-                        <item id="Level0" input="" vlaue="0"/>
-                        <item id="Level1" input="" vlaue="0"/>
-                        <item id="Level2" input="" vlaue="0"/>
-                        <item id="Level3" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="txCallback" selection="enable">
-                        <item id="enable" input="" vlaue="0"/>
-                        <item id="disable" input="" vlaue="0"/>
-                    </option>
-                </allocatable>
-                <allocatable id="receive">
-                    <isocket id="CountingClock" selection="Clock.tool_clock_fCLK" value="3.2E7"/>
-                    <option enabled="true" id="Operation" selection="CK1">
-                        <item id="CK0" input="0" vlaue="0"/>
-                        <item id="CK1" input="1" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="Prescaler" selection="FCLK1">
-                        <item id="FCLK0" input="1" vlaue="0"/>
-                        <item id="FCLK1" input="2" vlaue="0"/>
-                        <item id="FCLK2" input="4" vlaue="0"/>
-                        <item id="FCLK3" input="8" vlaue="0"/>
-                        <item id="FCLK4" input="16" vlaue="0"/>
-                        <item id="FCLK5" input="32" vlaue="0"/>
-                        <item id="FCLK6" input="64" vlaue="0"/>
-                        <item id="FCLK7" input="128" vlaue="0"/>
-                        <item id="FCLK8" input="256" vlaue="0"/>
-                        <item id="FCLK9" input="512" vlaue="0"/>
-                        <item id="FCLK10" input="1024" vlaue="0"/>
-                        <item id="FCLK11" input="2048" vlaue="0"/>
-                        <item id="FCLK12" input="4096" vlaue="0"/>
-                        <item id="FCLK13" input="8192" vlaue="0"/>
-                        <item id="FCLK14" input="16384" vlaue="0"/>
-                        <item id="FCLK15" input="32768" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="dataLength" selection="8bits">
-                        <item id="7bits" input="" vlaue="0"/>
-                        <item id="8bits" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="directionSetting" selection="lsb">
-                        <item id="lsb" input="" vlaue="0"/>
-                        <item id="msb" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="paritySetting" selection="none">
-                        <item id="none" input="" vlaue="0"/>
-                        <item id="zero" input="" vlaue="0"/>
-                        <item id="odd" input="" vlaue="0"/>
-                        <item id="even" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="stopBitSetting" selection="1bit">
-                        <item id="1bit" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="dataLevelSetting" selection="normal">
-                        <item id="normal" input="" vlaue="0"/>
-                        <item id="reverse" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="baudrateSetting" selection="input">
-                        <item id="input" input="115200" vlaue="68"/>
-                        <item id="9600" input="9600" vlaue="0"/>
-                        <item id="19200" input="19200" vlaue="0"/>
-                        <item id="31250" input="31250" vlaue="0"/>
-                        <item id="38400" input="38400" vlaue="0"/>
-                        <item id="76800" input="76800" vlaue="0"/>
-                        <item id="153600" input="153600" vlaue="0"/>
-                        <item id="312500" input="312500" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="rxPriority" selection="Level2">
-                        <item id="Level0" input="" vlaue="0"/>
-                        <item id="Level1" input="" vlaue="0"/>
-                        <item id="Level2" input="" vlaue="0"/>
-                        <item id="Level3" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="rxErrorFunction" selection="enable">
-                        <item id="enable" input="" vlaue="0"/>
-                        <item id="disable" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="rxErrorPriority" selection="Level3">
-                        <item id="Level0" input="" vlaue="0"/>
-                        <item id="Level1" input="" vlaue="0"/>
-                        <item id="Level2" input="" vlaue="0"/>
-                        <item id="Level3" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="rxCallback" selection="enable">
-                        <item id="enable" input="" vlaue="0"/>
-                        <item id="disable" input="" vlaue="0"/>
-                    </option>
-                    <option enabled="true" id="rxErrorCallback" selection="enable">
-                        <item id="enable" input="" vlaue="0"/>
-                        <item id="disable" input="" vlaue="0"/>
-                    </option>
-                </allocatable>
-                <osocket id="SendSetting" value="SingleTransfer"/>
-                <osocket id="BothSetting" value="SingleTransfer"/>
-                <option enabled="true" id="Mode" selection="both">
-                    <item id="transmit" input="" vlaue="0"/>
-                    <item id="receive" input="" vlaue="0"/>
-                    <item id="both" input="" vlaue="0"/>
-                </option>
-            </allocatable>
-            <component description="非同期式シリアル通信(UART)インタフェースは、調歩同期式通信機能です。" detailDescription="" display="UART通信" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.5.0"/>
-            <allocator channelLevel0="3" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART通信" display="UART3" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator3" type="UART">
                 <context>
                     <option enabled="true" id="Mode" selection="both">
                         <item enabled="true" id="transmit"/>

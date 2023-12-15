@@ -261,6 +261,12 @@
 /* #define UNITY_PTR_ATTRIBUTE __attribute__((far)) */
 /* #define UNITY_PTR_ATTRIBUTE near */
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+extern void TEST_CacheResult( char cResult );
+extern void TEST_SubmitResultBuffer( void );
+extern void TEST_NotifyTestStart( void );
+extern void TEST_NotifyTestFinished( void );
+#endif
 
 /* Redirect output to print task. */
 #ifndef UNITY_OUTPUT_CHAR

@@ -28,8 +28,8 @@ Includes
 ***********************************************************************************************************************/
 #include "r_cg_macrodriver.h"
 #include "r_cg_userdefine.h"
-#include "Config_UART2.h"
 #include "Config_UART3.h"
+#include "Config_UART2.h"
 #include "r_cg_sau_common.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
@@ -66,8 +66,8 @@ void R_SAU0_Create(void)
 void R_SAU1_Create(void)
 {
     SAU1EN = 1U;    /* supplies input clock */
-    R_Config_UART2_Create();
     R_Config_UART3_Create();
+    R_Config_UART2_Create();
 }
 
 /***********************************************************************************************************************

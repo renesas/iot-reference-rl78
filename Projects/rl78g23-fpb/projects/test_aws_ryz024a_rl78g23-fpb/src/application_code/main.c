@@ -39,15 +39,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "demo_config.h"
 #include "mqtt_agent_task.h"
 
+#if (ENABLE_AFR_IDT == 0)
 #if (ENABLE_OTA_UPDATE_DEMO == 1)
 #define START_DEMO_FUNC   vStartOtaDemo
 #else
 #define START_DEMO_FUNC   vStartSimplePubSubDemo
 #endif
+#endif
 
 extern void START_DEMO_FUNC( void );
 extern bool setupCellular( void );
+#if (ENABLE_AFR_IDT == 1)
 extern void prvQualificationTestTask( void * pvParameters );
+extern void vSubscribePublishTestTask( void * pvParameters );
+#endif
 
 /**
  * @brief Flag which enables OTA update task in background along with other demo tasks.
@@ -79,8 +84,10 @@ extern void prvQualificationTestTask( void * pvParameters );
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 #endif
 
-#define appmainTEST_TASK_STACK_SIZE               ( 3000 )
+#if (ENABLE_AFR_IDT == 1)
+#define appmainTEST_TASK_STACK_SIZE               ( 4000 )
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
+#endif
 
 /* Logging Task Defines. */
 #define mainLOGGING_TASK_STACK_SIZE               ( configMINIMAL_STACK_SIZE * 2 )
@@ -98,11 +105,36 @@ void vApplicationDaemonTaskStartupHook( void );
 void prvMiscInitialization( void );
 static BaseType_t xPlatformNetworkUp( void );
 
+#if (ENABLE_AFR_IDT == 1)
+int RunDeviceAdvisorDemo( void )
+{
+    BaseType_t xResult = pdFAIL;
+
+    xResult = xMQTTAgentInit();
+    xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );
+    vStartMQTTAgent (appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
+
+    if( xResult == pdPASS )
+    {
+        xResult = xTaskCreate( vSubscribePublishTestTask,
+                               "TEST",
+                               appmainTEST_TASK_STACK_SIZE,
+                               NULL,
+                               appmainTEST_TASK_PRIORITY,
+                               NULL );
+
+    }
+    return ( xResult == pdPASS ) ? 0 : -1;
+}
+
+#if (OTA_E2E_TEST_ENABLED == 1)
 int RunOtaE2eDemo( void )
 {
     vStartOtaDemo();
     return 0;
 }
+#endif
+#endif
 
 /*-----------------------------------------------------------*/
 
@@ -124,7 +156,7 @@ void main( void )
 
 void main_task( void * pvParameters )
 {
-#ifndef AFR_LTS_TEST
+#if (ENABLE_AFR_IDT == 1)
     if (pdTRUE == xPlatformNetworkUp())
     {
 #if ( OTA_E2E_TEST_ENABLED == 1)
@@ -139,6 +171,11 @@ void main_task( void * pvParameters )
                      NULL );
 #endif
     }
+
+    while( 1 )
+    {
+    	vTaskSuspend( NULL );
+    }
 #else
     if (pdTRUE == xPlatformNetworkUp())
     {
@@ -150,13 +187,13 @@ void main_task( void * pvParameters )
 
         START_DEMO_FUNC();
     }
-#endif
 
     while( 1 )
     {
     	LED_PORT ^= 1;
         vTaskDelay(5000);
     }
+#endif
 }
 /*-----------------------------------------------------------*/
 
@@ -168,7 +205,7 @@ void prvMiscInitialization( void )
 
     /* Start logging task. */
     xLoggingTaskInitialize( mainLOGGING_TASK_STACK_SIZE,
-                            tskIDLE_PRIORITY,
+                            tskIDLE_PRIORITY + 2,
                             mainLOGGING_MESSAGE_QUEUE_LENGTH );
 
 }

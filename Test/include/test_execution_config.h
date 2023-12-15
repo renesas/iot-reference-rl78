@@ -55,7 +55,9 @@
  *
  * #define OTA_PAL_TEST_ENABLED  (0)
  */
+#ifndef OTA_PAL_TEST_ENABLED
 #define OTA_PAL_TEST_ENABLED                ( 0 )
+#endif
 
 /**
  * @brief Configuration to enable the OTA End-to-end test.

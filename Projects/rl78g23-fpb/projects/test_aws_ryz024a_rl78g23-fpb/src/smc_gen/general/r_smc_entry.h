@@ -29,8 +29,8 @@ Includes
 ***********************************************************************************************************************/
 #include "r_cg_macrodriver.h"
 #include "Config_PORT.h"
-#include "Config_UART2.h"
 #include "Config_UART3.h"
+#include "Config_UART2.h"
 #include "Pin.h"
 #include "r_cg_sau_common.h"
 #include "r_cg_userdefine.h"
