@@ -18,6 +18,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#include "string_rl78.h"
+#endif
 
 #ifndef RX_CELLULAR_PLATFORM_AWS_H
 #define RX_CELLULAR_PLATFORM_AWS_H
