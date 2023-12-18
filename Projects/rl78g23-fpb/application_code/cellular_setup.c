@@ -124,7 +124,7 @@ bool setupCellular(void)
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     /* Write certificate to RYZ. */
-    prvWriteCertificateToModule(CellularHandle);
+    prvWriteCertificateToModule();
 #endif
 
     /* wait until SIM is ready */

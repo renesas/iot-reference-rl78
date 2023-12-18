@@ -59,6 +59,8 @@
 /**********************************************************************************************************************
  Exported global functions
  *********************************************************************************************************************/
-void prvWriteCertificateToModule (CellularHandle_t hdl);
+void prvWriteCertificateToModule (void);
+void tlstestCertificate(const uint8_t *clientcert_data, uint32_t clientcert_size,
+		                const uint8_t *prvkey_data, uint32_t prvkey_size);
 
 #endif /* CERT_PROFILE_HELPER_H_ */

@@ -40,6 +40,7 @@
 /**********************************************************************************************************************
  Exported global variables
  *********************************************************************************************************************/
+extern CellularHandle_t CellularHandle;
 
 /**********************************************************************************************************************
  Private (static) variables and functions
@@ -48,31 +49,61 @@
 /**********************************************************************************************************************
  * Function Name: prvWriteCertificateToModule
  * Description  : Sets the host address to the certificate profile that matches the specified Id.
- * Arguments    : hdl    cellular module handle.
+ * Arguments    : none
  * Return Value : none
  *********************************************************************************************************************/
-void prvWriteCertificateToModule(CellularHandle_t hdl)
+void prvWriteCertificateToModule(void)
 {
-    /* Write certificate */
-    Cellular_WriteCertificate(hdl,
+    /* CA Root */
+    Cellular_WriteCertificate(CellularHandle,
                               AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
                               ROOTCA_PEM2_NVM_IDX,
                               (const uint8_t *)CFG_ROOT_CA_PEM2,
                               strlen((const char *)CFG_ROOT_CA_PEM2));
 
     /* Certificate */
-    Cellular_WriteCertificate(hdl,
+    Cellular_WriteCertificate(CellularHandle,
                               AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
                               CLIENT_CERT_NVM_IDX,
                               (const uint8_t *)keyCLIENT_CERTIFICATE_PEM,
                               strlen((const char *)keyCLIENT_CERTIFICATE_PEM));
 
     /* Private key */
-    Cellular_WriteCertificate(hdl,
+    Cellular_WriteCertificate(CellularHandle,
                               AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
                               CLIENT_PRIVATEKEY_NVM_IDX,
                               (const uint8_t *)keyCLIENT_PRIVATE_KEY_PEM,
                               strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
+}
+/**********************************************************************************************************************
+ * End of Function prvWriteCertificateToModule
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ * Function Name: tlstestCertificate
+ * Description  : Sets the host address to the certificate profile that matches the specified Id.
+ * Arguments    : clientcert_data
+ *                clientcert_size
+ *                prvkey_data
+ *                prvkey_size
+ * Return Value : none
+ *********************************************************************************************************************/
+void tlstestCertificate(const uint8_t *clientcert_data, uint32_t clientcert_size,
+		                const uint8_t *prvkey_data, uint32_t prvkey_size)
+{
+    /* Certificate */
+    Cellular_WriteCertificate(CellularHandle,
+                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
+                              CLIENT_CERT_NVM_IDX,
+							  (const uint8_t *)clientcert_data,
+							  clientcert_size);
+
+    /* Private key */
+    Cellular_WriteCertificate(CellularHandle,
+                              AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
+                              CLIENT_PRIVATEKEY_NVM_IDX,
+							  (const uint8_t *)prvkey_data,
+							  prvkey_size);
 }
 /**********************************************************************************************************************
  * End of Function prvWriteCertificateToModule
