@@ -480,7 +480,7 @@
 				<option id="toolchain.enable" value="true"/>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="abs" artifactName="${ProjName}_ota" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" description="Debug on hardware" id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706" name="HardwareDebug_OTA" parent="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration">
+				<configuration artifactExtension="abs" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" description="Debug on hardware" id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706" name="HardwareDebug_OTA" parent="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration">
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706." name="/" resourcePath="">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1035866157" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.1345487880" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -594,7 +594,7 @@
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.langFileC.1475109135" name="Cソース・ファイルの言語規格 (-lang)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.langFileC" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.langFileC.c99" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.D.1611501351" name="プリプロセッサ・マクロの定義 (-D)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.D" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__LITTLE_ENDIAN__"/>
-									<listOptionValue builtIn="false" value="USE_BOOTLOADER_V2=0"/>
+									<listOptionValue builtIn="false" value="USE_BOOTLOADER_V2=1"/>
 									<listOptionValue builtIn="false" value="R_RFD_MCU_FLASH_T01_CATEGORY01"/>
 									<listOptionValue builtIn="false" value="UNITY_INCLUDE_CONFIG_H"/>
 									<listOptionValue builtIn="false" value="ENABLE_AFR_IDT=1"/>
@@ -659,6 +659,7 @@
 									<listOptionValue builtIn="false" value="&quot;.\src/smc_gen/r_bsp/board/generic_rl78_g23\stkinit.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/smc_gen/r_bsp/mcu/all\cstart.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/smc_gen/r_bsp/mcu/all\r_bsp_common_ccrl.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common/compiler_support/ccrl\strtok_r.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common\rl78_bsp_wrapper.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Common/FreeRTOS_common\rl78_serial_term_uart.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Common/ports/ota_pal\ota_pal.obj&quot;"/>
@@ -702,8 +703,18 @@
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent_command_functions.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\Middleware/logging\iot_logging_task_dynamic_buffers.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Common\test_framework.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src/mqtt\mqtt_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src/ota\ota_pal_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src\qualification_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/FreeRTOS-Libraries-Integration-Tests/src/transport_interface\transport_interface_test.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Unity/extras/fixture/src\unity_fixture.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Unity/extras/memory/src\unity_memory.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test/Unity/src\unity.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\Test\integration_test.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/application_code\cellular_setup.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/application_code\main.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/application_code\pub_sub_test_task.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/frtos_startup\freertos_object_init.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/frtos_startup\freertos_start.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/helper\cert_profile_helper.obj&quot;"/>
@@ -731,7 +742,7 @@
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz_api.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz_urc_handler.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_aws_cellular_lib/src/cellular_ryz_aws\cellular_ryz_wrapper.obj&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_byteq\r_byteq.obj&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_byteq/src\r_byteq.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup_wrap_com.obj&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;.\src/modules/r_fwup/src\r_fwup_wrap_flash.obj&quot;"/>
@@ -813,9 +824,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.17209806" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Test/Common/test_framework.c" name="test_framework.c" rcbsApplicability="disable" resourcePath="Test/Common/test_framework.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.235153613.227781485">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.235153613.227781485" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.235153613"/>
-					</fileInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/mqtt_agent" name="/" resourcePath="Demos/mqtt_agent">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.2118468943" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.1078288463" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -836,9 +844,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1753145772" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/mqtt_agent/mqtt_agent_task.c" name="mqtt_agent_task.c" rcbsApplicability="disable" resourcePath="Demos/mqtt_agent/mqtt_agent_task.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1143009210.553019028">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1143009210.553019028" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1143009210"/>
-					</fileInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/common" name="/" resourcePath="Demos/common">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1912870846" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.981557198" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -859,12 +864,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.166832228" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/common/mqtt-agent-interface/freertos_command_pool.c" name="freertos_command_pool.c" rcbsApplicability="disable" resourcePath="Demos/common/mqtt-agent-interface/freertos_command_pool.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.723013529.1818007223">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.723013529.1818007223" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.723013529"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/common/mqtt-agent-interface/freertos_agent_message.c" name="freertos_agent_message.c" rcbsApplicability="disable" resourcePath="Demos/common/mqtt-agent-interface/freertos_agent_message.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.723013529.1464781270">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.723013529.1464781270" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.723013529"/>
-					</fileInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/Application-Protocols/network_transport/sockets_wrapper/ports" name="/" resourcePath="Middleware/Application-Protocols/network_transport/sockets_wrapper/ports">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1347597479" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.1030498580" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -885,9 +884,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1526193351" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/Application-Protocols/network_transport/sockets_wrapper/ports/cellular_ryz024a/sockets_wrapper.c" name="sockets_wrapper.c" rcbsApplicability="disable" resourcePath="Middleware/Application-Protocols/network_transport/sockets_wrapper/ports/cellular_ryz024a/sockets_wrapper.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1963305725.1095456100">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1963305725.1095456100" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1963305725"/>
-					</fileInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS" name="/" resourcePath="Middleware/AWS">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1581972504" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.426107633" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -908,18 +904,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1156673697" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_base64.c" name="ota_base64.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_base64.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.190685004">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.190685004" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota.c" name="ota.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.1974927773">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.1974927773" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_mqtt.c" name="ota_mqtt.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_mqtt.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.1969049978">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.1969049978" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_interface.c" name="ota_interface.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_interface.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.2061440358">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.2061440358" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182"/>
-					</fileInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os" name="/" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.216376240" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.145868364" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -940,15 +924,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1715872715" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1156673697"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os/ota_os_freertos.c" name="ota_os_freertos.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os/ota_os_freertos.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1680146881.126155246">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1680146881.126155246" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1680146881"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_http.c" name="ota_http.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_http.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.1561542084">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.1561542084" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_cbor.c" name="ota_cbor.c" rcbsApplicability="disable" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/ota_cbor.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.601006900">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182.601006900" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1853797182"/>
-					</fileInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty" name="/" resourcePath="Middleware/3rdparty">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1341431404" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.1532637778" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -969,30 +944,6 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1374348641" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborencoder.c" name="cborencoder.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborencoder.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.261698396">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.261698396" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborpretty.c" name="cborpretty.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborpretty.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1392330066">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1392330066" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborerrorstrings.c" name="cborerrorstrings.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborerrorstrings.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1890577893">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1890577893" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborvalidation.c" name="cborvalidation.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborvalidation.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1907496926">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1907496926" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborencoder_close_container_checked.c" name="cborencoder_close_container_checked.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborencoder_close_container_checked.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.842721075">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.842721075" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborparser_dup_string.c" name="cborparser_dup_string.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborparser_dup_string.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1382892471">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1382892471" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborpretty_stdio.c" name="cborpretty_stdio.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborpretty_stdio.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1878529483">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.1878529483" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
-					<fileInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty/tinycbor/src/cborparser.c" name="cborparser.c" rcbsApplicability="disable" resourcePath="Middleware/3rdparty/tinycbor/src/cborparser.c" toolsToInvoke="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.909048237">
-						<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441.909048237" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1577888441"/>
-					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Common"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Configuration"/>
