@@ -94,6 +94,13 @@
  */
 #define configSUBSCRIBE_TOPIC_FORMAT           "mqtt_test/incoming"
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+/**
+ * @brief Size of statically allocated buffers for holding payloads.
+ */
+#define confgPUBLISH_BUFFER_LENGTH                   ( 64 )
+#endif
+
 /**
  * @brief Size of the static buffer to hold the topic name.
  */
@@ -409,6 +416,9 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
 
 void vSubscribePublishTestTask( void * pvParameters )
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char cPublishBuf[ confgPUBLISH_BUFFER_LENGTH ];
+#endif
     char cPayloadBuf[ confgPAYLOAD_BUFFER_LENGTH ];
     size_t xPayloadLength;
     uint32_t ulPublishCount = 0U, ulSuccessCount = 0U, ulFailCount = 0U;
@@ -431,8 +441,14 @@ void vSubscribePublishTestTask( void * pvParameters )
 
     if( xStatus == pdPASS )
     {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        snprintf( cPayloadBuf, confgPUBLISH_BUFFER_LENGTH, configSUBSCRIBE_TOPIC_FORMAT);
+        xMQTTStatus = prvSubscribeToTopic( MQTTQoS1,
+                                           cPublishBuf );
+#else
         xMQTTStatus = prvSubscribeToTopic( MQTTQoS1,
                                            configSUBSCRIBE_TOPIC_FORMAT );
+#endif
 
         if( xMQTTStatus != MQTTSuccess )
         {
@@ -466,11 +482,18 @@ void vSubscribePublishTestTask( void * pvParameters )
                        xQoS,
                        xPayloadLength,
                        ( char * ) cPayloadBuf ) );
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+            snprintf( cPublishBuf, confgPUBLISH_BUFFER_LENGTH, configPUBLISH_TOPIC_FORMAT);
+            xMQTTStatus = prvPublishToTopic( xQoS,
+                                             cPublishBuf,
+                                             ( uint8_t * ) cPayloadBuf,
+                                             xPayloadLength );
+#else
             xMQTTStatus = prvPublishToTopic( xQoS,
                                              configPUBLISH_TOPIC_FORMAT,
                                              ( uint8_t * ) cPayloadBuf,
                                              xPayloadLength );
+#endif
 
             if( xMQTTStatus == MQTTSuccess )
             {
