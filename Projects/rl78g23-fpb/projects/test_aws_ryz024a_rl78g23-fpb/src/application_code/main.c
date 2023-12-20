@@ -85,7 +85,7 @@ extern void vSubscribePublishTestTask( void * pvParameters );
 #endif
 
 #if (ENABLE_AFR_IDT == 1)
-#define appmainTEST_TASK_STACK_SIZE               ( 4000 )
+#define appmainTEST_TASK_STACK_SIZE               ( 2000 )
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
 #endif
 

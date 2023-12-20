@@ -59,7 +59,11 @@
  * verified to remain unchanged after each test.
  */
 #define TRANSPORT_TEST_BUFFER_PREFIX_GUARD_LENGTH    ( 32U )
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#define TRANSPORT_TEST_BUFFER_WRITABLE_LENGTH        ( 1024U )
+#else
 #define TRANSPORT_TEST_BUFFER_WRITABLE_LENGTH        ( 2048U )
+#endif
 #define TRANSPORT_TEST_BUFFER_SUFFIX_GUARD_LENGTH    ( 32U )
 #define TRANSPORT_TEST_BUFFER_TOTAL_LENGTH        \
     ( TRANSPORT_TEST_BUFFER_PREFIX_GUARD_LENGTH + \
