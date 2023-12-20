@@ -23,9 +23,6 @@
  * https://github.com/FreeRTOS
  *
  */
-#if (__CCRL__)
-#pragma section const const_middleware
-#endif
 
 /* Standard includes. */
 #include <string.h>
@@ -184,6 +181,3 @@ int32_t Plaintext_FreeRTOS_send( NetworkContext_t * pNetworkContext,
 
     return socketStatus;
 }
-#if (__CCRL__)
-#pragma section
-#endif

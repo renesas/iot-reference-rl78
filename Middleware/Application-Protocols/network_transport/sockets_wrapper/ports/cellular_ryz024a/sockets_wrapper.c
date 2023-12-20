@@ -24,9 +24,6 @@
  *
  */
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#pragma section const const_middleware
-#endif
 
 /* Standard includes. */
 #include <stdio.h>
@@ -769,7 +766,3 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
 }
 
 /*-----------------------------------------------------------*/
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#pragma section
-#endif
-
