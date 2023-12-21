@@ -130,6 +130,10 @@ int RunDeviceAdvisorDemo( void )
 #if (OTA_E2E_TEST_ENABLED == 1)
 int RunOtaE2eDemo( void )
 {
+    xMQTTAgentInit();
+    xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );
+    vStartMQTTAgent (appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
+
     vStartOtaDemo();
     return 0;
 }

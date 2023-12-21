@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2023 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,13 +23,22 @@
  * http://aws.amazon.com/freertos
  */
 
-
-/**
- * @brief A test application which loops through subscribing to a topic and publishing message
- * to a topic. This test application can be used with AWS IoT device advisor test suite to
- * verify that an application implemented using MQTT agent follows best practices in connecting
- * to AWS IoT core.
+/*
+ * This file demonstrates task which use the MQTT agent API
+ * to send unique MQTT payloads to unique topics over the same MQTT connection
+ * to the same MQTT agent.  Some tasks use QoS0 and others QoS1.
+ *
+ * vSimpleSubscribePublishTask() subscribes to a topic then periodically publishes a message to the same
+ * topic to which it has subscribed.  The command context sent to
+ * MQTTAgent_Publish() contains a unique number that is sent back to the task
+ * as a task notification from the callback function that executes when the
+ * PUBLISH operation is acknowledged (or just sent in the case of QoS 0).  The
+ * task checks the number it receives from the callback equals the number it
+ * previously set in the command context before printing out either a success
+ * or failure message.
  */
+ 
+
 /* Standard includes. */
 #include <string.h>
 #include <stdio.h>
@@ -51,6 +61,10 @@
 /* MQTT agent task API. */
 #include "mqtt_agent_task.h"
 
+/**
+ * @brief Delay for the synchronous publisher task between publishes.
+ */
+#define configDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    ( 2000U )
 
 /**
  * @brief A test application which loops through subscribing to a topic and publishing message
@@ -60,10 +74,6 @@
  */
 #define configMS_TO_WAIT_FOR_NOTIFICATION            ( 10000 )
 
-/**
- * @brief Delay for the synchronous publisher task between publishes.
- */
-#define configDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    ( 2000U )
 
 /**
  * @brief The maximum amount of time in milliseconds to wait for the commands
@@ -98,7 +108,7 @@
 /**
  * @brief Size of statically allocated buffers for holding payloads.
  */
-#define confgPUBLISH_BUFFER_LENGTH                   ( 64 )
+#define confgPUBLISH_BUFFER_LENGTH                   ( 100 )
 #endif
 
 /**
@@ -176,6 +186,7 @@ static void prvIncomingPublishCallback( void * pvIncomingPublishCallbackContext,
  * @param[in] xQoS The quality of service (QoS) to use.  Can be zero or one
  * for all MQTT brokers.  Can also be QoS2 if supported by the broker.  AWS IoT
  * does not support QoS2.
+ * @param[in] pcTopicFilter Pointer to the topic filter string to subscribe for.
  */
 static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
                                          char * pcTopicFilter );
@@ -224,7 +235,7 @@ static void prvPublishCommandCallback( MQTTAgentCommandContext_t * pxCommandCont
 {
     if( pxCommandContext->xTaskToNotify != NULL )
     {
-        xTaskNotify( pxCommandContext->xTaskToNotify,
+        ( void ) xTaskNotify( pxCommandContext->xTaskToNotify,
                      pxReturnInfo->returnCode,
                      eSetValueWithOverwrite );
     }
@@ -235,7 +246,7 @@ static void prvPublishCommandCallback( MQTTAgentCommandContext_t * pxCommandCont
 static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
                                          MQTTAgentReturnInfo_t * pxReturnInfo )
 {
-    BaseType_t xSubscriptionAdded;
+    BaseType_t xSubscriptionAdded = pdFALSE;
     MQTTAgentSubscribeArgs_t * pxSubscribeArgs = ( MQTTAgentSubscribeArgs_t * ) pxCommandContext->pArgs;
 
     /* Check if the subscribe operation is a success. Only one topic is
@@ -244,12 +255,11 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
     {
         /* Add subscription so that incoming publishes are routed to the application
          * callback. */
-        xSubscriptionAdded = xAddMQTTTopicFilterCallback(
-            pxSubscribeArgs->pSubscribeInfo->pTopicFilter,
-            pxSubscribeArgs->pSubscribeInfo->topicFilterLength,
-            prvIncomingPublishCallback,
-            NULL,
-            pdTRUE );
+        xSubscriptionAdded = xAddMQTTTopicFilterCallback( pxSubscribeArgs->pSubscribeInfo->pTopicFilter,
+                                                          pxSubscribeArgs->pSubscribeInfo->topicFilterLength,
+                                                          prvIncomingPublishCallback,
+                                                          NULL,
+                                                          pdTRUE );
         configASSERT( xSubscriptionAdded == pdTRUE );
     }
 
@@ -257,6 +267,7 @@ static void prvSubscribeCommandCallback( MQTTAgentCommandContext_t * pxCommandCo
                  ( uint32_t ) ( pxReturnInfo->returnCode ),
                  eSetValueWithOverwrite );
 }
+
 /*-----------------------------------------------------------*/
 
 static void prvIncomingPublishCallback( void * pvIncomingPublishCallbackContext,
@@ -353,7 +364,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
                                        uint8_t * pucPayload,
                                        size_t xPayloadLength )
 {
-    MQTTPublishInfo_t xPublishInfo = { 0UL };
+    MQTTPublishInfo_t xPublishInfo = { MQTTQoS0, 0, };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
     MQTTStatus_t xMQTTStatus;
     BaseType_t xNotifyStatus;
@@ -417,7 +428,7 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
 void vSubscribePublishTestTask( void * pvParameters )
 {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    char cPublishBuf[ confgPUBLISH_BUFFER_LENGTH ];
+    char cPublishBuf[ confgPAYLOAD_BUFFER_LENGTH ];
 #endif
     char cPayloadBuf[ confgPAYLOAD_BUFFER_LENGTH ];
     size_t xPayloadLength;
@@ -465,7 +476,6 @@ void vSubscribePublishTestTask( void * pvParameters )
             /* Have different tasks use different QoS.  0 and 1.  2 can also be used
              * if supported by the broker. */
             xQoS = ( MQTTQoS_t ) ( ( ulPublishCount + 1 ) % 2UL );
-
 
             /* Create a payload to send with the publish message.  This contains
              * the task name and an incrementing number. */
