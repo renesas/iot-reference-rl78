@@ -46,7 +46,7 @@
     #define LIBRARY_LOG_NAME     "CELLULAR_SOCKETS"
 #endif
 #ifndef LIBRARY_LOG_LEVEL
-    #define LIBRARY_LOG_LEVEL    LOG_NONE
+    #define LIBRARY_LOG_LEVEL    LOG_INFO
 #endif
 #include "logging_stack.h"
 
@@ -236,9 +236,8 @@ static bool _calculateElapsedTime( uint64_t entryTimeMs,
 static BaseType_t prvSetupSocketTimeout( cellularSocketWrapper_t * pCellularSocketContext,
                                          CellularSocketOption_t option,
                                          TickType_t timeout );
-#else
-static CellularError_t Sockets_GetHostByName( const char * pcHostName , const uint8_t * addr);
 #endif
+
 
 /*-----------------------------------------------------------*/
 
@@ -450,9 +449,8 @@ static bool _calculateElapsedTime( uint64_t entryTimeMs,
     return isExpired;
 }
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 /*-----------------------------------------------------------*/
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 static BaseType_t prvSetupSocketTimeout( cellularSocketWrapper_t * pCellularSocketContext,
                                          CellularSocketOption_t option,
                                          TickType_t timeout )
@@ -472,10 +470,11 @@ static BaseType_t prvSetupSocketTimeout( cellularSocketWrapper_t * pCellularSock
 
     return TCP_SOCKETS_ERRNO_NONE;
 }
-
+#endif
 /*-----------------------------------------------------------*/
 
-#else
+/*-----------------------------------------------------------*/
+#ifndef RL78_DBG
 static CellularError_t Sockets_GetHostByName( const char * pcHostName , const uint8_t * addr)
 {
     return Cellular_GetHostByName( CellularHandle,
@@ -545,7 +544,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
         /* AT+SQNSPCFG */
         cellularSocketStatus = Cellular_ConfigSSLProfile( CellularHandle,
                                                           cellularSocketHandle->socketId + 1U,
-                                                          AWS_CELLULAR_VALIDATE_CERT_EXPDATE_CN,
+                                                          AWS_CELLULAR_NO_CERT_VALIDATE,
                                                           ROOTCA_PEM2_NVM_IDX,
                                                           CLIENT_CERT_NVM_IDX,
                                                           CLIENT_PRIVATEKEY_NVM_IDX );
@@ -567,7 +566,23 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
             retConnect = TCP_SOCKETS_ERRNO_ENOTCONN;
         }
     }
-
+#ifndef RL78_DBG
+    if( retConnect == TCP_SOCKETS_ERRNO_NONE )
+    {
+        cellularSocketStatus = Sockets_GetHostByName(pHostName, (const uint8_t *)serverAddress.ipAddress.ipAddress);
+        if (cellularSocketStatus == CELLULAR_SUCCESS )
+        {
+            serverAddress.ipAddress.ipAddressType = CELLULAR_IP_ADDRESS_V4;
+            serverAddress.port = port;
+            LogInfo( ( "Ip address %s port %u\r\n", serverAddress.ipAddress.ipAddress, serverAddress.port ) );
+            retConnect = prvCellularSocketRegisterCallback( cellularSocketHandle, pCellularSocketContext );
+        }
+        else
+        {
+            IotLogError( "Failed Get Host By Name." );
+        }
+    }
+#endif
     if( retConnect == TCP_SOCKETS_ERRNO_NONE )
     {
         strncpy(serverAddress.ipAddress.ipAddress, pHostName, sizeof(serverAddress.ipAddress.ipAddress));
@@ -587,7 +602,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
                                                                 sizeof( uint32_t ) );
         if( cellularSocketStatus != CELLULAR_SUCCESS )
         {
-            IotLogDebug( "Failed to setup cellular AT command receive timeout %d.", cellularStatus );
+            IotLogError( "Failed to setup cellular AT command receive timeout %d.", cellularSocketStatus );
             retConnect = TCP_SOCKETS_ERRNO_ERROR;
         }
 
@@ -605,7 +620,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
 
         if( cellularSocketStatus != CELLULAR_SUCCESS )
         {
-            IotLogDebug( "Failed to establish new connection. Socket status %d.", cellularStatus );
+            IotLogError( "Failed to establish new connection. Socket status %d.", cellularSocketStatus );
             retConnect = TCP_SOCKETS_ERRNO_ERROR;
         }
     }
@@ -621,7 +636,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
 
         if( waitEventBits != SOCKET_OPEN_CALLBACK_BIT )
         {
-            IotLogDebug( "Socket connect timeout." );
+            IotLogError( "Socket connect timeout." );
             retConnect = TCP_SOCKETS_ERRNO_ENOTCONN;
         }
     }
@@ -766,3 +781,4 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
 }
 
 /*-----------------------------------------------------------*/
+
