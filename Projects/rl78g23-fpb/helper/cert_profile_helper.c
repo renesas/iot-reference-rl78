@@ -49,61 +49,29 @@ extern CellularHandle_t CellularHandle;
 /**********************************************************************************************************************
  * Function Name: prvWriteCertificateToModule
  * Description  : Sets the host address to the certificate profile that matches the specified Id.
- * Arguments    : none
+ * Arguments    : ca_data          CA certificate data
+ *                ca_size          CA certificate size
+ *                clientcert_data  Client certificate data
+ *                clientcert_size  Client certificate size
+ *                prvkey_data      Client private key data
+ *                prvkey_size      Client private key size
  * Return Value : none
  *********************************************************************************************************************/
-void prvWriteCertificateToModule(void)
+void prvWriteCertificateToModule(const uint8_t *ca_data, uint32_t ca_size,
+                                 const uint8_t *clientcert_data, uint32_t clientcert_size,
+                                 const uint8_t *prvkey_data, uint32_t prvkey_size)
 {
     /* CA Root */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              ROOTCA_PEM2_NVM_IDX,
-                              (const uint8_t *)CFG_ROOT_CA_PEM2,
-                              strlen((const char *)CFG_ROOT_CA_PEM2));
+    Cellular_WriteCertificate(CellularHandle, AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
+                              ROOTCA_PEM2_NVM_IDX, (const uint8_t *)ca_data, ca_size);
 
     /* Certificate */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              CLIENT_CERT_NVM_IDX,
-                              (const uint8_t *)keyCLIENT_CERTIFICATE_PEM,
-                              strlen((const char *)keyCLIENT_CERTIFICATE_PEM));
+    Cellular_WriteCertificate(CellularHandle, AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
+                              CLIENT_CERT_NVM_IDX, (const uint8_t *)clientcert_data, clientcert_size);
 
     /* Private key */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
-                              CLIENT_PRIVATEKEY_NVM_IDX,
-                              (const uint8_t *)keyCLIENT_PRIVATE_KEY_PEM,
-                              strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
-}
-/**********************************************************************************************************************
- * End of Function prvWriteCertificateToModule
- *********************************************************************************************************************/
-
-/**********************************************************************************************************************
- * Function Name: tlstestCertificate
- * Description  : Sets the host address to the certificate profile that matches the specified Id.
- * Arguments    : clientcert_data
- *                clientcert_size
- *                prvkey_data
- *                prvkey_size
- * Return Value : none
- *********************************************************************************************************************/
-void tlstestCertificate(const uint8_t *clientcert_data, uint32_t clientcert_size,
-		                const uint8_t *prvkey_data, uint32_t prvkey_size)
-{
-    /* Certificate */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              CLIENT_CERT_NVM_IDX,
-							  (const uint8_t *)clientcert_data,
-							  clientcert_size);
-
-    /* Private key */
-    Cellular_WriteCertificate(CellularHandle,
-                              AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
-                              CLIENT_PRIVATEKEY_NVM_IDX,
-							  (const uint8_t *)prvkey_data,
-							  prvkey_size);
+    Cellular_WriteCertificate(CellularHandle, AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
+                              CLIENT_PRIVATEKEY_NVM_IDX, (const uint8_t *)prvkey_data, prvkey_size);
 }
 /**********************************************************************************************************************
  * End of Function prvWriteCertificateToModule

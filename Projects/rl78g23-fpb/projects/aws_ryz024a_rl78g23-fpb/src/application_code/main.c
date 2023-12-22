@@ -39,6 +39,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "demo_config.h"
 #include "mqtt_agent_task.h"
 
+/* Write Certificate */
+#include "cert_profile_helper.h"
+
 #if (ENABLE_AFR_IDT == 0)
 #if (ENABLE_OTA_UPDATE_DEMO == 1)
 #define START_DEMO_FUNC   vStartOtaDemo
@@ -85,7 +88,7 @@ extern void vSubscribePublishTestTask( void * pvParameters );
 #endif
 
 #if (ENABLE_AFR_IDT == 1)
-#define appmainTEST_TASK_STACK_SIZE               ( 4000 )
+#define appmainTEST_TASK_STACK_SIZE               ( 2000 )
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
 #endif
 
@@ -130,6 +133,10 @@ int RunDeviceAdvisorDemo( void )
 #if (OTA_E2E_TEST_ENABLED == 1)
 int RunOtaE2eDemo( void )
 {
+    xMQTTAgentInit();
+    xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );
+    vStartMQTTAgent (appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
+
     vStartOtaDemo();
     return 0;
 }
@@ -179,6 +186,16 @@ void main_task( void * pvParameters )
 #else
     if (pdTRUE == xPlatformNetworkUp())
     {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        /* Write certificate to RYZ. */
+        prvWriteCertificateToModule((const uint8_t *)CFG_ROOT_CA_PEM1,
+                                    strlen((const char *)CFG_ROOT_CA_PEM1),
+                                    (const uint8_t *)keyCLIENT_CERTIFICATE_PEM,
+                                    strlen((const char *)keyCLIENT_CERTIFICATE_PEM),
+                                    (const uint8_t *)keyCLIENT_PRIVATE_KEY_PEM,
+                                    strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
+#endif
+
         configPRINT_STRING( ( "---------STARTING DEMO---------\r\n" ) );
 
         xMQTTAgentInit();

@@ -29,11 +29,7 @@
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
-/* The config header is always included first. */
 #include "r_aws_cellular_if.h"
-
-#include "aws_clientcredential_keys.h"
-#include "iot_default_root_certificates.h"
 
 /**********************************************************************************************************************
  Macro definitions
@@ -43,10 +39,8 @@
 #define ROOTCA_PEM3_NVM_IDX             (19)
 #define CLIENT_CERT_NVM_IDX             (0)
 #define CLIENT_PRIVATEKEY_NVM_IDX       (0)
-
-#define CFG_ROOT_CA_PEM1                tlsVERISIGN_ROOT_CERTIFICATE_PEM
-#define CFG_ROOT_CA_PEM2                tlsATS1_ROOT_CERTIFICATE_PEM
-#define CFG_ROOT_CA_PEM3                tlsSTARFIELD_ROOT_CERTIFICATE_PEM
+#define CFG_ROOT_CA_PEM1                tlsATS1_ROOT_CERTIFICATE_PEM
+#define CFG_ROOT_CA_PEM3                tlsATS3_ROOT_CERTIFICATE_PEM
 
 /**********************************************************************************************************************
  Global Typedef definitions
@@ -59,8 +53,8 @@
 /**********************************************************************************************************************
  Exported global functions
  *********************************************************************************************************************/
-void prvWriteCertificateToModule (void);
-void tlstestCertificate(const uint8_t *clientcert_data, uint32_t clientcert_size,
-		                const uint8_t *prvkey_data, uint32_t prvkey_size);
+void prvWriteCertificateToModule(const uint8_t *ca_data, uint32_t ca_size,
+                                 const uint8_t *clientcert_data, uint32_t clientcert_size,
+                                 const uint8_t *prvkey_data, uint32_t prvkey_size);
 
 #endif /* CERT_PROFILE_HELPER_H_ */

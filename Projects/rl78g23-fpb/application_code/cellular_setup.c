@@ -122,12 +122,8 @@ bool setupCellular(void)
         return (false);
     }
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    /* Write certificate to RYZ. */
-    prvWriteCertificateToModule();
-#endif
-
     /* wait until SIM is ready */
+    vTaskDelay(pdMS_TO_TICKS( CELLULAR_SIM_CARD_WAIT_INTERVAL_MS));
     for (tries = 0; tries < CELLULAR_MAX_SIM_RETRY; tries++ )
     {
         cellularStatus = Cellular_GetSimCardStatus(CellularHandle, &simStatus);
