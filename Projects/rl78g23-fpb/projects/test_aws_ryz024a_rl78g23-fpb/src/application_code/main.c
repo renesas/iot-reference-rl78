@@ -57,6 +57,8 @@ extern void prvQualificationTestTask( void * pvParameters );
 extern void vSubscribePublishTestTask( void * pvParameters );
 #endif
 
+extern uint8_t CellularDisableSni;
+
 /**
  * @brief Flag which enables OTA update task in background along with other demo tasks.
  * OTA update task polls regularly for firmware update jobs or acts on a new firmware update
@@ -121,6 +123,8 @@ int RunDeviceAdvisorDemo( void )
                                 (const uint8_t *)MQTT_CLIENT_PRIVATE_KEY,
                                 strlen((const char *)MQTT_CLIENT_PRIVATE_KEY));
 
+    CellularDisableSni = pdFALSE;
+
     xResult = xMQTTAgentInit();
     xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );
     vStartMQTTAgent (appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
@@ -148,6 +152,8 @@ int RunOtaE2eDemo( void )
                                 strlen((const char *)MQTT_CLIENT_CERTIFICATE),
                                 (const uint8_t *)MQTT_CLIENT_PRIVATE_KEY,
                                 strlen((const char *)MQTT_CLIENT_PRIVATE_KEY));
+
+    CellularDisableSni = pdFALSE;
 
     xMQTTAgentInit();
     xSetMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED );

@@ -65,6 +65,8 @@ extern CellularHandle_t CellularHandle;
 /* coverity[misra_c_2012_rule_8_6_violation] */
 extern uint8_t CellularSocketPdnContextId;
 
+extern uint8_t CellularDisableSni;
+
 /*-----------------------------------------------------------*/
 
 /* Windows simulator implementation. */
@@ -499,6 +501,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
     CellularSocketAddress_t serverAddress;
     EventBits_t waitEventBits = 0;
     BaseType_t retConnect = TCP_SOCKETS_ERRNO_NONE;
+    e_aws_cellular_validate_level_t certValidLevel = AWS_CELLULAR_NO_CERT_VALIDATE;
     const uint32_t defaultReceiveTimeoutMs = CELLULAR_SOCKET_RECV_TIMEOUT_MS;
 
     /* Create a new TCP socket. */
@@ -541,10 +544,20 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
     /* Setup TLS socket */
     if( retConnect == TCP_SOCKETS_ERRNO_NONE )
     {
+        if ( CellularDisableSni == pdTRUE )
+        {
+            certValidLevel = AWS_CELLULAR_NO_CERT_VALIDATE;
+        }
+        else
+        {
+            certValidLevel = AWS_CELLULAR_VALIDATE_CERT_EXPDATE_CN;
+        }
+        LogInfo( ( "certValidLevel %u\r\n", certValidLevel ) );
+
         /* AT+SQNSPCFG */
         cellularSocketStatus = Cellular_ConfigSSLProfile( CellularHandle,
                                                           cellularSocketHandle->socketId + 1U,
-                                                          AWS_CELLULAR_NO_CERT_VALIDATE,
+                                                          certValidLevel,
                                                           ROOTCA_PEM2_NVM_IDX,
                                                           CLIENT_CERT_NVM_IDX,
                                                           CLIENT_PRIVATEKEY_NVM_IDX );

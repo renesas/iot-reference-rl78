@@ -33,6 +33,7 @@
 #include "ota_pal_test.h"
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #include "trng_helper.h"
+#include "cert_profile_helper.h"
 #else
 #include "core_pkcs11_config.h"
 #endif
@@ -51,6 +52,10 @@
 #include "task.h"
 #include "semphr.h"
 #include "ota_config.h"
+
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+extern uint8_t CellularDisableSni;
+#endif
 
 struct NetworkContext
 {
@@ -84,15 +89,12 @@ void prvTransportTestDelay( uint32_t delayMs );
 #else
 static NetworkCredentials_t xNetworkCredentials = { 0 };
 #endif
-#if ( MQTT_TEST_ENABLED == 1 )
 static TransportInterface_t xTransport = { 0 };
 static NetworkContext_t xSecondNetworkContext = { 0 };
 static NetworkContext_t xNetworkContext = { 0 };
-#endif /* ( MQTT_TEST_ENABLED == 1 ) */
 static uint32_t ulGlobalEntryTimeMs = 0;
 
 
-#if ( MQTT_TEST_ENABLED == 1 )
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
                                                           void * pvNetworkCredentials )
@@ -128,7 +130,6 @@ static void prvTransportNetworkDisconnect( void * pNetworkContext )
     TLS_FreeRTOS_Disconnect( pNetworkContext );
 #endif
 }
-#endif /* ( MQTT_TEST_ENABLED == 1 )*/
 
 static void ThreadWrapper( void * pParam )
 {
@@ -296,6 +297,13 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
     xTransport.send = Plaintext_FreeRTOS_send;
     xTransport.recv = Plaintext_FreeRTOS_recv;
     xTransport.writev = NULL;
+    prvWriteCertificateToModule((const uint8_t *)CFG_ROOT_CA_PEM1,
+                                strlen((const char *)CFG_ROOT_CA_PEM1),
+                                (const uint8_t *)MQTT_CLIENT_CERTIFICATE,
+                                strlen((const char *)MQTT_CLIENT_CERTIFICATE),
+                                (const uint8_t *)MQTT_CLIENT_PRIVATE_KEY,
+                                strlen((const char *)MQTT_CLIENT_PRIVATE_KEY));
+    CellularDisableSni = pdFALSE;
 #else
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_send;
@@ -345,6 +353,13 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
     xTransport.send = Plaintext_FreeRTOS_send;
     xTransport.recv = Plaintext_FreeRTOS_recv;
     xTransport.writev = NULL;
+    prvWriteCertificateToModule((const uint8_t *)ECHO_SERVER_ROOT_CA,
+                                strlen((const char *)ECHO_SERVER_ROOT_CA),
+                                (const uint8_t *)TRANSPORT_CLIENT_CERTIFICATE,
+                                strlen((const char *)TRANSPORT_CLIENT_CERTIFICATE),
+                                (const uint8_t *)TRANSPORT_CLIENT_PRIVATE_KEY,
+                                strlen((const char *)TRANSPORT_CLIENT_PRIVATE_KEY));
+    CellularDisableSni = pdTRUE;
 #else
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_send;

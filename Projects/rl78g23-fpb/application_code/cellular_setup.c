@@ -66,6 +66,9 @@ CellularHandle_t CellularHandle = NULL;
 /* User of secure sockets cellular should provide this variable. */
 uint8_t CellularSocketPdnContextId = RM_CELLULAR_RYZ_DEFAULT_BEARER_CONTEXT_ID;
 
+/* User of secure sockets cellular should provide this variable. */
+uint8_t CellularDisableSni = pdFALSE;
+
 /*-----------------------------------------------------------*/
 
 bool setupCellular (void);
@@ -80,6 +83,8 @@ bool setupCellular(void)
     CellularSimCardStatus_t simStatus;
     CellularServiceStatus_t serviceStatus;
     uint8_t tries;
+
+    CellularDisableSni = pdFALSE;
 
     CellularPdnConfig_t pdnConfig = { CELLULAR_PDN_CONTEXT_IPV4,
                                       (CellularPdnAuthType_t)AWS_CELLULAR_CFG_AUTH_TYPE,
