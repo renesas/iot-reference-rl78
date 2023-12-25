@@ -55,6 +55,9 @@ extern bool setupCellular( void );
 #if (ENABLE_AFR_IDT == 1)
 extern void prvQualificationTestTask( void * pvParameters );
 extern void vSubscribePublishTestTask( void * pvParameters );
+#if (OTA_E2E_TEST_ENABLED == 1)
+extern vStartOtaDemo( void);
+#endif
 #endif
 
 extern uint8_t CellularDisableSni;
