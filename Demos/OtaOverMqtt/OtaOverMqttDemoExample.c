@@ -183,7 +183,7 @@ extern KeyValueStore_t gKeyValueStore;
 /**
  * @brief Priority required for OTA agent task.
  */
-#define OTA_AGENT_TASK_PRIORITY                     ( tskIDLE_PRIORITY + 1)
+#define OTA_AGENT_TASK_PRIORITY                     ( tskIDLE_PRIORITY )
 
 /**
  * @brief The timeout for waiting for the agent to get suspended after closing the
