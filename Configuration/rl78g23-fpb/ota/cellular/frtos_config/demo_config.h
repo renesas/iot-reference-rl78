@@ -375,7 +375,7 @@
  * "-----END CERTIFICATE-----\n"
  *
  */
-#define democonfigROOT_CA_PEM                   tlsSTARFIELD_ROOT_CERTIFICATE_PEM
+#define democonfigROOT_CA_PEM                   tlsATS1_ROOT_CERTIFICATE_PEM
 
 /**
  * @brief Dimensions the buffer used to serialize and deserialize MQTT packets.
