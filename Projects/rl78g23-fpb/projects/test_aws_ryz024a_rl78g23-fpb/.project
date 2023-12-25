@@ -92,7 +92,7 @@
 	</linkedResources>
 	<filteredResources>
 		<filter>
-			<id>1686531698457</id>
+			<id>1703468083609</id>
 			<name>Demos</name>
 			<type>10</type>
 			<matcher>
@@ -101,7 +101,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1686531698473</id>
+			<id>1703468083623</id>
 			<name>Demos</name>
 			<type>10</type>
 			<matcher>
@@ -110,7 +110,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1686531698499</id>
+			<id>1703468083636</id>
 			<name>Demos</name>
 			<type>10</type>
 			<matcher>
@@ -119,12 +119,21 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1686531698515</id>
+			<id>1703468083649</id>
 			<name>Demos</name>
 			<type>10</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-MQTT_Mutual_Auth</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1703468083662</id>
+			<name>Demos</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-include</arguments>
 			</matcher>
 		</filter>
 		<filter>
