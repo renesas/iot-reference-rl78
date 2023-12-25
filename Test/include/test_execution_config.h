@@ -40,9 +40,7 @@
  *
  * #define MQTT_TEST_ENABLED                 (0)
  */
-#ifndef MQTT_TEST_ENABLED
 #define MQTT_TEST_ENABLED              ( 0 )
-#endif
 
 /**
  * @brief Configuration to enable the transport interface test.
@@ -50,27 +48,21 @@
  * #define TRANSPORT_INTERFACE_TEST_ENABLED  (0)
  */
 
-#ifndef TRANSPORT_INTERFACE_TEST_ENABLED
 #define TRANSPORT_INTERFACE_TEST_ENABLED    ( 0 )
-#endif
 
 /**
  * @brief Configuration to enable the OTA PAL test.
  *
  * #define OTA_PAL_TEST_ENABLED  (0)
  */
-#ifndef OTA_PAL_TEST_ENABLED
 #define OTA_PAL_TEST_ENABLED                ( 0 )
-#endif
 
 /**
  * @brief Configuration to enable the OTA End-to-end test.
  *
  * #define OTA_E2E_TEST_ENABLED  (0)
  */
-#ifndef OTA_E2E_TEST_ENABLED
 #define OTA_E2E_TEST_ENABLED                ( 0 )
-#endif
 
 /**
  * @brief Configuration to enable the corePKCS11 test.
