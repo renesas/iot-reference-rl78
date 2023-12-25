@@ -86,8 +86,6 @@
  */
 #define ENABLE_OTA_UPDATE_DEMO              (1)
 
-#define democonfigROOT_CA_PEM               tlsSTARFIELD_ROOT_CERTIFICATE_PEM
-
 /**
  * @brief Path of the file containing the provisioning claim certificate. This
  * certificate is used to connect to AWS IoT Core and use Fleet Provisioning

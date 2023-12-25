@@ -86,8 +86,6 @@
  */
 #define ENABLE_OTA_UPDATE_DEMO              (0)
 
-#define democonfigROOT_CA_PEM               tlsSTARFIELD_ROOT_CERTIFICATE_PEM
-
 /**
  * @brief Path of the file containing the provisioning claim certificate. This
  * certificate is used to connect to AWS IoT Core and use Fleet Provisioning
@@ -375,7 +373,7 @@
  * "-----END CERTIFICATE-----\n"
  *
  */
-#define democonfigROOT_CA_PEM                   tlsSTARFIELD_ROOT_CERTIFICATE_PEM
+#define democonfigROOT_CA_PEM                   tlsATS1_ROOT_CERTIFICATE_PEM
 
 /**
  * @brief Dimensions the buffer used to serialize and deserialize MQTT packets.
