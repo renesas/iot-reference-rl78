@@ -40,8 +40,6 @@
 #define TRNG_SUCCESS        (0)    /* Successful operation */
 #define TRNG_BUSY           (-1)   /* Busy operation */
 
-#define RANDOM_LENGTH       (4U)   /*random value 4 bytes */
-
 /***********************************************************************************************************************
  Typedef definitions
  **********************************************************************************************************************/
@@ -59,10 +57,11 @@ int8_t R_TRNG_GenerateRandomNumber (void);
  * Function Name: R_TRNG_GetRandomNumber
  * @brief         .
  * @param [in]    random: top address of random number
+ * @param [in]    size  : size of of random number
  * @retval         0: TRNG_SUCCESS
  * @retval        -1: TRNG_BUSY
  * @details       This function gets random numbers.
  *********************************************************************************************************************/
-int8_t R_TRNG_GetRandomNumber (uint8_t *random);
+int8_t R_TRNG_GetRandomNumber (uint8_t *random, uint16_t size);
 
 #endif /* R_TRNG_H_ */

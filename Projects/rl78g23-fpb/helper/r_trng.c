@@ -68,18 +68,19 @@ int8_t R_TRNG_GenerateRandomNumber(void)
  * Function Name: R_TRNG_GetRandomNumber
  * @brief         .
  * @param [in]    random: top address of random number
+ * @param [in]    size m: size of of random number
  * @retval         0: TRNG_SUCCESS
  * @retval        -1: TRNG_BUSY
  * @details       This function gets random numbers.
  *********************************************************************************************************************/
-int8_t R_TRNG_GetRandomNumber(uint8_t *random)
+int8_t R_TRNG_GetRandomNumber(uint8_t *random, uint16_t size)
 {
-    uint8_t i;
+    uint16_t i;
 
     if (TRNGSCR0 & TRNGRDY_CHK) /* Check the TRNGSCR0 */
     {
         /* Store the Ramdom Number */
-        for (i = 0; i < RANDOM_LENGTH; i++)
+        for (i = 0; i < size; i++)
         {
             *(random + i) = TRNGSDR;
         }

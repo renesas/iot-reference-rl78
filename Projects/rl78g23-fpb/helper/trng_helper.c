@@ -47,18 +47,14 @@
 
 BaseType_t xTrngGenerateRandomNumber(uint8_t * pusRandomNumBuffer, size_t xBufferLength)
 {
-    BaseType_t xStatus = pdPASS;
-    uint8_t ucRandomNumber;
-
     R_TRNG_GenerateRandomNumber();
     BSP_NOP();
-    while (TRNG_SUCCESS != R_TRNG_GetRandomNumber(&ucRandomNumber))
+    while (TRNG_SUCCESS != R_TRNG_GetRandomNumber(pusRandomNumBuffer, xBufferLength))
     {
         ;
     }
 
-    *pusRandomNumBuffer = ucRandomNumber;
-    return xStatus;
+    return pdPASS;
 }
 
 uint32_t uxRand(void)
