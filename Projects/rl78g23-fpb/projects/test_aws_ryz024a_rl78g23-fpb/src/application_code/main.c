@@ -84,13 +84,8 @@ extern uint8_t CellularDisableSni;
  * higher than other MQTT application tasks, so that the agent can drain the queue
  * as work is being produced.
  */
-#if (ENABLE_OTA_UPDATE_DEMO == 1)
-#define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 1200 )
-#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 1 )
-#else
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         ( 1200 )
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
-#endif
 
 #if (ENABLE_AFR_IDT == 1)
 #define appmainTEST_TASK_STACK_SIZE               ( 2000 )
