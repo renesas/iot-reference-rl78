@@ -200,7 +200,7 @@
 /**
  * @brief Socket send and receive timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 750 )
+#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 450 )
 
 /**
  * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
@@ -636,7 +636,6 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     /* Establish a TCP connection with the MQTT broker. This example connects to
      * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
      * democonfigMQTT_BROKER_PORT at the top of this file. */
-
     uint32_t ulRandomNum = 0;
 	do
 	{
