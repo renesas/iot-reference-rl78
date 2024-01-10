@@ -183,11 +183,11 @@
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.userAfter.1380927202" name="追加するオプション（すべての指定オプションの後ろに追加）" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.userAfter" valueType="stringList">
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_serializer.obj(.constf=const_core_mqtt_serializer_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_state.obj(.constf=const_core_mqtt_state_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt.obj(.constf=const_core_mqtt_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent_command_functions.obj(.constf=const_core_mqtt_agent_command_functions_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent.obj(.constf=const_core_mqtt_agent_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_serializer.obj(.constf=const_mqtt_com_serializer_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_state.obj(.constf=const_mqtt_com_state_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt.obj(.constf=const_mqtt_com_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent_command_functions.obj(.constf=const_mqtt_agent_command_functions_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent.obj(.constf=const_mqtt_agent_f)"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.debugMonitor.1970978646" name="OCDモニタのメモリ領域を確保する (-debug_monitor)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.debugMonitor" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.noneLinkageOrderList.948761764" name="なし(リンク順序のリスト)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.noneLinkageOrderList" valueType="stringList">
@@ -294,7 +294,7 @@
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.ocdbg.429095726" name="オプションバイト領域のオンチップ・デバッグ・オプション・バイトに値を設定する (-ocdbg)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.ocdbg" value="true" valueType="boolean"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.RAMarea.1785000459" name="セクションを配置しないRAM領域 (-self/-ocdtr/-ocdhpi)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.RAMarea" value="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.RAMarea.none" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.c99Library.2079231779" name="C99版ライブラリを使用する (-library)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.c99Library" value="true" valueType="boolean"/>
-								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section.1122098459" name="セクション (-start)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section" value=".const,.text,.data,.sdata,.RLIB,.SLIB/03000,.constf/010000,const_*,.textf/020000,.dataR,.bss/0F3F04,.sdataR,.sbss/0FFE20" valueType="string"/>
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section.1122098459" name="セクション (-start)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section" value=".const,.text,.data,.sdata,.RLIB,.SLIB,const_mqtt_com*/03000,.constf/010000,const_mqtt_agent*,const_demo*,.textf/020000,.dataR,.bss/0F3F04,.sdataR,.sbss/0FFE20" valueType="string"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.597673645" name="最適化方法 (-nooptimize/-optimize)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize" value="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.custom" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.symbolDelete.1078605793" name="一度も参照のない変数/関数を削除する (-optimize=symbol_delete)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.symbolDelete" value="true" valueType="boolean"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.show.relocationAttribute.2093408390" name="再配置属性を出力する (-show=relocation_attribute)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.show.relocationAttribute" value="true" valueType="boolean"/>
@@ -642,11 +642,11 @@
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.userAfter.1638343478" name="追加するオプション（すべての指定オプションの後ろに追加）" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.userAfter" valueType="stringList">
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_serializer.obj(.constf=const_core_mqtt_serializer_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_state.obj(.constf=const_core_mqtt_state_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt.obj(.constf=const_core_mqtt_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent_command_functions.obj(.constf=const_core_mqtt_agent_command_functions_f)"/>
-									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent.obj(.constf=const_core_mqtt_agent_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_serializer.obj(.constf=const_mqtt_com_serializer_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt_state.obj(.constf=const_mqtt_com_state_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT/source\core_mqtt.obj(.constf=const_mqtt_com_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent_command_functions.obj(.constf=const_mqtt_agent_command_functions_f)"/>
+									<listOptionValue builtIn="false" value="-rename=.\Middleware/FreeRTOS/coreMQTT-Agent/source\core_mqtt_agent.obj(.constf=const_mqtt_agent_f)"/>
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.debugMonitor.1210183410" name="OCDモニタのメモリ領域を確保する (-debug_monitor)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.debugMonitor" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.noneLinkageOrderList.1386815775" name="なし(リンク順序のリスト)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.noneLinkageOrderList" valueType="stringList">
@@ -767,7 +767,7 @@
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.ocdbg.2043815176" name="オプションバイト領域のオンチップ・デバッグ・オプション・バイトに値を設定する (-ocdbg)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.ocdbg" value="true" valueType="boolean"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.RAMarea.1663279715" name="セクションを配置しないRAM領域 (-self/-ocdtr/-ocdhpi)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.RAMarea" value="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.RAMarea.none" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.c99Library.801513356" name="C99版ライブラリを使用する (-library)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.c99Library" value="true" valueType="boolean"/>
-								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section.1610249853" name="セクション (-start)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section" value="RFD_DATA_n,RFD_DF_f,RFD_CMN_f,RFD_CF_f/01400,.const,.text,.data,.sdata,.RLIB,.SLIB/03000,.constf/010000,const_*,.textf/020000,.stack_bss,.dataR,.bss,RFD_DATA_nR,RFD_CMN_fR,RFD_CF_fR/0F3F04,.sdataR,.sbss/0FFE20" valueType="string"/>
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section.1610249853" name="セクション (-start)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.section" value="RFD_DATA_n,RFD_DF_f,RFD_CMN_f,RFD_CF_f/01400,.const,.text,.data,.sdata,.RLIB,.SLIB,const_mqtt_com_serializer_f,const_mqtt_com_f/03000,.constf/010000,const_mqtt_com_state_f,const_mqtt_agent*,const_demo*,.textf/020000,.stack_bss,.dataR,.bss,RFD_DATA_nR,RFD_CMN_fR,RFD_CF_fR/0F3F04,.sdataR,.sbss/0FFE20" valueType="string"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.1751813603" name="最適化方法 (-nooptimize/-optimize)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize" value="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.custom" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.symbolDelete.379610657" name="一度も参照のない変数/関数を削除する (-optimize=symbol_delete)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.optimize.symbolDelete" value="true" valueType="boolean"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.show.relocationAttribute.1589257545" name="再配置属性を出力する (-show=relocation_attribute)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.show.relocationAttribute" value="true" valueType="boolean"/>
