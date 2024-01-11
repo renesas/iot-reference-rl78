@@ -137,7 +137,7 @@
 									<listOptionValue builtIn="false" value="UNITY_INCLUDE_CONFIG_H"/>
 									<listOptionValue builtIn="false" value="ENABLE_AFR_IDT=1"/>
 								</option>
-								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.449324093" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.449324093" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.default" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.1016255075" name="未使用static関数の削除を行う (-Odelete_static_func)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.yes" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.memoryModel.1545981971" name="メモリ・モデル (-memory_model)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.memoryModel" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.memoryModel.medium" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.farRom.148273979" name="メモリ・モデルで指定したROMデータに対するnear/far属性ををfarに設定する (-far_rom)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.farRom" value="true" valueType="boolean"/>
@@ -387,6 +387,27 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.44171754" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.1676710201" name="/" resourcePath="Middleware/FreeRTOS/FreeRTOS-Cellular-Interface">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.900903257" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.499272011" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1713937910">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.634966949" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1503803961" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1150081554"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.497911861" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1700320804"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1922930584" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1844116524"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1940926500" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1689573117">
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.163650806" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
+								<inputType id="Base.Compiler.ccrl.C.inputType.24544477" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.13457614" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1827574348" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1161152250">
+								<inputType id="Base.Assembler.ccrl.inputType.557071092" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.113585269" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1684013886" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+						</toolChain>
+					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Middleware/AWS" name="/" resourcePath="Middleware/AWS">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.878332481" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.1049249164" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -596,7 +617,7 @@
 									<listOptionValue builtIn="false" value="UNITY_INCLUDE_CONFIG_H"/>
 									<listOptionValue builtIn="false" value="ENABLE_AFR_IDT=1"/>
 								</option>
-								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.2001746142" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.2001746142" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.default" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.306555828" name="未使用static関数の削除を行う (-Odelete_static_func)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.Odelete.yes" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.memoryModel.2107350630" name="メモリ・モデル (-memory_model)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.memoryModel" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.memoryModel.medium" valueType="enumerated"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.farRom.1400622434" name="メモリ・モデルで指定したROMデータに対するnear/far属性ををfarに設定する (-far_rom)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.farRom" value="true" valueType="boolean"/>
@@ -898,6 +919,26 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1003338814" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1526193351" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.1737229366" name="/" resourcePath="Middleware/FreeRTOS/FreeRTOS-Cellular-Interface">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.567159185" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.247253455" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.24075034">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1393456603" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.367726720" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.908032943"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.899967431" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.7272714"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1584099373" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.533026379"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1074550101" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1514078842">
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.866987325" name="最適化レベル (-O)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization" value="com.renesas.cdt.managedbuild.renesas.ccrl.compiler.option.optimization.Onothing" valueType="enumerated"/>
+								<inputType id="Base.Compiler.ccrl.C.inputType.1464194431" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.1233333846" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1160637036" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.564933370">
+								<inputType id="Base.Assembler.ccrl.inputType.597918345" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.932580793" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1293141438" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS" name="/" resourcePath="Middleware/AWS">
