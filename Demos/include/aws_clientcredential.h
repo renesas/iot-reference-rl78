@@ -43,7 +43,7 @@
  * by software, such as a production serial number, rather
  * than a hard coded constant.
  */
-#define clientcredentialIOT_THING_NAME               "rx-ota-firm-things-rx65n-rsk"
+#define clientcredentialIOT_THING_NAME               "iot-thing-watanabe"
 
 /*
  * @brief Port number the MQTT broker is using.
