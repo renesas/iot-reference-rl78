@@ -24,7 +24,6 @@
 #define CODE_SIGNER_PUBLIC_KEY_H_
 
 #include "test_execution_config.h"
-#include "aws_test_ota_pal_ecdsa_sha256_signature.h"
 
 /*
  * PEM-encoded code signer public key.
