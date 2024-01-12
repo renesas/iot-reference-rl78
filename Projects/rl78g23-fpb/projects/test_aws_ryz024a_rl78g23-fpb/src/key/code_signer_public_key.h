@@ -31,10 +31,11 @@
  * "...base64 data...\n"\
  * "-----END CERTIFICATE-----"
  */
+/* 41167f58-633c-499f-a17f-4631918c6422 */
 #define CODE_SIGNER_PUBLIC_KEY_PEM \
 "-----BEGIN PUBLIC KEY-----"\
-"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKwbEshKaHHhtxmojJidJ/GX+1S/e"\
-"5uwH1jMq32opLTX6vfckKXG4/WvB9IqZB99O6BQ4wWj2qfwWrV9YXVytSA=="\
-"-----END PUBLIC KEY-----"\
+"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEedv40AoIGSF0wzc5D/n9v4dHh907"\
+"1+Io02XDFmpUrxeig3FxHOiGNKHL57u5RA45NS/uUL20QEFNhbtpsOcksw=="\
+"-----END PUBLIC KEY-----"
 
 #endif /* CODE_SIGNER_PUBLIC_KEY_H_ */
