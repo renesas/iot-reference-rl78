@@ -23,6 +23,9 @@
 #ifndef CODE_SIGNER_PUBLIC_KEY_H_
 #define CODE_SIGNER_PUBLIC_KEY_H_
 
+#include "test_execution_config.h"
+#include "aws_test_ota_pal_ecdsa_sha256_signature.h"
+
 /*
  * PEM-encoded code signer public key.
  *
@@ -31,11 +34,20 @@
  * "...base64 data...\n"\
  * "-----END CERTIFICATE-----"
  */
+#if (OTA_PAL_TEST_ENABLED == 1)
+/* for Full_OTA_PAL Test */
+#define CODE_SIGNER_PUBLIC_KEY_PEM \
+"-----BEGIN PUBLIC KEY-----"\
+"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEKwbEshKaHHhtxmojJidJ/GX+1S/e"\
+"5uwH1jMq32opLTX6vfckKXG4/WvB9IqZB99O6BQ4wWj2qfwWrV9YXVytSA=="\
+"-----END PUBLIC KEY-----"
+#else
 /* 41167f58-633c-499f-a17f-4631918c6422 */
 #define CODE_SIGNER_PUBLIC_KEY_PEM \
 "-----BEGIN PUBLIC KEY-----"\
 "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEedv40AoIGSF0wzc5D/n9v4dHh907"\
 "1+Io02XDFmpUrxeig3FxHOiGNKHL57u5RA45NS/uUL20QEFNhbtpsOcksw=="\
 "-----END PUBLIC KEY-----"
+#endif
 
 #endif /* CODE_SIGNER_PUBLIC_KEY_H_ */
