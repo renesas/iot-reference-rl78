@@ -47,9 +47,9 @@
 #define AWS_CELLULAR_CFG_URC_CHARGET_ENABLED    (0)      /* Whether the callback function is invoked when a URC is received(0: No, 1: Yes)*/
 #define AWS_CELLULAR_CFG_URC_CHARGET_FUNCTION   my_sw_urc_charget_function   /* Name of the callback function to be invoked during ringline operation.*/
 
-#define AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT     (60000)  /* Timeout period before an Ack response is returned when AT command is executed */
+#define AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT     (120000) /* Timeout period before an Ack response is returned when AT command is executed */
 
-#define AWS_CELLULAR_CFG_SEND_DELAY             (150)    /* Transmission delay after data mode shift(msec) */
+#define AWS_CELLULAR_CFG_SEND_DELAY             (200)    /* Transmission delay after data mode shift(msec) */
 
 #define AWS_CELLULAR_CFG_RING_LINE_ACTIVE_TIME  (1000)   /* RING line active duration (1msec, 1000~5000)*/
 #define AWS_CELLULAR_CFG_PSM_PREPARATION_TIME   (100)    /* Reception guard time before the module transitions to PSM (1msec, 100~10000) */
