@@ -14,7 +14,7 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_aws_cellular_if.h
@@ -146,6 +146,12 @@ typedef enum
     AWS_CELLULAR_MODULE_SHUTDOWN_FLG,   // Received +SHUTDONW URC
 } e_aws_cellular_module_flg_t;
 
+typedef enum
+{
+    AWS_CELLULAR_RAT_CATM1 = 1,     //The CAT M1 RATs network.
+    AWS_CELLULAR_RAT_NBIOT = 2,     //The NBIOT RATs network.
+} e_aws_cellular_rat_t;
+
 typedef struct aws_cellular_svn
 {
     uint8_t ue_svn[AWS_CELLULAR_MAX_UE_SVN_LENGTH+1];   // UE Software Version Number
@@ -160,6 +166,12 @@ typedef struct aws_cellular_timeout
     uint32_t            end_time;
 } st_aws_cellular_timeout_ctrl_t;
 
+typedef struct aws_cellular_support_rat
+{
+    bool lte_m;
+    bool nb_iot;
+} st_aws_cellular_support_rat_t;
+
 typedef struct aws_cellular_ctrl
 {
     e_aws_cellular_module_flg_t module_flg;         // Module state
@@ -167,7 +179,9 @@ typedef struct aws_cellular_ctrl
     void *                      rts_semaphore;      // Semaphore handle
     void *                      ring_event;         // Event Group Handles
     void *                      ring_taskhandle;    // Task handle
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    void *                      ring_irqhandle;     // IRQ control block handle
+#else
     irq_handle_t                ring_irqhandle;     // IRQ control block handle
 #endif
 } st_aws_cellular_ctrl_t;
@@ -380,29 +394,6 @@ CellularError_t Cellular_ConfigSSLProfile (CellularHandle_t                     
                                             const uint8_t                         client_certificate_id,
                                             const uint8_t                         client_privatekey_id);
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-/***************************************************************************************************************
- * Function Name  @fn            Cellular_ConfigTlslSocket
- * Description    @details       TLS socket configuration.
- * Arguments      @param[in]     cellularHandle -
- *                                  Pointer to managed structure.
- *                @param[in]     socket_id -
- *                                  Socket ID.
- *                @param[in]     enable -
- *                                  enable TLS.
- *                @param[in]     security_profile_id -
- *                                  Security profile ID.
- * Return Value   @retval        CELLULAR_SUCCESS -
- *                                  Successfully configurate.
- *                               Others -
- *                                  Error code indicating the cause of the error.
- **************************************************************************************************************/
-CellularError_t Cellular_ConfigTlslSocket (CellularHandle_t cellularHandle,
-                                           const uint8_t    socket_id,
-                                           const bool       enable,
-                                           const uint8_t    security_profile_id);
-#endif
-
 /***************************************************************************************************************
  * Function Name  @fn            Cellular_PingRequest
  * Description    @details       Perform Ping.
@@ -559,6 +550,75 @@ CellularError_t Cellular_GetSocketDataSize (CellularHandle_t        cellularHand
                                              CellularSocketHandle_t socketHandle,
                                              const uint16_t       * p_size);
 
+/***************************************************************************************************************
+ * Function Name  @fn            Cellular_SetServiceStatus
+ * Description    @details       Sets the mode to automatically select a connection destination.
+ * Arguments      @param[in]     cellularHandle -
+ *                                  Pointer to managed structure.
+ * Return Value   @retval        CELLULAR_SUCCESS -
+ *                                  Socket information is successfully obtained.
+ *                               Others -
+ *                                  Error code indicating the cause of the error.
+ **************************************************************************************************************/
+CellularError_t Cellular_SetServiceStatus (CellularHandle_t cellularHandle);
+
+/***************************************************************************************************************
+ * Function Name  @fn            Cellular_SetRAT
+ * Description    @details       Specify the RAT to use.
+ * Arguments      @param[in]     cellularHandle -
+ *                                  Pointer to managed structure.
+ * Arguments      @param[in]     rat -
+ *                                  RAT to be set.
+ * Return Value   @retval        CELLULAR_SUCCESS -
+ *                                  Socket information is successfully obtained.
+ *                               Others -
+ *                                  Error code indicating the cause of the error.
+ **************************************************************************************************************/
+CellularError_t Cellular_SetRAT (CellularHandle_t              cellularHandle,
+                                    const e_aws_cellular_rat_t rat);
+
+/***************************************************************************************************************
+ * Function Name  @fn            Cellular_GetRAT
+ * Description    @details       Obtain the RAT being set.
+ * Arguments      @param[in]     cellularHandle -
+ *                                  Pointer to managed structure.
+ * Arguments      @param[out]    p_rat -
+ *                                  RAT in setting.
+ * Return Value   @retval        CELLULAR_SUCCESS -
+ *                                  Socket information is successfully obtained.
+ *                               Others -
+ *                                  Error code indicating the cause of the error.
+ **************************************************************************************************************/
+CellularError_t Cellular_GetRAT (CellularHandle_t                cellularHandle,
+                                    const e_aws_cellular_rat_t * p_rat);
+
+/***************************************************************************************************************
+ * Function Name  @fn            Cellular_GetSupportRAT
+ * Description    @details       Get the RATs supported by the module.
+ * Arguments      @param[in]     cellularHandle -
+ *                                  Pointer to managed structure.
+ * Arguments      @param[out]    p_support -
+ *                                  Pointer to store acquired RAT.
+ * Return Value   @retval        CELLULAR_SUCCESS -
+ *                                  Socket information is successfully obtained.
+ *                               Others -
+ *                                  Error code indicating the cause of the error.
+ **************************************************************************************************************/
+CellularError_t Cellular_GetSupportRAT (CellularHandle_t                      cellularHandle,
+                                        const st_aws_cellular_support_rat_t * p_support);
+
+/***************************************************************************************************************
+ * Function Name  @fn            Cellular_SetHWConfig
+ * Description    @details       Set the application parameter of UART1 to dcp.
+ * Arguments      @param[in]     cellularHandle -
+ *                                  Pointer to managed structure.
+ * Return Value   @retval        CELLULAR_SUCCESS -
+ *                                  Socket information is successfully obtained.
+ *                               Others -
+ *                                  Error code indicating the cause of the error.
+ **************************************************************************************************************/
+CellularError_t Cellular_SetHWConfig (CellularHandle_t cellularHandle);
+
 #if AWS_CELLULAR_CFG_URC_CHARGET_ENABLED == 1
 void AWS_CELLULAR_CFG_URC_CHARGET_FUNCTION (const char * pRawData,
                                             void       * pCallbackContext);
@@ -626,62 +686,12 @@ void aws_cellular_modemevent (CellularModemEvent_t   modemEvent,
                               void                 * pCallbackContext);
 
 /***************************************************************************************************************
- * Function Name  @fn            aws_cellular_timeout_init
- * Description    @details       Initialize timeout settings.
- * Arguments      @param[in]     timeout_ctrl -
- *                                  Timeout management structure.
- *                @param[in]     timeout -
- *                                  Set timeout period.
- **************************************************************************************************************/
-void aws_cellular_timeout_init (st_aws_cellular_timeout_ctrl_t * timeout_ctrl, uint32_t timeout);
-
-/***************************************************************************************************************
- * Function Name  @fn            aws_cellular_check_timeout
- * Description    @details       Check timeout.
- * Arguments      @param[in]     timeout_ctrl -
- *                                  Timeout management structure.
- * Return Value   @retval        false -
- *                                  Not timed out.
- *                               true -
- *                                  Time out.
- **************************************************************************************************************/
-bool aws_cellular_check_timeout (st_aws_cellular_timeout_ctrl_t * const timeout_ctrl);
-
-/***************************************************************************************************************
  * Function Name  @fn            aws_cellular_rts_ctrl
  * Description    @details       RTS pin control.
  * Arguments      @param[in]     lowhigh -
  *                                  Output signal.
  **************************************************************************************************************/
 void aws_cellular_rts_ctrl (const uint8_t lowhigh);
-
-/***************************************************************************************************************
- * Function Name  @fn            aws_cellular_irq_callback
- * Description    @details       IRQ interrupt callback.
- * Arguments      @param[in]     p_Args -
- *                                  Callback Content.
- **************************************************************************************************************/
-void aws_cellular_irq_callback (void * const p_Args);
-
-/***************************************************************************************************************
- * Function Name  @fn            aws_cellular_irq_open
- * Description    @details       Enable irq interrupt.
- * Arguments      @param[in]     p_aws_ctrl -
- *                                  Pointer to management structure for cellular module.
- * Return Value   @retval        true -
- *                                  Success.
- *                               false -
- *                                  Failure.
- **************************************************************************************************************/
-bool aws_cellular_irq_open (st_aws_cellular_ctrl_t * const p_aws_ctrl);
-
-/***************************************************************************************************************
- * Function Name  @fn            aws_cellular_irq_close
- * Description    @details       Disable irq interrupt.
- * Arguments      @param[in]     p_aws_ctrl -
- *                                  Pointer to management structure for cellular module.
- **************************************************************************************************************/
-void aws_cellular_irq_close (st_aws_cellular_ctrl_t * const p_aws_ctrl);
 
 /***************************************************************************************************************
  * Function Name  @fn            aws_cellular_psm_config
@@ -697,17 +707,6 @@ void aws_cellular_irq_close (st_aws_cellular_ctrl_t * const p_aws_ctrl);
  **************************************************************************************************************/
 CellularError_t aws_cellular_psm_config (CellularContext_t * p_context, const uint8_t mode);
 
-/***************************************************************************************************************
- * Function Name  @fn            aws_cellular_psm_conf_fail
- * Description    @details       Disable PSM config settings.
- * Arguments      @param[in]     p_context -
- *                                  Pointer to managed structure.
- *                @param[in]     phase -
- *                                  PSM Config Progress.
- **************************************************************************************************************/
-void aws_cellular_psm_conf_fail (CellularContext_t * p_context, const uint8_t phase);
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /***************************************************************************************************************
  * Function Name  @fn            aws_cellular_rts_active
  * Description    @details       Set the RTS pin to High output.
@@ -729,6 +728,28 @@ void aws_cellular_rts_active (CellularContext_t * p_context, BaseType_t semaphor
  *                                  Processing was not executed.
  **************************************************************************************************************/
 BaseType_t aws_cellular_rts_deactive (CellularContext_t * p_context);
+
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+/***************************************************************************************************************
+ * Function Name  @fn            Cellular_ConfigTlslSocket
+ * Description    @details       TLS socket configuration.
+ * Arguments      @param[in]     cellularHandle -
+ *                                  Pointer to managed structure.
+ *                @param[in]     socket_id -
+ *                                  Socket ID.
+ *                @param[in]     enable -
+ *                                  enable TLS.
+ *                @param[in]     security_profile_id -
+ *                                  Security profile ID.
+ * Return Value   @retval        CELLULAR_SUCCESS -
+ *                                  Successfully configurate.
+ *                               Others -
+ *                                  Error code indicating the cause of the error.
+ **************************************************************************************************************/
+CellularError_t Cellular_ConfigTlslSocket (CellularHandle_t cellularHandle,
+                                           const uint8_t    socket_id,
+                                           const bool       enable,
+                                           const uint8_t    security_profile_id);
 #endif
 
 #endif /* AWS_CELLULAR_IF_H */

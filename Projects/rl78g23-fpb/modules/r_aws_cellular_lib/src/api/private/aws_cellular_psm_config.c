@@ -14,7 +14,7 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : aws_cellular_psm_config.c
@@ -46,6 +46,12 @@
 /**********************************************************************************************************************
  * Private (static) variables and functions
  *********************************************************************************************************************/
+static void aws_cellular_irq_callback (void * const p_Args);
+static bool aws_cellular_irq_open (st_aws_cellular_ctrl_t * const p_aws_ctrl);
+static void aws_cellular_irq_close (st_aws_cellular_ctrl_t * const p_aws_ctrl);
+static void aws_cellular_psm_conf_fail (CellularContext_t * p_context, const uint8_t phase);
+static void aws_cellular_timeout_init (st_aws_cellular_timeout_ctrl_t * timeout_ctrl, uint32_t timeout);
+static bool aws_cellular_check_timeout (st_aws_cellular_timeout_ctrl_t * const timeout_ctrl);
 static void ring_thread (void * const p_pvParameters);
 
 /*************************************************************************************************
@@ -63,15 +69,6 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
     uint8_t    phase      = 0;
     BaseType_t rtos_ret   = pdFALSE;
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqpsmconfig;
-    atReqpsmconfig.pAtCmd       = (char *)cmdBuf;
-    atReqpsmconfig.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqpsmconfig.pAtRspPrefix = NULL;
-    atReqpsmconfig.respCallback = NULL;
-    atReqpsmconfig.pData        = NULL;
-    atReqpsmconfig.dataLen      = 0;
-#else
     CellularAtReq_t atReqpsmconfig =
     {
         (char *)cmdBuf, //cast
@@ -81,11 +78,10 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
         NULL,
         0,
     };
-#endif
 
     if (1 == mode)
     {
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                         "AT+SQNRICFG=2,3,%d", AWS_CELLULAR_CFG_RING_LINE_ACTIVE_TIME);
 
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
@@ -101,7 +97,7 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
 
         if (CELLULAR_PKT_STATUS_OK == pktStatus)
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                             "AT+SQNIPSCFG=1,%d", AWS_CELLULAR_CFG_PSM_PREPARATION_TIME);
 
             pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
@@ -118,7 +114,7 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
 
         if (CELLULAR_PKT_STATUS_OK == pktStatus)
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                             "AT+SQNPSCFG=%d", AWS_CELLULAR_CFG_PSM_WAKEUP_LATENCY);
 
             pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
@@ -136,6 +132,14 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
             {
                 phase |= RM_PSM_PHASE_3;
             }
+            else
+            {
+                cellularStatus = CELLULAR_NO_MEMORY;
+            }
+        }
+        else
+        {
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
         if (NULL != p_aws_ctrl->ring_event)
@@ -144,6 +148,10 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
             if (NULL != p_aws_ctrl->rts_semaphore)
             {
                 phase |= RM_PSM_PHASE_4;
+            }
+            else
+            {
+                cellularStatus = CELLULAR_NO_MEMORY;
             }
         }
 
@@ -159,6 +167,10 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
             {
                 phase |= RM_PSM_PHASE_5;
             }
+            else
+            {
+                cellularStatus = CELLULAR_NO_MEMORY;
+            }
         }
 
         if (pdFAIL != rtos_ret)
@@ -169,6 +181,10 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
                 phase         |= RM_PSM_PHASE_6;
                 cellularStatus = CELLULAR_SUCCESS;
             }
+            else
+            {
+                cellularStatus = CELLULAR_UNKNOWN;
+            }
         }
 
         if (true != status)
@@ -178,17 +194,17 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
     }
     else
     {
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                         "AT+SQNRICFG=0,3,%d", AWS_CELLULAR_CFG_RING_LINE_ACTIVE_TIME);
 
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
 
         if (CELLULAR_PKT_STATUS_OK == pktStatus)
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                             "AT+SQNIPSCFG=0,%d", AWS_CELLULAR_CFG_PSM_PREPARATION_TIME);
 
-            pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
+            _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
         }
 
         aws_cellular_irq_close(p_aws_ctrl);
@@ -235,21 +251,12 @@ CellularError_t aws_cellular_psm_config(CellularContext_t * p_context, const uin
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_psm_conf_fail
  ************************************************************************************************/
-void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t phase)
+static void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t phase)
 {
     st_aws_cellular_ctrl_t * p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;   //cast
 
     uint8_t    cmdBuf[32] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqpsmconfig;
-    atReqpsmconfig.pAtCmd       = (char *)cmdBuf;
-    atReqpsmconfig.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqpsmconfig.pAtRspPrefix = NULL;
-    atReqpsmconfig.respCallback = NULL;
-    atReqpsmconfig.pData        = NULL;
-    atReqpsmconfig.dataLen      = 0;
-#else
     CellularAtReq_t atReqpsmconfig =
     {
         (char *)cmdBuf, //cast
@@ -259,7 +266,6 @@ void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t pha
         NULL,
         0,
     };
-#endif
 
     if ((phase & RM_PSM_PHASE_6) == RM_PSM_PHASE_6)
     {
@@ -287,7 +293,7 @@ void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t pha
 
     if ((phase & RM_PSM_PHASE_2) == RM_PSM_PHASE_2)
     {
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                         "AT+SQNIPSCFG=0,%d", AWS_CELLULAR_CFG_PSM_PREPARATION_TIME);
 
         _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
@@ -295,7 +301,7 @@ void aws_cellular_psm_conf_fail(CellularContext_t * p_context, const uint8_t pha
 
     if ((phase & RM_PSM_PHASE_1) == RM_PSM_PHASE_1)
     {
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                         "AT+SQNRICFG=0,3,%d", AWS_CELLULAR_CFG_RING_LINE_ACTIVE_TIME);
 
         _Cellular_AtcmdRequestWithCallback(p_context, atReqpsmconfig);
@@ -319,6 +325,7 @@ static void ring_thread(void * const p_pvParameters)
 
     bool status = false;
 
+    /* WAIT_LOOP */
     while (1)
     {
         if (NULL != p_aws_ctrl->ring_event)
@@ -336,6 +343,7 @@ static void ring_thread(void * const p_pvParameters)
             aws_cellular_rts_ctrl(0);
 #endif
 
+    /* WAIT_LOOP */
             while (1)
             {
                 status = aws_cellular_check_timeout(&timeout_ctrl);
@@ -365,7 +373,7 @@ static void ring_thread(void * const p_pvParameters)
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_irq_callback
  ************************************************************************************************/
-void aws_cellular_irq_callback(void * const p_Args)
+static void aws_cellular_irq_callback(void * const p_Args)
 {
     (void)p_Args;
 
@@ -388,7 +396,7 @@ void aws_cellular_irq_callback(void * const p_Args)
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_irq_open
  ************************************************************************************************/
-bool aws_cellular_irq_open(st_aws_cellular_ctrl_t * const p_aws_ctrl)
+static bool aws_cellular_irq_open(st_aws_cellular_ctrl_t * const p_aws_ctrl)
 {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     return true;
@@ -412,7 +420,7 @@ bool aws_cellular_irq_open(st_aws_cellular_ctrl_t * const p_aws_ctrl)
     }
 
     return status;
-#endif /* defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) */
+#endif
 }
 /**********************************************************************************************************************
  * End of function aws_cellular_irq_open
@@ -421,9 +429,11 @@ bool aws_cellular_irq_open(st_aws_cellular_ctrl_t * const p_aws_ctrl)
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_irq_close
  ************************************************************************************************/
-void aws_cellular_irq_close(st_aws_cellular_ctrl_t * const p_aws_ctrl)
+static void aws_cellular_irq_close(st_aws_cellular_ctrl_t * const p_aws_ctrl)
 {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    return;
+#else
     R_IRQ_Close(p_aws_ctrl->ring_irqhandle);
     return;
 #endif /* #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__) */
@@ -435,7 +445,7 @@ void aws_cellular_irq_close(st_aws_cellular_ctrl_t * const p_aws_ctrl)
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_timeout_init
  ************************************************************************************************/
-void aws_cellular_timeout_init(st_aws_cellular_timeout_ctrl_t * timeout_ctrl, uint32_t timeout)
+static void aws_cellular_timeout_init(st_aws_cellular_timeout_ctrl_t * timeout_ctrl, uint32_t timeout)
 {
     timeout_ctrl->over_flg    = 0;
     timeout_ctrl->timeout_flg = 0;
@@ -456,7 +466,7 @@ void aws_cellular_timeout_init(st_aws_cellular_timeout_ctrl_t * timeout_ctrl, ui
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_check_timeout
  ************************************************************************************************/
-bool aws_cellular_check_timeout(st_aws_cellular_timeout_ctrl_t * const timeout_ctrl)
+static bool aws_cellular_check_timeout(st_aws_cellular_timeout_ctrl_t * const timeout_ctrl)
 {
     uint32_t this_time = pdMS_TO_TICKS(xTaskGetTickCount());
     bool     status    = false;
@@ -531,24 +541,35 @@ void aws_cellular_rts_hw_flow_disable(void)
  *********************************************************************************************************************/
 #endif  /* AWS_CELLULAR_CFG_CTS_SW_CTRL == 1 */
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /*************************************************************************************************
  * Function Name  @fn            aws_cellular_rts_active
  ************************************************************************************************/
 void aws_cellular_rts_active(CellularContext_t * p_context, BaseType_t semaphore_ret)
 {
-    st_aws_cellular_ctrl_t * p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;   //cast
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    return;
+#else
+    st_aws_cellular_ctrl_t * p_aws_ctrl     = NULL;
+    CellularError_t          cellularStatus = CELLULAR_SUCCESS;
 
-    if ((1 == p_aws_ctrl->psm_mode) && (pdTRUE == semaphore_ret))
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS == cellularStatus)
     {
+        p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;    //cast
+
+        if ((1 == p_aws_ctrl->psm_mode) && (pdTRUE == semaphore_ret))
+        {
 #if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
-        aws_cellular_rts_hw_flow_disable();
+            aws_cellular_rts_hw_flow_disable();
 #endif
-        aws_cellular_rts_ctrl(1);
-        xSemaphoreGive((SemaphoreHandle_t)p_aws_ctrl->rts_semaphore);
+            aws_cellular_rts_ctrl(1);
+            xSemaphoreGive((SemaphoreHandle_t)p_aws_ctrl->rts_semaphore);
+        }
     }
 
     return;
+#endif
 }
 /**********************************************************************************************************************
  * End of function aws_cellular_rts_active
@@ -559,29 +580,40 @@ void aws_cellular_rts_active(CellularContext_t * p_context, BaseType_t semaphore
  ************************************************************************************************/
 BaseType_t aws_cellular_rts_deactive(CellularContext_t * p_context)
 {
-    BaseType_t               semaphore_ret = pdFALSE;
-    st_aws_cellular_ctrl_t * p_aws_ctrl    = (st_aws_cellular_ctrl_t *)p_context->pModueContext;   //cast
-
-    if (1 == p_aws_ctrl->psm_mode)
-    {
-        semaphore_ret = xSemaphoreTake((SemaphoreHandle_t)p_aws_ctrl->rts_semaphore,
-                                        pdMS_TO_TICKS(AWS_CELLULAR_SEMAPHORE_BLOCK_TIME));
-        if (pdTRUE == semaphore_ret)
-        {
-#if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
-            aws_cellular_rts_hw_flow_enable();
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    return pdTRUE;
 #else
-            aws_cellular_rts_ctrl(0);
+    BaseType_t               semaphore_ret  = pdFALSE;
+    st_aws_cellular_ctrl_t * p_aws_ctrl     = NULL;
+    CellularError_t          cellularStatus = CELLULAR_SUCCESS;
+
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;   //cast
+
+        if (1 == p_aws_ctrl->psm_mode)
+        {
+            semaphore_ret = xSemaphoreTake((SemaphoreHandle_t)p_aws_ctrl->rts_semaphore,
+                                            pdMS_TO_TICKS(AWS_CELLULAR_SEMAPHORE_BLOCK_TIME));
+            if (pdTRUE == semaphore_ret)
+            {
+#if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
+                aws_cellular_rts_hw_flow_enable();
+#else
+                aws_cellular_rts_ctrl(0);
 #endif
 #ifdef AWS_CELLULAR_RTS_DELAY
-            vTaskDelay(AWS_CELLULAR_RTS_DELAYTIME);
+                Platform_Delay(AWS_CELLULAR_RTS_DELAYTIME);
 #endif
+            }
         }
     }
 
     return semaphore_ret;
+#endif
 }
 /**********************************************************************************************************************
  * End of function aws_cellular_rts_deactive
  *********************************************************************************************************************/
-#endif

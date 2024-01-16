@@ -30,38 +30,34 @@
  * Macro definitions
  **********************************************************************************************************************/
 #ifndef RM_CELLULAR_RYZ_PDN_ACT_PACKET_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_PDN_ACT_PACKET_REQ_TIMEOUT_MS              (150000UL)
+ #define RM_CELLULAR_RYZ_PDN_ACT_PACKET_REQ_TIMEOUT_MS              AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(150000UL)
 #endif
 #ifndef RM_CELLULAR_RYZ_PDN_DEACT_PACKET_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_PDN_DEACT_PACKET_REQ_TIMEOUT_MS            (40000UL)
+ #define RM_CELLULAR_RYZ_PDN_DEACT_PACKET_REQ_TIMEOUT_MS            AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(40000UL)
 #endif
 #ifndef RM_CELLULAR_RYZ_GPRS_ATTACH_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_GPRS_ATTACH_REQ_TIMEOUT_MS                 (180000UL)
+ #define RM_CELLULAR_RYZ_GPRS_ATTACH_REQ_TIMEOUT_MS                 AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(180000UL)
 #endif
 #ifndef RM_CELLULAR_RYZ_DNS_QUERY_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_DNS_QUERY_REQ_TIMEOUT_MS                   (120000UL)
+ #define RM_CELLULAR_RYZ_DNS_QUERY_REQ_TIMEOUT_MS                   AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(120000UL)
 #endif
 #ifndef RM_CELLULAR_RYZ_SOCKET_CONNECT_PACKET_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_SOCKET_CONNECT_PACKET_REQ_TIMEOUT_MS       (120000U)
+ #define RM_CELLULAR_RYZ_SOCKET_CONNECT_PACKET_REQ_TIMEOUT_MS       AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(120000U)
 #endif
 #ifndef RM_CELLULAR_RYZ_PACKET_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_PACKET_REQ_TIMEOUT_MS                      (10000U)
+ #define RM_CELLULAR_RYZ_PACKET_REQ_TIMEOUT_MS                      AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(10000U)
 #endif
 #ifndef RM_CELLULAR_RYZ_DATA_SEND_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_DATA_SEND_TIMEOUT_MS                       (10000U)
+ #define RM_CELLULAR_RYZ_DATA_SEND_TIMEOUT_MS                       AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(10000U)
 #endif
 #ifndef RM_CELLULAR_RYZ_DATA_SEND_INTER_DELAY_MS
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
- #define RM_CELLULAR_RYZ_DATA_SEND_INTER_DELAY_MS                   (150U)
-#else
- #define RM_CELLULAR_RYZ_DATA_SEND_INTER_DELAY_MS                   (200U)
-#endif
+ #define RM_CELLULAR_RYZ_DATA_SEND_INTER_DELAY_MS                   AWS_CELLULAR_CFG_SEND_DELAY //(200U)
 #endif
 #ifndef RM_CELLULAR_RYZ_DATA_READ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_DATA_READ_TIMEOUT_MS                       (50000UL)
+ #define RM_CELLULAR_RYZ_DATA_READ_TIMEOUT_MS                       AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(50000UL)
 #endif
 #ifndef RM_CELLULAR_RYZ_SOCKET_DISCONNECT_PACKET_REQ_TIMEOUT_MS
- #define RM_CELLULAR_RYZ_SOCKET_DISCONNECT_PACKET_REQ_TIMEOUT_MS    (12000UL)
+ #define RM_CELLULAR_RYZ_SOCKET_DISCONNECT_PACKET_REQ_TIMEOUT_MS    AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT //(12000UL)
 #endif
 
 #define RM_CELLULAR_RYZ_SOCKET_DATA_PREFIX_TOKEN                    "+SQNSRECV: "
@@ -198,6 +194,14 @@ static CellularPktStatus_t _Cellular_RecvFuncGetSocketDataSize (CellularContext_
                                                                 const CellularATCommandResponse_t * p_atresp,
                                                                 void                              * p_data,
                                                                 uint16_t                            dataLen);
+static CellularPktStatus_t _Cellular_RecvFuncGetRAT (CellularContext_t                 * p_context,
+                                                     const CellularATCommandResponse_t * p_atresp,
+                                                     void                              * p_data,
+                                                     uint16_t                            dataLen);
+static CellularPktStatus_t _Cellular_RecvFuncGetSupportRAT (CellularContext_t                 * p_context,
+                                                            const CellularATCommandResponse_t * p_atresp,
+                                                            void                              * p_data,
+                                                            uint16_t                            dataLen);
 static bool _parseGetHostByName (char * pQcsqPayload, char * pSignalInfo);
 static bool _parseGetPhoneNum (uint8_t * p_QcsqPayload, uint8_t * p_GetPhonenum);
 
@@ -234,11 +238,8 @@ CellularError_t Cellular_GetSimCardStatus (CellularHandle_t cellularHandle, Cell
 {
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularContext_t * pContext       = (CellularContext_t *) cellularHandle;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* pContext is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -253,10 +254,7 @@ CellularError_t Cellular_GetSimCardStatus (CellularHandle_t cellularHandle, Cell
     }
     else
     {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         /* Parameters are checked in this API. */
         pSimCardStatus->simCardState     = CELLULAR_SIM_CARD_UNKNOWN;
@@ -276,12 +274,8 @@ CellularError_t Cellular_GetSimCardStatus (CellularHandle_t cellularHandle, Cell
                 pSimCardStatus->simCardState = CELLULAR_SIM_CARD_UNKNOWN;
             }
         }
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return cellularStatus;
 }
@@ -295,11 +289,26 @@ CellularError_t Cellular_GetSimCardInfo (CellularHandle_t cellularHandle, Cellul
     CellularAtReq_t     atReqGetIccid  = {0};
     CellularAtReq_t     atReqGetImsi   = {0};
     CellularAtReq_t     atReqGetHplmn  = {0};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
+    atReqGetIccid.pAtCmd       = "AT+SQNCCID?";
+    atReqGetIccid.atCmdType    = CELLULAR_AT_WITH_PREFIX;
+    atReqGetIccid.pAtRspPrefix = "+SQNCCID";
+    atReqGetIccid.respCallback = _Cellular_RecvFuncGetIccid;
+    atReqGetIccid.dataLen      = CELLULAR_ICCID_MAX_SIZE + 1U;
+
+    atReqGetImsi.pAtCmd       = "AT+CIMI";
+    atReqGetImsi.atCmdType    = CELLULAR_AT_WO_PREFIX;
+    atReqGetImsi.pAtRspPrefix = NULL;
+    atReqGetImsi.respCallback = _Cellular_RecvFuncGetImsi;
+    atReqGetImsi.dataLen      = CELLULAR_IMSI_MAX_SIZE + 1U;
+
+    atReqGetHplmn.pAtCmd       = "AT+CRSM=176,28514,0,0,0"; /* READ BINARY commmand. HPLMN Selector with Access Technology( 6F62 ). */
+    atReqGetHplmn.atCmdType    = CELLULAR_AT_WITH_PREFIX;
+    atReqGetHplmn.pAtRspPrefix = "+CRSM";
+    atReqGetHplmn.respCallback = _Cellular_RecvFuncGetHplmn;
+    atReqGetHplmn.dataLen      = (uint16_t)sizeof(CellularPlmnInfo_t);
+
     /* pContext is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -314,31 +323,11 @@ CellularError_t Cellular_GetSimCardInfo (CellularHandle_t cellularHandle, Cellul
     }
     else
     {
-#endif
-        atReqGetIccid.pAtCmd       = "AT+SQNCCID?";
-        atReqGetIccid.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-        atReqGetIccid.pAtRspPrefix = "+SQNCCID";
-        atReqGetIccid.respCallback = _Cellular_RecvFuncGetIccid;
         atReqGetIccid.pData        = pSimCardInfo->iccid;
-        atReqGetIccid.dataLen      = CELLULAR_ICCID_MAX_SIZE + 1U;
-
-        atReqGetImsi.pAtCmd       = "AT+CIMI";
-        atReqGetImsi.atCmdType    = CELLULAR_AT_WO_PREFIX;
-        atReqGetImsi.pAtRspPrefix = NULL;
-        atReqGetImsi.respCallback = _Cellular_RecvFuncGetImsi;
         atReqGetImsi.pData        = pSimCardInfo->imsi;
-        atReqGetImsi.dataLen      = CELLULAR_IMSI_MAX_SIZE + 1U;
-
-        atReqGetHplmn.pAtCmd       = "AT+CRSM=176,28514,0,0,0"; /* READ BINARY commmand. HPLMN Selector with Access Technology( 6F62 ). */
-        atReqGetHplmn.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-        atReqGetHplmn.pAtRspPrefix = "+CRSM";
-        atReqGetHplmn.respCallback = _Cellular_RecvFuncGetHplmn;
         atReqGetHplmn.pData        = &pSimCardInfo->plmn;
-        atReqGetHplmn.dataLen      = (uint16_t) sizeof(CellularPlmnInfo_t);
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         (void) memset(pSimCardInfo, 0, sizeof(CellularSimCardInfo_t));
         pktStatus = _Cellular_AtcmdRequestWithCallback(pContext, atReqGetImsi);
@@ -363,12 +352,8 @@ CellularError_t Cellular_GetSimCardInfo (CellularHandle_t cellularHandle, Cellul
                       pSimCardInfo->imsi, pSimCardInfo->plmn.mcc, pSimCardInfo->plmn.mnc,
                       pSimCardInfo->iccid));
         }
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return cellularStatus;
 }
@@ -384,29 +369,20 @@ CellularError_t Cellular_GetPdnStatus (CellularHandle_t      cellularHandle,
     CellularPktStatus_t         pktStatus          = CELLULAR_PKT_STATUS_OK;
     CellularPdnContextActInfo_t pdpContextsActInfo = {0};
     CellularPdnContextInfo_t    pdpContextsInfo    = {0};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t                  semaphore_ret      = 0;
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    if (cellularStatus == CELLULAR_SUCCESS)
-    {
         /* Make sure the library is open. */
         cellularStatus = _Cellular_CheckLibraryStatus(pContext);
-    }
 
     if ((pPdnStatusBuffers == NULL) || (pNumStatus == NULL) || (numStatusBuffers < 1))
     {
         cellularStatus = CELLULAR_BAD_PARAMETER;
         LogWarn(("_Cellular_GetPdnStatus: Bad input Parameter "));
     }
-#endif
 
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         *pNumStatus = 0;
 
@@ -416,15 +392,6 @@ CellularError_t Cellular_GetPdnStatus (CellularHandle_t      cellularHandle,
         if (cellularStatus == CELLULAR_SUCCESS)
         {
             /* Get PDP config info */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            CellularAtReq_t atReqGetCurrentApnName;
-            atReqGetCurrentApnName.pAtCmd       = "AT+CGDCONT?";
-            atReqGetCurrentApnName.atCmdType    = CELLULAR_AT_MULTI_WITH_PREFIX;
-            atReqGetCurrentApnName.pAtRspPrefix = "+CGDCONT";
-            atReqGetCurrentApnName.respCallback = _Cellular_RecvFuncGetPdpContextSettings;
-            atReqGetCurrentApnName.pData        = &pdpContextsInfo;
-            atReqGetCurrentApnName.dataLen      = sizeof(CellularPdnContextInfo_t);
-#else
             CellularAtReq_t atReqGetCurrentApnName =
             {
                 "AT+CGDCONT?",
@@ -434,13 +401,13 @@ CellularError_t Cellular_GetPdnStatus (CellularHandle_t      cellularHandle,
                 &pdpContextsInfo,
                 sizeof(CellularPdnContextInfo_t),
             };
-#endif
 
             pktStatus      = _Cellular_AtcmdRequestWithCallback(pContext, atReqGetCurrentApnName);
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
 
             if (cellularStatus == CELLULAR_SUCCESS)
             {
+                /* WAIT_LOOP */
                 for (uint8_t i = 0; i < RM_CELLULAR_RYZ_MAX_PDP_CONTEXTS; i++)
                 {
                     if (*pNumStatus == numStatusBuffers)
@@ -455,16 +422,12 @@ CellularError_t Cellular_GetPdnStatus (CellularHandle_t      cellularHandle,
                         pPdnStatusBuffers[i].contextId = (uint8_t) (i + 1);
 
                         /* Get IP Address */
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
                         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
                         cellularStatus = Cellular_GetIPAddress(cellularHandle,
                                                                (uint8_t) (i + 1),
                                                                pPdnStatusBuffers[i].ipAddress.ipAddress,
                                                                CELLULAR_IP_ADDRESS_MAX_SIZE + 1);
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
                         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
                         if (cellularStatus != CELLULAR_SUCCESS)
                         {
                             break;
@@ -497,9 +460,8 @@ CellularError_t Cellular_GetPdnStatus (CellularHandle_t      cellularHandle,
                 }
             }
         }
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -512,21 +474,10 @@ CellularError_t Cellular_ActivatePdn (CellularHandle_t cellularHandle, uint8_t c
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     CellularPdnContextActInfo_t pdpContextsActInfo = {0};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqActPdn;
-    atReqActPdn.pAtCmd       = cmdBuf;
-    atReqActPdn.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqActPdn.pAtRspPrefix = NULL;
-    atReqActPdn.respCallback = NULL;
-    atReqActPdn.pData        = NULL;
-    atReqActPdn.dataLen      = 0;
-#else
     CellularAtReq_t atReqActPdn =
     {
         cmdBuf,
@@ -536,9 +487,7 @@ CellularError_t Cellular_ActivatePdn (CellularHandle_t cellularHandle, uint8_t c
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     cellularStatus = _Cellular_IsValidPdn(contextId);
 
     if (cellularStatus == CELLULAR_SUCCESS)
@@ -546,13 +495,10 @@ CellularError_t Cellular_ActivatePdn (CellularHandle_t cellularHandle, uint8_t c
         /* Make sure the library is open. */
         cellularStatus = _Cellular_CheckLibraryStatus(pContext);
     }
-#endif
 
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         /* Check the current <Act> status of context. If not activated, activate the PDN context ID. */
         cellularStatus = _Cellular_GetContextActivationStatus(cellularHandle, &pdpContextsActInfo);
@@ -562,7 +508,7 @@ CellularError_t Cellular_ActivatePdn (CellularHandle_t cellularHandle, uint8_t c
             /* Activate context if not already active */
             if (pdpContextsActInfo.contextActState[contextId - 1] == false)
             {
-                (void) snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "%s=1,%u", "AT+CGACT", contextId);
+                (void) snprintf(cmdBuf, sizeof(cmdBuf), "%s=1,%u", "AT+CGACT", contextId);
                 pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
                                                                       atReqActPdn,
                                                                       RM_CELLULAR_RYZ_PDN_ACT_PACKET_REQ_TIMEOUT_MS);
@@ -578,9 +524,7 @@ CellularError_t Cellular_ActivatePdn (CellularHandle_t cellularHandle, uint8_t c
                 LogInfo(("Cellular_ActivatePdn: Context id [%d] is already active", contextId));
             }
         }
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -594,22 +538,11 @@ CellularError_t Cellular_DeactivatePdn (CellularHandle_t cellularHandle, uint8_t
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
     bool                packetSwitchStatus               = false;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     CellularServiceStatus_t     serviceStatus;
     CellularPdnContextActInfo_t pdpContextsActInfo = {0};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqDeactPdn;
-    atReqDeactPdn.pAtCmd       = cmdBuf;
-    atReqDeactPdn.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqDeactPdn.pAtRspPrefix = NULL;
-    atReqDeactPdn.respCallback = NULL;
-    atReqDeactPdn.pData        = NULL;
-    atReqDeactPdn.dataLen      = 0;
-#else
     CellularAtReq_t atReqDeactPdn =
     {
         cmdBuf,
@@ -619,11 +552,9 @@ CellularError_t Cellular_DeactivatePdn (CellularHandle_t cellularHandle, uint8_t
         NULL,
         0,
     };
-#endif
 
     memset(&serviceStatus, 0, sizeof(serviceStatus));
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     cellularStatus = _Cellular_IsValidPdn(contextId);
 
     if (cellularStatus == CELLULAR_SUCCESS)
@@ -631,16 +562,13 @@ CellularError_t Cellular_DeactivatePdn (CellularHandle_t cellularHandle, uint8_t
         /* Make sure the library is open. */
         cellularStatus = _Cellular_CheckLibraryStatus(pContext);
     }
-#endif
 
     if (cellularStatus == CELLULAR_SUCCESS)
     {
         /* Get current network operator settings. */
         cellularStatus = Cellular_GetServiceStatus(cellularHandle, &serviceStatus);
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         if (cellularStatus == CELLULAR_SUCCESS)
         {
@@ -665,7 +593,7 @@ CellularError_t Cellular_DeactivatePdn (CellularHandle_t cellularHandle, uint8_t
                 }
                 else
                 {
-                    (void) snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "%s=0,%u", "AT+CGACT", contextId);
+                    (void) snprintf(cmdBuf, sizeof(cmdBuf), "%s=0,%u", "AT+CGACT", contextId);
                     pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
                                                                           atReqDeactPdn,
                                                                           RM_CELLULAR_RYZ_PDN_DEACT_PACKET_REQ_TIMEOUT_MS);
@@ -684,7 +612,7 @@ CellularError_t Cellular_DeactivatePdn (CellularHandle_t cellularHandle, uint8_t
                         if ((cellularStatus == CELLULAR_SUCCESS) && (packetSwitchStatus == true))
                         {
                             LogError(("Deactivate Packet switch"));
-                            (void) snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "%s", "AT+CGATT=0");
+                            (void) snprintf(cmdBuf, sizeof(cmdBuf), "%s", "AT+CGATT=0");
                             pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
                                                                                   atReqDeactPdn,
                                                                                   RM_CELLULAR_RYZ_GPRS_ATTACH_REQ_TIMEOUT_MS);
@@ -713,9 +641,7 @@ CellularError_t Cellular_DeactivatePdn (CellularHandle_t cellularHandle, uint8_t
             LogError(("Cellular_DeactivatePdn: Unable to list operator and context details."));
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -728,26 +654,7 @@ CellularError_t Cellular_GetSignalInfo (CellularHandle_t cellularHandle, Cellula
     CellularError_t     cellularStatus       = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus            = CELLULAR_PKT_STATUS_OK;
     CellularRat_t       rat                  = CELLULAR_RAT_INVALID;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret        = 0;
-#endif
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqQuerySignalInfo;
-    atReqQuerySignalInfo.pAtCmd       = "AT+CSQ";
-    atReqQuerySignalInfo.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqQuerySignalInfo.pAtRspPrefix = "+CSQ";
-    atReqQuerySignalInfo.respCallback = _Cellular_RecvFuncGetSignalInfo;
-    atReqQuerySignalInfo.pData        = pSignalInfo;
-    atReqQuerySignalInfo.dataLen      = sizeof(CellularSignalInfo_t);
-
-    CellularAtReq_t atReqQueryExtendedSignalInfo;
-    atReqQueryExtendedSignalInfo.pAtCmd       = "AT+CESQ";
-    atReqQueryExtendedSignalInfo.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqQueryExtendedSignalInfo.pAtRspPrefix = "+CESQ";
-    atReqQueryExtendedSignalInfo.respCallback = _Cellular_RecvFuncGetSignalInfo;
-    atReqQueryExtendedSignalInfo.pData        = pSignalInfo;
-    atReqQueryExtendedSignalInfo.dataLen      = sizeof(CellularSignalInfo_t);
-#else
     CellularAtReq_t     atReqQuerySignalInfo =
     {
         "AT+CSQ",
@@ -766,9 +673,7 @@ CellularError_t Cellular_GetSignalInfo (CellularHandle_t cellularHandle, Cellula
         pSignalInfo,
         sizeof(CellularSignalInfo_t),
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
     if (cellularStatus != CELLULAR_SUCCESS)
@@ -781,17 +686,12 @@ CellularError_t Cellular_GetSignalInfo (CellularHandle_t cellularHandle, Cellula
     }
     else
     {
-#endif
         cellularStatus = _Cellular_GetCurrentRat(pContext, &rat);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         /* Get +CSQ response */
         pktStatus = _Cellular_AtcmdRequestWithCallback(pContext, atReqQuerySignalInfo);
@@ -810,9 +710,7 @@ CellularError_t Cellular_GetSignalInfo (CellularHandle_t cellularHandle, Cellula
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -828,19 +726,8 @@ CellularError_t Cellular_GetHostByName (CellularHandle_t cellularHandle,
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqQueryDns;
-    atReqQueryDns.pAtCmd       = cmdBuf;
-    atReqQueryDns.atCmdType    = CELLULAR_AT_MULTI_WITH_PREFIX;
-    atReqQueryDns.pAtRspPrefix = "+SQNDNSLKUP";
-    atReqQueryDns.respCallback = _Cellular_RecvFuncResolveDomainToIpAddress;
-    atReqQueryDns.pData        = pResolvedAddress;
-    atReqQueryDns.dataLen      = CELLULAR_IP_ADDRESS_MAX_SIZE;
-#else
     CellularAtReq_t atReqQueryDns =
     {
         cmdBuf,
@@ -850,11 +737,9 @@ CellularError_t Cellular_GetHostByName (CellularHandle_t cellularHandle,
         pResolvedAddress,
         CELLULAR_IP_ADDRESS_MAX_SIZE,
     };
-#endif
 
     (void)(contextId);
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* pContext is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -870,14 +755,12 @@ CellularError_t Cellular_GetHostByName (CellularHandle_t cellularHandle,
             cellularStatus = CELLULAR_BAD_PARAMETER;
         }
     }
-#endif
 
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
-        (void) snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNDNSLKUP=\"%s\"", pcHostName);
+        
+        (void) snprintf(cmdBuf, sizeof(cmdBuf), "AT+SQNDNSLKUP=\"%s\"", pcHostName);
 
         pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
                                                               atReqQueryDns,
@@ -889,9 +772,7 @@ CellularError_t Cellular_GetHostByName (CellularHandle_t cellularHandle,
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -907,19 +788,8 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqSocketConnect;
-    atReqSocketConnect.pAtCmd       = cmdBuf;
-    atReqSocketConnect.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqSocketConnect.pAtRspPrefix = NULL;
-    atReqSocketConnect.respCallback = NULL;
-    atReqSocketConnect.pData        = NULL;
-    atReqSocketConnect.dataLen      = 0;
-#else
     CellularAtReq_t     atReqSocketConnect               =
     {
         cmdBuf,
@@ -929,11 +799,8 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
         NULL,
         0,
     };
-#endif
-
     CellularSocketOpenCallback_t openCallback = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* Make sure the library is open. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -953,7 +820,6 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
     }
     else
     {
-#endif
         if (socketHandle->socketState != SOCKETSTATE_ALLOCATED)
         {
             LogError(("storeAccessModeAndAddress, bad socket state %d",
@@ -981,19 +847,15 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
                 openCallback = socketHandle->openCallback;
             }
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     /* Configure the socket. */
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         /* AT+SQNSCFG=<connId>,<cid>,<pktSz>,<maxTo(1s)>,<connTo(0.1s)>,<txTo(0.1s)>*/
-        snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSCFG=%u,%d,0,90,600,50",
+        snprintf(cmdBuf, sizeof(cmdBuf), "AT+SQNSCFG=%u,%d,0,90,600,50",
                  RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId), socketHandle->contextId);
 
         pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
@@ -1002,7 +864,7 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
 
         if (pktStatus == CELLULAR_PKT_STATUS_OK)
         {
-            snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSCFGEXT=%u,0,0,0",
+            snprintf(cmdBuf, sizeof(cmdBuf), "AT+SQNSCFGEXT=%u,0,0,0",
                      RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId));
 
             pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
@@ -1021,22 +883,18 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     /* Start the connection. */
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         uint8_t protocol = (CELLULAR_SOCKET_PROTOCOL_TCP == socketHandle->socketProtocol) ? 0 : 1;
 
         snprintf(cmdBuf,
-                 CELLULAR_AT_CMD_MAX_SIZE,
+                 sizeof(cmdBuf),
                  "AT+SQNSD=%u,%u,%u,\"%s\",0,%d,1,0",
                  RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId),
                  protocol,
@@ -1058,9 +916,7 @@ CellularError_t Cellular_SocketConnect (CellularHandle_t                cellular
             socketHandle->socketState = SOCKETSTATE_CONNECTED;
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     /* Call callback */
@@ -1091,26 +947,8 @@ CellularError_t Cellular_SocketSend (CellularHandle_t       cellularHandle,
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     uint32_t            sendTimeout    = RM_CELLULAR_RYZ_DATA_SEND_TIMEOUT_MS;
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqSocketSend;
-    atReqSocketSend.pAtCmd       = cmdBuf;
-    atReqSocketSend.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqSocketSend.pAtRspPrefix = NULL;
-    atReqSocketSend.respCallback = NULL;
-    atReqSocketSend.pData        = NULL;
-    atReqSocketSend.dataLen      = 0;
-
-    CellularAtDataReq_t atDataReqSocketSend;
-    atDataReqSocketSend.pData           = pData;
-    atDataReqSocketSend.dataLen         = dataLength;
-    atDataReqSocketSend.pSentDataLength = pSentDataLength;
-    atDataReqSocketSend.pEndPattern     = NULL;
-    atDataReqSocketSend.endPatternLen   = 0;
-#else
     CellularAtReq_t     atReqSocketSend =
     {
         cmdBuf,
@@ -1129,9 +967,7 @@ CellularError_t Cellular_SocketSend (CellularHandle_t       cellularHandle,
         NULL,
         0
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* pContext is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -1149,9 +985,6 @@ CellularError_t Cellular_SocketSend (CellularHandle_t       cellularHandle,
         cellularStatus = CELLULAR_BAD_PARAMETER;
     }
     else if (socketHandle->socketState != SOCKETSTATE_CONNECTED)
-#else
-    if (socketHandle->socketState != SOCKETSTATE_CONNECTED)
-#endif
     {
         /* Check the socket connection state. */
         if ((socketHandle->socketState == SOCKETSTATE_ALLOCATED) ||
@@ -1166,9 +999,7 @@ CellularError_t Cellular_SocketSend (CellularHandle_t       cellularHandle,
     }
     else
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         /* Send data length check. */
         if (dataLength > (uint32_t) CELLULAR_MAX_SEND_DATA_LEN)
@@ -1182,7 +1013,7 @@ CellularError_t Cellular_SocketSend (CellularHandle_t       cellularHandle,
             sendTimeout = socketHandle->sendTimeoutMs;
         }
 
-        snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSSENDEXT=%u,%u",
+        snprintf(cmdBuf, sizeof(cmdBuf), "AT+SQNSSENDEXT=%u,%u",
                  RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId), (uint16_t) atDataReqSocketSend.dataLen);
 
         pktStatus = _Cellular_AtcmdDataSend(pContext,
@@ -1208,9 +1039,7 @@ CellularError_t Cellular_SocketSend (CellularHandle_t       cellularHandle,
             }
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -1230,19 +1059,7 @@ CellularError_t Cellular_SocketRecv (CellularHandle_t       cellularHandle,
     uint32_t            recvTimeout     = RM_CELLULAR_RYZ_DATA_READ_TIMEOUT_MS;
     uint32_t            recvLen         = bufferLength;
     _socketDataRecv_t   dataRecv        = {0};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret   = 0;
-#endif
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqSocketRecv;
-    atReqSocketRecv.pAtCmd       = cmdBuf;
-    atReqSocketRecv.atCmdType    = CELLULAR_AT_MULTI_DATA_WO_PREFIX;
-    atReqSocketRecv.pAtRspPrefix = "+SQNSRECV";
-    atReqSocketRecv.respCallback = _Cellular_RecvFuncData;
-    atReqSocketRecv.pData        = (void *) &dataRecv;
-    atReqSocketRecv.dataLen      = (uint16_t) bufferLength;
-#else
     CellularAtReq_t     atReqSocketRecv =
     {
         cmdBuf,
@@ -1252,9 +1069,7 @@ CellularError_t Cellular_SocketRecv (CellularHandle_t       cellularHandle,
         (void *) &dataRecv,
         (uint16_t) bufferLength,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
     if (cellularStatus != CELLULAR_SUCCESS)
@@ -1272,10 +1087,7 @@ CellularError_t Cellular_SocketRecv (CellularHandle_t       cellularHandle,
     }
     else
     {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         dataRecv.pDataLen = pReceivedDataLength;
         dataRecv.pData    = pBuffer;
@@ -1294,7 +1106,7 @@ CellularError_t Cellular_SocketRecv (CellularHandle_t       cellularHandle,
                 recvTimeout = socketHandle->recvTimeoutMs;
             }
 
-            snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSRECV=%u,%u",
+            snprintf(cmdBuf, sizeof(cmdBuf), "AT+SQNSRECV=%u,%u",
                      RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId), (uint16_t) recvLen);
             pktStatus = _Cellular_TimeoutAtcmdDataRecvRequestWithCallback(pContext,
                                                                           atReqSocketRecv,
@@ -1310,12 +1122,8 @@ CellularError_t Cellular_SocketRecv (CellularHandle_t       cellularHandle,
             }
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return cellularStatus;
 }
@@ -1327,19 +1135,7 @@ CellularError_t Cellular_SocketClose (CellularHandle_t cellularHandle, CellularS
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqSockClose;
-    atReqSockClose.pAtCmd       = cmdBuf;
-    atReqSockClose.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqSockClose.pAtRspPrefix = NULL;
-    atReqSockClose.respCallback = NULL;
-    atReqSockClose.pData        = NULL;
-    atReqSockClose.dataLen      = 0;
-#else
     CellularAtReq_t     atReqSockClose =
     {
         cmdBuf,
@@ -1349,9 +1145,7 @@ CellularError_t Cellular_SocketClose (CellularHandle_t cellularHandle, CellularS
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* Make sure the library is open. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -1365,17 +1159,14 @@ CellularError_t Cellular_SocketClose (CellularHandle_t cellularHandle, CellularS
     }
     else
     {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         if ((socketHandle->socketState == SOCKETSTATE_CONNECTING) ||
             (socketHandle->socketState == SOCKETSTATE_CONNECTED) ||
             (socketHandle->socketState == SOCKETSTATE_DISCONNECTED))
         {
             /* Form the AT command. */
-            snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSH=%u",
+            snprintf(cmdBuf, sizeof(cmdBuf), "AT+SQNSH=%u",
                      RM_CELLULAR_RYZ_GET_MODEM_SOCKET_ID(socketHandle->socketId));
             pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
                                                                   atReqSockClose,
@@ -1390,12 +1181,8 @@ CellularError_t Cellular_SocketClose (CellularHandle_t cellularHandle, CellularS
         /* Ignore the result from the info, and force to remove the socket. */
         cellularStatus = _Cellular_RemoveSocketData(pContext, socketHandle);
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return cellularStatus;
 }
@@ -1406,13 +1193,10 @@ CellularError_t Cellular_GetServiceStatus (CellularHandle_t cellularHandle, Cell
     CellularContext_t     * pContext       = (CellularContext_t *) cellularHandle;
     CellularError_t         cellularStatus = CELLULAR_SUCCESS;
     CellularServiceStatus_t serviceStatus;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t              semaphore_ret  = 0;
-#endif
 
     (void) memset(&serviceStatus, 0, sizeof(CellularServiceStatus_t));
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* pContext is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(pContext);
 
@@ -1427,10 +1211,7 @@ CellularError_t Cellular_GetServiceStatus (CellularHandle_t cellularHandle, Cell
     }
     else
     {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         const cellularAtData_t * pLibAtData     = NULL;
         CellularPktStatus_t      pktStatus      = CELLULAR_PKT_STATUS_OK;
@@ -1494,12 +1275,8 @@ CellularError_t Cellular_GetServiceStatus (CellularHandle_t cellularHandle, Cell
             }
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return cellularStatus;
 }
@@ -1528,7 +1305,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetNetworkReg (CellularContext_t   
     (void)(pData);
     (void)(dataLen);
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -1540,7 +1316,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetNetworkReg (CellularContext_t   
     }
     else
     {
-#endif
         pPregLine    = pAtResp->pItm->pLine;
         atCoreStatus = Cellular_ATRemoveLeadingWhiteSpaces(&pPregLine);
         pktStatus    = _Cellular_TranslateAtCoreStatus(atCoreStatus);
@@ -1555,9 +1330,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetNetworkReg (CellularContext_t   
         }
 
         LogDebug(("atcmd network register status pktStatus:%d", pktStatus));
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -1584,7 +1357,6 @@ static CellularPktStatus_t _Cellular_RecvFuncUpdateMccMnc (CellularContext_t    
     CellularATError_t        atCoreStatus  = CELLULAR_AT_SUCCESS;
     CellularServiceStatus_t * pserviceStatus = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         pktStatus = CELLULAR_PKT_STATUS_FAILURE;
@@ -1601,7 +1373,6 @@ static CellularPktStatus_t _Cellular_RecvFuncUpdateMccMnc (CellularContext_t    
     }
     else
     {
-#endif
         pCopsResponse = pAtResp->pItm->pLine;
         pserviceStatus = (CellularServiceStatus_t *) pData;
 
@@ -1785,9 +1556,7 @@ static CellularPktStatus_t _Cellular_RecvFuncUpdateMccMnc (CellularContext_t    
             LogError(("ERROR: COPS %s", pCopsResponse));
             pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -1807,15 +1576,6 @@ static CellularError_t _Cellular_GetContextActivationStatus (CellularHandle_t   
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqPacketSwitchStatus;
-    atReqPacketSwitchStatus.pAtCmd       = "AT+CGACT?";
-    atReqPacketSwitchStatus.atCmdType    = CELLULAR_AT_MULTI_WITH_PREFIX;
-    atReqPacketSwitchStatus.pAtRspPrefix = "+CGACT";
-    atReqPacketSwitchStatus.respCallback = _Cellular_RecvFuncGetPdpContextActState;
-    atReqPacketSwitchStatus.pData        = pPdpContextsActInfo;
-    atReqPacketSwitchStatus.dataLen      = sizeof(CellularPdnContextActInfo_t);
-#else
     CellularAtReq_t atReqPacketSwitchStatus =
     {
         "AT+CGACT?",
@@ -1825,7 +1585,6 @@ static CellularError_t _Cellular_GetContextActivationStatus (CellularHandle_t   
         pPdpContextsActInfo,
         sizeof(CellularPdnContextActInfo_t),
     };
-#endif
 
     /* Internal function. Callee check parameters. */
     pktStatus      = _Cellular_AtcmdRequestWithCallback(pContext, atReqPacketSwitchStatus);
@@ -1861,7 +1620,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextActState (CellularCont
     int32_t tempValue  = 0;
     char  * pToken     = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("_Cellular_RecvFuncGetPdpContextActState: invalid context"));
@@ -1883,11 +1641,11 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextActState (CellularCont
     }
     else
     {
-#endif
         pRespLine = pAtResp->pItm->pLine;
 
         pCommandItem = pAtResp->pItm;
 
+        /* WAIT_LOOP */
         while (pCommandItem != NULL)
         {
             pRespLine = pCommandItem->pLine;
@@ -1914,6 +1672,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextActState (CellularCont
                 {
                     tokenIndex = 0;
 
+                    /* WAIT_LOOP */
                     while ((pToken != NULL) && (atCoreStatus == CELLULAR_AT_SUCCESS))
                     {
                         switch (tokenIndex)
@@ -1986,9 +1745,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextActState (CellularCont
 
             pCommandItem = pCommandItem->pNext;
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -2006,15 +1763,6 @@ static CellularError_t _Cellular_GetPacketSwitchStatus (CellularHandle_t cellula
     CellularContext_t * pContext                = (CellularContext_t *) cellularHandle;
     CellularError_t     cellularStatus          = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus               = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqPacketSwitchStatus;
-    atReqPacketSwitchStatus.pAtCmd       = "AT+CGATT?";
-    atReqPacketSwitchStatus.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqPacketSwitchStatus.pAtRspPrefix = "+CGATT";
-    atReqPacketSwitchStatus.respCallback = _Cellular_RecvFuncPacketSwitchStatus;
-    atReqPacketSwitchStatus.pData        = pPacketSwitchStatus;
-    atReqPacketSwitchStatus.dataLen      = sizeof(bool);
-#else
     CellularAtReq_t     atReqPacketSwitchStatus =
     {
         "AT+CGATT?",
@@ -2024,7 +1772,6 @@ static CellularError_t _Cellular_GetPacketSwitchStatus (CellularHandle_t cellula
         pPacketSwitchStatus,
         sizeof(bool),
     };
-#endif
 
     /* Internal function. Callee check parameters. */
     pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
@@ -2057,7 +1804,6 @@ static CellularPktStatus_t _Cellular_RecvFuncPacketSwitchStatus (CellularContext
     CellularATError_t   atCoreStatus        = CELLULAR_AT_SUCCESS;
     bool              * pPacketSwitchStatus = (bool *) pData;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("PacketSwitchStatus: Invalid handle"));
@@ -2075,7 +1821,6 @@ static CellularPktStatus_t _Cellular_RecvFuncPacketSwitchStatus (CellularContext
     }
     else
     {
-#endif
         pInputLine = pAtResp->pItm->pLine;
 
         /* Remove prefix. */
@@ -2104,9 +1849,7 @@ static CellularPktStatus_t _Cellular_RecvFuncPacketSwitchStatus (CellularContext
         }
 
         pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -2140,7 +1883,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextSettings (CellularCont
 
     (void)(dataLen);
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("_Cellular_RecvFuncGetPdpContextSettings: invalid context"));
@@ -2162,11 +1904,11 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextSettings (CellularCont
     }
     else
     {
-#endif
         pRespLine = pAtResp->pItm->pLine;
 
         pCommandItem = pAtResp->pItm;
 
+        /* WAIT_LOOP */
         while (pCommandItem != NULL)
         {
             pRespLine = pCommandItem->pLine;
@@ -2193,6 +1935,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextSettings (CellularCont
                 {
                     tokenIndex = 0;
 
+                    /* WAIT_LOOP */
                     while ((pToken != NULL) && (atCoreStatus == CELLULAR_AT_SUCCESS))
                     {
                         switch (tokenIndex)
@@ -2279,9 +2022,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPdpContextSettings (CellularCont
 
             pCommandItem = pCommandItem->pNext;
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -2298,7 +2039,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetSignalInfo (CellularContext_t   
     CellularATError_t   atCoreStatus       = CELLULAR_AT_SUCCESS;
     bool                isExtendedResponse = false;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -2314,7 +2054,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetSignalInfo (CellularContext_t   
     }
     else
     {
-#endif
         pInputLine = pAtResp->pItm->pLine;
 
         if (strstr(pInputLine, "+CESQ"))
@@ -2334,9 +2073,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetSignalInfo (CellularContext_t   
         {
             pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if (pktStatus == CELLULAR_PKT_STATUS_OK)
     {
@@ -2371,13 +2108,11 @@ static bool _parseExtendedSignalQuality (char * pQcsqPayload, CellularSignalInfo
     bool              parseStatus     = true;
     CellularATError_t atCoreStatus    = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((pSignalInfo == NULL) || (pQcsqPayload == NULL))
     {
         LogError(("_parseExtendedSignalQuality: Invalid Input Parameters"));
         parseStatus = false;
     }
-#endif
 
     /*  +CESQ: <rxlev>,<ber>,<rscp>,<ecn0>,<rsrq>,<rsrp>. */
 
@@ -2510,13 +2245,11 @@ static bool _parseSignalQuality (char * pQcsqPayload, CellularSignalInfo_t * pSi
     bool              parseStatus     = true;
     CellularATError_t atCoreStatus    = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((pSignalInfo == NULL) || (pQcsqPayload == NULL))
     {
         LogError(("_parseSignalQuality: Invalid Input Parameters"));
         parseStatus = false;
     }
-#endif
 
     /* +CSQ: <signal_power>,<qual>. */
 
@@ -2600,12 +2333,11 @@ static CellularPktStatus_t _Cellular_RecvFuncResolveDomainToIpAddress (CellularC
     (void)dataLen;
 
     char * pInputLine = NULL;
-    char pRecvInfo[16] = {0};
+    char pRecvInfo[40] = {0};
     bool parseStatus = true;
     CellularPktStatus_t pktStatus = CELLULAR_PKT_STATUS_OK;
     CellularATError_t atCoreStatus = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if( pContext == NULL )
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -2617,7 +2349,6 @@ static CellularPktStatus_t _Cellular_RecvFuncResolveDomainToIpAddress (CellularC
     }
     else
     {
-#endif
         pInputLine = pAtResp->pItm->pLine;
         atCoreStatus = Cellular_ATRemovePrefix( &pInputLine );
 
@@ -2635,9 +2366,7 @@ static CellularPktStatus_t _Cellular_RecvFuncResolveDomainToIpAddress (CellularC
         {
             pktStatus = _Cellular_TranslateAtCoreStatus( atCoreStatus );
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if( pktStatus == CELLULAR_PKT_STATUS_OK )
     {
@@ -2662,13 +2391,11 @@ static bool _parseGetHostByName( char * pQcsqPayload, char * pGetHostInfo )
     char * pTmpQcsqPayload = pQcsqPayload;
     bool   parseStatus     = true;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    if( ( &pGetHostInfo == NULL ) || ( pQcsqPayload == NULL ) )
+    if( ( pGetHostInfo == NULL ) || ( pQcsqPayload == NULL ) )
     {
         LogError(( "_parseGetHostByName: Invalid Input Parameters" ));
         parseStatus = false;
     }
-#endif
 
     if( ( parseStatus == true ) && ( Cellular_ATGetNextTok( &pTmpQcsqPayload, &pToken ) != CELLULAR_AT_SUCCESS ) )
     {
@@ -2693,7 +2420,6 @@ static CellularPktStatus_t socketSendDataPrefix (void * pCallbackContext, char *
 {
     CellularPktStatus_t pktStatus = CELLULAR_PKT_STATUS_OK;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((pLine == NULL) || (pBytesRead == NULL))
     {
         LogError(("socketSendDataPrefix: pLine is invalid or pBytesRead is invalid"));
@@ -2710,7 +2436,6 @@ static CellularPktStatus_t socketSendDataPrefix (void * pCallbackContext, char *
     }
     else
     {
-#endif
         /* After the data prefix, there should not be any data in stream.
          * Cellular commmon processes AT command in lines. Add a '\0' after '@'. */
         if (strcmp(pLine, "> ") == 0)
@@ -2718,9 +2443,7 @@ static CellularPktStatus_t socketSendDataPrefix (void * pCallbackContext, char *
             pLine[2]    = '\n';
             *pBytesRead = 3;
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -2739,7 +2462,6 @@ static CellularPktStatus_t _Cellular_RecvFuncData (CellularContext_t            
 
     (void) dataLen;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("Receive Data: invalid context"));
@@ -2757,7 +2479,6 @@ static CellularPktStatus_t _Cellular_RecvFuncData (CellularContext_t            
     }
     else
     {
-#endif
         pInputLine = pAtResp->pItm->pLine; /* The first item is the data prefix. */
 
         /* Check the data prefix token "+SQNSRECV: ". */
@@ -2793,9 +2514,7 @@ static CellularPktStatus_t _Cellular_RecvFuncData (CellularContext_t            
         }
 
         pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -2870,14 +2589,12 @@ static CellularPktStatus_t socketRecvDataPrefix (void     * pCallbackContext,
 
     (void) pCallbackContext;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((pLine == NULL) || (ppDataStart == NULL) || (pDataLength == NULL))
     {
         pktStatus = CELLULAR_PKT_STATUS_BAD_PARAM;
     }
     else
     {
-#endif
         /* Check if the message is a data response. */
         if (strncmp(pLine, RM_CELLULAR_RYZ_SOCKET_DATA_PREFIX_TOKEN, RM_CELLULAR_RYZ_SOCKET_DATA_PREFIX_TOKEN_LEN) == 0)
         {
@@ -2885,6 +2602,7 @@ static CellularPktStatus_t socketRecvDataPrefix (void     * pCallbackContext,
             pLocalLine[RM_CELLULAR_RYZ_MAX_SQNSSRECV_STRING_PREFIX_STRING] = '\0';
             pDataStart = pLocalLine;
 
+            /* WAIT_LOOP */
             /* Add a '\0' char at the end of the line. */
             for (i = 0; i < localLineLength; i++)
             {
@@ -2936,9 +2654,7 @@ static CellularPktStatus_t socketRecvDataPrefix (void     * pCallbackContext,
         }
 
         *ppDataStart = pDataStart;
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -2947,13 +2663,11 @@ static bool _checkCrsmMemoryStatus (const char * pToken)
 {
     bool memoryStatus = true;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pToken == NULL)
     {
         LogError(("Input Parameter NULL"));
         memoryStatus = false;
     }
-#endif
 
     if (memoryStatus == true)
     {
@@ -2975,13 +2689,11 @@ static bool _checkCrsmReadStatus (const char * pToken)
 {
     bool readStatus = true;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pToken == NULL)
     {
         LogError(("Input Parameter NULL"));
         readStatus = false;
     }
-#endif
 
     if (readStatus == true)
     {
@@ -3006,7 +2718,6 @@ static bool _parseHplmn (char * pToken, void * pData)
     bool                 parseStatus = true;
     CellularPlmnInfo_t * plmn        = (CellularPlmnInfo_t *) pData;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pToken == NULL)
     {
         LogError(("_parseHplmn: pToken is NULL or pData is NULL"));
@@ -3019,7 +2730,6 @@ static bool _parseHplmn (char * pToken, void * pData)
     }
     else
     {
-#endif
         /* Returning only the very first HPLMN present in EFHPLMNwACT in SIM.
          * EF-HPLMNwACT can contain a maximum of 10 HPLMN entries in decreasing order of priority.
          * In this implementation, returning the very first HPLMN is the PLMN priority list. */
@@ -3040,9 +2750,7 @@ static bool _parseHplmn (char * pToken, void * pData)
         {
             plmn->mnc[2] = '\0';
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return parseStatus;
 }
@@ -3060,7 +2768,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetHplmn (CellularContext_t        
     char              * pCrsmResponse = NULL;
     char              * pToken        = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("GetHplmn: pContext is invalid"));
@@ -3078,7 +2785,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetHplmn (CellularContext_t        
     }
     else
     {
-#endif
         pCrsmResponse = pAtResp->pItm->pLine;
         atCoreStatus  = Cellular_ATRemoveAllWhiteSpaces(pCrsmResponse);
 
@@ -3141,9 +2847,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetHplmn (CellularContext_t        
         }
 
         pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -3160,7 +2864,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetIccid (CellularContext_t        
     char              * pRespLine    = NULL;
     char              * pToken       = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("getIccid: pContext is invalid"));
@@ -3179,7 +2882,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetIccid (CellularContext_t        
     }
     else
     {
-#endif
         pRespLine    = pAtResp->pItm->pLine;
         atCoreStatus = Cellular_ATRemoveAllWhiteSpaces(pRespLine);
 
@@ -3215,9 +2917,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetIccid (CellularContext_t        
         }
 
         pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -3233,7 +2933,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetImsi (CellularContext_t         
     CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
     char              * pRespLine    = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogError(("getImsi: pContext is invalid"));
@@ -3251,7 +2950,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetImsi (CellularContext_t         
     }
     else
     {
-#endif
         pRespLine = pAtResp->pItm->pLine;
 
         /* Removing all the Spaces in the AT Response. */
@@ -3270,9 +2968,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetImsi (CellularContext_t         
         }
 
         pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -3285,21 +2981,10 @@ CellularError_t Cellular_SetPdnConfig (CellularHandle_t            cellularHandl
     CellularContext_t * pContext       = (CellularContext_t *) cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
-    char cmdBuf[CELLULAR_AT_CMD_MAX_SIZE * 2] = {'\0'}; /* APN and auth info is too long */
+    char cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'}; /* APN and auth info is too long */
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqSetPdn;
-    atReqSetPdn.pAtCmd       = cmdBuf;
-    atReqSetPdn.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqSetPdn.pAtRspPrefix = NULL;
-    atReqSetPdn.respCallback = NULL;
-    atReqSetPdn.pData        = NULL;
-    atReqSetPdn.dataLen      = 0;
-#else
     CellularAtReq_t atReqSetPdn =
     {
         cmdBuf,
@@ -3309,9 +2994,7 @@ CellularError_t Cellular_SetPdnConfig (CellularHandle_t            cellularHandl
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pPdnConfig == NULL)
     {
         LogError(("Cellular_ATCommandRaw: Input parameter is NULL"));
@@ -3328,13 +3011,10 @@ CellularError_t Cellular_SetPdnConfig (CellularHandle_t            cellularHandl
         /* Make sure the library is open. */
         cellularStatus = _Cellular_CheckLibraryStatus(pContext);
     }
-#endif
 
     if (cellularStatus == CELLULAR_SUCCESS)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(pContext);
-#endif
 
         const char * pPdnType;
 
@@ -3358,28 +3038,31 @@ CellularError_t Cellular_SetPdnConfig (CellularHandle_t            cellularHandl
             /* IPv6 address format setting */
             (void)snprintf(cmdBuf, sizeof(cmdBuf), "AT+CGPIAF=1,0,1,0");
             pktStatus = _Cellular_AtcmdRequestWithCallback(pContext, atReqSetPdn);
+
+            if (pktStatus != CELLULAR_PKT_STATUS_OK)
+            {
+                LogError(("Cellular_SetPdnConfig: can't set PDN, cmdBuf:%s, PktRet: %d", cmdBuf, pktStatus));
+                cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+            }
         }
 
-        if (pktStatus != CELLULAR_PKT_STATUS_OK)
-        {
-            LogError(("Cellular_SetPdnConfig: can't set PDN, cmdBuf:%s, PktRet: %d", cmdBuf, pktStatus));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-        else
+        if (cellularStatus == CELLULAR_SUCCESS)
         {
             /* Build AT+CGDCONT command to set the PDN context type and APN name */
             (void) snprintf(cmdBuf, sizeof(cmdBuf), "AT+CGDCONT=%d,\"%s\",\"%s\"", contextId, pPdnType,
                             pPdnConfig->apnName);
 
             pktStatus = _Cellular_AtcmdRequestWithCallback(pContext, atReqSetPdn);
+
+            if (pktStatus != CELLULAR_PKT_STATUS_OK)
+            {
+                LogError(("Cellular_SetPdnConfig: can't set PDN, cmdBuf:%s, PktRet: %d", cmdBuf, pktStatus));
+                cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+            }
         }
 
-        if (pktStatus != CELLULAR_PKT_STATUS_OK)
-        {
-            LogError(("Cellular_SetPdnConfig: can't set PDN, cmdBuf:%s, PktRet: %d", cmdBuf, pktStatus));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-        else
+
+        if (cellularStatus == CELLULAR_SUCCESS)
         {
             /* Check if APN authentication is specified */
             if (pPdnConfig->pdnAuthType == CELLULAR_PDN_AUTH_NONE)
@@ -3407,9 +3090,7 @@ CellularError_t Cellular_SetPdnConfig (CellularHandle_t            cellularHandl
             }
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(pContext, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -3422,21 +3103,10 @@ CellularError_t Cellular_GetPhoneNum(CellularHandle_t cellularHandle,
     CellularContext_t * p_context       = (CellularContext_t *) cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqGetPhonenum;
-    atReqGetPhonenum.pAtCmd       = (char *)cmdBuf;
-    atReqGetPhonenum.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqGetPhonenum.pAtRspPrefix = "+CNUM";
-    atReqGetPhonenum.respCallback = _Cellular_RecvFuncGetPhoneNum;
-    atReqGetPhonenum.pData        = (void *)p_phonenum;
-    atReqGetPhonenum.dataLen      = CELLULAR_PHONENUM_MAX_SIZE;
-#else
     CellularAtReq_t atReqGetPhonenum =
     {
         (char *)cmdBuf, //cast
@@ -3446,9 +3116,7 @@ CellularError_t Cellular_GetPhoneNum(CellularHandle_t cellularHandle,
         (void *)p_phonenum, //cast
         CELLULAR_PHONENUM_MAX_SIZE,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -3456,23 +3124,16 @@ CellularError_t Cellular_GetPhoneNum(CellularHandle_t cellularHandle,
     {
         LogDebug(("Cellular_GetPhoneNum: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (NULL == p_phonenum)
+    {
+        LogError(("Cellular_GetPhoneNum: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (NULL == p_phonenum)
-        {
-            LogError(("Cellular_GetPhoneNum: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CNUM");    //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CNUM");    //cast
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetPhonenum);
 
         if (CELLULAR_PKT_STATUS_OK != pktStatus)
@@ -3481,9 +3142,7 @@ CellularError_t Cellular_GetPhoneNum(CellularHandle_t cellularHandle,
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -3503,7 +3162,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPhoneNum(CellularContext_t      
     CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
     CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == p_context)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -3515,13 +3173,8 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPhoneNum(CellularContext_t      
     }
     else
     {
-#endif
         p_inputline  = (uint8_t *)p_atresp->pItm->pLine;                //cast
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
         atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATRemovePrefix(&(char *)p_inputline);   //cast
-#endif
 
         if (CELLULAR_AT_SUCCESS == atCoreStatus)
         {
@@ -3537,9 +3190,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetPhoneNum(CellularContext_t      
         {
             pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if (CELLULAR_PKT_STATUS_OK == pktStatus)
     {
@@ -3567,21 +3218,15 @@ static bool _parseGetPhoneNum(uint8_t * p_QcsqPayload,
 
     CellularATError_t atCoreStatus = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((NULL == p_GetPhonenum) || (NULL == p_QcsqPayload))
     {
         LogError(("_parseGetPhoneNum: Invalid Input Parameters"));
         parseStatus = false;
     }
-#endif
 
     if (true == parseStatus)
     {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
         atCoreStatus = Cellular_ATGetNextTok((char **)&p_TmpQcsqPayload, (char **)&p_Token);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATGetNextTok(&(char *)p_TmpQcsqPayload, &(char *)p_Token);  //cast
-#endif
         if (CELLULAR_AT_SUCCESS != atCoreStatus)
         {
             LogError(("_parseGetPhoneNum: Error in processing Get Phone Number. Token %s", p_Token));
@@ -3591,11 +3236,7 @@ static bool _parseGetPhoneNum(uint8_t * p_QcsqPayload,
 
     if ((true == parseStatus))
     {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
         atCoreStatus = Cellular_ATGetNextTok((char **)&p_TmpQcsqPayload, (char **)&p_Token);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATGetNextTok(&(char *)p_TmpQcsqPayload, &(char *)p_Token);  //cast
-#endif
         if (CELLULAR_AT_SUCCESS != atCoreStatus)
         {
             LogError(("_parseGetPhoneNum: Error in processing Get Phone Number. Token %s", p_Token));
@@ -3617,21 +3258,10 @@ CellularError_t Cellular_PingRequest(CellularHandle_t      cellularHandle,
     CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqPing;
-    atReqPing.pAtCmd       = (char *)cmdBuf;
-    atReqPing.atCmdType    = CELLULAR_AT_MULTI_WITH_PREFIX;
-    atReqPing.pAtRspPrefix = "+PING";
-    atReqPing.respCallback = _Cellular_RecvFuncPingEcho;
-    atReqPing.pData        = NULL;
-    atReqPing.dataLen      = 0;
-#else
     CellularAtReq_t atReqPing =
     {
         (char *)cmdBuf, //cast
@@ -3641,9 +3271,7 @@ CellularError_t Cellular_PingRequest(CellularHandle_t      cellularHandle,
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -3651,23 +3279,16 @@ CellularError_t Cellular_PingRequest(CellularHandle_t      cellularHandle,
     {
         LogDebug(("Cellular_PingRequest: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (NULL == p_hostname)
+    {
+        LogError(("Cellular_PingRequest: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (NULL == p_hostname)
-        {
-            LogError(("Cellular_PingRequest: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                         "AT+PING=\"%s\"", p_hostname);
         pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(p_context, atReqPing,
                                                                 RM_CELLULAR_RYZ_DATA_SEND_TIMEOUT_MS);
@@ -3678,9 +3299,7 @@ CellularError_t Cellular_PingRequest(CellularHandle_t      cellularHandle,
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -3699,7 +3318,6 @@ static CellularPktStatus_t _Cellular_RecvFuncPingEcho(CellularContext_t         
     CellularPktStatus_t       pktStatus = CELLULAR_PKT_STATUS_OK;
     CellularATCommandLine_t * p_line    = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == p_context)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -3711,15 +3329,13 @@ static CellularPktStatus_t _Cellular_RecvFuncPingEcho(CellularContext_t         
     }
     else
     {
-#endif
         p_inputline = (uint8_t *)p_atresp->pItm->pLine; //cast
         p_line      = p_atresp->pItm->pNext;
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if (CELLULAR_PKT_STATUS_OK == pktStatus)
     {
+        /* WAIT_LOOP */
         while (1)
         {
             if (NULL != p_context->cbEvents.genericCallback)
@@ -3753,29 +3369,10 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     uint8_t             resBuf[20]     = {'\0'};
     uint8_t             count          = 0;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqGetOpName;
-    atReqGetOpName.pAtCmd       = (char *)cmdBuf;
-    atReqGetOpName.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqGetOpName.pAtRspPrefix = "+SQNCTM";
-    atReqGetOpName.respCallback = _Cellular_RecvFuncGetOperatorName;
-    atReqGetOpName.pData        = resBuf;
-    atReqGetOpName.dataLen      = sizeof(resBuf);
-
-    CellularAtReq_t atReqother;
-    atReqother.pAtCmd       = (char *)cmdBuf;
-    atReqother.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqother.pAtRspPrefix = NULL;
-    atReqother.respCallback = NULL;
-    atReqother.pData        = NULL;
-    atReqother.dataLen      = 0;
-#else
     CellularAtReq_t atReqGetOpName =
     {
         (char *)cmdBuf, //cast
@@ -3795,9 +3392,7 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -3805,23 +3400,16 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
     {
         LogDebug(("Cellular_SetOperator: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (NULL == p_operator_name)
+    {
+        LogError(("Cellular_SetOperator: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (NULL == p_operator_name)
-        {
-            LogError(("Cellular_SetOperator: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNCTM?"); //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNCTM?"); //cast
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetOpName);
 
         if (CELLULAR_PKT_STATUS_OK != pktStatus)
@@ -3830,21 +3418,17 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     if ((CELLULAR_SUCCESS == cellularStatus) &&
             (strcmp((const char *)p_operator_name, (const char *)resBuf) != 0))  //cast
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
         p_aws_ctrl->module_flg = AWS_CELLULAR_MODULE_FLG_INIT;
 
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNCTM=\"%s\"", p_operator_name);  //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNCTM=\"%s\"", p_operator_name);  //cast
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqother);
 
         if (CELLULAR_PKT_STATUS_OK != pktStatus)
@@ -3856,6 +3440,7 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
         {
             count = 0;
 
+            /* WAIT_LOOP */
             while (1)
             {
                 if (AWS_CELLULAR_MODULE_START_FLG == p_aws_ctrl->module_flg)
@@ -3869,7 +3454,7 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
                     Platform_Delay(1000);   //cast
                 }
 
-                if (count > AWS_CELLULAR_RESTART_LIMIT)
+                if (count >= AWS_CELLULAR_RESTART_LIMIT)
                 {
                     cellularStatus = CELLULAR_TIMEOUT;
                     break;
@@ -3877,9 +3462,7 @@ CellularError_t Cellular_SetOperator(CellularHandle_t      cellularHandle,
             }
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -3897,29 +3480,10 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
     uint8_t             resBuf[20]     = {'\0'};
     uint8_t             rat            = 0;    // 0 = M1, 1 = NB1
     uint8_t             count          = 0;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqGetOpName;
-    atReqGetOpName.pAtCmd       = (char *)cmdBuf;
-    atReqGetOpName.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqGetOpName.pAtRspPrefix = "+SQNCTM";
-    atReqGetOpName.respCallback = _Cellular_RecvFuncGetOperatorName;
-    atReqGetOpName.pData        = resBuf;
-    atReqGetOpName.dataLen      = sizeof(resBuf);
-
-    CellularAtReq_t atReqother;
-    atReqother.pAtCmd       = (char *)cmdBuf;
-    atReqother.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqother.pAtRspPrefix = NULL;
-    atReqother.respCallback = NULL;
-    atReqother.pData        = NULL;
-    atReqother.dataLen      = 0;
-#else
     CellularAtReq_t atReqGetOpName =
     {
         (char *)cmdBuf, //cast
@@ -3939,9 +3503,7 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -3949,23 +3511,16 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
     {
         LogDebug(("Cellular_SetBand: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (NULL == p_band)
+    {
+        LogError(("Cellular_SetBand: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (NULL == p_band)
-        {
-            LogError(("Cellular_SetBand: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNCTM?"); //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNCTM?"); //cast
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetOpName);
 
         if (CELLULAR_PKT_STATUS_OK != pktStatus)
@@ -3974,18 +3529,14 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     if (CELLULAR_SUCCESS == cellularStatus)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,    //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf),    //cast
                         "AT+SQNBANDSEL=%d,\"%s\",\"%s\"", rat, resBuf, p_band);
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqother);
 
@@ -3996,7 +3547,7 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
         }
         else
         {
-            (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT^RESET");   //cast
+            (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT^RESET");   //cast
             pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqother);
 
             if (CELLULAR_PKT_STATUS_OK != pktStatus)
@@ -4008,6 +3559,7 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
             {
                 count = 0;
 
+                /* WAIT_LOOP */
                 while (1)
                 {
                     if (AWS_CELLULAR_MODULE_START_FLG == p_aws_ctrl->module_flg)
@@ -4021,7 +3573,7 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
                         Platform_Delay(1000);   //cast
                     }
 
-                    if (count > AWS_CELLULAR_RESTART_LIMIT)
+                    if (count >= AWS_CELLULAR_RESTART_LIMIT)
                     {
                         cellularStatus = CELLULAR_TIMEOUT;
                         break;
@@ -4030,9 +3582,7 @@ CellularError_t Cellular_SetBand(CellularHandle_t      cellularHandle,
             }
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -4051,7 +3601,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetOperatorName(CellularContext_t  
     CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
     CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == p_context)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -4063,13 +3612,8 @@ static CellularPktStatus_t _Cellular_RecvFuncGetOperatorName(CellularContext_t  
     }
     else
     {
-#endif
         p_inputline  = (uint8_t *)p_atresp->pItm->pLine;    //cast
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
         atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATRemovePrefix(&(char *)p_inputline);   //cast
-#endif
 
         if (CELLULAR_AT_SUCCESS == atCoreStatus)
         {
@@ -4083,20 +3627,14 @@ static CellularPktStatus_t _Cellular_RecvFuncGetOperatorName(CellularContext_t  
 
         if (CELLULAR_AT_SUCCESS == atCoreStatus)
         {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
             atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token); /* Fixed build error on CC-RL. */
-#else
-            atCoreStatus = Cellular_ATGetNextTok(&(char *)p_inputline, &(char *)p_token);   //cast
-#endif
         }
 
         if (CELLULAR_AT_SUCCESS != atCoreStatus)
         {
             pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if ((CELLULAR_PKT_STATUS_OK == pktStatus) && (NULL != p_data) && (NULL != p_token))
     {
@@ -4118,21 +3656,10 @@ CellularError_t Cellular_FirmUpgrade(CellularHandle_t                    cellula
     CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqFirmUpgrade;
-    atReqFirmUpgrade.pAtCmd       = (char *)cmdBuf;
-    atReqFirmUpgrade.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqFirmUpgrade.pAtRspPrefix = NULL;
-    atReqFirmUpgrade.respCallback = NULL;
-    atReqFirmUpgrade.pData        = NULL;
-    atReqFirmUpgrade.dataLen      = 0;
-#else
     CellularAtReq_t atReqFirmUpgrade =
     {
         (char *)cmdBuf, //cast
@@ -4142,9 +3669,7 @@ CellularError_t Cellular_FirmUpgrade(CellularHandle_t                    cellula
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -4152,30 +3677,25 @@ CellularError_t Cellular_FirmUpgrade(CellularHandle_t                    cellula
     {
         LogDebug(("Cellular_FirmUpgrade: _Cellular_CheckLibraryStatus failed"));
     }
+    else if ((NULL == p_url) ||
+                (command < AWS_CELLULAR_FIRM_UPGRADE_NONBLOCKING) ||
+                (command > AWS_CELLULAR_FIRM_UPGRADE_CANCEL))
+    {
+        LogError(("Cellular_FirmUpgrade: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (NULL == p_url)
-        {
-            LogError(("Cellular_FirmUpgrade: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
         if (0 == spid)
         {
-            (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,    //cast
+            (void)snprintf((char *)cmdBuf, sizeof(cmdBuf),    //cast
                             "AT+SQNSUPGRADE=\"%s\",0,5,%d", p_url, command);
         }
         else
         {
-            (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,    //cast
+            (void)snprintf((char *)cmdBuf, sizeof(cmdBuf),    //cast
                             "AT+SQNSUPGRADE=\"%s\",0,5,%d,%d", p_url, command, spid);
         }
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqFirmUpgrade);
@@ -4186,9 +3706,7 @@ CellularError_t Cellular_FirmUpgrade(CellularHandle_t                    cellula
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -4201,21 +3719,10 @@ CellularError_t Cellular_GetUpgradeState(CellularHandle_t   cellularHandle,
     CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqFirmUpgrade;
-    atReqFirmUpgrade.pAtCmd       = (char *)cmdBuf;
-    atReqFirmUpgrade.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqFirmUpgrade.pAtRspPrefix = "+SQNSUPGRADE";
-    atReqFirmUpgrade.respCallback = _Cellular_RecvFuncGetUpgradeState;
-    atReqFirmUpgrade.pData        = (void *)p_state;
-    atReqFirmUpgrade.dataLen      = size;
-#else
     CellularAtReq_t atReqFirmUpgrade =
     {
         (char *)cmdBuf, //cast
@@ -4225,9 +3732,7 @@ CellularError_t Cellular_GetUpgradeState(CellularHandle_t   cellularHandle,
         (void *)p_state,    //cast
         size,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -4235,23 +3740,16 @@ CellularError_t Cellular_GetUpgradeState(CellularHandle_t   cellularHandle,
     {
         LogDebug(("Cellular_GetUpgradeState: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (NULL == p_state)
+    {
+        LogError(("Cellular_GetUpgradeState: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (NULL == p_state)
-        {
-            LogError(("Cellular_GetUpgradeState: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSUPGRADE?");
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNSUPGRADE?");
 
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqFirmUpgrade);
 
@@ -4261,9 +3759,7 @@ CellularError_t Cellular_GetUpgradeState(CellularHandle_t   cellularHandle,
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -4278,7 +3774,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetUpgradeState(CellularContext_t  
 
     CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == p_context)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -4290,7 +3785,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetUpgradeState(CellularContext_t  
     }
     else
     {
-#endif
         if (dataLen > strlen(p_atresp->pItm->pLine))
         {
             sprintf(p_data, "%s", p_atresp->pItm->pLine);
@@ -4299,9 +3793,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetUpgradeState(CellularContext_t  
         {
             LogError(("_Cellular_RecvFuncGetUpgradeState: Buffer size is small"));
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return pktStatus;
 }
@@ -4317,28 +3809,10 @@ CellularError_t Cellular_WriteCertificate(CellularHandle_t                 cellu
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     uint32_t            timeout        = 1000;
     uint32_t            p_len          = 0;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqWriteCert;
-    atReqWriteCert.pAtCmd       = (char *)cmdBuf;
-    atReqWriteCert.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqWriteCert.pAtRspPrefix = NULL;
-    atReqWriteCert.respCallback = NULL;
-    atReqWriteCert.pData        = NULL;
-    atReqWriteCert.dataLen      = 0;
-
-    CellularAtDataReq_t atDataReqWriteCert;
-    atDataReqWriteCert.pData           = p_data;
-    atDataReqWriteCert.dataLen         = size;
-    atDataReqWriteCert.pSentDataLength = &p_len;
-    atDataReqWriteCert.pEndPattern     = NULL;
-    atDataReqWriteCert.endPatternLen   = 0;
-#else
     CellularAtReq_t     atReqWriteCert =
     {
         (char *)cmdBuf, //cast
@@ -4357,9 +3831,7 @@ CellularError_t Cellular_WriteCertificate(CellularHandle_t                 cellu
         NULL,
         0
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -4367,33 +3839,26 @@ CellularError_t Cellular_WriteCertificate(CellularHandle_t                 cellu
     {
         LogDebug(("Cellular_WriteCertificate: _Cellular_CheckLibraryStatus failed"));
     }
-    else
-    {
-        if ((NULL == p_data) ||
+    else if ((NULL == p_data) ||
             ((AWS_CELLULAR_NVM_TYPE_CERTIFICATE != data_type) && (AWS_CELLULAR_NVM_TYPE_PRIVATEKEY != data_type)) ||
                 (RM_CELLULAR_MAX_NVM_CERTIFICATE_INDEX < index) ||
                 (RM_CELLULAR_NVM_CERTIFICATE_SIZE_L > size) || (RM_CELLULAR_NVM_CERTIFICATE_SIZE_H < size))
-        {
-            LogError(("Cellular_WriteCertificate: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
     {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+        LogError(("Cellular_WriteCertificate: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
         if (AWS_CELLULAR_NVM_TYPE_CERTIFICATE == data_type)
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //casst
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //casst
                             "AT+SQNSNVW=\"%s\",%u,%u", "certificate", index, size);
         }
         else
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                             "AT+SQNSNVW=\"%s\",%u,%u", "privatekey", index, size);
         }
 
@@ -4412,9 +3877,7 @@ CellularError_t Cellular_WriteCertificate(CellularHandle_t                 cellu
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -4427,21 +3890,10 @@ CellularError_t Cellular_EraseCertificate(CellularHandle_t                 cellu
     CellularContext_t * p_context      = (CellularContext_t *) cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqFirmUpgrade;
-    atReqFirmUpgrade.pAtCmd       = (char *)cmdBuf;
-    atReqFirmUpgrade.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqFirmUpgrade.pAtRspPrefix = NULL;
-    atReqFirmUpgrade.respCallback = NULL;
-    atReqFirmUpgrade.pData        = NULL;
-    atReqFirmUpgrade.dataLen      = 0;
-#else
     CellularAtReq_t atReqFirmUpgrade =
     {
         (char *)cmdBuf, //cast
@@ -4451,9 +3903,7 @@ CellularError_t Cellular_EraseCertificate(CellularHandle_t                 cellu
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -4461,31 +3911,25 @@ CellularError_t Cellular_EraseCertificate(CellularHandle_t                 cellu
     {
         LogDebug(("Cellular_EraseCertificate: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (((AWS_CELLULAR_NVM_TYPE_CERTIFICATE != data_type) &&
+                (AWS_CELLULAR_NVM_TYPE_PRIVATEKEY != data_type)) ||
+                (RM_CELLULAR_MAX_NVM_CERTIFICATE_INDEX < index))
+    {
+        LogError(("Cellular_EraseCertificate: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (((AWS_CELLULAR_NVM_TYPE_CERTIFICATE != data_type) && (AWS_CELLULAR_NVM_TYPE_PRIVATEKEY != data_type)) ||
-                (RM_CELLULAR_MAX_NVM_CERTIFICATE_INDEX < index))
-        {
-            LogError(("Cellular_EraseCertificate: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
         if (AWS_CELLULAR_NVM_TYPE_CERTIFICATE == data_type)
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                                 "AT+SQNSNVW=\"%s\",%d,0\r", "certificate", index);
         }
         else
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                                 "AT+SQNSNVW=\"%s\",%d,0\r", "privatekey", index);
         }
 
@@ -4497,9 +3941,7 @@ CellularError_t Cellular_EraseCertificate(CellularHandle_t                 cellu
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -4514,21 +3956,10 @@ CellularError_t Cellular_GetCertificate(CellularHandle_t                 cellula
     CellularContext_t * p_context      = (CellularContext_t *) cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqGetCert;
-    atReqGetCert.pAtCmd       = (char *)cmdBuf;
-    atReqGetCert.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqGetCert.pAtRspPrefix = "+SQNSNVR";
-    atReqGetCert.respCallback = _Cellular_RecvFuncGetCertificate;
-    atReqGetCert.pData        = (void *)p_buff;
-    atReqGetCert.dataLen      = buff_length;
-#else
     CellularAtReq_t atReqGetCert =
     {
         (char *)cmdBuf, //cast
@@ -4538,9 +3969,7 @@ CellularError_t Cellular_GetCertificate(CellularHandle_t                 cellula
         (void *)p_buff,    //cast
         buff_length,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -4548,31 +3977,26 @@ CellularError_t Cellular_GetCertificate(CellularHandle_t                 cellula
     {
         LogDebug(("Cellular_GetCertificate: _Cellular_CheckLibraryStatus failed"));
     }
+    else if (((AWS_CELLULAR_NVM_TYPE_CERTIFICATE != data_type) &&
+                (AWS_CELLULAR_NVM_TYPE_PRIVATEKEY != data_type)) ||
+                (RM_CELLULAR_MAX_NVM_CERTIFICATE_INDEX < index) ||
+                (NULL == p_buff))
+    {
+        LogError(("Cellular_GetCertificate: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if (((AWS_CELLULAR_NVM_TYPE_CERTIFICATE != data_type) && (AWS_CELLULAR_NVM_TYPE_PRIVATEKEY != data_type)) ||
-                (RM_CELLULAR_MAX_NVM_CERTIFICATE_INDEX < index))
-        {
-            LogError(("Cellular_GetCertificate: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
         if (AWS_CELLULAR_NVM_TYPE_CERTIFICATE == data_type)
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                                 "AT+SQNSNVR=\"%s\",%d", "certificate", index);
         }
         else
         {
-            (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+            (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                                 "AT+SQNSNVR=\"%s\",%d", "privatekey", index);
         }
 
@@ -4584,9 +4008,7 @@ CellularError_t Cellular_GetCertificate(CellularHandle_t                 cellula
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
     }
 
     return cellularStatus;
@@ -4606,7 +4028,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetCertificate(CellularContext_t   
     CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
     CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == p_context)
     {
         pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
@@ -4618,7 +4039,6 @@ static CellularPktStatus_t _Cellular_RecvFuncGetCertificate(CellularContext_t   
     }
     else
     {
-#endif
         p_inputline = (uint8_t *)p_atresp->pItm->pLine; //cast
 
         atCoreStatus = _Cellular_ATGetSpecificNextTok(&p_inputline,
@@ -4636,9 +4056,7 @@ static CellularPktStatus_t _Cellular_RecvFuncGetCertificate(CellularContext_t   
         {
             pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if (CELLULAR_PKT_STATUS_OK == pktStatus)
     {
@@ -4669,12 +4087,10 @@ static CellularATError_t _Cellular_ATGetSpecificNextTok(uint8_t      ** pp_Strin
 
     CellularATError_t atStatus = CELLULAR_AT_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((NULL == pp_String) || (NULL == p_Delimiter) || (NULL == pp_TokOutput))
     {
         atStatus = CELLULAR_AT_BAD_PARAMETER;
     }
-#endif
 
     if (CELLULAR_AT_SUCCESS == atStatus)
     {
@@ -4720,22 +4136,11 @@ CellularError_t Cellular_ConfigSSLProfile(CellularHandle_t                      
     CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
     CellularError_t     cellularStatus = CELLULAR_SUCCESS;
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     BaseType_t          semaphore_ret  = 0;
-#endif
 
     uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
     uint8_t             arg[3][3]                        = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqFirmUpgrade;
-    atReqFirmUpgrade.pAtCmd       = (char *)cmdBuf;
-    atReqFirmUpgrade.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqFirmUpgrade.pAtRspPrefix = NULL;
-    atReqFirmUpgrade.respCallback = NULL;
-    atReqFirmUpgrade.pData        = NULL;
-    atReqFirmUpgrade.dataLen      = 0;
-#else
     CellularAtReq_t atReqFirmUpgrade =
     {
         (char *)cmdBuf, //cast
@@ -4745,9 +4150,7 @@ CellularError_t Cellular_ConfigSSLProfile(CellularHandle_t                      
         NULL,
         0,
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* p_context is checked in _Cellular_CheckLibraryStatus function. */
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
 
@@ -4755,25 +4158,18 @@ CellularError_t Cellular_ConfigSSLProfile(CellularHandle_t                      
     {
         LogDebug(("Cellular_ConfigSSLProfile: _Cellular_CheckLibraryStatus failed"));
     }
+    else if ((RM_CELLULAR_SECURITY_PROFILE_ID_L > security_profile_id) ||
+            (RM_CELLULAR_SECURITY_PROFILE_ID_H < security_profile_id) ||
+                ((AWS_CELLULAR_NO_CERT_VALIDATE        != cert_valid_level) &&
+                (AWS_CELLULAR_VALIDATE_CERT_EXPDATE    != cert_valid_level) &&
+                (AWS_CELLULAR_VALIDATE_CERT_EXPDATE_CN != cert_valid_level)))
+    {
+        LogError(("Cellular_ConfigSSLProfile: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
     else
     {
-        if ((RM_CELLULAR_SECURITY_PROFILE_ID_L > security_profile_id) ||
-            (RM_CELLULAR_SECURITY_PROFILE_ID_H < security_profile_id) ||
-                ((AWS_CELLULAR_NO_CERT_VALIDATE         != cert_valid_level) &&
-                 (AWS_CELLULAR_VALIDATE_CERT_EXPDATE    != cert_valid_level) &&
-                 (AWS_CELLULAR_VALIDATE_CERT_EXPDATE_CN != cert_valid_level)))
-        {
-            LogError(("Cellular_ConfigSSLProfile: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
 
         if (RM_CELLULAR_MAX_NVM_CERTIFICATE_INDEX >= ca_certificate_id)
         {
@@ -4802,7 +4198,7 @@ CellularError_t Cellular_ConfigSSLProfile(CellularHandle_t                      
             arg[2][0] =  '\0';
         }
 
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
                         "AT+SQNSPCFG=%d,2,,%d,%s,%s,%s,\"\"",
                         security_profile_id,
                         cert_valid_level,
@@ -4816,9 +4212,1496 @@ CellularError_t Cellular_ConfigSSLProfile(CellularHandle_t                      
             cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
         }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_AutoAPConnectConfig */
+CellularError_t Cellular_AutoAPConnectConfig(CellularHandle_t              cellularHandle,
+                                             const e_aws_cellular_auto_connect_t type)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqAutoConfig =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_AutoAPConnectConfig: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if ((AWS_CELLULAR_DISABLE_AUTO_CONNECT != type) &&
+                (AWS_CELLULAR_ENABLE_AUTO_CONNECT != type))
+    {
+        LogError(("Cellular_AutoAPConnectConfig: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
+                        "AT+SQNAUTOCONNECT=%d", type);
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqAutoConfig);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_AutoAPConnectConfig: couldn't resolve auto ap connect config"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_UnlockSIM */
+CellularError_t Cellular_UnlockSIM(CellularHandle_t      cellularHandle,
+                                   const uint8_t * const p_pass)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    uint8_t             resBuf[20]     = {'\0'};
+    int32_t             funclevel      = 0;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqFuncGetString =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_WITH_PREFIX,
+        "+CFUN",
+        _Cellular_RecvFuncGetString,
+        resBuf,
+        sizeof(resBuf),
+    };
+
+    CellularAtReq_t atReqCommon =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_UnlockSIM: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == p_pass)
+    {
+        LogError(("Cellular_UnlockSIM: Bad input Parameter "));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN?");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqFuncGetString);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_UnlockSIM: couldn't resolve func check"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+        else
+        {
+            sscanf((char *)resBuf, "%d", &funclevel);  //cast
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if ((CELLULAR_SUCCESS == cellularStatus) &&
+            ((AWS_CELLULAR_MODULE_OPERATING_LEVEL1 != funclevel) &&
+             (AWS_CELLULAR_MODULE_OPERATING_LEVEL4 != funclevel)))
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN=4");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_UnlockSIM: couldn't resolve set func"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        Platform_Delay(1000);   //cast
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CPIN?");  //cast
+        atReqFuncGetString.pAtRspPrefix = "+CPIN";
+
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqFuncGetString);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_UnlockSIM: couldn't resolve get lock state"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if ((CELLULAR_SUCCESS == cellularStatus) && (NULL == strstr((char *)resBuf, "READY")))  //cast
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CPIN=\"%s\"", (char *)p_pass);  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_UnlockSIM: couldn't resolve unlock sim"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+static CellularPktStatus_t _Cellular_RecvFuncGetString(CellularContext_t                 * p_context,
+                                                       const CellularATCommandResponse_t * p_atresp,
+                                                       void                              * p_data,
+                                                       uint16_t                            dataLen)
+{
+    (void)dataLen;
+
+    uint8_t * p_token     = NULL;
+    uint8_t * p_inputline = NULL;
+
+    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
+    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
+
+    if (NULL == p_context)
+    {
+        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
+    }
+    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
+    {
+        LogError(("_Cellular_RecvFuncGetString: Input Line passed is NULL"));
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+    else
+    {
+        p_inputline  = (uint8_t *)p_atresp->pItm->pLine;    //cast
+        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
+        }
+
+        if (CELLULAR_AT_SUCCESS != atCoreStatus)
+        {
+            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
+        }
+    }
+
+    if ((CELLULAR_PKT_STATUS_OK == pktStatus) && (NULL != p_data) && (NULL != p_token))
+    {
+        (void)strcpy((char *)p_data, (char *)p_token);  //cast
+    }
+    else
+    {
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+
+    return pktStatus;
+}
+
+/* Implementation of Cellular_FactoryReset */
+CellularError_t Cellular_FactoryReset(CellularHandle_t cellularHandle)
+{
+    CellularContext_t      * p_context       = (CellularContext_t *)cellularHandle;
+    CellularError_t          cellularStatus  = CELLULAR_SUCCESS;
+    CellularPktStatus_t      pktStatus       = CELLULAR_PKT_STATUS_OK;
+    CellularPdnContextInfo_t pdpContextsInfo = {0};
+    uint8_t                  cnt             = 0;
+    uint8_t                  cnt_res         = RM_CELLULAR_RYZ_MAX_PDP_CONTEXTS;
+    BaseType_t               semaphore_ret   = 0;
+
+    uint8_t cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqCommon =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    CellularAtReq_t atReqGetCurrentApnName =
+    {
+        "AT+CGDCONT?",
+        CELLULAR_AT_MULTI_WITH_PREFIX,
+        "+CGDCONT",
+        _Cellular_RecvFuncGetPdpContextSettings,
+        &pdpContextsInfo,
+        sizeof(CellularPdnContextInfo_t),
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_FactoryReset: _Cellular_CheckLibraryStatus failed"));
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CGDCONT?");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetCurrentApnName);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_FactoryReset: couldn't resolve AT+CGDCONT?"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+        else
+        {
+            /* WAIT_LOOP */
+            for (cnt = RM_CELLULAR_RYZ_MAX_PDP_CONTEXTS; cnt > 0; cnt--)
+            {
+                if (false == pdpContextsInfo.contextsPresent[cnt - 1])
+                {
+                    cnt_res = cnt;
+                    cnt     = 1;    /* Exit this For Loop to set "1" */
+                }
+            }
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf),    //cast
+                        "AT+CGDCONT=%d,\"IPV4V6\",\"%s\"", cnt_res, "RESET");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_FactoryReset: couldn't resolve AT+CGDCONT"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        cellularStatus = aws_cellular_psm_config(p_context, 0);
+
+        if (CELLULAR_SUCCESS != cellularStatus)
+        {
+            LogError(("Cellular_FactoryReset: couldn't resolve psm config"));
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        cellularStatus = aws_cellular_closesocket(p_context);
+
+        if (CELLULAR_SUCCESS == cellularStatus)
+        {
+            (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNSFACTORYRESET");   //cast
+            (void)_Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
+            cellularStatus = aws_cellular_hardreset(p_context);
+        }
+        else
+        {
+            LogError(("Cellular_FactoryReset: couldn't resolve close socket"));
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        memset((void *)&pdpContextsInfo, 0x00, sizeof(CellularPdnContextInfo_t));   //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CGDCONT?");    //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetCurrentApnName);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_FactoryReset: couldn't resolve AT+CGDCONT?"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+        else
+        {
+            if ((false != pdpContextsInfo.contextsPresent[cnt_res - 1]) &&
+                (0     == strncmp((char *)pdpContextsInfo.apnName[cnt_res - 1], "RESET", 5)))  //cast
+            {
+                LogError(("Cellular_FactoryReset: couldn't resolve factory reset"));
+                cellularStatus = CELLULAR_UNKNOWN;
+            }
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_SetBaudrate */
+CellularError_t Cellular_SetBaudrate(CellularHandle_t cellularHandle,
+                                     const uint32_t   baudrate)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    sci_err_t           sci_ret        = SCI_SUCCESS;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqQuery =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_SetBaudrate: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (0 == baudrate)
+    {
+        LogError(("Cellular_SetBaudrate: Invalid argument"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN=5");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQuery);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetBaudrate: couldn't resolve %s", cmdBuf));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),
+                        "AT+SQNHWCFG=\"uart0\",\"enable\",\"rtscts\",\"%u\",\"8\",\"none\",\"1\",\"at\"", baudrate);
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQuery);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetBaudrate: couldn't resolve %s", cmdBuf));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        sci_ret = aws_cellular_temp_close(cellularHandle);
+
+        if (SCI_SUCCESS == sci_ret)
+        {
+            sci_ret = aws_cellular_serial_reopen(cellularHandle, baudrate);
+        }
+        else
+        {
+            cellularStatus = CELLULAR_UNKNOWN;
+        }
+
+        if (SCI_SUCCESS == sci_ret)
+        {
+            cellularStatus = aws_cellular_hardreset(p_context);
+        }
+        else
+        {
+            cellularStatus = CELLULAR_UNKNOWN;
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_StartUpLink */
+CellularError_t Cellular_StartUpLink(CellularHandle_t    cellularHandle,
+                                     const uint8_t       enable,
+                                     const uint16_t      earfcn,
+                                     const uint32_t      level)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqQueryStartUpLink =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_StartUpLink: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (1 < enable)
+    {
+        LogError(("Cellular_StartUpLink: Invalid argument"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN=5");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_StartUpLink: couldn't resolve Start Up Link"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),   //cast
+                        "AT+SMCWTX=%u,%u,%u", enable, earfcn, level);
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_StartUpLink: couldn't resolve Start Up Link"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_StartDownLink */
+CellularError_t Cellular_StartDownLink(CellularHandle_t    cellularHandle,
+                                       const uint16_t      earfcn)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReq =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    CellularAtReq_t atReqQueryStartDownLink =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_WITH_PREFIX,
+        "+SMCWRX",
+        _Cellular_RecvFuncStartDownLink,
+        NULL,  //cast
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_StartDownLink: _Cellular_CheckLibraryStatus failed"));
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN=5");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_StartDownLink: couldn't resolve Start Down Link"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SMCWRX=%d", earfcn);   //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartDownLink);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_StartDownLink: couldn't resolve Start Down Link"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+static CellularPktStatus_t _Cellular_RecvFuncStartDownLink(CellularContext_t                 * p_context,
+                                                           const CellularATCommandResponse_t * p_atresp,
+                                                           void                              * p_data,
+                                                           uint16_t                            dataLen)
+{
+    (void)dataLen;
+
+    uint8_t * p_inputline = NULL;
+
+    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
+    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
+
+    if (NULL == p_context)
+    {
+        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
+    }
+    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
+    {
+        LogError(("_Cellular_RecvFuncStartDownLink: Input Line passed is NULL"));
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+    else
+    {
+        p_inputline = (uint8_t *)p_atresp->pItm->pLine; //cast
+        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS != atCoreStatus)
+        {
+            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
+        }
+    }
+
+    if (CELLULAR_PKT_STATUS_OK == pktStatus)
+    {
+        *(int32_t *)p_data = atoi((char *)p_inputline); //cast
+    }
+    else
+    {
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+
+    return pktStatus;
+}
+
+/* Implementation of Cellular_SetPsmSettings */
+CellularError_t Cellular_SetPsmSettings(CellularHandle_t              cellularHandle,
+                                        const CellularPsmSettings_t * pPsmSettings)
+{
+    CellularContext_t      * p_context  = (CellularContext_t *)cellularHandle;                  //cast
+    st_aws_cellular_ctrl_t * p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;   //cast
+
+    CellularError_t cellularStatus = CELLULAR_SUCCESS;
+    BaseType_t      semaphore_ret  = 0;
+
+    /* Make sure the library is open. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("_Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == pPsmSettings)
+    {
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        cellularStatus = aws_cellular_psm_config(p_context, pPsmSettings->mode);
+
+        if (CELLULAR_SUCCESS == cellularStatus)
+        {
+            cellularStatus = Cellular_CommonSetPsmSettings(cellularHandle, pPsmSettings);
+        }
+
+        if ((CELLULAR_SUCCESS == cellularStatus) && (1 == pPsmSettings->mode))
+        {
+#if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
+            aws_cellular_rts_hw_flow_disable();
 #endif
+            aws_cellular_rts_ctrl(1);
+            p_aws_ctrl->psm_mode = 1;
+        }
+        else
+        {
+            aws_cellular_psm_config(p_context, 0);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_GetSVN */
+CellularError_t Cellular_GetSVN(CellularHandle_t    cellularHandle,
+                                const st_aws_cellular_svn_t * p_svn)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqQueryGetSVN =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_MULTI_WO_PREFIX,
+        NULL,
+        _Cellular_RecvFuncGetSVN,
+        NULL,
+        sizeof(st_aws_cellular_svn_t),
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_GetSVN: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == p_svn)
+    {
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        atReqQueryGetSVN.pData = (void *)p_svn; //cast
+
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "ATI1");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryGetSVN);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_GetSVN: couldn't resolve ATI1 command"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+static CellularPktStatus_t _Cellular_RecvFuncGetSVN(CellularContext_t                 * p_context,
+                                                    const CellularATCommandResponse_t * p_atresp,
+                                                    void                              * p_data,
+                                                    uint16_t                            dataLen)
+{
+    (void)dataLen;
+
+    st_aws_cellular_svn_t * p_svn       = p_data;
+    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
+
+    if (NULL == p_context)
+    {
+        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
+    }
+    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
+    {
+        LogError(("_Cellular_RecvFuncGetSVN: Input Line passed is NULL"));
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+    else
+    {
+        (void)snprintf((char *)p_svn->ue_svn, AWS_CELLULAR_MAX_UE_SVN_LENGTH, p_atresp->pItm->pLine);           //cast
+        (void)snprintf((char *)p_svn->lr_svn, AWS_CELLULAR_MAX_LR_SVN_LENGTH, p_atresp->pItm->pNext->pLine);    //cast
+    }
+
+    return pktStatus;
+}
+
+/* Implementation of Cellular_SetEidrxSettingsEXT */
+CellularError_t Cellular_SetEidrxSettingsEXT(CellularHandle_t                cellularHandle,
+                                             const CellularEidrxSettings_t * p_eidrxsettings)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqSetEidrx =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogError(("_Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == p_eidrxsettings)
+    {
+        LogError(("Cellular_CommonSetEidrxSettings : Bad parameter"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf),    //cast
+                        "%s%d,%d,\"" PRINTF_BINARY_PATTERN_INT4 "\",\"" PRINTF_BINARY_PATTERN_INT4 "\"",
+                        "AT+SQNEDRX=",
+                        p_eidrxsettings->mode,
+                        p_eidrxsettings->rat,
+                        PRINTF_BYTE_TO_BINARY_INT4(p_eidrxsettings->requestedEdrxVaue),
+                        PRINTF_BYTE_TO_BINARY_INT4(p_eidrxsettings->pagingTimeWindow));
+
+        LogDebug(("Eidrx setting: %s ", cmdBuf));
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqSetEidrx);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("_Cellular_SetEidrxSettings: couldn't set Eidrx settings"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_GetSocketDataSize */
+CellularError_t Cellular_GetSocketDataSize(CellularHandle_t        cellularHandle,
+                                            CellularSocketHandle_t socketHandle,
+                                            const uint16_t       * p_size)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReqQueryStartUpLink =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_WITH_PREFIX,
+        "+SQNSI",
+        _Cellular_RecvFuncGetSocketDataSize,
+        (void *)p_size,  //cast
+        sizeof(uint16_t),
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_GetSocketDataSize: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == socketHandle)
+    {
+        LogDebug(("Cellular_GetSocketDataSize: Invalid argument"));
+        cellularStatus = CELLULAR_INVALID_HANDLE;
+    }
+    else if (NULL == p_size)
+    {
+        LogDebug(("Cellular_GetSocketDataSize: Invalid argument"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNSI=%ld", socketHandle->socketId + 1);  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_GetSocketDataSize: couldn't resolve %s command", cmdBuf));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+static CellularPktStatus_t _Cellular_RecvFuncGetSocketDataSize(CellularContext_t                 * p_context,
+                                                               const CellularATCommandResponse_t * p_atresp,
+                                                               void                              * p_data,
+                                                               uint16_t                            dataLen)
+{
+    (void)dataLen;
+
+    uint16_t * p_ret       = p_data;
+    uint8_t  * p_inputline = NULL;
+    uint8_t  * p_token     = NULL;
+
+    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
+    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
+
+    if (NULL == p_context)
+    {
+        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
+    }
+    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
+    {
+        LogError(("_Cellular_RecvFuncGetSocketDataSize: Input Line passed is NULL"));
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+    else
+    {
+        p_inputline  = (uint8_t *)p_atresp->pItm->pLine;                //cast
+        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get connId */
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get sent */
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get received */
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get buff_in */
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
+        }
+
+        if ((CELLULAR_AT_SUCCESS == atCoreStatus) && (NULL != p_token))
+        {
+            *p_ret = (uint16_t)atoi((char *)p_token);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS != atCoreStatus)
+        {
+            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
+        }
+    }
+
+    return pktStatus;
+}
+
+/* Implementation of Cellular_SetServiceStatus */
+CellularError_t Cellular_SetServiceStatus(CellularHandle_t cellularHandle)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReq =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_SetServiceStatus: _Cellular_CheckLibraryStatus failed"));
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+COPS=0");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetServiceStatus: couldn't resolve AT+COPS"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_SetRAT */
+CellularError_t Cellular_SetRAT(CellularHandle_t           cellularHandle,
+                                const e_aws_cellular_rat_t rat)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+    uint8_t             cnt            = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    st_aws_cellular_ctrl_t * p_aws_ctrl = (st_aws_cellular_ctrl_t *)cellularHandle->pModueContext;   //cast
+
+    CellularAtReq_t atReq =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_SetRAT: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if ((AWS_CELLULAR_RAT_CATM1 != rat) && (AWS_CELLULAR_RAT_NBIOT != rat))
+    {
+        LogError(("Cellular_SetRAT : Bad parameter"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN=0");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetRAT: couldn't resolve AT+CFUN=0"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNMODEACTIVE=%d", rat);
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetRAT: couldn't resolve AT+SQNMODEACTIVE=%d", rat));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT^RESET");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetRAT: couldn't resolve AT^RESET"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+        else
+        {
+            /* WAIT_LOOP */
+            while (1)
+            {
+                if (AWS_CELLULAR_MODULE_START_FLG == p_aws_ctrl->module_flg)
+                {
+                    p_aws_ctrl->module_flg = AWS_CELLULAR_MODULE_FLG_INIT;
+                    break;
+                }
+                else
+                {
+                    cnt++;
+                    Platform_Delay(1000);   //cast
+                }
+
+                if (cnt >= AWS_CELLULAR_RESTART_LIMIT)
+                {
+                    cellularStatus = CELLULAR_MODEM_NOT_READY;
+                    break;
+                }
+            }
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+/* Implementation of Cellular_GetRAT */
+CellularError_t Cellular_GetRAT(CellularHandle_t             cellularHandle,
+                                const e_aws_cellular_rat_t * p_rat)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReq =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_WITH_PREFIX,
+        "+SQNMODEACTIVE",
+        _Cellular_RecvFuncGetRAT,
+        (void *)p_rat,
+        sizeof(uint8_t *),
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_GetRAT: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == p_rat)
+    {
+        LogError(("Cellular_GetRAT : Bad parameter"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNMODEACTIVE?");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_GetRAT: couldn't resolve AT+SQNMODEACTIVE?"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+static CellularPktStatus_t _Cellular_RecvFuncGetRAT(CellularContext_t                 * p_context,
+                                                    const CellularATCommandResponse_t * p_atresp,
+                                                    void                              * p_data,
+                                                    uint16_t                            dataLen)
+{
+    (void)dataLen;
+
+    e_aws_cellular_rat_t * p_ret       = p_data;
+    uint8_t              * p_inputline = NULL;
+    uint8_t              * p_token     = NULL;
+
+    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
+    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
+
+    if (NULL == p_context)
+    {
+        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
+    }
+    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
+    {
+        LogError(("_Cellular_RecvFuncGetRAT: Input Line passed is NULL"));
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+    else
+    {
+        p_inputline  = (uint8_t *)p_atresp->pItm->pLine;                //cast
+        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);   //cast
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get RAT */
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);   //cast
+        }
+
+        if ((CELLULAR_AT_SUCCESS == atCoreStatus) && (NULL != p_token))
+        {
+            *p_ret = (e_aws_cellular_rat_t)atoi((char *)p_token);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS != atCoreStatus)
+        {
+            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
+        }
+    }
+
+    return pktStatus;
+}
+
+/* Implementation of Cellular_GetSupportRAT */
+CellularError_t Cellular_GetSupportRAT(CellularHandle_t                      cellularHandle,
+                                       const st_aws_cellular_support_rat_t * p_support)
+{
+    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReq =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_WITH_PREFIX,
+        "+SQNMODEACTIVE",
+        _Cellular_RecvFuncGetSupportRAT,
+        (void *)p_support,
+        sizeof(st_aws_cellular_support_rat_t),
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_GetSupportRAT: _Cellular_CheckLibraryStatus failed"));
+    }
+    else if (NULL == p_support)
+    {
+        LogError(("Cellular_GetSupportRAT : Bad parameter"));
+        cellularStatus = CELLULAR_BAD_PARAMETER;
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNMODEACTIVE=?");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_GetSupportRAT: couldn't resolve AT+SQNMODEACTIVE=?"));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    return cellularStatus;
+}
+
+static CellularPktStatus_t _Cellular_RecvFuncGetSupportRAT(CellularContext_t                 * p_context,
+                                                           const CellularATCommandResponse_t * p_atresp,
+                                                           void                              * p_data,
+                                                           uint16_t                            dataLen)
+{
+    (void)dataLen;
+
+    st_aws_cellular_support_rat_t * p_ret = p_data;
+
+    uint8_t  * p_inputline = NULL;
+    uint8_t  * p_token     = NULL;
+
+    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
+    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
+
+    if (NULL == p_context)
+    {
+        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
+    }
+    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
+    {
+        LogError(("_Cellular_RecvFuncGetRAT: Input Line passed is NULL"));
+        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
+    }
+    else
+    {
+        p_inputline  = (uint8_t *)p_atresp->pItm->pLine;                //cast
+        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);   //cast
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get Mode */
+            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);   //cast
+        }
+
+        if (CELLULAR_AT_SUCCESS == atCoreStatus)
+        {
+            /* Get Support RAT */
+            if (NULL != strstr((char *)p_inputline, "1"))   //cast
+            {
+                p_ret->lte_m = true;
+            }
+
+            if (NULL != strstr((char *)p_inputline, "2"))   //cast
+            {
+                p_ret->nb_iot = true;
+            }
+
+            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
+        }
+    }
+
+    return pktStatus;
+}
+
+/* Implementation of Cellular_SetHWConfig */
+CellularError_t Cellular_SetHWConfig(CellularHandle_t cellularHandle)
+{
+    CellularContext_t      * p_context  = (CellularContext_t *) cellularHandle;                  //cast
+    st_aws_cellular_ctrl_t * p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;    //cast
+
+    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
+    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
+    BaseType_t          semaphore_ret  = 0;
+
+    uint8_t             count          = 0;
+    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
+
+    CellularAtReq_t atReq =
+    {
+        (char *)cmdBuf, //cast
+        CELLULAR_AT_NO_RESULT,
+        NULL,
+        NULL,
+        NULL,
+        0,
+    };
+
+    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
+    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
+
+    if (CELLULAR_SUCCESS != cellularStatus)
+    {
+        LogDebug(("Cellular_GetSupportRAT: _Cellular_CheckLibraryStatus failed"));
+    }
+    else
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+CFUN=5");  //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetHWConfig: couldn't resolve %s", cmdBuf));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void) snprintf((char *)cmdBuf, sizeof(cmdBuf),
+                        "AT+SQNHWCFG=\"uart1\",\"enable\",\"rtscts\",\"921600\",\"8\",\"none\",\"1\",\"dcp\"");
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetHWConfig: couldn't resolve %s", cmdBuf));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
+    }
+
+    if (CELLULAR_SUCCESS == cellularStatus)
+    {
+        semaphore_ret = aws_cellular_rts_deactive(p_context);
+
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT^RESET");   //cast
+        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
+
+        if (CELLULAR_PKT_STATUS_OK != pktStatus)
+        {
+            LogError(("Cellular_SetHWConfig: couldn't resolve %s", cmdBuf));
+            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
+        }
+        else
+        {
+            count = 0;
+
+            /* WAIT_LOOP */
+            while (1)
+            {
+                if (AWS_CELLULAR_MODULE_START_FLG == p_aws_ctrl->module_flg)
+                {
+                    p_aws_ctrl->module_flg = AWS_CELLULAR_MODULE_FLG_INIT;
+                    break;
+                }
+                else
+                {
+                    count++;
+                    Platform_Delay(1000);   //cast
+                }
+
+                if (count >= AWS_CELLULAR_RESTART_LIMIT)
+                {
+                    cellularStatus = CELLULAR_TIMEOUT;
+                    break;
+                }
+            }
+        }
+
+        aws_cellular_rts_active(p_context, semaphore_ret);
     }
 
     return cellularStatus;
@@ -4843,7 +5726,6 @@ CellularError_t Cellular_ConfigTlslSocket(CellularHandle_t cellularHandle,
     atReq.pData        = NULL;
     atReq.dataLen      = 0;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((RM_CELLULAR_SECURITY_PROFILE_ID_L > security_profile_id) ||
         (RM_CELLULAR_SECURITY_PROFILE_ID_H < security_profile_id))
     {
@@ -4861,1308 +5743,19 @@ CellularError_t Cellular_ConfigTlslSocket(CellularHandle_t cellularHandle,
     cellularStatus = _Cellular_CheckLibraryStatus(p_context);
     if (CELLULAR_SUCCESS != cellularStatus)
     {
-        LogDebug(("Cellular_EraseCertificate: _Cellular_CheckLibraryStatus failed"));
+        LogDebug(("Cellular_ConfigTlslSocket : _Cellular_CheckLibraryStatus failed"));
         return (cellularStatus);
     }
-#endif
 
     (void)snprintf(cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSSCFG=%d,%d,%d\r",
                    socket_id, enable, security_profile_id);
     pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
     if (CELLULAR_PKT_STATUS_OK != pktStatus)
     {
-        LogError(("Cellular_ConfigTlslSocket: couldn't resolve erase certificate"));
+        LogError(("Cellular_ConfigTlslSocket: couldn't resolve TLS configuration"));
     }
 
     cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
     return cellularStatus;
 }
 #endif
-
-/* Implementation of Cellular_AutoAPConnectConfig */
-CellularError_t Cellular_AutoAPConnectConfig(CellularHandle_t              cellularHandle,
-                                             const e_aws_cellular_auto_connect_t type)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqAutoConfig;
-    atReqAutoConfig.pAtCmd       = (char *)cmdBuf;
-    atReqAutoConfig.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqAutoConfig.pAtRspPrefix = NULL;
-    atReqAutoConfig.respCallback = NULL;
-    atReqAutoConfig.pData        = NULL;
-    atReqAutoConfig.dataLen      = 0;
-#else
-    CellularAtReq_t atReqAutoConfig =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_AutoAPConnectConfig: _Cellular_CheckLibraryStatus failed"));
-    }
-    else
-    {
-        if ((AWS_CELLULAR_DISABLE_AUTO_CONNECT != type) && (AWS_CELLULAR_ENABLE_AUTO_CONNECT != type))
-        {
-            LogError(("Cellular_AutoAPConnectConfig: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
-                        "AT+SQNAUTOCONNECT=%s", type);
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqAutoConfig);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_AutoAPConnectConfig: couldn't resolve auto ap connect config"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-/* Implementation of Cellular_UnlockSIM */
-CellularError_t Cellular_UnlockSIM(CellularHandle_t      cellularHandle,
-                                   const uint8_t * const p_pass)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-    uint8_t             resBuf[20]     = {'\0'};
-    int32_t             funclevel      = 0;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqFuncGetString;
-    atReqFuncGetString.pAtCmd       = (char *)cmdBuf;
-    atReqFuncGetString.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqFuncGetString.pAtRspPrefix = "+CFUN";
-    atReqFuncGetString.respCallback = _Cellular_RecvFuncGetString;
-    atReqFuncGetString.pData        = resBuf;
-    atReqFuncGetString.dataLen      = sizeof(resBuf);
-
-    CellularAtReq_t atReqCommon;
-    atReqCommon.pAtCmd       = (char *)cmdBuf;
-    atReqCommon.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqCommon.pAtRspPrefix = NULL;
-    atReqCommon.respCallback = NULL;
-    atReqCommon.pData        = NULL;
-    atReqCommon.dataLen      = 0;
-#else
-    CellularAtReq_t atReqFuncGetString =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_WITH_PREFIX,
-        "+CFUN",
-        _Cellular_RecvFuncGetString,
-        resBuf,
-        sizeof(resBuf),
-    };
-
-    CellularAtReq_t atReqCommon =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_UnlockSIM: _Cellular_CheckLibraryStatus failed"));
-    }
-    else
-    {
-        if (NULL == p_pass)
-        {
-            LogError(("Cellular_UnlockSIM: Bad input Parameter "));
-            cellularStatus = CELLULAR_BAD_PARAMETER;
-        }
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CFUN?");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqFuncGetString);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_UnlockSIM: couldn't resolve func check"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-        else
-        {
-            sscanf((char *)resBuf, "%ld", &funclevel);  //cast
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if ((CELLULAR_SUCCESS == cellularStatus) &&
-            ((AWS_CELLULAR_MODULE_OPERATING_LEVEL1 != funclevel) &&
-             (AWS_CELLULAR_MODULE_OPERATING_LEVEL4 != funclevel)))
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CFUN=4");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_UnlockSIM: couldn't resolve set func"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        Platform_Delay(1000);   //cast
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CPIN?");  //cast
-        atReqFuncGetString.pAtRspPrefix = "+CPIN";
-
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqFuncGetString);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_UnlockSIM: couldn't resolve get lock state"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if ((CELLULAR_SUCCESS == cellularStatus) && (NULL == strstr((char *)resBuf, "READY")))  //cast
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CPIN=\"%s\"", (char *)p_pass);  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_UnlockSIM: couldn't resolve unlock sim"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-static CellularPktStatus_t _Cellular_RecvFuncGetString(CellularContext_t                 * p_context,
-                                                       const CellularATCommandResponse_t * p_atresp,
-                                                       void                              * p_data,
-                                                       uint16_t                            dataLen)
-{
-    (void)dataLen;
-
-    uint8_t * p_token     = NULL;
-    uint8_t * p_inputline = NULL;
-
-    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
-    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    if (NULL == p_context)
-    {
-        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
-    }
-    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
-    {
-        LogError(("_Cellular_RecvFuncGetString: Input Line passed is NULL"));
-        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
-    }
-    else
-    {
-#endif
-        p_inputline  = (uint8_t *)p_atresp->pItm->pLine;    //cast
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATRemovePrefix(&(char *)p_inputline);   //cast
-#endif
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
-#else
-            atCoreStatus = Cellular_ATGetNextTok(&(char *)p_inputline, &(char *)p_token);   //cast
-#endif
-        }
-
-        if (CELLULAR_AT_SUCCESS != atCoreStatus)
-        {
-            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-        }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    if ((CELLULAR_PKT_STATUS_OK == pktStatus) && (NULL != p_data) && (NULL != p_token))
-    {
-        (void)strcpy((char *)p_data, (char *)p_token);  //cast
-    }
-    else
-    {
-        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
-    }
-
-    return pktStatus;
-}
-
-/* Implementation of Cellular_FactoryReset */
-CellularError_t Cellular_FactoryReset(CellularHandle_t cellularHandle)
-{
-    CellularContext_t      * p_context       = (CellularContext_t *)cellularHandle;
-    CellularError_t          cellularStatus  = CELLULAR_SUCCESS;
-    CellularPktStatus_t      pktStatus       = CELLULAR_PKT_STATUS_OK;
-    CellularPdnContextInfo_t pdpContextsInfo = {0};
-    uint8_t                  cnt             = 0;
-    uint8_t                  cnt_res         = RM_CELLULAR_RYZ_MAX_PDP_CONTEXTS;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t               semaphore_ret   = 0;
-#endif
-
-    uint8_t cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqCommon;
-    atReqCommon.pAtCmd       = (char *)cmdBuf;
-    atReqCommon.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqCommon.pAtRspPrefix = NULL;
-    atReqCommon.respCallback = NULL;
-    atReqCommon.pData        = NULL;
-    atReqCommon.dataLen      = 0;
-
-    CellularAtReq_t atReqGetCurrentApnName;
-    atReqGetCurrentApnName.pAtCmd       = "AT+CGDCONT?";
-    atReqGetCurrentApnName.atCmdType    = CELLULAR_AT_MULTI_WITH_PREFIX;
-    atReqGetCurrentApnName.pAtRspPrefix = "+CGDCONT";
-    atReqGetCurrentApnName.respCallback = _Cellular_RecvFuncGetPdpContextSettings;
-    atReqGetCurrentApnName.pData        = &pdpContextsInfo;
-    atReqGetCurrentApnName.dataLen      = sizeof(CellularPdnContextInfo_t);
-#else
-    CellularAtReq_t atReqCommon =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-
-    CellularAtReq_t atReqGetCurrentApnName =
-    {
-        "AT+CGDCONT?",
-        CELLULAR_AT_MULTI_WITH_PREFIX,
-        "+CGDCONT",
-        _Cellular_RecvFuncGetPdpContextSettings,
-        &pdpContextsInfo,
-        sizeof(CellularPdnContextInfo_t),
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_FactoryReset: _Cellular_CheckLibraryStatus failed"));
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CGDCONT?");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetCurrentApnName);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_FactoryReset: couldn't resolve AT+CGDCONT?"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-        else
-        {
-            for (cnt = RM_CELLULAR_RYZ_MAX_PDP_CONTEXTS; cnt > 0; cnt--)
-            {
-                if (false == pdpContextsInfo.contextsPresent[cnt - 1])
-                {
-                    cnt_res = cnt;
-                    cnt     = 1;    /* Exit this For Loop to set "1" */
-                }
-            }
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,    //cast
-                        "AT+CGDCONT=%d,\"IPV4V6\",\"%s\"", cnt_res, "RESET");
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_FactoryReset: couldn't resolve AT+CGDCONT"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        cellularStatus = aws_cellular_psm_config(p_context, 0);
-
-        if (CELLULAR_SUCCESS != cellularStatus)
-        {
-            LogError(("Cellular_FactoryReset: couldn't resolve psm config"));
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        cellularStatus = aws_cellular_closesocket(p_context);
-
-        if (CELLULAR_SUCCESS == cellularStatus)
-        {
-            (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSFACTORYRESET");   //cast
-            (void)_Cellular_AtcmdRequestWithCallback(p_context, atReqCommon);
-            cellularStatus = aws_cellular_hardreset(p_context);
-        }
-        else
-        {
-            LogError(("Cellular_FactoryReset: couldn't resolve AT+SQNSFACTORYRESET"));
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        memset((void *)&pdpContextsInfo, 0x00, sizeof(CellularPdnContextInfo_t));   //cast
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CGDCONT?");    //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqGetCurrentApnName);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_FactoryReset: couldn't resolve AT+CGDCONT?"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-        else
-        {
-            if ((false != pdpContextsInfo.contextsPresent[cnt_res - 1]) &&
-                (0     == strncmp((char *)pdpContextsInfo.apnName[cnt_res - 1], "RESET", 5)))  //cast
-            {
-                LogError(("Cellular_FactoryReset: couldn't resolve factory reset"));
-                cellularStatus = CELLULAR_UNKNOWN;
-            }
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-/* Implementation of Cellular_SetBaudrate */
-CellularError_t Cellular_SetBaudrate(CellularHandle_t cellularHandle,
-                                     const uint32_t   baudrate)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-    sci_err_t           sci_ret        = SCI_SUCCESS;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqQuery;
-    atReqQuery.pAtCmd       = (char *)cmdBuf;
-    atReqQuery.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqQuery.pAtRspPrefix = NULL;
-    atReqQuery.respCallback = NULL;
-    atReqQuery.pData        = NULL;
-    atReqQuery.dataLen      = 0;
-#else
-    CellularAtReq_t atReqQuery =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_SetBaudrate: _Cellular_CheckLibraryStatus failed"));
-    }
-    else if (0 == baudrate)
-    {
-        LogError(("Cellular_SetBaudrate: Invalid argument"));
-        pktStatus = CELLULAR_PKT_STATUS_BAD_PARAM;
-    }
-    else
-    {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CFUN=5");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQuery);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_SetBaudrate: couldn't resolve %s", cmdBuf));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,
-                        "AT+SQNHWCFG=\"uart0\",\"enable\",\"rtscts\",\"%ld\",\"8\",\"none\",\"1\",\"at\"", baudrate);
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQuery);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_SetBaudrate: couldn't resolve %s", cmdBuf));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        sci_ret = aws_cellular_temp_close(cellularHandle);
-
-        if (SCI_SUCCESS == sci_ret)
-        {
-            sci_ret = aws_cellular_serial_reopen(cellularHandle, baudrate);
-        }
-        else
-        {
-            cellularStatus = CELLULAR_UNKNOWN;
-        }
-
-        if (SCI_SUCCESS == sci_ret)
-        {
-            cellularStatus = aws_cellular_hardreset(p_context);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-/* Implementation of Cellular_StartUpLink */
-CellularError_t Cellular_StartUpLink(CellularHandle_t    cellularHandle,
-                                     const uint8_t       enable,
-                                     const uint16_t      earfcn,
-                                     const uint32_t      level)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqQueryStartUpLink;
-    atReqQueryStartUpLink.pAtCmd       = (char *)cmdBuf;
-    atReqQueryStartUpLink.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqQueryStartUpLink.pAtRspPrefix = NULL;
-    atReqQueryStartUpLink.respCallback = NULL;
-    atReqQueryStartUpLink.pData        = NULL;
-    atReqQueryStartUpLink.dataLen      = 0;
-#else
-    CellularAtReq_t atReqQueryStartUpLink =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_StartUpLink: _Cellular_CheckLibraryStatus failed"));
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CFUN=5");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_StartUpLink: couldn't resolve Start Up Link"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void) snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,   //cast
-                        "AT+SMCWTX=%u,%u,%ld", enable, earfcn, level);
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_StartUpLink: couldn't resolve Start Up Link"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-/* Implementation of Cellular_StartDownLink */
-CellularError_t Cellular_StartDownLink(CellularHandle_t    cellularHandle,
-                                       const uint16_t      earfcn)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReq;
-    atReq.pAtCmd       = (char *)cmdBuf;
-    atReq.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReq.pAtRspPrefix = NULL;
-    atReq.respCallback = NULL;
-    atReq.pData        = NULL;
-    atReq.dataLen      = 0;
-
-    CellularAtReq_t atReqQueryStartDownLink;
-    atReqQueryStartDownLink.pAtCmd       = (char *)cmdBuf;
-    atReqQueryStartDownLink.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqQueryStartDownLink.pAtRspPrefix = "+SMCWRX";
-    atReqQueryStartDownLink.respCallback = _Cellular_RecvFuncStartDownLink;
-    atReqQueryStartDownLink.pData        = NULL;
-    atReqQueryStartDownLink.dataLen      = 0;
-#else
-    CellularAtReq_t atReq =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-
-    CellularAtReq_t atReqQueryStartDownLink =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_WITH_PREFIX,
-        "+SMCWRX",
-        _Cellular_RecvFuncStartDownLink,
-        NULL,  //cast
-        0,
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_StartDownLink: _Cellular_CheckLibraryStatus failed"));
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+CFUN=5");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReq);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_StartDownLink: couldn't resolve Start Down Link"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SMCWRX=%d", earfcn);   //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartDownLink);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_StartDownLink: couldn't resolve Start Down Link"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-static CellularPktStatus_t _Cellular_RecvFuncStartDownLink(CellularContext_t                 * p_context,
-                                                           const CellularATCommandResponse_t * p_atresp,
-                                                           void                              * p_data,
-                                                           uint16_t                            dataLen)
-{
-    (void)dataLen;
-
-    uint8_t * p_inputline = NULL;
-
-    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
-    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    if (NULL == p_context)
-    {
-        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
-    }
-    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
-    {
-        LogError(("_Cellular_RecvFuncStartDownLink: Input Line passed is NULL"));
-        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
-    }
-    else
-    {
-#endif
-        p_inputline = (uint8_t *)p_atresp->pItm->pLine; //cast
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATRemovePrefix(&(char *)p_inputline);   //cast
-#endif
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS != atCoreStatus)
-        {
-            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-        }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    if (CELLULAR_PKT_STATUS_OK == pktStatus)
-    {
-        *(int32_t *)p_data = atoi((char *)p_inputline); //cast
-    }
-    else
-    {
-        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
-    }
-
-    return pktStatus;
-}
-
-/* Implementation of Cellular_SetPsmSettings */
-CellularError_t Cellular_SetPsmSettings(CellularHandle_t              cellularHandle,
-                                        const CellularPsmSettings_t * pPsmSettings)
-{
-    CellularContext_t      * p_context  = (CellularContext_t *)cellularHandle;                  //cast
-    st_aws_cellular_ctrl_t * p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;   //cast
-
-    CellularError_t cellularStatus = CELLULAR_SUCCESS;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t      semaphore_ret  = 0;
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* Make sure the library is open. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("_Cellular_CheckLibraryStatus failed"));
-    }
-    else if (NULL == pPsmSettings)
-    {
-        cellularStatus = CELLULAR_BAD_PARAMETER;
-    }
-    else
-    {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        cellularStatus = aws_cellular_psm_config(p_context, pPsmSettings->mode);
-
-        if (CELLULAR_SUCCESS == cellularStatus)
-        {
-            cellularStatus = Cellular_CommonSetPsmSettings(cellularHandle, pPsmSettings);
-        }
-
-        if ((CELLULAR_SUCCESS == cellularStatus) && (1 == pPsmSettings->mode))
-        {
-#if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
-            aws_cellular_rts_hw_flow_disable();
-#endif
-            aws_cellular_rts_ctrl(1);
-            p_aws_ctrl->psm_mode = 1;
-        }
-        else
-        {
-            aws_cellular_psm_config(p_context, 0);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    return cellularStatus;
-}
-
-/* Implementation of Cellular_GetSVN */
-CellularError_t Cellular_GetSVN(CellularHandle_t    cellularHandle,
-                                const st_aws_cellular_svn_t * p_svn)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqQueryStartUpLink;
-    atReqQueryStartUpLink.pAtCmd       = (char *)cmdBuf;
-    atReqQueryStartUpLink.atCmdType    = CELLULAR_AT_MULTI_WO_PREFIX;
-    atReqQueryStartUpLink.pAtRspPrefix = NULL;
-    atReqQueryStartUpLink.respCallback = _Cellular_RecvFuncGetSVN;
-    atReqQueryStartUpLink.pData        = (void *)p_svn;
-    atReqQueryStartUpLink.dataLen      = sizeof(st_aws_cellular_svn_t);
-#else
-    CellularAtReq_t atReqQueryStartUpLink =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_MULTI_WO_PREFIX,
-        NULL,
-        _Cellular_RecvFuncGetSVN,
-        (void *)p_svn,  //cast
-        sizeof(st_aws_cellular_svn_t),
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_GetSVN: _Cellular_CheckLibraryStatus failed"));
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "ATI1");  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_GetSVN: couldn't resolve ATI1 command"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-static CellularPktStatus_t _Cellular_RecvFuncGetSVN(CellularContext_t                 * p_context,
-                                                    const CellularATCommandResponse_t * p_atresp,
-                                                    void                              * p_data,
-                                                    uint16_t                            dataLen)
-{
-    (void)dataLen;
-
-    st_aws_cellular_svn_t * p_svn       = p_data;
-    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    if (NULL == p_context)
-    {
-        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
-    }
-    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
-    {
-        LogError(("_Cellular_RecvFuncGetSVN: Input Line passed is NULL"));
-        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
-    }
-    else
-    {
-#endif
-        (void)snprintf((char *)p_svn->ue_svn, AWS_CELLULAR_MAX_UE_SVN_LENGTH, p_atresp->pItm->pLine);           //cast
-        (void)snprintf((char *)p_svn->lr_svn, AWS_CELLULAR_MAX_LR_SVN_LENGTH, p_atresp->pItm->pNext->pLine);    //cast
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    return pktStatus;
-}
-
-/* Implementation of Cellular_SetEidrxSettingsEXT */
-CellularError_t Cellular_SetEidrxSettingsEXT(CellularHandle_t                cellularHandle,
-                                             const CellularEidrxSettings_t * p_eidrxsettings)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqSetEidrx;
-    atReqSetEidrx.pAtCmd       = (char *)cmdBuf;
-    atReqSetEidrx.atCmdType    = CELLULAR_AT_NO_RESULT;
-    atReqSetEidrx.pAtRspPrefix = NULL;
-    atReqSetEidrx.respCallback = NULL;
-    atReqSetEidrx.pData        = NULL;
-    atReqSetEidrx.dataLen      = 0;
-#else
-    CellularAtReq_t atReqSetEidrx =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_NO_RESULT,
-        NULL,
-        NULL,
-        NULL,
-        0,
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogError(("_Cellular_CheckLibraryStatus failed"));
-    }
-    else if (NULL == p_eidrxsettings)
-    {
-        LogError(("Cellular_CommonSetEidrxSettings : Bad parameter"));
-        cellularStatus = CELLULAR_BAD_PARAMETER;
-    }
-    else
-    {
-#endif
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE,    //cast
-                        "%s%d,%d,\"" PRINTF_BINARY_PATTERN_INT4 "\",\"" PRINTF_BINARY_PATTERN_INT4 "\"",
-                        "AT+SQNEDRX=",
-                        p_eidrxsettings->mode,
-                        p_eidrxsettings->rat,
-                        PRINTF_BYTE_TO_BINARY_INT4(p_eidrxsettings->requestedEdrxVaue),
-                        PRINTF_BYTE_TO_BINARY_INT4(p_eidrxsettings->pagingTimeWindow));
-
-        LogDebug(("Eidrx setting: %s ", cmdBuf));
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqSetEidrx);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("_Cellular_SetEidrxSettings: couldn't set Eidrx settings"));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    return cellularStatus;
-}
-
-/* Implementation of Cellular_GetSocketDataSize */
-CellularError_t Cellular_GetSocketDataSize(CellularHandle_t        cellularHandle,
-                                            CellularSocketHandle_t socketHandle,
-                                            const uint16_t       * p_size)
-{
-    CellularContext_t * p_context      = (CellularContext_t *)cellularHandle;
-    CellularError_t     cellularStatus = CELLULAR_SUCCESS;
-    CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-    BaseType_t          semaphore_ret  = 0;
-#endif
-
-    uint8_t             cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
-
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t atReqQueryStartUpLink;
-    atReqQueryStartUpLink.pAtCmd       = (char *)cmdBuf;
-    atReqQueryStartUpLink.atCmdType    = CELLULAR_AT_WITH_PREFIX;
-    atReqQueryStartUpLink.pAtRspPrefix = "+SQNSI";
-    atReqQueryStartUpLink.respCallback = _Cellular_RecvFuncGetSocketDataSize;
-    atReqQueryStartUpLink.pData        = (void *)p_size;
-    atReqQueryStartUpLink.dataLen      = sizeof(uint16_t);
-#else
-    CellularAtReq_t atReqQueryStartUpLink =
-    {
-        (char *)cmdBuf, //cast
-        CELLULAR_AT_WITH_PREFIX,
-        "+SQNSI",
-        _Cellular_RecvFuncGetSocketDataSize,
-        (void *)p_size,  //cast
-        sizeof(uint16_t),
-    };
-#endif
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    /* p_context is checked in _Cellular_CheckLibraryStatus function. */
-    cellularStatus = _Cellular_CheckLibraryStatus(p_context);
-
-    if (CELLULAR_SUCCESS != cellularStatus)
-    {
-        LogDebug(("Cellular_GetSocketDataSize: _Cellular_CheckLibraryStatus failed"));
-    }
-
-    if ((NULL == socketHandle) || (NULL == p_size))
-    {
-        LogDebug(("Cellular_GetSocketDataSize: Invalid argument"));
-        cellularStatus = CELLULAR_INVALID_HANDLE;
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellularStatus)
-    {
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        semaphore_ret = aws_cellular_rts_deactive(p_context);
-#endif
-
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSI=%ld", socketHandle->socketId + 1);  //cast
-        pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqQueryStartUpLink);
-
-        if (CELLULAR_PKT_STATUS_OK != pktStatus)
-        {
-            LogError(("Cellular_GetSocketDataSize: couldn't resolve %s command", cmdBuf));
-            cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
-        }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
-        aws_cellular_rts_active(p_context, semaphore_ret);
-#endif
-    }
-
-    return cellularStatus;
-}
-
-static CellularPktStatus_t _Cellular_RecvFuncGetSocketDataSize(CellularContext_t                 * p_context,
-                                                               const CellularATCommandResponse_t * p_atresp,
-                                                               void                              * p_data,
-                                                               uint16_t                            dataLen)
-{
-    (void)dataLen;
-
-    uint16_t * p_ret       = p_data;
-    uint8_t  * p_inputline = NULL;
-    uint8_t  * p_token     = NULL;
-
-    CellularPktStatus_t pktStatus    = CELLULAR_PKT_STATUS_OK;
-    CellularATError_t   atCoreStatus = CELLULAR_AT_SUCCESS;
-
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    if (NULL == p_context)
-    {
-        pktStatus = CELLULAR_PKT_STATUS_INVALID_HANDLE;
-    }
-    else if ((NULL == p_atresp) || (NULL == p_atresp->pItm) || (NULL == p_atresp->pItm->pLine))
-    {
-        LogError(("_Cellular_RecvFuncGetSVN: Input Line passed is NULL"));
-        pktStatus = CELLULAR_PKT_STATUS_FAILURE;
-    }
-    else
-    {
-#endif
-        p_inputline  = (uint8_t *)p_atresp->pItm->pLine;                //cast
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-        atCoreStatus = Cellular_ATRemovePrefix((char **)&p_inputline);  /* Fixed build error on CC-RL. */
-#else
-        atCoreStatus = Cellular_ATRemovePrefix(&(char *)p_inputline);   //cast
-#endif
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            atCoreStatus = Cellular_ATRemoveAllDoubleQuote((char *)p_inputline);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            atCoreStatus = Cellular_ATRemoveAllWhiteSpaces((char *)p_inputline);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            /* Get connId */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
-#else
-            atCoreStatus = Cellular_ATGetNextTok(&(char *)p_inputline, &(char *)p_token);   //cast
-#endif
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            /* Get sent */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
-#else
-            atCoreStatus = Cellular_ATGetNextTok(&(char *)p_inputline, &(char *)p_token);   //cast
-#endif
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            /* Get received */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
-#else
-            atCoreStatus = Cellular_ATGetNextTok(&(char *)p_inputline, &(char *)p_token);   //cast
-#endif
-        }
-
-        if (CELLULAR_AT_SUCCESS == atCoreStatus)
-        {
-            /* Get buff_in */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            atCoreStatus = Cellular_ATGetNextTok((char **)&p_inputline, (char **)&p_token);  /* Fixed build error on CC-RL. */
-#else
-            atCoreStatus = Cellular_ATGetNextTok(&(char *)p_inputline, &(char *)p_token);   //cast
-#endif
-        }
-
-        if ((CELLULAR_AT_SUCCESS == atCoreStatus) && (NULL != p_token))
-        {
-            *p_ret = (uint16_t)atoi((char *)p_token);    //cast
-        }
-
-        if (CELLULAR_AT_SUCCESS != atCoreStatus)
-        {
-            pktStatus = _Cellular_TranslateAtCoreStatus(atCoreStatus);
-        }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
-    }
-#endif
-
-    return pktStatus;
-}

@@ -36,14 +36,10 @@
  **********************************************************************************************************************/
 static void cellular_ryz_urc_process_sqnsring(CellularContext_t * pContext, char * pInputLine);
 static void cellular_ryz_urc_process_sysstart(CellularContext_t * pContext, char * pInputLine);
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static void cellular_ryz_urc_process_shutdown(CellularContext_t * pContext, char * pInputLine);
-#endif
 static void cellular_ryz_urc_process_socket_shutdown(CellularContext_t * pContext, char * pInputLine);
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static void cellular_ryz_urc_process_csq(CellularContext_t * pContext, char * pInputLine);
 static void cellular_ryz_urc_process_cgact(CellularContext_t * pContext, char * pInputLine);
-#endif
 
 /* Remapping these common functions because function pointer in CellularAtParseTokenMap_t doesn't match */
 static void cellular_ryz_urc_process_cereg(CellularContext_t * pContext, char * pInputLine);
@@ -77,11 +73,9 @@ static void cellular_ryz_urc_process_cereg(CellularContext_t * pContext, char * 
 CellularAtParseTokenMap_t cellular_urc_handler_table[] =
 {
     {"CEREG",    cellular_ryz_urc_process_cereg          }, // Network registration status change notification
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     {"CGACT",    cellular_ryz_urc_process_cgact          }, // Indicates the state of PDP context activation
     {"CSQ",      cellular_ryz_urc_process_csq            }, // Received signal strength indication
     {"SHUTDOWN", cellular_ryz_urc_process_shutdown       }, // Power down completed, safe to turn cut power supply
-#endif
     {"SQNSH",    cellular_ryz_urc_process_socket_shutdown}, // Socket closed
     {"SQNSRING", cellular_ryz_urc_process_sqnsring       }, // Socket notification (receive)
     {"SYSSTART", cellular_ryz_urc_process_sysstart       }, // System start/restarted notification
@@ -102,10 +96,8 @@ static void cellular_ryz_urc_process_sqnsring (CellularContext_t * pContext, cha
     CellularSocketContext_t * pSocketData     = NULL;
     int32_t                   socketId        = 0;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((pContext != NULL) && (pInputLine != NULL))
     {
-#endif
         /* The inputline is in this format +SQNSRING:<connId> */
         atCoreStatus = Cellular_ATGetNextTok(&pLocalInputLine, &pToken);
 
@@ -136,9 +128,7 @@ static void cellular_ryz_urc_process_sqnsring (CellularContext_t * pContext, cha
                 }
             }
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
 
 static void cellular_ryz_urc_process_socket_shutdown (CellularContext_t * pContext, char * pInputLine)
@@ -149,10 +139,8 @@ static void cellular_ryz_urc_process_socket_shutdown (CellularContext_t * pConte
     CellularSocketContext_t * pSocketData     = NULL;
     int32_t                   socketId        = 0;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((pContext != NULL) && (pInputLine != NULL))
     {
-#endif
         /* The inputline is in this format +SQNSH:<connId> */
         atCoreStatus = Cellular_ATGetNextTok(&pLocalInputLine, &pToken);
 
@@ -185,9 +173,7 @@ static void cellular_ryz_urc_process_socket_shutdown (CellularContext_t * pConte
                 }
             }
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
 
 static void cellular_ryz_urc_process_sysstart (CellularContext_t * pContext, char * pInputLine)
@@ -197,14 +183,12 @@ static void cellular_ryz_urc_process_sysstart (CellularContext_t * pContext, cha
 
     st_aws_cellular_ctrl_t * p_ctrl = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogWarn(("cellular_ryz_urc_process_sysstart: Context not set"));
     }
     else
     {
-#endif
         LogDebug(("cellular_ryz_urc_process_sysstart: Modem Ready event received"));
 
         if (NULL != pContext->pModueContext)
@@ -214,12 +198,9 @@ static void cellular_ryz_urc_process_sysstart (CellularContext_t * pContext, cha
         }
 
         _Cellular_ModemEventCallback(pContext, CELLULAR_MODEM_EVENT_BOOTUP_OR_REBOOT);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 static void cellular_ryz_urc_process_shutdown (CellularContext_t * pContext, char * pInputLine)
 {
     /* The token is the pInputLine. No need to process the pInputLine. */
@@ -227,14 +208,12 @@ static void cellular_ryz_urc_process_shutdown (CellularContext_t * pContext, cha
 
     st_aws_cellular_ctrl_t * p_ctrl = NULL;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogWarn(("cellular_ryz_urc_process_shutdown: Context not set"));
     }
     else
     {
-#endif
         LogDebug(("cellular_ryz_urc_process_shutdown: Modem Shutdown event received"));
 
         if (NULL != pContext->pModueContext)
@@ -244,29 +223,20 @@ static void cellular_ryz_urc_process_shutdown (CellularContext_t * pContext, cha
         }
 
         _Cellular_ModemEventCallback(pContext, CELLULAR_MODEM_EVENT_POWERED_DOWN);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
-#endif
 
 static void cellular_ryz_urc_process_cereg (CellularContext_t * pContext, char * pInputLine)
 {
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pContext == NULL)
     {
         LogWarn(("cellular_ryz_urc_process_cereg: Context not set"));
     }
     else
     {
-#endif
         Cellular_CommonUrcProcessCereg(pContext, pInputLine);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
-
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 
 static void cellular_ryz_urc_process_csq (CellularContext_t * pContext, char * pInputLine)
 {
@@ -277,19 +247,13 @@ static void cellular_ryz_urc_process_csq (CellularContext_t * pContext, char * p
     int32_t              rssi             = 0;
     int32_t              ber              = 0;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == pContext)
     {
         LogWarn(("cellular_ryz_urc_process_csq: Context not set"));
     }
     else
     {
-#endif
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
         ret = Cellular_ATGetNextTok((char **)&p_localinputline, (char **)&p_token); /* Fixed build error on CC-RL. */
-#else
-        ret = Cellular_ATGetNextTok(&(char *)p_localinputline, &(char *)p_token);   //cast
-#endif
 
         if (CELLULAR_AT_SUCCESS == ret)
         {
@@ -309,9 +273,7 @@ static void cellular_ryz_urc_process_csq (CellularContext_t * pContext, char * p
                                                                 &signalinfo,
                                                                 pContext->cbEvents.pSignalStrengthChangedCallbackContext);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
 
 static void cellular_ryz_urc_process_cgact (CellularContext_t * pContext, char * pInputLine)
@@ -322,19 +284,13 @@ static void cellular_ryz_urc_process_cgact (CellularContext_t * pContext, char *
     int32_t           contextid        = 0;
     int32_t           state            = 0;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == pContext)
     {
         LogWarn(("cellular_ryz_urc_process_cgact: Context not set"));
     }
     else
     {
-#endif
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
         ret = Cellular_ATGetNextTok((char **)&p_localinputline, (char **)&p_token); /* Fixed build error on CC-RL. */
-#else
-        ret = Cellular_ATGetNextTok(&(char *)p_localinputline, &(char *)p_token);   //cast
-#endif
 
         if (CELLULAR_AT_SUCCESS == ret)
         {
@@ -361,8 +317,5 @@ static void cellular_ryz_urc_process_cgact (CellularContext_t * pContext, char *
                                                     pContext->cbEvents.pPdnEventCallbackContext);
             }
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 }
-#endif

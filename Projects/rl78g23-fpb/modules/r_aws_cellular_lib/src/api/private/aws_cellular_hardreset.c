@@ -14,7 +14,7 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : aws_cellular_hardreset.c
@@ -58,6 +58,7 @@ CellularError_t aws_cellular_hardreset(CellularHandle_t cellularHandle)
     Platform_Delay(1);   /* hold reset signal time for cellular module */
     AWS_CELLULAR_SET_PODR(AWS_CELLULAR_CFG_RESET_PORT, AWS_CELLULAR_CFG_RESET_PIN) = AWS_CELLULAR_CFG_RESET_SIGNAL_OFF;
 
+    /* WAIT_LOOP */
     while (1)
     {
         if (AWS_CELLULAR_MODULE_START_FLG == p_aws_ctrl->module_flg)
@@ -71,7 +72,7 @@ CellularError_t aws_cellular_hardreset(CellularHandle_t cellularHandle)
            Platform_Delay(1000);   //cast
         }
 
-        if (cnt > AWS_CELLULAR_RESTART_LIMIT)
+        if (cnt >= AWS_CELLULAR_RESTART_LIMIT)
         {
             cellularStatus = CELLULAR_MODEM_NOT_READY;
            break;

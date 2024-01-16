@@ -14,7 +14,7 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_aws_cellular_close.c
@@ -52,6 +52,7 @@ CellularError_t R_AWS_CELLULAR_Close(CellularHandle_t cellularHandle)
     st_aws_cellular_ctrl_t * p_aws_ctrl = NULL;
     CellularError_t          ret        = CELLULAR_SUCCESS;
     uint8_t                  cnt        = 0;
+    BaseType_t               semaphore_ret = 0;
 
     if (NULL != cellularHandle)
     {
@@ -61,7 +62,10 @@ CellularError_t R_AWS_CELLULAR_Close(CellularHandle_t cellularHandle)
         }
         else
         {
+            semaphore_ret = aws_cellular_rts_deactive(p_context);
+
             aws_cellular_closesocket(cellularHandle);
+            aws_cellular_psm_config(p_context, 0);
 
             ret = aws_cellular_hardreset(cellularHandle);
 
@@ -69,6 +73,8 @@ CellularError_t R_AWS_CELLULAR_Close(CellularHandle_t cellularHandle)
             {
                 cellular_shutdown(cellularHandle);
                 p_aws_ctrl = (st_aws_cellular_ctrl_t *)p_context->pModueContext;    //cast
+
+                /* WAIT_LOOP */
                 while (1)
                 {
                     if (AWS_CELLULAR_MODULE_SHUTDOWN_FLG == p_aws_ctrl->module_flg)
@@ -82,12 +88,14 @@ CellularError_t R_AWS_CELLULAR_Close(CellularHandle_t cellularHandle)
                        Platform_Delay(1000);   //cast
                     }
 
-                    if (cnt > AWS_CELLULAR_RESTART_LIMIT)
+                    if (cnt >= AWS_CELLULAR_RESTART_LIMIT)
                     {
                        break;
                     }
                 }
             }
+
+            aws_cellular_rts_active(p_context, semaphore_ret);
 
             ret = Cellular_Cleanup(cellularHandle);
         }
@@ -129,7 +137,7 @@ static void cellular_shutdown(CellularHandle_t cellularHandle)
 
     if (CELLULAR_SUCCESS == cellularStatus)
     {
-        (void)snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSSHDN");    //cast
+        (void)snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNSSHDN");    //cast
         pktStatus = _Cellular_AtcmdRequestWithCallback(p_context, atReqShutdown);
 
         if (CELLULAR_PKT_STATUS_OK != pktStatus)

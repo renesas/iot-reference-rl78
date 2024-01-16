@@ -49,6 +49,8 @@
 
 #define AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT     (60000)  /* Timeout period before an Ack response is returned when AT command is executed */
 
+#define AWS_CELLULAR_CFG_SEND_DELAY             (150)    /* Transmission delay after data mode shift(msec) */
+
 #define AWS_CELLULAR_CFG_RING_LINE_ACTIVE_TIME  (1000)   /* RING line active duration (1msec, 1000~5000)*/
 #define AWS_CELLULAR_CFG_PSM_PREPARATION_TIME   (100)    /* Reception guard time before the module transitions to PSM (1msec, 100~10000) */
 #define AWS_CELLULAR_CFG_PSM_WAKEUP_LATENCY     (5000)   /* Maximum authorized wake-up latency (1msec, 0~10000) */
@@ -65,6 +67,8 @@
 #define AWS_CELLULAR_CFG_RESET_SIGNAL_OFF       (1)
 #endif
 
+#define AWS_CELLULAR_CFG_START_BIT_EDGE         (0)         /* 0: Detected at Low level, 1: Detect on falling edge */
+
 #define AWS_CELLULAR_CFG_CTS_SW_CTRL            (0)
 #define AWS_CELLULAR_CFG_CTS_PORT               0           /* CTS port number */
 #define AWS_CELLULAR_CFG_CTS_PIN                2           /* CTS Pin number */
@@ -77,12 +81,6 @@
 #define AWS_CELLULAR_CFG_RESET_PIN              0           /* Reset pin number */
 
 #define AWS_CELLULAR_CFG_IRQ_NUM                (5)
-
-/* Parameter check enable
- 0 : Disable parameter check.
- 1 : Enable parameter check.
-*/
-#define AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE  (0)
 
 /* Board dependent settings; please use the value for each setting listed below depending on the board you use.
 

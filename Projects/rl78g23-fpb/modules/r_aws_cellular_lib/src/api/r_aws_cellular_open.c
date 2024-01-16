@@ -14,7 +14,7 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : r_aws_cellular_open.c
@@ -37,20 +37,12 @@
 /**********************************************************************************************************************
  * Exported global variables
  *********************************************************************************************************************/
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-st_aws_cellular_ctrl_t g_aws_cellular_ctrl = {AWS_CELLULAR_MODULE_FLG_INIT,
-                                              0,
-                                              NULL,
-                                              NULL,
-                                              NULL};
-#else
 st_aws_cellular_ctrl_t g_aws_cellular_ctrl = {AWS_CELLULAR_MODULE_FLG_INIT,
                                               0,
                                               NULL,
                                               NULL,
                                               NULL,
                                               NULL};
-#endif /* defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) */
 
 /**********************************************************************************************************************
  * Private (static) variables and functions
@@ -61,29 +53,29 @@ st_aws_cellular_ctrl_t g_aws_cellular_ctrl = {AWS_CELLULAR_MODULE_FLG_INIT,
  ************************************************************************************************/
 CellularError_t R_AWS_CELLULAR_Open(CellularHandle_t * cellularHandle)
 {
-    CellularContext_t       * p_context  = (CellularContext_t *)cellularHandle;
+    CellularContext_t       * p_context  = (CellularContext_t *)*cellularHandle;
     CellularError_t           ret        = CELLULAR_SUCCESS;
     CellularCommInterface_t * p_comm_if  = &g_cellular_comm_interface;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL != cellularHandle)
     {
-#endif
-        if (true == p_context->bLibOpened)
+        if (NULL != p_context)
         {
-            ret = CELLULAR_LIBRARY_ALREADY_OPEN;
+            if (true == p_context->bLibOpened)
+            {
+                ret = CELLULAR_LIBRARY_ALREADY_OPEN;
+            }
         }
-        else
+
+        if (CELLULAR_SUCCESS == ret)
         {
             ret = Cellular_Init(cellularHandle, p_comm_if);
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
     else
     {
         ret = CELLULAR_INVALID_HANDLE;
     }
-#endif
 
     return ret;
 }

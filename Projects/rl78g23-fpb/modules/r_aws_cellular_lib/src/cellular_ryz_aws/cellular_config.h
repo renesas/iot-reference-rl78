@@ -1,4 +1,5 @@
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
 #include "r_aws_cellular_config.h"
 #endif
 

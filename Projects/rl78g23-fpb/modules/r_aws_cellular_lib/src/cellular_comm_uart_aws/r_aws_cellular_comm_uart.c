@@ -173,12 +173,13 @@ static CellularCommInterfaceError_t aws_cellular_send (CellularCommInterfaceHand
                                                        uint32_t dataLength,
                                                        uint32_t timeoutMilliseconds,
                                                        uint32_t * pDataSentLength);
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
 static uint32_t                     aws_cellular_timeout_reconfig (st_aws_cellular_timeout_ctrl_t * const p_timeout);
 #if AWS_CELLULAR_CFG_CTS_SW_CTRL == 1
 static CellularCommInterfaceError_t aws_cellular_wait_bits (EventGroupHandle_t hdl, uint32_t timeout);
 #endif
-#endif /* defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__) */
+#endif
 
 /*-----------------------------------------------------------*/
 
@@ -267,6 +268,9 @@ static void aws_cellular_uart_callback(void * const p_Args)
         }
     }
 }
+/***********************************************************************
+ * End of function aws_cellular_uart_callback
+ **********************************************************************/
 
 /************************************************************************
  * Function Name  @fn            aws_cellular_serial_open
@@ -275,7 +279,8 @@ static sci_err_t aws_cellular_serial_open(st_aws_cellular_uart_ctrl_t * p_aws_ce
 {
     sci_err_t   sci_ret     = SCI_SUCCESS;
     sci_cfg_t   sci_cfg     = {0};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     uint8_t     tx_priority = AWS_CELLULAR_CFG_SCI_PRIORITY - 1;
 #endif
 
@@ -292,11 +297,15 @@ static sci_err_t aws_cellular_serial_open(st_aws_cellular_uart_ctrl_t * p_aws_ce
     sci_ret = R_SCI_Open(AWS_CELLULAR_SERIAL_CH, SCI_MODE_ASYNC, &sci_cfg,
                          aws_cellular_uart_callback, &p_aws_cellular_uart_ctrl->sci_hdl);
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     if (SCI_SUCCESS == sci_ret)
     {
 #if AWS_CELLULAR_CFG_CTS_SW_CTRL == 0
-        R_SCI_Control(p_aws_cellular_uart_ctrl->sci_hdl, SCI_CMD_EN_CTS_IN, NULL);
+        R_SCI_Control(p_aws_cellular_uart_ctrl->sci_hdl, SCI_CMD_EN_CTS_IN, FIT_NO_PTR);
+#endif
+#if AWS_CELLULAR_CFG_START_BIT_EDGE == 1
+        R_SCI_Control(p_aws_cellular_uart_ctrl->sci_hdl, SCI_CMD_START_BIT_EDGE, FIT_NO_PTR);
 #endif
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         R_SCI_Control(p_aws_cellular_uart_ctrl->sci_hdl, SCI_CMD_SET_TXI_PRIORITY, &tx_priority);
@@ -314,6 +323,9 @@ static sci_err_t aws_cellular_serial_open(st_aws_cellular_uart_ctrl_t * p_aws_ce
 
     return sci_ret;
 }
+/***********************************************************************
+ * End of function aws_cellular_serial_open
+ **********************************************************************/
 
 /************************************************************************
  * Function Name  @fn            aws_cellular_serial_reopen
@@ -325,7 +337,8 @@ sci_err_t aws_cellular_serial_reopen(CellularHandle_t cellularHandle, const uint
 
     sci_err_t   sci_ret     = SCI_SUCCESS;
     sci_cfg_t   sci_cfg     = {0};
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     uint8_t     tx_priority = AWS_CELLULAR_CFG_SCI_PRIORITY - 1;
 #endif
 
@@ -340,11 +353,15 @@ sci_err_t aws_cellular_serial_reopen(CellularHandle_t cellularHandle, const uint
     sci_ret = R_SCI_Open(AWS_CELLULAR_SERIAL_CH, SCI_MODE_ASYNC, &sci_cfg,
                          aws_cellular_uart_callback, &p_uart_ctrl->sci_hdl);
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     if (SCI_SUCCESS == sci_ret)
     {
 #if AWS_CELLULAR_CFG_CTS_SW_CTRL == 0
-        R_SCI_Control(p_uart_ctrl->sci_hdl, SCI_CMD_EN_CTS_IN, NULL);
+        R_SCI_Control(p_uart_ctrl->sci_hdl, SCI_CMD_EN_CTS_IN, FIT_NO_PTR);
+#endif
+#if AWS_CELLULAR_CFG_START_BIT_EDGE == 1
+        R_SCI_Control(p_uart_ctrl->sci_hdl, SCI_CMD_START_BIT_EDGE, FIT_NO_PTR);
 #endif
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
         R_SCI_Control(p_uart_ctrl->sci_hdl, SCI_CMD_SET_TXI_PRIORITY, &tx_priority);
@@ -362,6 +379,9 @@ sci_err_t aws_cellular_serial_reopen(CellularHandle_t cellularHandle, const uint
 
     return sci_ret;
 }
+/***********************************************************************
+ * End of function aws_cellular_serial_reopen
+ **********************************************************************/
 
 /************************************************************************
  * Function Name  @fn            aws_cellular_temp_close
@@ -408,7 +428,6 @@ static CellularCommInterfaceError_t aws_cellular_open(CellularCommInterfaceRecei
     sci_err_t                    sci_ret;
     CellularCommInterfaceError_t ret = IOT_COMM_INTERFACE_SUCCESS;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     /* check input parameter. */
     if ((NULL == pCommInterfaceHandle) || (NULL == receiveCallback))
     {
@@ -420,27 +439,20 @@ static CellularCommInterfaceError_t aws_cellular_open(CellularCommInterfaceRecei
     }
     else
     {
-#endif
         /* Initialize the context structure. */
         (void)memset(p_aws_cellular_uart_ctrl, 0, sizeof(st_aws_cellular_uart_ctrl_t));
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     /* Setup the read FIFO. */
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (IOT_COMM_INTERFACE_SUCCESS == ret)
     {
-#endif
         p_aws_cellular_uart_ctrl->p_event_hdl = xEventGroupCreate();
         if (NULL == p_aws_cellular_uart_ctrl->p_event_hdl)
         {
             LogError(("EventGroup create failed"));
             ret = IOT_COMM_INTERFACE_NO_MEMORY;
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     if (IOT_COMM_INTERFACE_SUCCESS == ret)
     {
@@ -477,7 +489,6 @@ static CellularCommInterfaceError_t aws_cellular_close(CellularCommInterfaceHand
 
     CellularCommInterfaceError_t ret = IOT_COMM_INTERFACE_FAILURE;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL == p_aws_cellular_uart_ctrl)
     {
         ret = IOT_COMM_INTERFACE_BAD_PARAMETER;
@@ -488,7 +499,6 @@ static CellularCommInterfaceError_t aws_cellular_close(CellularCommInterfaceHand
     }
     else
     {
-#endif
         if (NULL != p_aws_cellular_uart_ctrl->sci_hdl)
         {
             aws_cellular_serial_close(p_aws_cellular_uart_ctrl);
@@ -506,9 +516,7 @@ static CellularCommInterfaceError_t aws_cellular_close(CellularCommInterfaceHand
         p_aws_cellular_uart_ctrl->if_open = false;
 
         ret = IOT_COMM_INTERFACE_SUCCESS;
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return ret;
 }
@@ -526,75 +534,93 @@ static CellularCommInterfaceError_t aws_cellular_send(CellularCommInterfaceHandl
                                                       uint32_t timeoutMilliseconds,
                                                       uint32_t * pDataSentLength)
 {
-    st_aws_cellular_uart_ctrl_t * p_uart_ctrl = (st_aws_cellular_uart_ctrl_t *)commInterfaceHandle;
+    st_aws_cellular_uart_ctrl_t * p_aws_cellular_uart_ctrl = (st_aws_cellular_uart_ctrl_t *)commInterfaceHandle;    //cast
+
     CellularCommInterfaceError_t ret = IOT_COMM_INTERFACE_SUCCESS;
-    EventBits_t uxBits;
-    uint32_t send_length;
-    uint32_t tick_sta;
-    uint32_t tick_timeout;
-    uint32_t tick_tmp;
+    sci_err_t                    err    = SCI_SUCCESS;
+    EventBits_t                  uxBits = 0;
+    uint32_t                     send_length;
+    uint32_t                     tick_sta;
+    uint32_t                     tick_timeout;
+    uint32_t                     tick_tmp;
 
     (*pDataSentLength) = 0;
     tick_timeout = pdMS_TO_TICKS(timeoutMilliseconds);
     tick_sta  = pdMS_TO_TICKS(xTaskGetTickCount());
 
-    while ((*pDataSentLength) < dataLength)
+    if ((NULL == p_aws_cellular_uart_ctrl) || (NULL == pData) || (NULL == pDataSentLength) || (0 == dataLength))
     {
-        (void)xEventGroupClearBits( p_uart_ctrl->p_event_hdl,
-                                    AWS_CELLUALR_COMM_EVT_TX_DONE |
-                                    AWS_CELLUALR_COMM_EVT_TX_ERROR |
-                                    AWS_CELLUALR_COMM_EVT_TX_ABORTED );
-
-        /* Calculate Send length */
-        if ((dataLength - (*pDataSentLength)) > p_uart_ctrl->tx_buff_size)
+        ret = IOT_COMM_INTERFACE_BAD_PARAMETER;
+    }
+    else
+    {
+        if (false == p_aws_cellular_uart_ctrl->if_open)
         {
-            send_length = p_uart_ctrl->tx_buff_size;
+            ret = IOT_COMM_INTERFACE_FAILURE;
         }
-        else
+    }
+
+    if (IOT_COMM_INTERFACE_SUCCESS == ret)
+    {
+        while ((*pDataSentLength) < dataLength)
         {
-            send_length = dataLength - (*pDataSentLength);
-        }
+            ( void ) xEventGroupClearBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                           AWS_CELLUALR_COMM_EVT_TX_DONE |
+                                           AWS_CELLUALR_COMM_EVT_TX_ERROR |
+                                           AWS_CELLUALR_COMM_EVT_TX_ABORTED);
 
-        /* Send data */
-        if (SCI_SUCCESS != R_SCI_Send(p_uart_ctrl->sci_hdl, (uint8_t __far *)pData + (*pDataSentLength), send_length))
-        {
-            ret = IOT_COMM_INTERFACE_DRIVER_ERROR;
-            break;
-        }
+            /* Calculate Send length */
+            if ((dataLength - (*pDataSentLength)) > p_aws_cellular_uart_ctrl->tx_buff_size)
+            {
+                send_length = p_aws_cellular_uart_ctrl->tx_buff_size;
+            }
+            else
+            {
+                send_length = dataLength - (*pDataSentLength);
+            }
 
-        /* Wait for transmit end */
-        uxBits = xEventGroupWaitBits( p_uart_ctrl->p_event_hdl,
-                                      AWS_CELLUALR_COMM_EVT_TX_DONE |
-                                      AWS_CELLUALR_COMM_EVT_TX_ERROR |
-                                      AWS_CELLUALR_COMM_EVT_TX_ABORTED,
-                                      pdTRUE,
-                                      pdFALSE,
-                                      pdMS_TO_TICKS( timeoutMilliseconds ) );
+            /* Send data */
+            err = R_SCI_Send(p_aws_cellular_uart_ctrl->sci_hdl, (uint8_t __far *)pData + (*pDataSentLength), send_length);
+            if (SCI_SUCCESS != err)
+            {
+                ret = IOT_COMM_INTERFACE_DRIVER_ERROR;
+                break;
+            }
 
-        /* No events? */
-        if (0U == uxBits)
-        {
-            ret = IOT_COMM_INTERFACE_TIMEOUT;
-            break;
-        }
+            /* Wait for transmit end */
+            uxBits = xEventGroupWaitBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                          AWS_CELLUALR_COMM_EVT_TX_DONE |
+                                          AWS_CELLUALR_COMM_EVT_TX_ERROR |
+                                          AWS_CELLUALR_COMM_EVT_TX_ABORTED,
+                                          pdTRUE,
+                                          pdFALSE,
+                                          pdMS_TO_TICKS(timeoutMilliseconds));
 
-        /* Error events? */
-        if (0U != (uxBits & (AWS_CELLUALR_COMM_EVT_TX_ERROR | AWS_CELLUALR_COMM_EVT_TX_ABORTED)))
-        {
-            ret = IOT_COMM_INTERFACE_DRIVER_ERROR;
-            break;
-        }
-
-        (*pDataSentLength) += send_length;
-
-        /* timeout? */
-        if (0 < timeoutMilliseconds)
-        {
-            tick_tmp = pdMS_TO_TICKS(xTaskGetTickCount()) - tick_sta;
-            if (tick_timeout <= tick_tmp)
+            /* No events? */
+            if (0U == uxBits)
             {
                 ret = IOT_COMM_INTERFACE_TIMEOUT;
                 break;
+            }
+
+            /* Error events? */
+            if (0U != (uxBits & (AWS_CELLUALR_COMM_EVT_TX_ERROR | AWS_CELLUALR_COMM_EVT_TX_ABORTED)))
+            {
+                ret = IOT_COMM_INTERFACE_DRIVER_ERROR;
+                break;
+            }
+
+            (*pDataSentLength) += send_length;
+
+            /* timeout? */
+            if (0 < timeoutMilliseconds)
+            {
+                tick_tmp = pdMS_TO_TICKS(xTaskGetTickCount()) - tick_sta;
+                if (tick_timeout <= tick_tmp)
+                {
+                    ret = IOT_COMM_INTERFACE_TIMEOUT;
+                    break;
+                }
             }
         }
     }
@@ -645,21 +671,21 @@ static CellularCommInterfaceError_t aws_cellular_send(CellularCommInterfaceHandl
     if (IOT_COMM_INTERFACE_SUCCESS == ret)
     {
 #if AWS_CELLULAR_CFG_CTS_SW_CTRL == 0
-        ( void ) xEventGroupClearBits( p_aws_cellular_uart_ctrl->p_event_hdl,
-                                       AWS_CELLUALR_COMM_EVT_TX_DONE |
-                                       AWS_CELLUALR_COMM_EVT_TX_ERROR |
-                                       AWS_CELLUALR_COMM_EVT_TX_ABORTED );
+        ( void ) xEventGroupClearBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                        AWS_CELLUALR_COMM_EVT_TX_DONE |
+                                        AWS_CELLUALR_COMM_EVT_TX_ERROR |
+                                        AWS_CELLUALR_COMM_EVT_TX_ABORTED);
 
         err = R_SCI_Send(p_aws_cellular_uart_ctrl->sci_hdl, (uint8_t *)pData, (uint16_t)dataLength);    //cast
         if (SCI_SUCCESS == err)
         {
-            uxBits = xEventGroupWaitBits( p_aws_cellular_uart_ctrl->p_event_hdl,
-                                          AWS_CELLUALR_COMM_EVT_TX_DONE |
-                                          AWS_CELLUALR_COMM_EVT_TX_ERROR |
-                                          AWS_CELLUALR_COMM_EVT_TX_ABORTED,
-                                          pdTRUE,
-                                          pdFALSE,
-                                          pdMS_TO_TICKS( timeoutMilliseconds ) );
+            uxBits = xEventGroupWaitBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                            AWS_CELLUALR_COMM_EVT_TX_DONE |
+                                            AWS_CELLUALR_COMM_EVT_TX_ERROR |
+                                            AWS_CELLUALR_COMM_EVT_TX_ABORTED,
+                                            pdTRUE,
+                                            pdFALSE,
+                                            pdMS_TO_TICKS(timeoutMilliseconds));
 
             if (0U != (uxBits & (AWS_CELLUALR_COMM_EVT_TX_ERROR | AWS_CELLUALR_COMM_EVT_TX_ABORTED)))
             {
@@ -681,14 +707,15 @@ static CellularCommInterfaceError_t aws_cellular_send(CellularCommInterfaceHandl
         }
 #else /* AWS_CELLULAR_CFG_CTS_SW_CTRL == 0 */
 
+        /* WAIT_LOOP */
         while (send_size < dataLength)
         {
             if (1 != AWS_CELLULAR_GET_PIDR(AWS_CELLULAR_CFG_CTS_PORT, AWS_CELLULAR_CFG_CTS_PIN))
             {
-                ( void ) xEventGroupClearBits( p_aws_cellular_uart_ctrl->p_event_hdl,
-                                               AWS_CELLUALR_COMM_EVT_TX_DONE |
-                                               AWS_CELLUALR_COMM_EVT_TX_ERROR |
-                                               AWS_CELLUALR_COMM_EVT_TX_ABORTED );
+                (void)xEventGroupClearBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                            AWS_CELLUALR_COMM_EVT_TX_DONE |
+                                            AWS_CELLUALR_COMM_EVT_TX_ERROR |
+                                            AWS_CELLUALR_COMM_EVT_TX_ABORTED);
 
                 err = R_SCI_Send(p_aws_cellular_uart_ctrl->sci_hdl, (uint8_t *)&pData[send_size], 1);    //cast
                 if (SCI_SUCCESS == err)
@@ -739,13 +766,15 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
                                                       uint32_t timeoutMilliseconds,
                                                       uint32_t * pDataReceivedLength)
 {
-    st_aws_cellular_uart_ctrl_t * p_uart_ctrl = (st_aws_cellular_uart_ctrl_t *)commInterfaceHandle;    //cast
+    st_aws_cellular_uart_ctrl_t * p_aws_cellular_uart_ctrl = (st_aws_cellular_uart_ctrl_t *)commInterfaceHandle;    //cast
+
     CellularCommInterfaceError_t ret = IOT_COMM_INTERFACE_SUCCESS;
 
     EventBits_t uxBits       = 0;
-    sci_err_t   sci_ret;
+    sci_err_t   sci_ret      = SCI_SUCCESS;
     uint8_t     rxChar       = 0;
     uint32_t    rxCount      = 0;
+    uint32_t    wait_timems  = AWS_CELLULAR_DEFAULT_RECV_WAIT;
     uint32_t    tick_sta;
     uint32_t    tick_timeout;
     uint32_t    tick_tmp;
@@ -754,66 +783,79 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
     tick_timeout = pdMS_TO_TICKS(timeoutMilliseconds);
     tick_sta  = pdMS_TO_TICKS(xTaskGetTickCount());
 
-    /* Set this flag to inform interrupt handler to stop calling callback function. */
-    p_uart_ctrl->rx_fifo_reading_flg = 1U;
-
-    ( void ) xEventGroupClearBits( p_uart_ctrl->p_event_hdl,
-                                   AWS_CELLUALR_COMM_EVT_RX_DATA |
-                                   AWS_CELLUALR_COMM_EVT_RX_ERROR |
-                                   AWS_CELLUALR_COMM_EVT_RX_ABORTED);
-
-    while (rxCount < bufferLength)
+    if ((NULL == p_aws_cellular_uart_ctrl) || (NULL == pBuffer) ||
+            (NULL == pDataReceivedLength) || (0 == bufferLength))
     {
-        sci_ret = R_SCI_Receive(p_uart_ctrl->sci_hdl, &rxChar, 1);
-        if (SCI_SUCCESS == sci_ret)
-        {
-            pBuffer[rxCount] = rxChar;
-            rxCount++;
-
-            if (((' ' == rxChar) && ('>' == pBuffer[rxCount - 2])) ||
-                    ((rxCount > 2) && ('\n' == rxChar)))
-            {
-                break;
-            }
-        }
-        else
-        {
-            uxBits = xEventGroupWaitBits( p_uart_ctrl->p_event_hdl,
-                                          AWS_CELLUALR_COMM_EVT_RX_DATA |
-                                          AWS_CELLUALR_COMM_EVT_RX_ERROR |
-                                          AWS_CELLUALR_COMM_EVT_RX_ABORTED,
-                                          pdTRUE,
-                                          pdFALSE,
-                                          pdMS_TO_TICKS(AWS_CELLULAR_DEFAULT_RECV_WAIT));  //cast
-
-            if (0U != (uxBits & (AWS_CELLUALR_COMM_EVT_RX_ERROR | AWS_CELLUALR_COMM_EVT_RX_ABORTED)))
-            {
-                ret = IOT_COMM_INTERFACE_DRIVER_ERROR;
-                break;
-            }
-        }
-
-        /* timeout? */
-        if (0 < timeoutMilliseconds)
-        {
-            tick_tmp = pdMS_TO_TICKS(xTaskGetTickCount()) - tick_sta;
-            if (tick_timeout <= tick_tmp)
-            {
-                ret = IOT_COMM_INTERFACE_TIMEOUT;
-                break;
-            }
-        }
+        ret = IOT_COMM_INTERFACE_BAD_PARAMETER;
     }
-
-    /* Clear this flag to inform interrupt handler to call callback function. */
-    p_uart_ctrl->rx_fifo_reading_flg = 0U;
-
-    *pDataReceivedLength = rxCount;
-
-    /* Return success if bytes received. Even if timeout or RX error. */
-    if (rxCount > 0)
+    else if (false == p_aws_cellular_uart_ctrl->if_open)
     {
-        ret = IOT_COMM_INTERFACE_SUCCESS;
+        ret = IOT_COMM_INTERFACE_FAILURE;
+    }
+    else
+    {
+        /* Set this flag to inform interrupt handler to stop calling callback function. */
+        p_aws_cellular_uart_ctrl->rx_fifo_reading_flg = 1U;
+
+        ( void ) xEventGroupClearBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                        AWS_CELLUALR_COMM_EVT_RX_DATA |
+                                        AWS_CELLUALR_COMM_EVT_RX_ERROR |
+                                        AWS_CELLUALR_COMM_EVT_RX_ABORTED);
+
+        /* WAIT_LOOP */
+        while (rxCount < bufferLength)
+        {
+            sci_ret = R_SCI_Receive(p_aws_cellular_uart_ctrl->sci_hdl, &rxChar, 1);
+            if (SCI_SUCCESS == sci_ret)
+            {
+                pBuffer[rxCount] = rxChar;
+                rxCount++;
+
+                if (((' ' == rxChar) && ('>' == pBuffer[rxCount - 2])) ||
+                        ((rxCount > 2) && ('\n' == rxChar)))
+                {
+                    break;
+                }
+            }
+            else
+            {
+                uxBits = xEventGroupWaitBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                                AWS_CELLUALR_COMM_EVT_RX_DATA |
+                                                AWS_CELLUALR_COMM_EVT_RX_ERROR |
+                                                AWS_CELLUALR_COMM_EVT_RX_ABORTED,
+                                                pdTRUE,
+                                                pdFALSE,
+                                                pdMS_TO_TICKS(wait_timems));  //cast
+
+                if (0U != (uxBits & (AWS_CELLUALR_COMM_EVT_RX_ERROR | AWS_CELLUALR_COMM_EVT_RX_ABORTED)))
+                {
+                    ret = IOT_COMM_INTERFACE_DRIVER_ERROR;
+                    break;
+                }
+            }
+
+            /* timeout? */
+            if (0 < timeoutMilliseconds)
+            {
+                tick_tmp = pdMS_TO_TICKS(xTaskGetTickCount()) - tick_sta;
+                if (tick_timeout <= tick_tmp)
+                {
+                    ret = IOT_COMM_INTERFACE_TIMEOUT;
+                    break;
+                }
+            }
+        }
+
+        /* Clear this flag to inform interrupt handler to call callback function. */
+        p_aws_cellular_uart_ctrl->rx_fifo_reading_flg = 0U;
+
+        *pDataReceivedLength = rxCount;
+
+        /* Return success if bytes received. Even if timeout or RX error. */
+        if (rxCount > 0)
+        {
+            ret = IOT_COMM_INTERFACE_SUCCESS;
+        }
     }
 
     return ret;
@@ -849,7 +891,6 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
         timeout.over_flg = 1;
     }
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if ((NULL == p_aws_cellular_uart_ctrl) || (NULL == pBuffer) ||
             (NULL == pDataReceivedLength) || (0 == bufferLength))
     {
@@ -861,15 +902,15 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
     }
     else
     {
-#endif
         /* Set this flag to inform interrupt handler to stop callling callback function. */
         p_aws_cellular_uart_ctrl->rx_fifo_reading_flg = 1U;
 
-        ( void ) xEventGroupClearBits( p_aws_cellular_uart_ctrl->p_event_hdl,
-                                       AWS_CELLUALR_COMM_EVT_RX_DATA |
-                                       AWS_CELLUALR_COMM_EVT_RX_ERROR |
-                                       AWS_CELLUALR_COMM_EVT_RX_ABORTED);
+        ( void ) xEventGroupClearBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                        AWS_CELLUALR_COMM_EVT_RX_DATA |
+                                        AWS_CELLUALR_COMM_EVT_RX_ERROR |
+                                        AWS_CELLUALR_COMM_EVT_RX_ABORTED);
 
+        /* WAIT_LOOP */
         while (rxCount < bufferLength)
         {
             sci_ret = R_SCI_Receive(p_aws_cellular_uart_ctrl->sci_hdl, &rxChar, 1);
@@ -901,13 +942,13 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
                     wait_timems = AWS_CELLULAR_DEFAULT_RECV_WAIT;
                 }
 
-                uxBits = xEventGroupWaitBits( p_aws_cellular_uart_ctrl->p_event_hdl,
-                                              AWS_CELLUALR_COMM_EVT_RX_DATA |
-                                              AWS_CELLUALR_COMM_EVT_RX_ERROR |
-                                              AWS_CELLUALR_COMM_EVT_RX_ABORTED,
-                                              pdTRUE,
-                                              pdFALSE,
-                                              pdMS_TO_TICKS(wait_timems));  //cast
+                uxBits = xEventGroupWaitBits(p_aws_cellular_uart_ctrl->p_event_hdl,
+                                                AWS_CELLUALR_COMM_EVT_RX_DATA |
+                                                AWS_CELLUALR_COMM_EVT_RX_ERROR |
+                                                AWS_CELLUALR_COMM_EVT_RX_ABORTED,
+                                                pdTRUE,
+                                                pdFALSE,
+                                                pdMS_TO_TICKS(wait_timems));  //cast
 
                 if (0U != (uxBits & (AWS_CELLUALR_COMM_EVT_RX_ERROR | AWS_CELLUALR_COMM_EVT_RX_ABORTED)))
                 {
@@ -934,9 +975,7 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
         {
             ret = IOT_COMM_INTERFACE_SUCCESS;
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return ret;
 }
@@ -945,7 +984,8 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
  * End of function aws_cellular_recv
  **********************************************************************/
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
 /************************************************************************
  * Function Name  @fn            aws_cellular_timeout_reconfig
  ***********************************************************************/

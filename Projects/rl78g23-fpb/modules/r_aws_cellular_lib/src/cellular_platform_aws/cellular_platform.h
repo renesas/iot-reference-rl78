@@ -71,11 +71,7 @@ bool Platform_CreateDetachedThread(void ( * threadRoutine)(void *),
                                    uint32_t priority,
                                    size_t   stackSize);
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#define PLATFORM_THREAD_DEFAULT_STACK_SIZE    (1024U)
-#else
 #define PLATFORM_THREAD_DEFAULT_STACK_SIZE    (2048U)
-#endif /* defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) */
 #define PLATFORM_THREAD_DEFAULT_PRIORITY      (configMAX_PRIORITIES - 1)
 
 /*-----------------------------------------------------------*/

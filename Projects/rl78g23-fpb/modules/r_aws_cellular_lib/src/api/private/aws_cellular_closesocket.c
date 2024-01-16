@@ -14,7 +14,7 @@
  * following link:
  * http://www.renesas.com/disclaimer
  *
- * Copyright (C) 2022 Renesas Electronics Corporation. All rights reserved.
+ * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
  *********************************************************************************************************************/
 /**********************************************************************************************************************
  * File Name    : aws_cellular_closesocket.c
@@ -68,6 +68,7 @@ CellularError_t aws_cellular_closesocket(CellularHandle_t cellularHandle)
 
     if (CELLULAR_SUCCESS == cellularStatus)
     {
+        /* WAIT_LOOP */
         for (cnt = 0; cnt < CELLULAR_NUM_SOCKET_MAX; cnt++)
         {
             if (NULL != p_context->pSocketData[cnt])
@@ -75,14 +76,15 @@ CellularError_t aws_cellular_closesocket(CellularHandle_t cellularHandle)
                 if (SOCKETSTATE_CONNECTING == p_context->pSocketData[cnt]->socketState)
                 {
                     /* Form the AT command. */
-                    snprintf((char *)cmdBuf, CELLULAR_AT_CMD_MAX_SIZE, "AT+SQNSH=%u",   //cast
+                    snprintf((char *)cmdBuf, sizeof(cmdBuf), "AT+SQNSH=%u",   //cast
                              p_context->pSocketData[cnt]->socketId + 1);
                     pktStatus = _Cellular_AtcmdRequestWithCallback(p_context,
                                                                    atReqSockClose);
 
                     if (CELLULAR_PKT_STATUS_OK != pktStatus)
                     {
-                        LogError(("aws_cellular_closesocket: Socket close failed, cmdBuf:%s, PktRet: %d", cmdBuf, pktStatus));
+                        LogError(("aws_cellular_closesocket: Socket close failed, cmdBuf:%s, PktRet: %d", 
+                                    cmdBuf, pktStatus));
                         cellularStatus = _Cellular_TranslatePktStatus(pktStatus);
                     }
                     else

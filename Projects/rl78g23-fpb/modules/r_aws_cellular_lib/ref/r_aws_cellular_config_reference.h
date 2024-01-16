@@ -49,6 +49,8 @@
 
 #define AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT     (60000)  /* Timeout period before an Ack response is returned when AT command is executed */
 
+#define AWS_CELLULAR_CFG_SEND_DELAY             (0)      /* Transmission delay after data mode shift(msec) */
+
 #define AWS_CELLULAR_CFG_RING_LINE_ACTIVE_TIME  (1000)   /* RING line active duration (1msec, 1000~5000)*/
 #define AWS_CELLULAR_CFG_PSM_PREPARATION_TIME   (100)    /* Reception guard time before the module transitions to PSM (1msec, 100~10000) */
 #define AWS_CELLULAR_CFG_PSM_WAKEUP_LATENCY     (5000)   /* Maximum authorized wake-up latency (1msec, 0~10000) */
@@ -64,6 +66,8 @@
 #define AWS_CELLULAR_CFG_RESET_SIGNAL_ON        (0)
 #define AWS_CELLULAR_CFG_RESET_SIGNAL_OFF       (1)
 #endif
+
+#define AWS_CELLULAR_CFG_START_BIT_EDGE         (0)         /* 0: Detected at Low level, 1: Detect on falling edge */
 
 #define AWS_CELLULAR_CFG_CTS_SW_CTRL            (0)
 #define AWS_CELLULAR_CFG_CTS_PORT               0           /* CTS port number */

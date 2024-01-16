@@ -27,11 +27,7 @@
  * Macro definitions
  **********************************************************************************************************************/
 #define RM_CELLULAR_RYZ_ENABLE_MODULE_UE_RETRY_COUNT      (3U)
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-#define RM_CELLULAR_RYZ_ENABLE_MODULE_UE_RETRY_TIMEOUT    (5000U)
-#else
 #define RM_CELLULAR_RYZ_ENABLE_MODULE_UE_RETRY_TIMEOUT    AWS_CELLULAR_CFG_AT_COMMAND_TIMEOUT
-#endif
 
 /***********************************************************************************************************************
  * Typedef definitions
@@ -65,30 +61,6 @@ uint32_t     CellularUrcTokenWoPrefixTableSize = sizeof(CellularUrcTokenWoPrefix
  **********************************************************************************************************************/
 CellularError_t Cellular_ModuleInit (const CellularContext_t * pContext, void ** ppModuleContext)
 {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularError_t cellular_status = CELLULAR_SUCCESS;
-
-    *ppModuleContext = &g_aws_cellular_ctrl;
-    cellular_status  = Cellular_CommonRegisterModemEventCallback((CellularHandle_t)pContext,   //cast
-                                                                  aws_cellular_modemevent,
-                                                                  pContext->pModueContext);
-
-#if AWS_CELLULAR_CFG_URC_CHARGET_ENABLED == 1
-    if (CELLULAR_SUCCESS == cellular_status)
-    {
-        cellular_status = Cellular_RegisterUrcGenericCallback((CellularHandle_t)pContext,   //cast
-                                                                AWS_CELLULAR_CFG_URC_CHARGET_FUNCTION,
-                                                                NULL);
-    }
-#endif
-
-    if (CELLULAR_SUCCESS == cellular_status)
-    {
-        cellular_status = aws_cellular_hardreset((CellularHandle_t)pContext);   //cast
-    }
-
-    return cellular_status;
-#else
     CellularError_t cellular_status = CELLULAR_SUCCESS;
 
     if (NULL == pContext)
@@ -118,7 +90,6 @@ CellularError_t Cellular_ModuleInit (const CellularContext_t * pContext, void **
     }
 
     return cellular_status;
-#endif
 }
 
 /*******************************************************************************************************************//**
@@ -126,11 +97,6 @@ CellularError_t Cellular_ModuleInit (const CellularContext_t * pContext, void **
  **********************************************************************************************************************/
 CellularError_t Cellular_ModuleCleanUp (const CellularContext_t * pContext)
 {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    return Cellular_CommonRegisterModemEventCallback((CellularHandle_t)pContext,   //cast
-                                                      NULL,
-                                                      NULL);
-#else
     CellularError_t cellular_status = CELLULAR_SUCCESS;
 
     if (NULL == pContext)
@@ -139,11 +105,10 @@ CellularError_t Cellular_ModuleCleanUp (const CellularContext_t * pContext)
     }
     else
     {
-        cellular_status = aws_cellular_psm_config((CellularContext_t *)pContext, 0);    //cast
+        ;
     }
 
     return cellular_status;
-#endif
 }
 
 /*******************************************************************************************************************//**
@@ -151,30 +116,6 @@ CellularError_t Cellular_ModuleCleanUp (const CellularContext_t * pContext)
  **********************************************************************************************************************/
 CellularError_t Cellular_ModuleEnableUE (CellularContext_t * pContext)
 {
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularError_t cellular_status = CELLULAR_SUCCESS;
-
-    CellularAtReq_t at_req;
-    at_req.pAtCmd       = NULL;
-    at_req.atCmdType    = CELLULAR_AT_NO_RESULT;
-    at_req.pAtRspPrefix = NULL;
-    at_req.respCallback = NULL;
-    at_req.pData        = NULL;
-    at_req.dataLen      = 0;
-
-    /* Disable echo. */
-    at_req.pAtCmd = "ATE0";
-    at_req.atCmdType = CELLULAR_AT_MULTI_WO_PREFIX;
-    cellular_status  = sendAtCommandWithRetryTimeout(pContext, &at_req);
-    if (CELLULAR_SUCCESS == cellular_status)
-    {
-        /* Enable RTS/CTS hardware flow control. */
-        at_req.pAtCmd = "AT+IFC=2,2";
-        at_req.atCmdType = CELLULAR_AT_NO_RESULT;
-        cellular_status  = sendAtCommandWithRetryTimeout(pContext, &at_req);
-    }
-    return cellular_status;
-#else
     CellularError_t cellular_status = CELLULAR_SUCCESS;
 
     CellularAtReq_t at_req_no_result =
@@ -215,7 +156,6 @@ CellularError_t Cellular_ModuleEnableUE (CellularContext_t * pContext)
     }
 
     return cellular_status;
-#endif
 }
 
 /*******************************************************************************************************************//**
@@ -228,15 +168,6 @@ CellularError_t Cellular_ModuleEnableUrc (CellularContext_t * pContext)
 
     char                cmdBuf[CELLULAR_AT_CMD_MAX_SIZE] = {'\0'};
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    CellularAtReq_t at_req_no_result;
-    at_req_no_result.pAtCmd       = NULL;
-    at_req_no_result.atCmdType    = CELLULAR_AT_NO_RESULT;
-    at_req_no_result.pAtRspPrefix = NULL;
-    at_req_no_result.respCallback = NULL;
-    at_req_no_result.pData        = NULL;
-    at_req_no_result.dataLen      = 0;
-#else
     CellularAtReq_t at_req_no_result =
     {
         NULL,
@@ -246,12 +177,9 @@ CellularError_t Cellular_ModuleEnableUrc (CellularContext_t * pContext)
         NULL,
         0
     };
-#endif
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (NULL != pContext)
     {
-#endif
         /* Set operator format for PLMN command to numeric */
         at_req_no_result.pAtCmd = "AT+COPS=3,2";
         api_ret = _Cellular_AtcmdRequestWithCallback(pContext, at_req_no_result);
@@ -272,13 +200,11 @@ CellularError_t Cellular_ModuleEnableUrc (CellularContext_t * pContext)
         }
 
         cellular_status = _Cellular_TranslatePktStatus(api_ret);
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
     else
     {
         cellular_status = CELLULAR_INVALID_HANDLE;
     }
-#endif
 
     return cellular_status;
 }
@@ -298,14 +224,13 @@ static CellularError_t sendAtCommandWithRetryTimeout (CellularContext_t * pConte
     CellularPktStatus_t pktStatus      = CELLULAR_PKT_STATUS_OK;
     uint8_t             tryCount       = 0;
 
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     if (pAtReq == NULL)
     {
         cellularStatus = CELLULAR_BAD_PARAMETER;
     }
     else
     {
-#endif
+        /* WAIT_LOOP */
         for ( ; tryCount < RM_CELLULAR_RYZ_ENABLE_MODULE_UE_RETRY_COUNT; tryCount++)
         {
             pktStatus = _Cellular_TimeoutAtcmdRequestWithCallback(pContext,
@@ -318,9 +243,7 @@ static CellularError_t sendAtCommandWithRetryTimeout (CellularContext_t * pConte
                 break;
             }
         }
-#if AWS_CELLULAR_CFG_PARAM_CHECKING_ENABLE == 1
     }
-#endif
 
     return cellularStatus;
 }
