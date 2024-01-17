@@ -308,7 +308,6 @@ static BaseType_t prvNetworkRecvCellular( const cellularSocketWrapper_t * pCellu
     else
     {
         /* No data */
-        IotLogInfo( "prvNetworkRecv timeout : %lu", cellularSocketHandle->recvTimeoutMs );
         retRecvLength = 0;
     }
 
