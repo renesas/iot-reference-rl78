@@ -109,6 +109,7 @@ void prvMiscInitialization( void );
 static BaseType_t xPlatformNetworkUp( void );
 
 #if (ENABLE_AFR_IDT == 1)
+#if (DEVICE_ADVISOR_TEST_ENABLED == 1)
 int RunDeviceAdvisorDemo( void )
 {
     BaseType_t xResult = pdFAIL;
@@ -139,6 +140,7 @@ int RunDeviceAdvisorDemo( void )
     }
     return ( xResult == pdPASS ) ? 0 : -1;
 }
+#endif
 
 #if (OTA_E2E_TEST_ENABLED == 1)
 int RunOtaE2eDemo( void )
