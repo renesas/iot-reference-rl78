@@ -180,7 +180,7 @@ FRTestThreadHandle_t FRTest_ThreadCreate( FRTestThreadFunction_t threadFunc,
     xReturned = xTaskCreate( ThreadWrapper,    /* Task code. */
                              "ThreadWrapper",  /* All tasks have same name. */
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-                             2048,             /* Task stack size. */
+                             1200,             /* Task stack size. */
 #else
                              8192,             /* Task stack size. */
 #endif
