@@ -111,7 +111,7 @@
 #define confgPUBLISH_BUFFER_LENGTH                   ( 100 )
 #endif
 
-#define CONSECUTIVE_SUCCESS_MAX                      ( 5 )
+#define CONSECUTIVE_SUCCESS_MAX                      ( 10 )
 
 /**
  * @brief Size of the static buffer to hold the topic name.
