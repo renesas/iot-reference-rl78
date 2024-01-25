@@ -100,6 +100,6 @@ void FRTest_MemoryFree( void * ptr );
  *
  * @return A random number.
  */
-int FRTest_GenerateRandInt( void );
+int FRTest_GenerateRandInt();
 
 #endif /* PLATFORM_FUNCTION_H */
