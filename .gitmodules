@@ -37,3 +37,6 @@
 [submodule "Middleware/AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk"]
 	path = Middleware/AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk
 	url = https://github.com/aws/Fleet-Provisioning-for-AWS-IoT-embedded-sdk.git
+[submodule "Middleware/AWS/ota-for-aws-iot-embedded-sdk"]
+	path = Middleware/AWS/ota-for-aws-iot-embedded-sdk
+	url = https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git
