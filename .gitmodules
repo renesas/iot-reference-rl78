@@ -19,3 +19,6 @@
 [submodule "Middleware/FreeRTOS/FreeRTOS-Cellular-Interface"]
 	path = Middleware/FreeRTOS/FreeRTOS-Cellular-Interface
 	url = https://github.com/FreeRTOS/FreeRTOS-Cellular-Interface.git
+[submodule "Middleware/AWS/SigV4-for-AWS-IoT-embedded-sdk"]
+	path = Middleware/AWS/SigV4-for-AWS-IoT-embedded-sdk
+	url = https://github.com/aws/SigV4-for-AWS-IoT-embedded-sdk.git
