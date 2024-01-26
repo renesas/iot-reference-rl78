@@ -4,3 +4,6 @@
 [submodule "Middleware/FreeRTOS/coreJSON"]
 	path = Middleware/FreeRTOS/coreJSON
 	url = https://github.com/FreeRTOS/coreJSON.git
+[submodule "Middleware/FreeRTOS/coreHTTP"]
+	path = Middleware/FreeRTOS/coreHTTP
+	url = https://github.com/FreeRTOS/coreHTTP.git
