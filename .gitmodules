@@ -22,3 +22,6 @@
 [submodule "Middleware/AWS/SigV4-for-AWS-IoT-embedded-sdk"]
 	path = Middleware/AWS/SigV4-for-AWS-IoT-embedded-sdk
 	url = https://github.com/aws/SigV4-for-AWS-IoT-embedded-sdk.git
+[submodule "Middleware/FreeRTOS/backoffAlgorithm"]
+	path = Middleware/FreeRTOS/backoffAlgorithm
+	url = https://github.com/FreeRTOS/backoffAlgorithm
