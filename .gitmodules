@@ -10,3 +10,6 @@
 [submodule "Middleware/FreeRTOS/coreMQTT"]
 	path = Middleware/FreeRTOS/coreMQTT
 	url = https://github.com/FreeRTOS/coreMQTT.git
+[submodule "Middleware/FreeRTOS/corePKCS11"]
+	path = Middleware/FreeRTOS/corePKCS11
+	url = https://github.com/FreeRTOS/corePKCS11.git
