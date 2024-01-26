@@ -1,3 +1,6 @@
 [submodule "Middleware/FreeRTOS/FreeRTOS-Plus-TCP"]
 	path = Middleware/FreeRTOS/FreeRTOS-Plus-TCP
 	url = https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git
+[submodule "Middleware/FreeRTOS/coreJSON"]
+	path = Middleware/FreeRTOS/coreJSON
+	url = https://github.com/FreeRTOS/coreJSON.git
