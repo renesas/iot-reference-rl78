@@ -16,3 +16,6 @@
 [submodule "Middleware/FreeRTOS/coreSNTP"]
 	path = Middleware/FreeRTOS/coreSNTP
 	url = https://github.com/FreeRTOS/coreSNTP.git
+[submodule "Middleware/FreeRTOS/FreeRTOS-Cellular-Interface"]
+	path = Middleware/FreeRTOS/FreeRTOS-Cellular-Interface
+	url = https://github.com/FreeRTOS/FreeRTOS-Cellular-Interface.git
