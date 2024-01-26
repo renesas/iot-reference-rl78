@@ -34,3 +34,6 @@
 [submodule "Middleware/AWS/Jobs-for-AWS-IoT-embedded-sdk"]
 	path = Middleware/AWS/Jobs-for-AWS-IoT-embedded-sdk
 	url = https://github.com/aws/Jobs-for-AWS-IoT-embedded-sdk.git
+[submodule "Middleware/AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk"]
+	path = Middleware/AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk
+	url = https://github.com/aws/Fleet-Provisioning-for-AWS-IoT-embedded-sdk.git
