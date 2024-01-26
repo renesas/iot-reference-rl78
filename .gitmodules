@@ -43,3 +43,6 @@
 [submodule "Middleware/FreeRTOS/coreMQTT-Agent"]
 	path = Middleware/FreeRTOS/coreMQTT-Agent
 	url = https://github.com/FreeRTOS/coreMQTT-Agent.git
+[submodule "Test/Unity"]
+	path = Test/Unity
+	url = https://github.com/ThrowTheSwitch/Unity.git
