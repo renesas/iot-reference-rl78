@@ -92,7 +92,7 @@ dependencies:
     repository:
       type: "git"
       url: "https://github.com/FreeRTOS/coreMQTT-Agent.git"
-      path: "/Middleware/coreMQTT-Agent"
+      path: "/Middleware/FreeRTOS/coreMQTT-Agent"
   - name: "unity"
     version: "22777c4810de3e3a4cb521a05eca2752fccd00ea"
     repository:
