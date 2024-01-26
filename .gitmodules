@@ -7,3 +7,6 @@
 [submodule "Middleware/FreeRTOS/coreHTTP"]
 	path = Middleware/FreeRTOS/coreHTTP
 	url = https://github.com/FreeRTOS/coreHTTP.git
+[submodule "Middleware/FreeRTOS/coreMQTT"]
+	path = Middleware/FreeRTOS/coreMQTT
+	url = https://github.com/FreeRTOS/coreMQTT.git
