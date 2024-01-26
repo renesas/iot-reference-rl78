@@ -106,6 +106,11 @@
 #include "mqtt_agent_task.h"
 #include "backoff_algorithm.h"
 
+/* For IDT test. */
+#if (ENABLE_AFR_IDT == 1)
+#include "test_execution_config.h"
+#endif
+
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #include "store.h"
 #endif
@@ -935,8 +940,13 @@ void prvMQTTAgentTask( void * pvParameters )
                  * Disconnect the socket and terminate MQTT agent loop.
                  */
                 LogInfo( ( "MQTT Agent loop terminated due to a graceful disconnect." ) );
+#if (DEVICE_ADVISOR_TEST_ENABLED == 0)
                 ( void ) MQTTAgent_CancelAll( &xGlobalMqttAgentContext );
                 ( void ) prvDisconnectTLS( &xNetworkContext );
+#else
+                ( void ) prvDisconnectTLS( &xNetworkContext );
+                pMqttContext->connectStatus = prvConnectToMQTTBroker( true );
+#endif
             }
             else
             {

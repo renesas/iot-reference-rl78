@@ -1055,6 +1055,7 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
                 if( socketStatus != CELLULAR_SUCCESS )
                 {
                     if( ( socketStatus == CELLULAR_SOCKET_CLOSED ) ||
+                        ( socketStatus == CELLULAR_INTERNAL_FAILURE ) ||
                         ( socketStatus == CELLULAR_TIMEOUT ) )
                     {
                         /* Socket already closed. No data is sent. */

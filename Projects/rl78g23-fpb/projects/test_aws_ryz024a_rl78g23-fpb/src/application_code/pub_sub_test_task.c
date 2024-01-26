@@ -111,6 +111,8 @@
 #define confgPUBLISH_BUFFER_LENGTH                   ( 100 )
 #endif
 
+#define CONSECUTIVE_SUCCESS_MAX                      ( 10 )
+
 /**
  * @brief Size of the static buffer to hold the topic name.
  */
@@ -424,6 +426,27 @@ static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
 
 /*-----------------------------------------------------------*/
 
+static void prvDisconnectCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
+                                          MQTTAgentReturnInfo_t * pxReturnInfo )
+{
+    ;
+}
+
+/*-----------------------------------------------------------*/
+
+static MQTTStatus_t prvDisconnect( void )
+{
+    MQTTStatus_t xMQTTStatus;
+    MQTTAgentCommandInfo_t xCommandParams = { 0UL };
+
+    xCommandParams.blockTimeMs = configMAX_COMMAND_SEND_BLOCK_TIME_MS;
+    xCommandParams.cmdCompleteCallback = prvDisconnectCommandCallback;
+
+    xMQTTStatus = MQTTAgent_Disconnect( &xGlobalMqttAgentContext, &xCommandParams );
+    return xMQTTStatus;
+}
+
+/*-----------------------------------------------------------*/
 
 void vSubscribePublishTestTask( void * pvParameters )
 {
@@ -432,7 +455,7 @@ void vSubscribePublishTestTask( void * pvParameters )
 #endif
     char cPayloadBuf[ confgPAYLOAD_BUFFER_LENGTH ];
     size_t xPayloadLength;
-    uint32_t ulPublishCount = 0U, ulSuccessCount = 0U, ulFailCount = 0U;
+    uint32_t ulPublishCount = 0U, ulSuccessCount = 0U, ulFailCount = 0U, ulConsecutiveSuccessCount = 0U;;
     BaseType_t xStatus = pdPASS;
     MQTTStatus_t xMQTTStatus;
     MQTTQoS_t xQoS;
@@ -513,6 +536,7 @@ void vSubscribePublishTestTask( void * pvParameters )
                            configPUBLISH_TOPIC_FORMAT,
                            ulSuccessCount,
                            ulFailCount ) );
+                ulConsecutiveSuccessCount++;
             }
             else
             {
@@ -522,6 +546,7 @@ void vSubscribePublishTestTask( void * pvParameters )
                             configPUBLISH_TOPIC_FORMAT,
                             ulSuccessCount,
                             ulFailCount ) );
+                ulConsecutiveSuccessCount = 0;
             }
 
             /* Add a little randomness into the delay so the tasks don't remain
@@ -531,6 +556,13 @@ void vSubscribePublishTestTask( void * pvParameters )
             vTaskDelay( xTicksToDelay );
 
             ulPublishCount++;
+
+            /* succeeded xx times in a row */
+            if (CONSECUTIVE_SUCCESS_MAX == ulConsecutiveSuccessCount)
+            {
+                prvDisconnect();
+                ulConsecutiveSuccessCount = 0;
+            }
         }
     }
 
