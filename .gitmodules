@@ -40,3 +40,6 @@
 [submodule "Middleware/AWS/ota-for-aws-iot-embedded-sdk"]
 	path = Middleware/AWS/ota-for-aws-iot-embedded-sdk
 	url = https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git
+[submodule "Middleware/FreeRTOS/coreMQTT-Agent"]
+	path = Middleware/FreeRTOS/coreMQTT-Agent
+	url = https://github.com/FreeRTOS/coreMQTT-Agent.git
