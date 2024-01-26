@@ -3,12 +3,6 @@ version: "v202210.01"
 description: |-
   "Reference IoT integration project using RL78 family and FreeRTOS LTS libraries"
 dependencies:
-  - name: "FreeRTOS-Kernel"
-    version: "V10.5.1"
-    repository:
-      type: "git"
-      url: "https://github.com/FreeRTOS/FreeRTOS-Kernel.git"
-      path: "/Middleware/FreeRTOS/FreeRTOS-Kernel"
   - name: "FreeRTOS-Plus-TCP"
     version: "V3.1.0"
     repository:
