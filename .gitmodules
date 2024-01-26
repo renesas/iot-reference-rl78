@@ -25,3 +25,6 @@
 [submodule "Middleware/FreeRTOS/backoffAlgorithm"]
 	path = Middleware/FreeRTOS/backoffAlgorithm
 	url = https://github.com/FreeRTOS/backoffAlgorithm
+[submodule "Middleware/AWS/Device-Shadow-for-AWS-IoT-embedded-sdk"]
+	path = Middleware/AWS/Device-Shadow-for-AWS-IoT-embedded-sdk
+	url = https://github.com/aws/Device-Shadow-for-AWS-IoT-embedded-sdk.git
