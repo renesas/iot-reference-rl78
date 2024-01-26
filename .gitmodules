@@ -13,3 +13,6 @@
 [submodule "Middleware/FreeRTOS/corePKCS11"]
 	path = Middleware/FreeRTOS/corePKCS11
 	url = https://github.com/FreeRTOS/corePKCS11.git
+[submodule "Middleware/FreeRTOS/coreSNTP"]
+	path = Middleware/FreeRTOS/coreSNTP
+	url = https://github.com/FreeRTOS/coreSNTP.git
