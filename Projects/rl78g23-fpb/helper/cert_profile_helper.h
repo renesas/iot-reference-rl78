@@ -37,7 +37,7 @@
 #define ROOTCA_PEM1_NVM_IDX             (17)
 #define ROOTCA_PEM2_NVM_IDX             (18)
 #define ROOTCA_PEM3_NVM_IDX             (19)
-#define CLIENT_CERT_NVM_IDX             (0)
+#define CLIENT_CERT_NVM_IDX             (5)
 #define CLIENT_PRIVATEKEY_NVM_IDX       (0)
 #define CFG_ROOT_CA_PEM1                tlsATS1_ROOT_CERTIFICATE_PEM
 #define CFG_ROOT_CA_PEM3                tlsATS3_ROOT_CERTIFICATE_PEM
