@@ -205,7 +205,7 @@ bool setupCellular(void)
         if (timeoutCount >= timeoutCountLimit)
         {
             /* Return timeout to indicate network is not registered within CELLULAR_PDN_CONNECT_TIMEOUT. */
-            LogError( ( ">>>  Cellular module can't be registered within %d <<<\r\n",
+            LogError( ( ">>>  Cellular module can't be registered within %lu <<<\r\n",
                         CELLULAR_PDN_CONNECT_TIMEOUT) );
             return (false);
         }
