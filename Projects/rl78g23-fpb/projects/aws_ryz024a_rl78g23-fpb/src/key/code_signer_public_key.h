@@ -27,15 +27,14 @@
  * PEM-encoded code signer public key.
  *
  * Must include the PEM header and footer:
- * "-----BEGIN CERTIFICATE-----\n"\
- * "...base64 data...\n"\
+ * "-----BEGIN CERTIFICATE-----"\
+ * "...base64 data..."\
  * "-----END CERTIFICATE-----"
  */
-/* 41167f58-633c-499f-a17f-4631918c6422 */
 #define CODE_SIGNER_PUBLIC_KEY_PEM \
 "-----BEGIN PUBLIC KEY-----"\
-"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEedv40AoIGSF0wzc5D/n9v4dHh907"\
-"1+Io02XDFmpUrxeig3FxHOiGNKHL57u5RA45NS/uUL20QEFNhbtpsOcksw=="\
+"ABEiM0RVZneImaq7zN3u/wARIjNEVWZ3iJmqu8zd7v8AESIzRFVmd4iZqrvM3e7/"\
+"ABEiM0RVZneImaq7zN3u/wARIjNEVWZ3iJmqu8zd7v8="\
 "-----END PUBLIC KEY-----"
 
 #endif /* CODE_SIGNER_PUBLIC_KEY_H_ */
