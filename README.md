@@ -4,7 +4,7 @@
 
 This product provides the reference of IoT solution with using [RL78 family](https://www.renesas.com/products/microcontrollers-microprocessors/rl78-low-power-8-16-bit-mcus), [AWS](https://aws.amazon.com), and [FreeRTOS](https://www.freertos.org/RTOS.html). The RL78 family is a kind of MCUs provided by the [Renesas](https://www.renesas.com).
 You can easily try to run AWS IoT demos using RL78 family while working with our various other products.
-Refer to the [Getting Started Guide](#user_documents) for step by step instructions on setting up your development environment and running demos.
+Refer to the [Getting Started Guide](#user-documents) for step by step instructions on setting up your development environment and running demos.
 
 ## Product Specifications
 
