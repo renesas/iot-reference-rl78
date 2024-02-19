@@ -544,7 +544,6 @@ static CellularCommInterfaceError_t aws_cellular_send(CellularCommInterfaceHandl
     uint32_t                     tick_timeout;
     uint32_t                     tick_tmp;
 
-    (*pDataSentLength) = 0;
     tick_timeout = pdMS_TO_TICKS(timeoutMilliseconds);
     tick_sta  = pdMS_TO_TICKS(xTaskGetTickCount());
 
@@ -562,6 +561,8 @@ static CellularCommInterfaceError_t aws_cellular_send(CellularCommInterfaceHandl
 
     if (IOT_COMM_INTERFACE_SUCCESS == ret)
     {
+        (*pDataSentLength) = 0;
+
         while ((*pDataSentLength) < dataLength)
         {
             ( void ) xEventGroupClearBits(p_aws_cellular_uart_ctrl->p_event_hdl,
@@ -779,7 +780,6 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
     uint32_t    tick_timeout;
     uint32_t    tick_tmp;
 
-    (*pDataReceivedLength) = 0;
     tick_timeout = pdMS_TO_TICKS(timeoutMilliseconds);
     tick_sta  = pdMS_TO_TICKS(xTaskGetTickCount());
 
@@ -794,6 +794,8 @@ static CellularCommInterfaceError_t aws_cellular_recv(CellularCommInterfaceHandl
     }
     else
     {
+        (*pDataReceivedLength) = 0;
+
         /* Set this flag to inform interrupt handler to stop calling callback function. */
         p_aws_cellular_uart_ctrl->rx_fifo_reading_flg = 1U;
 
