@@ -1,0 +1,819 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MicomToolCommonProjectFile Version="1.00">
+  <CreatorType Name="e2studio" Version=""/>
+  <Placeholders>
+    <PlaceholderPrefix>${</PlaceholderPrefix>
+    <PlaceholderPostfix>}</PlaceholderPostfix>
+  </Placeholders>
+  <Project Name="boot_loader" Type="Application">
+    <Files>
+      <Category Name="src">
+        <Path>src\boot_loader.c</Path>
+        <Path>src\branch_table.c</Path>
+        <Path>src\branch_table.h</Path>
+        <Path>src\putchar_rl78.c</Path>
+        <Path>src\putchar_rl78.h</Path>
+        <Category Name="key">
+          <Path>src\key\code_signer_public_key.h</Path>
+        </Category>
+        <Category Name="smc_gen">
+          <Category Name="Config_PORT">
+            <Path>src\smc_gen\Config_PORT\Config_PORT.c</Path>
+            <Path>src\smc_gen\Config_PORT\Config_PORT.h</Path>
+            <Path>src\smc_gen\Config_PORT\Config_PORT_user.c</Path>
+          </Category>
+          <Category Name="Config_UART2">
+            <Path>src\smc_gen\Config_UART2\Config_UART2.c</Path>
+            <Path>src\smc_gen\Config_UART2\Config_UART2.h</Path>
+            <Path>src\smc_gen\Config_UART2\Config_UART2_user.c</Path>
+          </Category>
+          <Category Name="general">
+            <Path>src\smc_gen\general\r_cg_macrodriver.h</Path>
+            <Path>src\smc_gen\general\r_cg_port.h</Path>
+            <Path>src\smc_gen\general\r_cg_sau.h</Path>
+            <Path>src\smc_gen\general\r_cg_sau_common.c</Path>
+            <Path>src\smc_gen\general\r_cg_sau_common.h</Path>
+            <Path>src\smc_gen\general\r_cg_systeminit.c</Path>
+            <Path>src\smc_gen\general\r_cg_userdefine.h</Path>
+            <Path>src\smc_gen\general\r_smc_entry.h</Path>
+          </Category>
+          <Category Name="r_bsp">
+            <Path>src\smc_gen\r_bsp\platform.h</Path>
+            <Path>src\smc_gen\r_bsp\readme.txt</Path>
+            <Category Name="board">
+              <Category Name="generic_rl78_g23">
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.h</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp.h</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference.h</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_ccrl.inc</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_iccrl.inc</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_llvm.inc</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c</Path>
+                <Path>src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm</Path>
+              </Category>
+            </Category>
+            <Category Name="doc">
+              <Category Name="en">
+                <Path>src\smc_gen\r_bsp\doc\en\r01an5522ej0160-rl78-bsp.pdf</Path>
+              </Category>
+              <Category Name="ja">
+                <Path>src\smc_gen\r_bsp\doc\ja\r01an5522jj0160-rl78-bsp.pdf</Path>
+              </Category>
+            </Category>
+            <Category Name="mcu">
+              <Category Name="all">
+                <Path>src\smc_gen\r_bsp\mcu\all\cstart.asm</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\fsp_common_api.h</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\r_bsp_common.c</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\r_bsp_common.h</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\r_bsp_rl78_compiler.h</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\r_fsp_error.h</Path>
+                <Path>src\smc_gen\r_bsp\mcu\all\r_rtos.h</Path>
+              </Category>
+              <Category Name="rl78_g23">
+                <Path>src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c</Path>
+                <Path>src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.h</Path>
+                <Path>src\smc_gen\r_bsp\mcu\rl78_g23\mcu_info.h</Path>
+                <Category Name="register_access">
+                  <Category Name="ccrl">
+                    <Path>src\smc_gen\r_bsp\mcu\rl78_g23\register_access\ccrl\iodefine.h</Path>
+                  </Category>
+                </Category>
+              </Category>
+            </Category>
+          </Category>
+          <Category Name="r_config">
+            <Path>src\smc_gen\r_config\r_bsp_config.h</Path>
+            <Path>src\smc_gen\r_config\r_bsp_config.inc</Path>
+          </Category>
+          <Category Name="r_pincfg">
+            <Path>src\smc_gen\r_pincfg\Pin.c</Path>
+            <Path>src\smc_gen\r_pincfg\Pin.h</Path>
+          </Category>
+        </Category>
+        <Category Name="src">
+          <Category Name="etc">
+            <Path>..\..\..\modules\etc\base64_decode.c</Path>
+            <Path>..\..\..\modules\etc\base64_decode.h</Path>
+            <Path>..\..\..\modules\etc\rfd_wrapper.c</Path>
+            <Path>..\..\..\modules\etc\rfd_wrapper.h</Path>
+            <Category Name="RFD">
+              <Path>..\..\..\modules\etc\RFD\Release.txt</Path>
+              <Path>..\..\..\modules\etc\RFD\Support.txt</Path>
+              <Category Name="include">
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_code_flash_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_common_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_common_control_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_common_extension_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_common_get_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_common_userown.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_data_flash_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_extra_area_api.h</Path>
+                <Path>..\..\..\modules\etc\RFD\include\r_rfd_extra_area_security_api.h</Path>
+                <Category Name="rfd">
+                  <Path>..\..\..\modules\etc\RFD\include\rfd\r_rfd.h</Path>
+                  <Path>..\..\..\modules\etc\RFD\include\rfd\r_rfd_compiler.h</Path>
+                  <Path>..\..\..\modules\etc\RFD\include\rfd\r_rfd_device.h</Path>
+                  <Path>..\..\..\modules\etc\RFD\include\rfd\r_rfd_memmap.h</Path>
+                  <Path>..\..\..\modules\etc\RFD\include\rfd\r_rfd_types.h</Path>
+                  <Path>..\..\..\modules\etc\RFD\include\rfd\r_typedefs.h</Path>
+                </Category>
+              </Category>
+              <Category Name="source">
+                <Category Name="codeflash">
+                  <Path>..\..\..\modules\etc\RFD\source\codeflash\r_rfd_code_flash_api.c</Path>
+                </Category>
+                <Category Name="common">
+                  <Path>..\..\..\modules\etc\RFD\source\common\r_rfd_common_api.c</Path>
+                  <Path>..\..\..\modules\etc\RFD\source\common\r_rfd_common_control_api.c</Path>
+                  <Path>..\..\..\modules\etc\RFD\source\common\r_rfd_common_extension_api.c</Path>
+                  <Path>..\..\..\modules\etc\RFD\source\common\r_rfd_common_get_api.c</Path>
+                </Category>
+                <Category Name="dataflash">
+                  <Path>..\..\..\modules\etc\RFD\source\dataflash\r_rfd_data_flash_api.c</Path>
+                </Category>
+                <Category Name="extraarea">
+                  <Path>..\..\..\modules\etc\RFD\source\extraarea\r_rfd_extra_area_api.c</Path>
+                  <Path>..\..\..\modules\etc\RFD\source\extraarea\r_rfd_extra_area_security_api.c</Path>
+                </Category>
+              </Category>
+              <Category Name="userown">
+                <Path>..\..\..\modules\etc\RFD\userown\r_rfd_common_userown.c</Path>
+              </Category>
+            </Category>
+            <Category Name="tinycrypt">
+              <Category Name="lib">
+                <Category Name="include">
+                  <Category Name="tinycrypt">
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\aes.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\cbc_mode.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ccm_mode.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\cmac_mode.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\constants.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ctr_mode.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ctr_prng.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ecc.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ecc_dh.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ecc_dsa.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\ecc_platform_specific.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\hmac.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\hmac_prng.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\sha256.h</Path>
+                    <Path>..\..\..\modules\etc\tinycrypt\lib\include\tinycrypt\utils.h</Path>
+                  </Category>
+                </Category>
+                <Category Name="source">
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\aes_decrypt.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\aes_encrypt.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\cbc_mode.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ccm_mode.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\cmac_mode.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ctr_mode.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ctr_prng.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ecc.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ecc_dh.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ecc_dsa.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\ecc_platform_specific.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\hmac.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\hmac_prng.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\sha256.c</Path>
+                  <Path>..\..\..\modules\etc\tinycrypt\lib\source\utils.c</Path>
+                </Category>
+              </Category>
+            </Category>
+          </Category>
+          <Category Name="r_config">
+            <Path>src\src\r_config\r_fwup_config.h</Path>
+          </Category>
+          <Category Name="r_fwup">
+            <Path>..\..\..\modules\r_fwup\r_fwup_if.h</Path>
+            <Category Name="ref">
+              <Path>..\..\..\modules\r_fwup\ref\r_fwup_config_reference.h</Path>
+            </Category>
+            <Category Name="src">
+              <Path>..\..\..\modules\r_fwup\src\r_fwup.c</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_private.h</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_wrap_com.c</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_wrap_com.h</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_wrap_flash.c</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_wrap_flash.h</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_wrap_verify.c</Path>
+              <Path>..\..\..\modules\r_fwup\src\r_fwup_wrap_verify.h</Path>
+            </Category>
+          </Category>
+        </Category>
+      </Category>
+      <Category Name="trash">
+        <Category Name="2024-02-02-10-42-55">
+          <Category Name="src">
+            <Category Name="smc_gen">
+              <Category Name="Config_PORT">
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\Config_PORT\Config_PORT.c</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\Config_PORT\Config_PORT.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\Config_PORT\Config_PORT_user.c</Path>
+              </Category>
+              <Category Name="Config_UART2">
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\Config_UART2\Config_UART2.c</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\Config_UART2\Config_UART2.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\Config_UART2\Config_UART2_user.c</Path>
+              </Category>
+              <Category Name="general">
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_macrodriver.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_port.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_sau.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_sau_common.c</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_sau_common.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_systeminit.c</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_userdefine.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\general\r_smc_entry.h</Path>
+              </Category>
+              <Category Name="r_bsp">
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\platform.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\readme.txt</Path>
+                <Category Name="board">
+                  <Category Name="generic_rl78_g23">
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_ccrl.inc</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_iccrl.inc</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_llvm.inc</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm</Path>
+                  </Category>
+                </Category>
+                <Category Name="mcu">
+                  <Category Name="all">
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\cstart.asm</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\fsp_common_api.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_bsp_common.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_bsp_rl78_compiler.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_fsp_error.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_rtos.h</Path>
+                  </Category>
+                  <Category Name="rl78_g23">
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.h</Path>
+                    <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_info.h</Path>
+                    <Category Name="register_access">
+                      <Category Name="ccrl">
+                        <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\rl78_g23\register_access\ccrl\iodefine.h</Path>
+                      </Category>
+                    </Category>
+                  </Category>
+                </Category>
+              </Category>
+              <Category Name="r_config">
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_config\r_bsp_config.h</Path>
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_config\r_bsp_config.inc</Path>
+              </Category>
+              <Category Name="r_pincfg">
+                <Path>trash\2024-02-02-10-42-55\src\smc_gen\r_pincfg\Pin.h</Path>
+              </Category>
+            </Category>
+          </Category>
+        </Category>
+        <Category Name="2024-02-09-17-19-39">
+          <Category Name="src">
+            <Category Name="smc_gen">
+              <Category Name="Config_PORT">
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\Config_PORT\Config_PORT.c</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\Config_PORT\Config_PORT.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\Config_PORT\Config_PORT_user.c</Path>
+              </Category>
+              <Category Name="Config_UART2">
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\Config_UART2\Config_UART2.c</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\Config_UART2\Config_UART2.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\Config_UART2\Config_UART2_user.c</Path>
+              </Category>
+              <Category Name="general">
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_macrodriver.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_port.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_sau.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_sau_common.c</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_sau_common.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_systeminit.c</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_userdefine.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\general\r_smc_entry.h</Path>
+              </Category>
+              <Category Name="r_bsp">
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\platform.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\readme.txt</Path>
+                <Category Name="board">
+                  <Category Name="generic_rl78_g23">
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_ccrl.inc</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_iccrl.inc</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_llvm.inc</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm</Path>
+                  </Category>
+                </Category>
+                <Category Name="mcu">
+                  <Category Name="all">
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\cstart.asm</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\fsp_common_api.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_bsp_common.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_bsp_rl78_compiler.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_fsp_error.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_rtos.h</Path>
+                  </Category>
+                  <Category Name="rl78_g23">
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.h</Path>
+                    <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_info.h</Path>
+                    <Category Name="register_access">
+                      <Category Name="ccrl">
+                        <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\rl78_g23\register_access\ccrl\iodefine.h</Path>
+                      </Category>
+                    </Category>
+                  </Category>
+                </Category>
+              </Category>
+              <Category Name="r_config">
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_config\r_bsp_config.h</Path>
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_config\r_bsp_config.inc</Path>
+              </Category>
+              <Category Name="r_pincfg">
+                <Path>trash\2024-02-09-17-19-39\src\smc_gen\r_pincfg\Pin.h</Path>
+              </Category>
+            </Category>
+          </Category>
+        </Category>
+        <Category Name="2024-02-09-17-27-21">
+          <Category Name="src">
+            <Category Name="smc_gen">
+              <Category Name="Config_PORT">
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\Config_PORT\Config_PORT.c</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\Config_PORT\Config_PORT.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\Config_PORT\Config_PORT_user.c</Path>
+              </Category>
+              <Category Name="Config_UART2">
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\Config_UART2\Config_UART2.c</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\Config_UART2\Config_UART2.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\Config_UART2\Config_UART2_user.c</Path>
+              </Category>
+              <Category Name="general">
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_macrodriver.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_port.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_sau.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_sau_common.c</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_sau_common.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_systeminit.c</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_userdefine.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\general\r_smc_entry.h</Path>
+              </Category>
+              <Category Name="r_bsp">
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\platform.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\readme.txt</Path>
+                <Category Name="board">
+                  <Category Name="generic_rl78_g23">
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_ccrl.inc</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_iccrl.inc</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_llvm.inc</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm</Path>
+                  </Category>
+                </Category>
+                <Category Name="mcu">
+                  <Category Name="all">
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\cstart.asm</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\fsp_common_api.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_bsp_common.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_bsp_rl78_compiler.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_fsp_error.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_rtos.h</Path>
+                  </Category>
+                  <Category Name="rl78_g23">
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.h</Path>
+                    <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_info.h</Path>
+                    <Category Name="register_access">
+                      <Category Name="ccrl">
+                        <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\rl78_g23\register_access\ccrl\iodefine.h</Path>
+                      </Category>
+                    </Category>
+                  </Category>
+                </Category>
+              </Category>
+              <Category Name="r_config">
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_config\r_bsp_config.h</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_config\r_bsp_config.inc</Path>
+              </Category>
+              <Category Name="r_pincfg">
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_pincfg\Pin.c</Path>
+                <Path>trash\2024-02-09-17-27-21\src\smc_gen\r_pincfg\Pin.h</Path>
+              </Category>
+            </Category>
+          </Category>
+        </Category>
+        <Category Name="2024-02-20-10-24-31">
+          <Category Name="src">
+            <Category Name="smc_gen">
+              <Category Name="Config_PORT">
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\Config_PORT\Config_PORT.c</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\Config_PORT\Config_PORT.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\Config_PORT\Config_PORT_user.c</Path>
+              </Category>
+              <Category Name="Config_UART2">
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\Config_UART2\Config_UART2.c</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\Config_UART2\Config_UART2.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\Config_UART2\Config_UART2_user.c</Path>
+              </Category>
+              <Category Name="general">
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_macrodriver.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_port.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_sau.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_sau_common.c</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_sau_common.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_systeminit.c</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_userdefine.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\general\r_smc_entry.h</Path>
+              </Category>
+              <Category Name="r_bsp">
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\platform.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\readme.txt</Path>
+                <Category Name="board">
+                  <Category Name="generic_rl78_g23">
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_ccrl.inc</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_iccrl.inc</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_llvm.inc</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm</Path>
+                  </Category>
+                </Category>
+                <Category Name="mcu">
+                  <Category Name="all">
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\cstart.asm</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\fsp_common_api.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_bsp_common.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_bsp_rl78_compiler.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_fsp_error.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_rtos.h</Path>
+                  </Category>
+                  <Category Name="rl78_g23">
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.h</Path>
+                    <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_info.h</Path>
+                    <Category Name="register_access">
+                      <Category Name="ccrl">
+                        <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\rl78_g23\register_access\ccrl\iodefine.h</Path>
+                      </Category>
+                    </Category>
+                  </Category>
+                </Category>
+              </Category>
+              <Category Name="r_config">
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_config\r_bsp_config.h</Path>
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_config\r_bsp_config.inc</Path>
+              </Category>
+              <Category Name="r_pincfg">
+                <Path>trash\2024-02-20-10-24-31\src\smc_gen\r_pincfg\Pin.h</Path>
+              </Category>
+            </Category>
+          </Category>
+        </Category>
+        <Category Name="2024-02-20-10-46-33">
+          <Category Name="src">
+            <Category Name="smc_gen">
+              <Category Name="Config_PORT">
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\Config_PORT\Config_PORT.c</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\Config_PORT\Config_PORT.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\Config_PORT\Config_PORT_user.c</Path>
+              </Category>
+              <Category Name="Config_UART2">
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\Config_UART2\Config_UART2.c</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\Config_UART2\Config_UART2.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\Config_UART2\Config_UART2_user.c</Path>
+              </Category>
+              <Category Name="general">
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_macrodriver.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_port.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_sau.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_sau_common.c</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_sau_common.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_systeminit.c</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_userdefine.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\general\r_smc_entry.h</Path>
+              </Category>
+              <Category Name="r_bsp">
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\platform.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\readme.txt</Path>
+                <Category Name="board">
+                  <Category Name="generic_rl78_g23">
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_ccrl.inc</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_iccrl.inc</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_config_reference_llvm.inc</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm</Path>
+                  </Category>
+                </Category>
+                <Category Name="mcu">
+                  <Category Name="all">
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\cstart.asm</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\fsp_common_api.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_bsp_common.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_bsp_rl78_compiler.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_fsp_error.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_rtos.h</Path>
+                  </Category>
+                  <Category Name="rl78_g23">
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.h</Path>
+                    <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_info.h</Path>
+                    <Category Name="register_access">
+                      <Category Name="ccrl">
+                        <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\rl78_g23\register_access\ccrl\iodefine.h</Path>
+                      </Category>
+                    </Category>
+                  </Category>
+                </Category>
+              </Category>
+              <Category Name="r_config">
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_config\r_bsp_config.h</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_config\r_bsp_config.inc</Path>
+              </Category>
+              <Category Name="r_pincfg">
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_pincfg\Pin.c</Path>
+                <Path>trash\2024-02-20-10-46-33\src\smc_gen\r_pincfg\Pin.h</Path>
+              </Category>
+            </Category>
+          </Category>
+        </Category>
+      </Category>
+    </Files>
+    <Device Category="com.renesas.cdt.managedbuild.renesas.ccrl.common.option.cpu.s3" Series="RL78">R7F100GSNxFB</Device>
+    <BuildOptions Name="CC-RL" Version="v1.12.00">
+      <BuildMode Active="True" Name="HardwareDebug">
+        <GeneralOptions/>
+        <CompileOptions>
+          <Option>-cpu=S3</Option>
+          <Option>-c</Option>
+          <Option>-dev="C:/Users/a5124249/.eclipse/com.renesas.platform_518996270/DebugComp/RL78/RL78/Common/DR7F100GSN.DVF"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_bsp"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_config"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\general"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\Config_PORT"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\Config_UART2"</Option>
+          <Option>-I "${ProjDirPath}\src\key"</Option>
+          <Option>-I "${ProjDirPath}\src\src\r_config"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\r_fwup"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\r_fwup\src"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\RFD"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\RFD\include"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\RFD\include\rfd"</Option>
+          <Option>-I "C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\tinycrypt\lib\include"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_pincfg"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen"</Option>
+          <Option>-D __PRINTF_TINY__,R_RFD_MCU_FLASH_T01_CATEGORY01</Option>
+          <Option>-character_set=utf8</Option>
+          <Option>-g</Option>
+          <Option>-o ${workspace_loc}\${ProjName}/${ConfigName}</Option>
+          <Option>-memory_model=medium</Option>
+          <Option>-far_rom</Option>
+          <Option>-goptimize</Option>
+          <Option>-Odelete_static_func</Option>
+          <Option>-lang=c99</Option>
+        </CompileOptions>
+        <AssembleOptions>
+          <Option>-cpu=S3</Option>
+          <Option>-c</Option>
+          <Option>-dev="C:/Users/a5124249/.eclipse/com.renesas.platform_518996270/DebugComp/RL78/RL78/Common/DR7F100GSN.DVF"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_bsp"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_config"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\general"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\Config_PORT"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\Config_UART2"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_pincfg"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen"</Option>
+          <Option>-character_set=utf8</Option>
+          <Option>-g</Option>
+          <Option>-o "${ProjDirPath}/${ConfigName}"</Option>
+          <Option>-goptimize</Option>
+        </AssembleOptions>
+        <SmsAssembleOptions>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_bsp"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_config"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\general"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\Config_PORT"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\Config_UART2"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen\r_pincfg"</Option>
+          <Option>-I "${ProjDirPath}\src\smc_gen"</Option>
+          <Option>-o "${CWD}"</Option>
+          <Option>-character_set=utf8</Option>
+        </SmsAssembleOptions>
+        <LinkOptions>
+          <Option>-device="C:/Users/a5124249/.eclipse/com.renesas.platform_518996270/DebugComp/RL78/RL78/Common/DR7F100GSN.DVF"</Option>
+          <Option>-list</Option>
+          <Option>-show=symbol,reference,xreference,total_size,vector,relocation_attribute</Option>
+          <Option>-optimize=symbol_delete</Option>
+          <Option>-entry=_start</Option>
+          <Option>-auto_section_layout</Option>
+          <Option>-security_id=00000000000000000000</Option>
+          <Option>-debug_monitor=BFE00-BFFFF</Option>
+          <Option>-user_opt_byte=EF3AE8</Option>
+          <Option>-ocdbg=84</Option>
+          <Option>-subcommand="LinkerSubCommand.tmp"</Option>
+          <Option>-output="boot_loader.abs"</Option>
+          <Option>-debug</Option>
+          <Option>-nocompress</Option>
+          <Option>-rom=.data=.dataR,.sdata=.sdataR,RFD_DATA_n=RFD_DATA_nR,RFD_CMN_f=RFD_CMN_fR,RFD_CF_f=RFD_CF_fR,BL_DATA_n=BL_DATA_nR</Option>
+          <Option>-nomessage</Option>
+          <Option>-nologo</Option>
+          <Option>-library="C:\Program Files (x86)\Renesas\RL78\1_12_0\lib\rl78em4s99.lib"</Option>
+          <Option>-library="C:\Program Files (x86)\Renesas\RL78\1_12_0\lib\rl78em4r.lib"</Option>
+          <Option>-end</Option>
+          <Option>-output="${ProjName}.mot"</Option>
+          <Option>-form=stype</Option>
+          <Option>-byte_count=10</Option>
+          <Option>-nomessage</Option>
+          <Option>-nologo</Option>
+          <Option>-exit</Option>
+          <PreLinker>Auto</PreLinker>
+        </LinkOptions>
+        <LibraryGenerateOptions>
+          <GenerateMode>BuildAlways</GenerateMode>
+        </LibraryGenerateOptions>
+        <LinkOrder>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/board/generic_rl78_g23\stkinit.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/mcu/all\cstart.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/mcu/all\r_bsp_common_ccrl.obj</Path>
+          <Path>HardwareDebug\src\boot_loader.obj</Path>
+          <Path>HardwareDebug\src\branch_table.obj</Path>
+          <Path>HardwareDebug\src\putchar_rl78.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/Config_PORT\Config_PORT.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/Config_PORT\Config_PORT_user.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/Config_UART2\Config_UART2.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/Config_UART2\Config_UART2_user.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/general\r_cg_sau_common.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/general\r_cg_systeminit.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/board/generic_rl78_g23\hdwinit.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/board/generic_rl78_g23\r_bsp_init.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/mcu/all\r_bsp_common.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_bsp/mcu/rl78_g23\mcu_clocks.obj</Path>
+          <Path>HardwareDebug\src/smc_gen/r_pincfg\Pin.obj</Path>
+          <Path>HardwareDebug\src/src/etc/RFD/source/codeflash\r_rfd_code_flash_api.obj</Path>
+          <Path>HardwareDebug\src/src/etc/RFD/source/common\r_rfd_common_api.obj</Path>
+          <Path>HardwareDebug\src/src/etc/RFD/source/common\r_rfd_common_control_api.obj</Path>
+          <Path>HardwareDebug\src/src/etc/RFD/source/dataflash\r_rfd_data_flash_api.obj</Path>
+          <Path>HardwareDebug\src/src/etc/RFD/userown\r_rfd_common_userown.obj</Path>
+          <Path>HardwareDebug\src/src/etc\base64_decode.obj</Path>
+          <Path>HardwareDebug\src/src/etc\rfd_wrapper.obj</Path>
+          <Path>HardwareDebug\src/src/etc/tinycrypt/lib/source\ecc.obj</Path>
+          <Path>HardwareDebug\src/src/etc/tinycrypt/lib/source\ecc_dsa.obj</Path>
+          <Path>HardwareDebug\src/src/etc/tinycrypt/lib/source\sha256.obj</Path>
+          <Path>HardwareDebug\src/src/etc/tinycrypt/lib/source\utils.obj</Path>
+          <Path>HardwareDebug\src/src/r_fwup/src\r_fwup.obj</Path>
+          <Path>HardwareDebug\src/src/r_fwup/src\r_fwup_wrap_com.obj</Path>
+          <Path>HardwareDebug\src/src/r_fwup/src\r_fwup_wrap_flash.obj</Path>
+          <Path>HardwareDebug\src/src/r_fwup/src\r_fwup_wrap_verify.obj</Path>
+        </LinkOrder>
+        <NoTargetFile Target="..\..\..\modules\etc\RFD\source\common\r_rfd_common_extension_api.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\RFD\source\common\r_rfd_common_get_api.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\RFD\source\extraarea\r_rfd_extra_area_api.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\RFD\source\extraarea\r_rfd_extra_area_security_api.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\aes_decrypt.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\aes_encrypt.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\cbc_mode.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\ccm_mode.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\cmac_mode.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\ctr_mode.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\ctr_prng.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\ecc_dh.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\ecc_platform_specific.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\hmac.c"/>
+        <NoTargetFile Target="..\..\..\modules\etc\tinycrypt\lib\source\hmac_prng.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\Config_PORT\Config_PORT.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\Config_PORT\Config_PORT_user.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\Config_UART2\Config_UART2.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\Config_UART2\Config_UART2_user.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_sau_common.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\general\r_cg_systeminit.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\cstart.asm"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm"/>
+        <NoTargetFile Target="trash\2024-02-02-10-42-55\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\Config_PORT\Config_PORT.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\Config_PORT\Config_PORT_user.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\Config_UART2\Config_UART2.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\Config_UART2\Config_UART2_user.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_sau_common.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\general\r_cg_systeminit.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\cstart.asm"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm"/>
+        <NoTargetFile Target="trash\2024-02-09-17-19-39\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\Config_PORT\Config_PORT.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\Config_PORT\Config_PORT_user.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\Config_UART2\Config_UART2.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\Config_UART2\Config_UART2_user.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_sau_common.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\general\r_cg_systeminit.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\cstart.asm"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c"/>
+        <NoTargetFile Target="trash\2024-02-09-17-27-21\src\smc_gen\r_pincfg\Pin.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\Config_PORT\Config_PORT.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\Config_PORT\Config_PORT_user.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\Config_UART2\Config_UART2.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\Config_UART2\Config_UART2_user.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_sau_common.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\general\r_cg_systeminit.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\cstart.asm"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm"/>
+        <NoTargetFile Target="trash\2024-02-20-10-24-31\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\Config_PORT\Config_PORT.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\Config_PORT\Config_PORT_user.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\Config_UART2\Config_UART2.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\Config_UART2\Config_UART2_user.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_sau_common.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\general\r_cg_systeminit.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\hdwinit.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\r_bsp_init.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\board\generic_rl78_g23\stkinit.asm"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\cstart.asm"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_bsp_common.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\all\r_bsp_common_ccrl.asm"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_bsp\mcu\rl78_g23\mcu_clocks.c"/>
+        <NoTargetFile Target="trash\2024-02-20-10-46-33\src\smc_gen\r_pincfg\Pin.c"/>
+        <CommonOptions>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen\r_bsp"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen\r_config"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen\general"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen\Config_PORT"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen\Config_UART2"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\key"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\src\r_config"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\r_fwup"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\r_fwup\src"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\RFD"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\RFD\include"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\RFD\include\rfd"</IncludePathForC>
+          <IncludePathForC>"C:\idt490_rl78\test-bio\iot-reference-rl78\Projects\rl78g23-fpb\modules\etc\tinycrypt\lib\include"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen\r_pincfg"</IncludePathForC>
+          <IncludePathForC>"${ProjDirPath}\src\smc_gen"</IncludePathForC>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen\r_bsp"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen\r_config"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen\general"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen\Config_PORT"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen\Config_UART2"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen\r_pincfg"</IncludePathForAsm>
+          <IncludePathForAsm>"${ProjDirPath}\src\smc_gen"</IncludePathForAsm>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen\r_bsp"</IncludePathForSms>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen\r_config"</IncludePathForSms>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen\general"</IncludePathForSms>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen\Config_PORT"</IncludePathForSms>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen\Config_UART2"</IncludePathForSms>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen\r_pincfg"</IncludePathForSms>
+          <IncludePathForSms>"${ProjDirPath}\src\smc_gen"</IncludePathForSms>
+          <MacroForC>__PRINTF_TINY__</MacroForC>
+          <MacroForC>R_RFD_MCU_FLASH_T01_CATEGORY01</MacroForC>
+        </CommonOptions>
+      </BuildMode>
+    </BuildOptions>
+  </Project>
+</MicomToolCommonProjectFile>
