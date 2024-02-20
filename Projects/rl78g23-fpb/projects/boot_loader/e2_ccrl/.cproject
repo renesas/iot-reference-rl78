@@ -187,6 +187,7 @@
 									<listOptionValue builtIn="false" value="RFD_CF_f=RFD_CF_fR"/>
 									<listOptionValue builtIn="false" value="BL_DATA_n=BL_DATA_nR"/>
 								</option>
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.rrm.121224041" name="RRM／DMM機能用ワーク領域を確保する (-rrm)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.rrm" value="true" valueType="boolean"/>
 								<inputType id="Base.Linker.ccrl.inputType.1213546621" name="Linker InputType" superClass="Base.Linker.ccrl.inputType"/>
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1532407882" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter">
@@ -199,6 +200,7 @@
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.converter.option.outputHexFile.1415017470" name="ロード・モジュール・コンバータを実行する" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.converter.option.outputHexFile" value="true" valueType="boolean"/>
 							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.51513080" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>

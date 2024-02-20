@@ -18,18 +18,16 @@
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-* File Name        : r_cg_systeminit.c
-* Version          : 1.0.30
+* File Name        : Pin.c
+* Version          : 1.0.0
 * Device(s)        : R7F100GSNxFB
-* Description      : This file implements system initializing function.
+* Description      : This file implements SMC pin code generation.
 ***********************************************************************************************************************/
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
 #include "r_cg_macrodriver.h"
 #include "r_cg_userdefine.h"
-#include "Config_PORT.h"
-#include "r_cg_sau_common.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 
@@ -46,18 +44,18 @@ Global variables and functions
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
-* Function Name: R_Systeminit
-* Description  : This function initializes every macro
+* Function Name: R_Pins_Create
+* Description  : This function initializes Smart Configurator pins
 * Arguments    : None
 * Return Value : None
 ***********************************************************************************************************************/
-void R_Systeminit(void)
+void R_Pins_Create(void)
 {
-    PRR0 = 0x7FU;    /* reset IICA, ADC, TAU and SAU module */
-    PRR1 = 0xF3U;    /* reset DAC, SMS, COMP, ITL, REMC, CTSU module */
-    PRR0 = 0x00U;    /* release IICA, ADC, TAU and SAU module */
-    PRR1 = 0x00U;    /* release DAC, SMS, COMP, ITL, REMC, CTSU module */
-    /* Set peripheral settings */
-    R_Config_PORT_Create();
-    R_SAU1_Create();
+    /* Set XT1 pin */
+    /* No register setting has been required for pin */
+
+    /* Set XT2 pin */
+    /* No register setting has been required for pin */
+
 }
+

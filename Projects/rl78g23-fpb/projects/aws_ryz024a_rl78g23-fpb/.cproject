@@ -303,6 +303,7 @@
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.stack.786299537" name="スタック使用量情報ファイルを出力する (-stack)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.stack" value="true" valueType="boolean"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.define.1623619730" name="シンボル定義 (-define)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.define" valueType="definedSymbols"/>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.totalSize.1517664264" name="合計セクションサイズを表示する (-total_size)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.totalSize" value="true" valueType="boolean"/>
+								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.rrm.1300369119" name="RRM／DMM機能用ワーク領域を確保する (-rrm)" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.linker.option.rrm" value="true" valueType="boolean"/>
 								<inputType id="Base.Linker.ccrl.inputType.896098230" name="Linker InputType" superClass="Base.Linker.ccrl.inputType"/>
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter">
@@ -315,6 +316,7 @@
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.converter.option.outputHexFile.48229550" name="ロード・モジュール・コンバータを実行する" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.converter.option.outputHexFile" value="true" valueType="boolean"/>
 							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.962672648" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Demos/mqtt_agent" name="/" resourcePath="Demos/mqtt_agent">
@@ -335,6 +337,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1362231452" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.153025908" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.747234321" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Demos/common" name="/" resourcePath="Demos/common">
@@ -355,6 +358,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1292527343" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1229926035" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1560699725" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Middleware/Application-Protocols/network_transport/sockets_wrapper/ports" name="/" resourcePath="Middleware/Application-Protocols/network_transport/sockets_wrapper/ports">
@@ -375,6 +379,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.731110608" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.44171754" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1642286390" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.285911949" name="/" resourcePath="Middleware/FreeRTOS/FreeRTOS-Cellular-Interface">
@@ -450,6 +455,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.615548832" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.268478069" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.200785023" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Middleware/AWS" name="/" resourcePath="Middleware/AWS">
@@ -470,6 +476,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.2033103052" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.758565312" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1997620533" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os" name="/" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os">
@@ -490,6 +497,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1378284002" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.2033103052"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1055044176" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.758565312"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1495784043" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Middleware/3rdparty" name="/" resourcePath="Middleware/3rdparty">
@@ -510,6 +518,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.476653931" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.2007624527" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1582010554" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
@@ -841,6 +850,7 @@
 								</option>
 								<option id="com.renesas.cdt.managedbuild.renesas.ccrl.converter.option.outputHexFile.1296759898" name="ロード・モジュール・コンバータを実行する" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.converter.option.outputHexFile" value="true" valueType="boolean"/>
 							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1680499742" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/mqtt_agent" name="/" resourcePath="Demos/mqtt_agent">
@@ -861,6 +871,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.447221914" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1753145772" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.873361768" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Demos/common" name="/" resourcePath="Demos/common">
@@ -881,6 +892,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1306172448" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.166832228" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.330508830" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/Application-Protocols/network_transport/sockets_wrapper/ports" name="/" resourcePath="Middleware/Application-Protocols/network_transport/sockets_wrapper/ports">
@@ -901,6 +913,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1003338814" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1526193351" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.538066713" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.30388748" name="/" resourcePath="Middleware/FreeRTOS/FreeRTOS-Cellular-Interface">
@@ -922,6 +935,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.519184061" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1958178904" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1383894120" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS" name="/" resourcePath="Middleware/AWS">
@@ -942,6 +956,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1018337490" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1156673697" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1297627561" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os" name="/" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os">
@@ -962,6 +977,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1858130827" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1018337490"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1715872715" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1156673697"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.124506763" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.196503706.Middleware/3rdparty" name="/" resourcePath="Middleware/3rdparty">
@@ -982,6 +998,7 @@
 							</tool>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.112739311" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1483121271"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1374348641" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.40227043"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.2073829470" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>

@@ -912,7 +912,7 @@
    v1.3.0  : 1030
    v1.6.0  : 1060
 */
-#define BSP_CFG_CONFIGURATOR_VERSION    (1070) /* Generated value. Do not edit this manually */
+#define BSP_CFG_CONFIGURATOR_VERSION    (1090) /* Generated value. Do not edit this manually */
 
 /* API function disable(R_BSP_StartClock, R_BSP_StopClock)
  0 : Enable API functions
@@ -1059,7 +1059,7 @@
 
 /* Input clock frequency in Hz(High-speed system clock(X1))
 */
-#define BSP_CFG_FMX_HZ (20000000)
+#define BSP_CFG_FMX_HZ (5000000) /* Generated value. Do not edit this manually */
 
 /* Control of X1 clock oscillation frequency
    Clock operation mode control register(CMC)
@@ -1081,7 +1081,7 @@
  6 : 2^17/fX(fX = 10MHz : 13.1ms, fX = 20MHz : 6.55ms)
  7 : 2^18/fX(fX = 10MHz : 26.2ms, fX = 20MHz : 13.1ms)
 */
-#define BSP_CFG_X1_WAIT_TIME_SEL (0)
+#define BSP_CFG_X1_WAIT_TIME_SEL (7) /* Generated value. Do not edit this manually */
 
 /* Setting in STOP mode or in HALT mode while the CPU is opeating with subsystem clock X.
    Subsystem clock supply mode control register(OSMC)
