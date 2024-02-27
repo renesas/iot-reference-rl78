@@ -387,4 +387,10 @@
  */
 #define MQTT_AGENT_COMMAND_QUEUE_LENGTH         ( 25U )
 
+/**
+ * @brief The number of command structures to allocate in the pool
+ * for the agent.
+ */
+#define MQTT_COMMAND_CONTEXTS_POOL_SIZE         ( 10U )
+
 #endif /* DEMO_CONFIG_H */

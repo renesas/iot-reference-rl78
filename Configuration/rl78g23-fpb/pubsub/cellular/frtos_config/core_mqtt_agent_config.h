@@ -68,12 +68,6 @@
  */
 #define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME    ( 50U )
 
-/**
- * @brief The number of command structures to allocate in the pool
- * for the agent.
- */
-#define MQTT_COMMAND_CONTEXTS_POOL_SIZE         ( 10U )
-
 /* *INDENT-OFF* */
 #ifdef __cplusplus
     }
