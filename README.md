@@ -97,49 +97,56 @@ The following table indicates drivers provided by Renesas, that are Software Int
   This reference avoids to use these indexes, so you need not to pay attention.
   For more information about this command, refer to the [RYZ024 Modules AT Command User's Manual](https://www.renesas.com/document/mah/ryz024-modules-command-users-manual?r=1636901).
 
-### Configuration values changed from the default in the FIT Modules
+### Configuration values changed from the default in the SIS and FIT Modules
 
-* The configuration values of the FIT modules that have been changed from the default values are listed in the table below.
+* The configuration values of the SIS and FIT modules that have been changed from the default values are listed in the table below.
 * However, each projects is evaluated only with preset values, including configuration values that have not been changed from the default values.
 * If changed, the program may not work properly.
 
 #### RL78/G23-128p FPB Cellular-RYZ024A Projects
 
-  | FIT module | Config name | Default Value | Project value | Reason for change |
-  |------------|-------------|---------------|---------------|-------------------|
-  | r_bsp      | BSP_CFG_HEAP_BYTES | 0x400 | 0x1000 | Because LittleFS and fleet provisioning demo uses malloc which is not an OS feature.<br>Also, because the default value cannot secure enough heap memory. |
-  |            | BSP_CFG_CODE_FLASH_BANK_MODE | 1 | 0 | This project uses the Dual bank function. |
-  |            | BSP_CFG_RTOS_USED | 0 | 1 | This project uses FreeRTOS. |
-  |            | BSP_CFG_SCI_UART_TERMINAL_ENABLE | 0 | 1 | This project uses SCI UART terminals. |
-  |            | BSP_CFG_SCI_UART_TERMINAL_CHANNEL | 8 | 5 | This project uses SCI CH5 as the SCI UART terminal. |
-  | r_flash_rx | FLASH_CFG_CODE_FLASH_ENABLE | 0 | 1 | OTA library rewrites code flash. |
-  |            | FLASH_CFG_DATA_FLASH_BGO | 0 | 1 | LittleFS is implemented to rewrite data flash using BGO functionality. |
-  |            | FLASH_CFG_CODE_FLASH_BGO | 0 | 1 | OTA library is implemented to rewrite code flash using BGO functionality. |
-  |            | FLASH_CFG_CODE_FLASH_RUN_FROM_ROM | 0 | 1 | OTA library is implemented to execute code that rewrites the code flash from another bank. |
-  | r_sci_rx   | SCI_CFG_CH5_INCLUDED | 0 | 1 | SCI CH5 is used as the SCI UART terminal. |
-  |            | SCI_CFG_CH6_INCLUDED | 0 | 1 | SCI CH6 is used to communicate with the RYZ014A module. |
-  |            | SCI_CFG_CH6_TX_BUFSIZ | 80 | 2180 | The TX buffer size needs to be increased to communicate with RYZ014A. |
-  |            | SCI_CFG_CH6_RX_BUFSIZ | 80 | 8192 | The RX buffer size needs to be increased to communicate with RYZ014A. |
-  |            | SCI_CFG_TEI_INCLUDED | 0 | 1 | Transmit end interrupt is used. |
-  | r_fwup     | FWUP_CFG_UPDATE_MODE | 1 | 0 | This project uses Dual bank function. |
-  |            | FWUP_CFG_FUNCTION_MODE | 0 | 1 | This project is user program. |
-  |            | FWUP_CFG_MAIN_AREA_ADDR_L | 0xFFE00000U | 0xFFF00000U | This value is set according to the RX65N ROM 2MB product. |
-  |            | FWUP_CFG_BUF_AREA_ADDR_L | 0xFFEF8000U | 0xFFE00000U | This value is set according to the RX65N ROM 2MB product. |
-  |            | FWUP_CFG_AREA_SIZE | 0xF8000U | 0xF0000U | This value is set according to the RX65N ROM 2MB product. |
+  | Component | Config name | Default Value | Project value | Reason for change |
+  |-----------|-------------|---------------|---------------|-------------------|
+  | r_bsp     | BSP_CFG_MCU_PART_ROM_SIZE | 0x3 | 0x6 | This value is set according to the RL78/G23-128p product. |
+  |           | BSP_CFG_CONFIGURATOR_SELECT | 0 | 1 | Because enable initialization of peripheral functions by Code Generator/Smart Configurator. |
+  |           | BSP_CFG_SOFTWARE_DELAY_API_FUNCTIONS_DISABLE | 1 | 0 | To reduce using ROM/RAM. |
+  |           | BSP_CFG_HISYSCLK_SOURCE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_HISYSCLK_OPERATION | 0 | 1 | Clock setting. |
+  |           | BSP_CFG_MOCO_SOURCE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_ALLOW_FSUB_IN_STOPHALT | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_RTC_OUT_CLK_SOURCE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_WAKEUP_MODE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_RTOS_USED | 0 | 1 | Because using FreeRTOS. |
+  | r_fwup    | FWUP_CFG_FUNCTION_MODE | 0 | 1 | This project is user program. |
+  |           | FWUP_CFG_MAIN_AREA_ADDR_L | 0xFFFC0000U | 0x01000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_BUF_AREA_ADDR_L | 0xFFF80000U | 0x59000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_AREA_SIZE | 0x34000U | 0x58000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_CF_BLK_SIZE | 0x4000U | 2048U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_DF_ADDR_L | 0x00100000 | 0xF1000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_DF_BLK_SIZE | 64U | 256U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_DF_NUM_BLKS | 256U | 32U | This value is set according to the RL78/G23-128p product. |
+  | r_byteq   | BYTEQ_CFG_PARAM_CHECKING_ENABLE | BSP_CFG_PARAM_CHECKING_ENABLE | 0 | To reduce using ROM/RAM. |
+  |           | BYTEQ_CFG_MAX_CTRL_BLKS | 32 | 8 | To reduce using RAM. |
 
 #### RL78/G23-128p FPB Bootloader Projects
 
-  | FIT module | Config name | Default Value | Project value | Reason for change |
-  |------------|-------------|---------------|---------------|-------------------|
-  | r_bsp      | BSP_CFG_USER_CHARPUT_ENABLED | 0 | 1 | Use with log output function. |
-  |            | BSP_CFG_CODE_FLASH_BANK_MODE | 1 | 0 | This project uses the Dual bank function. |
-  | r_flash_rx | FLASH_CFG_CODE_FLASH_ENABLE | 0 | 1 | Bootloader rewrites the code flash. |
-  |            | FLASH_CFG_CODE_FLASH_RUN_FROM_ROM | 0 | 1 | Bootloader is implemented to execute code that rewrites the code flash from another bank. |
-  | r_sci_rx   | SCI_CFG_CH5_INCLUDED | 0 | 1 | SCI CH5 is used to write firmware and output log information. |
-  | r_fwup     | FWUP_CFG_UPDATE_MODE | 1 | 0 | This project uses the Dual bank function. |
-  |            | FWUP_CFG_MAIN_AREA_ADDR_L | 0xFFE00000U | 0xFFF00000U | This value is set according to the RX65N ROM 2MB product. |
-  |            | FWUP_CFG_BUF_AREA_ADDR_L | 0xFFEF8000U | 0xFFE00000U | This value is set according to the RX65N ROM 2MB product. |
-  |            | FWUP_CFG_AREA_SIZE | 0xF8000U | 0xF0000U | This value is set according to the RX65N ROM 2MB product. |
+  | Component | Config name | Default Value | Project value | Reason for change |
+  |-----------|-------------|---------------|---------------|-------------------|
+  | r_bsp     | BSP_CFG_MCU_PART_ROM_SIZE | 0x3 | 0x6 | This value is set according to the RL78/G23-128p product. |
+  |           | BSP_CFG_CONFIGURATOR_SELECT | 0 | 1 | Because enable initialization of peripheral functions by Code Generator/Smart Configurator. |
+  |           | BSP_CFG_HISYSCLK_SOURCE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_HISYSCLK_OPERATION | 0 | 1 | Clock setting. |
+  |           | BSP_CFG_MOCO_SOURCE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_ALLOW_FSUB_IN_STOPHALT | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_RTC_OUT_CLK_SOURCE | 1 | 0 | Clock setting. |
+  |           | BSP_CFG_WAKEUP_MODE | 1 | 0 | Clock setting. |
+  | r_fwup    | FWUP_CFG_MAIN_AREA_ADDR_L | 0xFFFC0000U | 0x01000U | This project uses the Dual bank function. |
+  |           | FWUP_CFG_BUF_AREA_ADDR_L | 0xFFF80000U | 0x59000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_AREA_SIZE | 0x34000U | 0x58000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_CF_BLK_SIZE | 0x4000U | 2048U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_DF_ADDR_L | 0x00100000 | 0xF1000U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_DF_BLK_SIZE | 64U | 256U | This value is set according to the RL78/G23-128p product. |
+  |           | FWUP_CFG_DF_NUM_BLKS | 256U | 32U | This value is set according to the RL78/G23-128p product. |
 
 ## Contribution
 
