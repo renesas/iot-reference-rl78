@@ -43,7 +43,7 @@ The documents for this reference are followings:
 
 * Getting Started Guide
   * For RL78/G23-128p Fast Prototyping Board
-    * **WIP**[Getting Started Guide for Connecting Amazon Web Services in LTE Communication: RL78/G23-128p Fast Prototyping Board + FreeRTOS]()
+    * [Getting Started Guide for Connecting Amazon Web Services in LTE Communication: RL78/G23-128p Fast Prototyping Board + FreeRTOS](https://www.renesas.com/document/apn/rl78g23-getting-started-guide-connecting-amazon-web-services-lte-communication-rl78g23-128p-fast)
 
 ### Open Source Software (OSS) Components
 
@@ -72,26 +72,18 @@ The following table indicates name and version of OSS which are used in this ref
 | Logging Interface             | 1.1.3              | -- | <https://github.com/aws/amazon-freertos/tree/main/libraries/logging>                        | Yes |
 | tinycrypt             | 0.2.8              | -- | <https://github.com/intel/tinycrypt>                        | Yes |
 
-### Software Integration System (SIS) and CG (Code Generation) Modules
+### Renesas Driver Components
 
-The following table indicates name and version.
+The following table indicates drivers provided by Renesas, that are Software Integration System (SIS), Firmware Integration Technology (FIT) , and CG (Code Generation) Modules.
 
-| SIS or CG Modules | Revision | URL |
-|------------|---------|---------|
-|r_bsp|1.60|[Board Support Package Module Using Software Integration System](https://www.renesas.com/document/apn/rl78-family-board-support-package-module-using-software-integration-system)|
-|Config_UART|1.6.0|-|
-|Config_PORT|1.4.0|-|
-
-### Other Drivers
-
-The following table indicates name and version.
-
-| Drivers | Revision | URL |
-|------------|---------|---------|
-|r_fwup|2.01|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
-|Renesas Flash Driver RL78 Type01|1.00|[Renesas Flash Driver RL78 Type01](https://www.renesas.com/document/man/renesas-flash-driver-rl78-type-01-users-manual-rl78g23)|
-|r_byteq||[BYTEQ Module Using Firmware Integration Technology](https://www.renesas.com/document/apn/byteq-module-using-firmware-integration-technology)|
-|r_sci||[SCI Module Using Firmware Integration Technology](https://www.renesas.com/document/apn/sci-module-using-firmware-integration-technology)|
+| Component | Revision | Component Type | URL |
+|------------|---------|---------|---------|
+|r_bsp|1.60|SIS module|[Board Support Package Module Using Software Integration System](https://www.renesas.com/document/apn/rl78-family-board-support-package-module-using-software-integration-system)|
+|FWUP SISr_fwup|2.01|SIS module|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
+|r_byteq|2.10|FIT module|[BYTEQ Module Using Firmware Integration Technology](https://www.renesas.com/document/apn/byteq-module-using-firmware-integration-technology)|
+|Config_UART|1.6.0|CG module|-|
+|Config_PORT|1.4.0|CG module|-|
+|Renesas Flash Driver RL78 Type01|1.00|-|[Renesas Flash Driver RL78 Type01](https://www.renesas.com/document/man/renesas-flash-driver-rl78-type-01-users-manual-rl78g23)|
 
 ## Limitation
 
@@ -102,7 +94,7 @@ The following table indicates name and version.
   For more information, check chapter 7 of the following document.  
   [RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)
 * In version LR8.2.0.2-59200 or later, which is one of RYZ024A's firmware, the `AT+SQNSNVW` command has limitation that indexes 0 to 4 and 7 to 10 of non-volatile memory in RYZ024A are reserved so they cann't be used for writing / deleting.  
-  This reference avoid to use these indexes, but pay attention if you use this command directly in your application.
+  This reference avoids to use these indexes, so you need not to pay attention.
   For more information about this command, refer to the [RYZ024 Modules AT Command User's Manual](https://www.renesas.com/document/mah/ryz024-modules-command-users-manual?r=1636901).
 
 ### Configuration values changed from the default in the FIT Modules
@@ -157,7 +149,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for more information.
 
 * Source code located in the *Projects*, *Common*, *Middleware/AWS*, and *Middleware/FreeRTOS* directories are available under the terms of the MIT License. See the LICENSE file for more details.
 * Other libraries located in the *Middleware* directories are available under the terms specified in each source file.
-* Each Renesas SIS, FIT, and other modules located in the *Projects/xxx/projects/xxx/src/smc_gen* and *Projects/xxx/modules* are available under the terms of the basically MIT License. See the doc/license of following URL for more details.
+* Each Renesas SIS, FIT, and other modules located in the *Projects/xxx/projects/xxx/src/smc_gen* and *Projects/xxx/modules* are available under the disclaimer written in source or header files.
   * [https://github.com/renesas/rx-driver-package](https://github.com/renesas/rx-driver-package)
 
 ## Support
