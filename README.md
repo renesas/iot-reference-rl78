@@ -79,7 +79,7 @@ The following table indicates drivers provided by Renesas, that are Software Int
 | Component | Revision | Component Type | URL |
 |------------|---------|---------|---------|
 |r_bsp|1.60|SIS module|[Board Support Package Module Using Software Integration System](https://www.renesas.com/document/apn/rl78-family-board-support-package-module-using-software-integration-system)|
-|FWUP SISr_fwup|2.01|SIS module|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
+|r_fwup|2.01|SIS module|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
 |r_byteq|2.10|FIT module|[BYTEQ Module Using Firmware Integration Technology](https://www.renesas.com/document/apn/byteq-module-using-firmware-integration-technology)|
 |Config_UART|1.6.0|CG module|-|
 |Config_PORT|1.4.0|CG module|-|
