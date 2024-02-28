@@ -8,7 +8,7 @@ Refer to the [Getting Started Guide](#user-documents) for step by step instructi
 
 ## Product Specifications
 
-This reference is consist of demo applications, FreeRTOS kernel, middleware provided by AWS and 3rd party, middleware and drivers for RL78 family provided as the Software Integration System by the Renesas, files to collaborate Renesas tools such as the IDE [e2 studio](https://www.renesas.com/software-tool/e-studio), and etc.
+This reference is consist of demo applications, FreeRTOS kernel, middleware provided by AWS and 3rd party, middleware and drivers for RL78 family provided as the Software Integration System by Renesas, files to collaborate Renesas tools such as the IDE [e2 studio](https://www.renesas.com/software-tool/e-studio), and etc.
 Summary of specifications explains in the following chapters.
 
 ### Using AWS Services
@@ -93,7 +93,7 @@ The following table indicates drivers provided by Renesas, that are Software Int
   When transitioning from the bootloader sample program to the application, the settings of the bootloader's peripheral functions are taken over by the application.  
   For more information, check chapter 7 of the following document.  
   [RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)
-* In version LR8.2.0.2-59200 or later, which is one of RYZ024A's firmware, the `AT+SQNSNVW` command has limitation that indexes 0 to 4 and 7 to 10 of non-volatile memory in RYZ024A are reserved so they cann't be used for writing / deleting.  
+* In version LR8.2.0.2-59200 or later, which is one of RYZ024A's firmware, the `AT+SQNSNVW` command has limitation that indexes 0 to 4 and 7 to 10 of non-volatile memory in RYZ024A are reserved so they can't be used for writing / deleting.  
   This reference avoids to use these indexes, so you need not to pay attention.
   For more information about this command, refer to the [RYZ024 Modules AT Command User's Manual](https://www.renesas.com/document/mah/ryz024-modules-command-users-manual?r=1636901).
 
@@ -157,7 +157,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for more information.
 * Source code located in the *Projects*, *Common*, *Middleware/AWS*, and *Middleware/FreeRTOS* directories are available under the terms of the MIT License. See the LICENSE file for more details.
 * Other libraries located in the *Middleware* directories are available under the terms specified in each source file.
 * Each Renesas SIS, FIT, and other modules located in the *Projects/xxx/projects/xxx/src/smc_gen* and *Projects/xxx/modules* are available under the disclaimer written in source or header files.
-  * [https://github.com/renesas/rx-driver-package](https://github.com/renesas/rx-driver-package)
+  * License of FIT modules: [https://github.com/renesas/rx-driver-package](https://github.com/renesas/rx-driver-package/blob/master/README.md#license)
 
 ## Support
 
