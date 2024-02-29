@@ -1,6 +1,7 @@
 /*
  * FreeRTOS V202112.00
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -57,7 +58,6 @@
 
 /* Library config includes. */
 #include "ota_config.h"
-#include "ota_demo_config.h"
 
 /* MQTT library includes. */
 #include "core_mqtt_agent.h"
@@ -75,10 +75,14 @@
 /* Include platform abstraction header. */
 #include "ota_pal.h"
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #include "store.h"
+#endif
 
 #include "mqtt_agent_task.h"
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 extern KeyValueStore_t gKeyValueStore;
+#endif
 
 /*------------- Demo configurations -------------------------*/
 
@@ -103,7 +107,7 @@ extern KeyValueStore_t gKeyValueStore;
  * to be posted to the MQTT agent should the MQTT agent's command queue be full.
  * Tasks wait in the Blocked state, so don't use any CPU time.
  */
-#define MQTT_AGENT_SEND_BLOCK_TIME_MS               	 ( 200U )
+#define MQTT_AGENT_SEND_BLOCK_TIME_MS                    ( 200U )
 
 /**
  * @brief The common prefix for all OTA topics.
@@ -175,7 +179,7 @@ extern KeyValueStore_t gKeyValueStore;
 /**
  * @brief Stack size required for OTA agent task.
  */
-#define OTA_AGENT_TASK_STACK_SIZE                   ( 5000U )
+#define OTA_AGENT_TASK_STACK_SIZE                   ( 1600U )
 
 /**
  * @brief Priority required for OTA agent task.
@@ -196,7 +200,11 @@ extern KeyValueStore_t gKeyValueStore;
  * @brief ThingName which is used as the client identifier for MQTT connection.
  * Thing name is retrieved  at runtime from a key value store.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static char __far * pcThingName = NULL;
+#else
 static char * pcThingName = NULL;
+#endif
 static size_t xThingNameLength = 0U;
 
 /**
@@ -536,8 +544,13 @@ static OtaEventData_t * prvOTAEventBufferGet( void )
  * @param[in] pData Data associated with the event.
  * @return None.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static void otaAppCallback( OtaJobEvent_t event,
+                            void * pData )
+#else
 static void otaAppCallback( OtaJobEvent_t event,
                             const void * pData )
+#endif
 {
     OtaErr_t err = OtaErrUninitialized;
 
@@ -824,7 +837,7 @@ static OtaMqttStatus_t prvMQTTSubscribe( const char * pTopicFilter,
     MQTTStatus_t mqttStatus;
     uint32_t ulNotifiedValue;
     MQTTAgentSubscribeArgs_t xSubscribeArgs = { 0 };
-    MQTTSubscribeInfo_t xSubscribeInfo = { 0 };
+    MQTTSubscribeInfo_t xSubscribeInfo = { MQTTQoS0, NULL, 0 };
     BaseType_t result;
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xApplicationDefinedContext = { 0 };
@@ -835,7 +848,7 @@ static OtaMqttStatus_t prvMQTTSubscribe( const char * pTopicFilter,
 
     xSubscribeInfo.pTopicFilter = pTopicFilter;
     xSubscribeInfo.topicFilterLength = topicFilterLength;
-    xSubscribeInfo.qos = ucQoS;
+    xSubscribeInfo.qos = (MQTTQoS_t)ucQoS;
     xSubscribeArgs.pSubscribeInfo = &xSubscribeInfo;
     xSubscribeArgs.numSubscriptions = 1;
 
@@ -904,14 +917,14 @@ static OtaMqttStatus_t prvMQTTPublish( const char * const pacTopic,
     OtaMqttStatus_t otaRet = OtaMqttSuccess;
     BaseType_t result;
     MQTTStatus_t mqttStatus = MQTTBadParameter;
-    MQTTPublishInfo_t publishInfo = { 0 };
+    MQTTPublishInfo_t publishInfo = { MQTTQoS0, 0, };
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
     uint32_t ulNotifiedValue;
 
     publishInfo.pTopicName = pacTopic;
     publishInfo.topicNameLength = topicLen;
-    publishInfo.qos = qos;
+    publishInfo.qos = (MQTTQoS_t)qos;
     publishInfo.pPayload = pMsg;
     publishInfo.payloadLength = msgSize;
 
@@ -975,7 +988,7 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
     MQTTStatus_t mqttStatus;
     uint32_t ulNotifiedValue;
     MQTTAgentSubscribeArgs_t xSubscribeArgs = { 0 };
-    MQTTSubscribeInfo_t xSubscribeInfo = { 0 };
+    MQTTSubscribeInfo_t xSubscribeInfo = { MQTTQoS0, NULL, 0 };
     BaseType_t result;
     MQTTAgentCommandInfo_t xCommandParams = { 0 };
     MQTTAgentCommandContext_t xApplicationDefinedContext = { 0 };
@@ -986,7 +999,7 @@ static OtaMqttStatus_t prvMQTTUnsubscribe( const char * pTopicFilter,
 
     xSubscribeInfo.pTopicFilter = pTopicFilter;
     xSubscribeInfo.topicFilterLength = topicFilterLength;
-    xSubscribeInfo.qos = ucQoS;
+    xSubscribeInfo.qos = (MQTTQoS_t)ucQoS;
     xSubscribeArgs.pSubscribeInfo = &xSubscribeInfo;
     xSubscribeArgs.numSubscriptions = 1;
 
@@ -1299,9 +1312,6 @@ static void vOtaDemoTask( void * pvParam )
     /* Return error status. */
     BaseType_t xReturnStatus = pdPASS;
 
-    /* Flag for MQTT init status. */
-    bool mqttInitialized = false;
-
     if (xGetMQTTAgentState () != MQTT_AGENT_STATE_CONNECTED)
     {
         (void ) xWaitForMQTTAgentState (MQTT_AGENT_STATE_CONNECTED, portMAX_DELAY);
@@ -1310,6 +1320,10 @@ static void vOtaDemoTask( void * pvParam )
 
     ( void ) pvParam;
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    pcThingName = (char __far *)clientcredentialIOT_THING_NAME ;
+    xThingNameLength = strlen(pcThingName);
+#else
 #if defined(__TEST__)
     pcThingName = clientcredentialIOT_THING_NAME ;
     xThingNameLength = strlen(pcThingName);
@@ -1323,6 +1337,7 @@ static void vOtaDemoTask( void * pvParam )
     {
         xReturnStatus = pdFAIL;
     }
+#endif
 #endif
 
     LogInfo( ( "OTA over MQTT demo, Application version %u.%u.%u",
@@ -1360,11 +1375,14 @@ static void vOtaDemoTask( void * pvParam )
         vSemaphoreDelete( xBufferSemaphore );
     }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     if( pcThingName != NULL )
-	{
-		vPortFree( pcThingName );
-		pcThingName = NULL;
-	}
+    {
+        vPortFree( pcThingName );
+        pcThingName = NULL;
+    }
+#endif
 
     vTaskDelete( NULL );
 }

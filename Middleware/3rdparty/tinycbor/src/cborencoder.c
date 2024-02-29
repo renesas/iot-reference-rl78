@@ -237,9 +237,17 @@ static inline void put64(void *where, uint64_t v)
     memcpy(where, &v, sizeof(v));
 }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static inline bool would_overflow(CborEncoder *encoder, uint32_t len)
+#else
 static inline bool would_overflow(CborEncoder *encoder, size_t len)
+#endif
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    int32_t remaining = (int32_t)encoder->end;
+#else
     ptrdiff_t remaining = (ptrdiff_t)encoder->end;
+#endif
     remaining -= remaining ? (ptrdiff_t)encoder->data.ptr : encoder->data.bytes_needed;
     remaining -= (ptrdiff_t)len;
     return unlikely(remaining < 0);

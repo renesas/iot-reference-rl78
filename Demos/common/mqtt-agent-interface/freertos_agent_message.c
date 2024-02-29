@@ -28,6 +28,9 @@
  * @file freertos_agent_message.c
  * @brief Implements functions to interact with queues.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section const const_demos
+#endif
 
 /* Standard includes. */
 #include <string.h>
@@ -72,3 +75,6 @@ bool Agent_MessageReceive( MQTTAgentMessageContext_t * pMsgCtx,
 
     return ( queueStatus == pdPASS ) ? true : false;
 }
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section
+#endif

@@ -1,6 +1,7 @@
 /*
  * FreeRTOS Common V1.1.3
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -248,8 +249,13 @@ static void prvLoggingPrintfCommon( uint8_t usLoggingLevel,
             /* Add metadata of task name and tick count if config is enabled. */
             #if ( configLOGGING_INCLUDE_TIME_AND_TASK_NAME == 1 )
                 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                    const char __far * pcTaskName;
+                    const char __far * pcNoTask = "None";
+#else
                     const char * pcTaskName;
                     const char * pcNoTask = "None";
+#endif
                     static BaseType_t xMessageNumber = 0;
 
                     /* Add a time stamp and the name of the calling task to the
@@ -350,7 +356,6 @@ static void prvLoggingPrintfCommon( uint8_t usLoggingLevel,
         {
             /* Send the string to the logging task for IO. */
             if( xQueueSend( xQueue, &pcPrintString, loggingDONT_BLOCK ) != pdPASS )
-//        	configPRINT_STRING(pcPrintString);
             {
                 /* The buffer was not sent so must be freed again. */
                 vPortFree( ( void * ) pcPrintString );

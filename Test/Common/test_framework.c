@@ -71,7 +71,7 @@ void TEST_CacheResult( char cResult )
 }
 /*-----------------------------------------------------------*/
 
-void TEST_SubmitResultBuffer()
+void TEST_SubmitResultBuffer( void )
 {
     if( 0 != xBufferSize )
     {
@@ -82,13 +82,13 @@ void TEST_SubmitResultBuffer()
 }
 /*-----------------------------------------------------------*/
 
-void TEST_NotifyTestStart()
+void TEST_NotifyTestStart( void )
 {
     TEST_SubmitResult( "---------STARTING TESTS---------\n" );
 }
 /*-----------------------------------------------------------*/
 
-void TEST_NotifyTestFinished()
+void TEST_NotifyTestFinished( void )
 {
     TEST_SubmitResult( "-------ALL TESTS FINISHED-------\n" );
 }
@@ -96,7 +96,11 @@ void TEST_NotifyTestFinished()
 
 void TEST_SubmitResult( const char * pcResult )
 {
-	configPRINT_STRING( pcResult );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    configPRINT_STRING( (char __far *)pcResult );
+#else
+    configPRINT_STRING( pcResult );
+#endif
     /* Wait for 0.1 seconds to let print task empty its buffer. */
     vTaskDelay( pdMS_TO_TICKS( 100UL ) );
 }
