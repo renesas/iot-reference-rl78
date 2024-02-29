@@ -79,10 +79,10 @@ The following table indicates drivers provided by Renesas, that are Software Int
 | Component | Revision | Component Type | URL |
 |------------|---------|---------|---------|
 |r_bsp|1.60|SIS module|[Board Support Package Module Using Software Integration System](https://www.renesas.com/document/apn/rl78-family-board-support-package-module-using-software-integration-system)|
-|r_fwup|2.01|SIS module|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
 |r_byteq|2.10|FIT module|[BYTEQ Module Using Firmware Integration Technology](https://www.renesas.com/document/apn/byteq-module-using-firmware-integration-technology)|
 |Config_UART|1.6.0|CG module|-|
 |Config_PORT|1.4.0|CG module|-|
+|r_fwup|2.01|-|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
 |Renesas Flash Driver RL78 Type01|1.00|-|[Renesas Flash Driver RL78 Type01](https://www.renesas.com/document/man/renesas-flash-driver-rl78-type-01-users-manual-rl78g23)|
 
 ## Limitation
@@ -117,6 +117,8 @@ The following table indicates drivers provided by Renesas, that are Software Int
   |           | BSP_CFG_RTC_OUT_CLK_SOURCE | 1 | 0 | Clock setting. |
   |           | BSP_CFG_WAKEUP_MODE | 1 | 0 | Clock setting. |
   |           | BSP_CFG_RTOS_USED | 0 | 1 | Because using FreeRTOS. |
+  | r_byteq   | BYTEQ_CFG_PARAM_CHECKING_ENABLE | BSP_CFG_PARAM_CHECKING_ENABLE | 0 | To reduce using ROM/RAM. |
+  |           | BYTEQ_CFG_MAX_CTRL_BLKS | 32 | 8 | To reduce using RAM. |
   | r_fwup    | FWUP_CFG_FUNCTION_MODE | 0 | 1 | This project is user program. |
   |           | FWUP_CFG_MAIN_AREA_ADDR_L | 0xFFFC0000U | 0x01000U | This value is set according to the RL78/G23-128p product. |
   |           | FWUP_CFG_BUF_AREA_ADDR_L | 0xFFF80000U | 0x59000U | This value is set according to the RL78/G23-128p product. |
@@ -125,8 +127,6 @@ The following table indicates drivers provided by Renesas, that are Software Int
   |           | FWUP_CFG_DF_ADDR_L | 0x00100000 | 0xF1000U | This value is set according to the RL78/G23-128p product. |
   |           | FWUP_CFG_DF_BLK_SIZE | 64U | 256U | This value is set according to the RL78/G23-128p product. |
   |           | FWUP_CFG_DF_NUM_BLKS | 256U | 32U | This value is set according to the RL78/G23-128p product. |
-  | r_byteq   | BYTEQ_CFG_PARAM_CHECKING_ENABLE | BSP_CFG_PARAM_CHECKING_ENABLE | 0 | To reduce using ROM/RAM. |
-  |           | BYTEQ_CFG_MAX_CTRL_BLKS | 32 | 8 | To reduce using RAM. |
 
 #### RL78/G23-128p FPB Bootloader Projects
 
