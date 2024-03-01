@@ -85,18 +85,6 @@ The following table indicates drivers provided by Renesas, that are Software Int
 |r_fwup|2.01|-|[RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)|
 |Renesas Flash Driver RL78 Type01|1.00|-|[Renesas Flash Driver RL78 Type01](https://www.renesas.com/document/man/renesas-flash-driver-rl78-type-01-users-manual-rl78g23)|
 
-## Limitation
-
-* Demo project (OTA) will not work properly unless `otaconfigMAX_NUM_BLOCKS_REQUEST` is set to "1".  
-  If `otaconfigMAX_NUM_BLOCKS_REQUEST` is set to anything other than 1, a build error will occur.  
-* Notes on bootloader to application transition.  
-  When transitioning from the bootloader sample program to the application, the settings of the bootloader's peripheral functions are taken over by the application.  
-  For more information, check chapter 7 of the following document.  
-  [RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)
-* In version LR8.2.0.2-59200 or later, which is one of RYZ024A's firmware, the `AT+SQNSNVW` command has limitation that indexes 0 to 4 and 7 to 10 of non-volatile memory in RYZ024A are reserved so they can't be used for writing / deleting.  
-  This reference avoids to use these indexes, so you need not to pay attention.
-  For more information about this command, refer to the [RYZ024 Modules AT Command User's Manual](https://www.renesas.com/document/mah/ryz024-modules-command-users-manual?r=1636901).
-
 ### Configuration values changed from the default in the SIS and FIT Modules
 
 * The configuration values of the SIS and FIT modules that have been changed from the default values are listed in the table below.
@@ -147,6 +135,18 @@ The following table indicates drivers provided by Renesas, that are Software Int
   |           | FWUP_CFG_DF_ADDR_L | 0x00100000 | 0xF1000U | This value is set according to the RL78/G23-128p product. |
   |           | FWUP_CFG_DF_BLK_SIZE | 64U | 256U | This value is set according to the RL78/G23-128p product. |
   |           | FWUP_CFG_DF_NUM_BLKS | 256U | 32U | This value is set according to the RL78/G23-128p product. |
+
+## Limitation
+
+* Demo project (OTA) will not work properly unless `otaconfigMAX_NUM_BLOCKS_REQUEST` is set to "1".  
+  If `otaconfigMAX_NUM_BLOCKS_REQUEST` is set to anything other than 1, a build error will occur.  
+* Notes on bootloader to application transition.  
+  When transitioning from the bootloader sample program to the application, the settings of the bootloader's peripheral functions are taken over by the application.  
+  For more information, check chapter 7 of the following document.  
+  [RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)
+* In version LR8.2.0.2-59200 or later, which is one of RYZ024A's firmware, the `AT+SQNSNVW` command has limitation that indexes 0 to 4 and 7 to 10 of non-volatile memory in RYZ024A are reserved so they can't be used for writing / deleting.  
+  This reference avoids to use these indexes, so you need not to pay attention.
+  For more information about this command, refer to the [RYZ024 Modules AT Command User's Manual](https://www.renesas.com/document/mah/ryz024-modules-command-users-manual?r=1636901).
 
 ## Contribution
 
