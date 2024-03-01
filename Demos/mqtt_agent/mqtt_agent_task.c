@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2023 Renesas Electronics Corporation. or its affiliates.
+ * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -50,6 +50,9 @@
  *    MQTT agent.
  */
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section const const_demos
+#endif
 
 /* Standard includes. */
 #include <string.h>
@@ -61,20 +64,23 @@
 #include "queue.h"
 #include "task.h"
 #include "event_groups.h"
+#include "semphr.h"
 
 /* Demo Specific configs. */
 #include "demo_config.h"
-#include "core_pkcs11_config.h"
 
 /* MQTT library includes. */
 #include "core_mqtt.h"
 
 /* Transport interface implementation include header for TLS. */
-#include "transport_mbedtls_pkcs11.h"
 #include "aws_clientcredential.h"
 #include "iot_default_root_certificates.h"
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#include "trng_helper.h"
+#else
 #include "core_pkcs11_config.h"
+#endif
 
 /* MQTT library includes. */
 #include "core_mqtt.h"
@@ -90,16 +96,24 @@
 #include "backoff_algorithm.h"
 
 /* Transport interface header file. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#include "transport_plaintext.h"
+#else
 #include "transport_mbedtls_pkcs11.h"
-
-/* Keystore APIs to fetch configuration data. */
-#include "aws_clientcredential.h"
+#endif
 
 /* Includes MQTT Agent Task management APIs. */
 #include "mqtt_agent_task.h"
 #include "backoff_algorithm.h"
 
+/* For IDT test. */
+#if (ENABLE_AFR_IDT == 1)
+#include "test_execution_config.h"
+#endif
+
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #include "store.h"
+#endif
 
 #ifndef democonfigMQTT_BROKER_ENDPOINT
     #define democonfigMQTT_BROKER_ENDPOINT    clientcredentialMQTT_BROKER_ENDPOINT
@@ -191,7 +205,7 @@
 /**
  * @brief Socket send and receive timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 750 )
+#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 100 )
 
 /**
  * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
@@ -232,18 +246,30 @@
  * @brief ThingName which is used as the client identifier for MQTT connection.
  * Thing name is retrieved  at runtime from a key value store.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static char __far * pcThingName = NULL;
+#else
 static char * pcThingName = NULL;
+#endif
 
 /**
  * @brief Broker endpoint name for the MQTT connection.
  * Broker endpoint name is retrieved at runtime from a key value store.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static char __far * pcBrokerEndpoint = NULL;
+#else
 static char * pcBrokerEndpoint = NULL;
+#endif
 
 /**
  * @brief Root CA
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static char __far * pcRootCA = NULL;
+#else
 static char * pcRootCA = NULL;
+#endif
 /*-----------------------------------------------------------*/
 
 /**
@@ -254,13 +280,21 @@ typedef struct TopicFilterSubscription
     IncomingPubCallback_t pxIncomingPublishCallback;
     void * pvIncomingPublishCallbackContext;
     uint16_t usTopicFilterLength;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    const char __far * pcTopicFilter;
+#else
     const char * pcTopicFilter;
+#endif
     BaseType_t xManageResubscription;
 } TopicFilterSubscription_t;
 
 /*-----------------------------------------------------------*/
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static PlaintextTransportParams_t xPlaintextTransportParams;
+#else
 static TlsTransportParams_t xTlsTransportParams;
+#endif
 
 /**
  * @brief Initializes an MQTT context, including transport interface and
@@ -365,8 +399,9 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect );
  * @return NULL if value not found, pointer to the NULL terminated string value
  *         if found.
  */
-//static char * prvKVStoreGetString( KVStoreKey_t xKey );
-
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+static char * prvKVStoreGetString( KVStoreKey_t xKey );
+#endif
 
 static void prvMQTTAgentTask( void * pvParameters );
 /*-----------------------------------------------------------*/
@@ -377,7 +412,11 @@ static void prvMQTTAgentTask( void * pvParameters );
  */
 struct NetworkContext
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    PlaintextTransportParams_t * pParams;
+#else
     TlsTransportParams_t * pParams;
+#endif
 };
 
 static NetworkContext_t xNetworkContext;
@@ -445,8 +484,13 @@ static MQTTStatus_t prvMQTTInit( void )
 
     /* Fill in Transport Interface send and receive function pointers. */
     xTransport.pNetworkContext = &xNetworkContext;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    xTransport.send = Plaintext_FreeRTOS_send;
+    xTransport.recv = Plaintext_FreeRTOS_recv;
+#else
     xTransport.send = TLS_FreeRTOS_send;
     xTransport.recv = TLS_FreeRTOS_recv;
+#endif
     xTransport.writev = NULL;
 
     /* Initialize MQTT library. */
@@ -553,12 +597,17 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 {
     BaseType_t xConnected = pdFAIL;
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    PlaintextTransportStatus_t xNetworkStatus = PLAINTEXT_TRANSPORT_CONNECT_FAILURE;
+#else
     TlsTransportStatus_t xNetworkStatus = TLS_TRANSPORT_CONNECT_FAILURE;
     NetworkCredentials_t xNetworkCredentials = { 0 };
+#endif
     BackoffAlgorithmStatus_t xBackoffAlgStatus = BackoffAlgorithmSuccess;
     BackoffAlgorithmContext_t xReconnectParams = { 0 };
     uint16_t usNextRetryBackOff = 0U;
 
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #ifdef democonfigUSE_AWS_IOT_CORE_BROKER
 
     /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
@@ -583,6 +632,7 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 
 
     xNetworkCredentials.disableSni = democonfigDISABLE_SNI;
+#endif
     BackoffAlgorithm_InitializeParams( &xReconnectParams,
                                         RETRY_BACKOFF_BASE_MS,
                                         RETRY_MAX_BACKOFF_DELAY_MS,
@@ -591,13 +641,21 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
     /* Establish a TCP connection with the MQTT broker. This example connects to
      * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
      * democonfigMQTT_BROKER_PORT at the top of this file. */
-
     uint32_t ulRandomNum = 0;
 	do
 	{
 	LogInfo( ( "Creating a TLS connection to %s:%u.",
 			pcBrokerEndpoint,
 			democonfigMQTT_BROKER_PORT ) );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    xNetworkStatus = Plaintext_FreeRTOS_Connect( pxNetworkContext,
+                                               pcBrokerEndpoint,
+                                               democonfigMQTT_BROKER_PORT,
+                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
+                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+
+    xConnected = ( xNetworkStatus == PLAINTEXT_TRANSPORT_SUCCESS ) ? pdPASS : pdFAIL;
+#else
 	xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
                                                pcBrokerEndpoint,
                                                democonfigMQTT_BROKER_PORT,
@@ -606,12 +664,18 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
                                            mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
 
     xConnected = ( xNetworkStatus == TLS_TRANSPORT_SUCCESS ) ? pdPASS : pdFAIL;
+#endif
 
 		if( !xConnected )
 		{
 			/* Get back-off value (in milliseconds) for the next connection retry. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+            if( xTrngGenerateRandomNumber( ( uint8_t * ) &ulRandomNum,
+                                               sizeof( ulRandomNum ) ) == pdPASS )
+#else
 			if( xPkcs11GenerateRandomNumber( ( uint8_t * ) &ulRandomNum,
 												 sizeof( ulRandomNum ) ) == pdPASS )
+#endif
 			{
 			xBackoffAlgStatus = BackoffAlgorithm_GetNextBackoff( &xReconnectParams, ulRandomNum, &usNextRetryBackOff );
 			}
@@ -639,7 +703,11 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
 static BaseType_t prvDisconnectTLS( NetworkContext_t * pxNetworkContext )
 {
     LogInfo( ( "Disconnecting TLS connection.\n" ) );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    Plaintext_FreeRTOS_Disconnect( pxNetworkContext );
+#else
     TLS_FreeRTOS_Disconnect( pxNetworkContext );
+#endif
     return pdPASS;
 }
 
@@ -653,7 +721,7 @@ static MQTTStatus_t prvHandleResubscribe( void )
 
     /* These variables need to stay in scope until command completes. */
     static MQTTAgentSubscribeArgs_t xSubArgs = { 0 };
-    static MQTTSubscribeInfo_t xSubInfo[ MQTT_AGENT_MAX_SUBSCRIPTIONS ] = { 0 };
+    static MQTTSubscribeInfo_t xSubInfo[ MQTT_AGENT_MAX_SUBSCRIPTIONS ] = { MQTTQoS0, NULL, 0 };
     static MQTTAgentCommandInfo_t xCommandParams = { 0 };
 
     /* Loop through each subscription in the subscription list and add a subscribe
@@ -773,7 +841,7 @@ static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
 
 /*-----------------------------------------------------------*/
 void vStartMQTTAgent( configSTACK_DEPTH_TYPE uxStackSize,
-        UBaseType_t uxPriority  )
+		              UBaseType_t uxPriority  )
 {
     xTaskCreate( prvMQTTAgentTask,
                   "MQTT",
@@ -789,7 +857,9 @@ void prvMQTTAgentTask( void * pvParameters )
     BaseType_t xStatus = pdPASS;
     MQTTStatus_t xMQTTStatus = MQTTBadParameter;
     MQTTContext_t * pMqttContext = &( xGlobalMqttAgentContext.mqttContext );
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     extern KeyValueStore_t gKeyValueStore ;
+#endif
     ( void ) pvParameters;
 
     ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED, portMAX_DELAY );
@@ -798,6 +868,11 @@ void prvMQTTAgentTask( void * pvParameters )
     /* Initialization of timestamp for MQTT. */
     ulGlobalEntryTimeMs = prvGetTimeMs();
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    pcThingName = clientcredentialIOT_THING_NAME ;
+    pcBrokerEndpoint = clientcredentialMQTT_BROKER_ENDPOINT;
+    pcRootCA = (char __far *)democonfigROOT_CA_PEM;
+#else
 #if defined(__TEST__)
     pcThingName = clientcredentialIOT_THING_NAME ;
     pcBrokerEndpoint = clientcredentialMQTT_BROKER_ENDPOINT;
@@ -826,8 +901,7 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
 #endif
-
-
+#endif
 
     /* Initialize the MQTT context with the buffer and transport interface. */
     if( xStatus == pdPASS )
@@ -866,8 +940,13 @@ void prvMQTTAgentTask( void * pvParameters )
                  * Disconnect the socket and terminate MQTT agent loop.
                  */
                 LogInfo( ( "MQTT Agent loop terminated due to a graceful disconnect." ) );
+#if (DEVICE_ADVISOR_TEST_ENABLED == 0)
                 ( void ) MQTTAgent_CancelAll( &xGlobalMqttAgentContext );
                 ( void ) prvDisconnectTLS( &xNetworkContext );
+#else
+                ( void ) prvDisconnectTLS( &xNetworkContext );
+                pMqttContext->connectStatus = prvConnectToMQTTBroker( true );
+#endif
             }
             else
             {
@@ -880,6 +959,9 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
     prvSetMQTTAgentState( MQTT_AGENT_STATE_TERMINATED );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
+#if !defined(__TEST__)
     if( pcThingName != NULL )
    {
 	   vPortFree( pcThingName );
@@ -892,11 +974,13 @@ void prvMQTTAgentTask( void * pvParameters )
 	   pcBrokerEndpoint = NULL;
    }
 
-    if (pcRootCA != NULL)
-    {
-        vPortFree( pcRootCA );
-        pcRootCA = NULL;
-    }
+   if (pcRootCA != NULL)
+   {
+       vPortFree( pcRootCA );
+       pcRootCA = NULL;
+   }
+#endif
+#endif
 
    LogInfo( ( "---------MQTT Agent Task Finished---------\r\n" ) );
    vTaskDelete( NULL );
@@ -913,7 +997,11 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect )
     BackoffAlgorithmContext_t xReconnectParams = { 0 };
     uint16_t usNextRetryBackOff = 0U;
 /* Initialize network context. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    xNetworkContext.pParams = &xPlaintextTransportParams;
+#else
     xNetworkContext.pParams = &xTlsTransportParams;
+#endif
 
     /* We will use a retry mechanism with an exponential backoff mechanism and
      * jitter.  That is done to prevent a fleet of IoT devices all trying to
@@ -1172,3 +1260,6 @@ void vRemoveMQTTTopicFilterCallback( const char * pcTopicFilter,
     }
     xSemaphoreGive( xSubscriptionsMutex );
 }
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#pragma section
+#endif

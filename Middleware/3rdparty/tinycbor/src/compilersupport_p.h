@@ -182,7 +182,7 @@ with these intrinsics. */
     (defined(BYTE_ORDER) && defined(LITTLE_ENDIAN) && BYTE_ORDER == LITTLE_ENDIAN) || \
     defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__MIPSEL__) || \
     defined(__i386) || defined(__i386__) || defined(__x86_64) || defined(__x86_64__) || defined(__amd64)
-#      define ntohll(x)       ((cbor_ntohl((uint32_t)(x)) * UINT64_C(0x100000000)) + (cbor_ntohl((x) >> 32)))
+#      define ntohll(x)       ((cbor_ntohl((uint32_t)(x)) * UINT64_C(0x100000000)) + (cbor_ntohl((uint32_t)(x) >> 32)))
 #      define htonll          ntohll
 #	 elif __little_endian__ == 1
 #      define ntohll(x)       ((cbor_ntohl(((uint32_t)(x))) * UINT64_C(0x100000000)) + (cbor_ntohl(((x) >> 32))))

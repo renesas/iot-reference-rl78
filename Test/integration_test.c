@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -31,11 +32,20 @@
 #include "test_execution_config.h"
 #include "qualification_test.h"
 #include "ota_pal_test.h"
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#include "trng_helper.h"
+#include "cert_profile_helper.h"
+#else
 #include "core_pkcs11_config.h"
+#endif
 #include "test_param_config.h"
 #include "qualification_test.h"
 #include "transport_interface_test.h"
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#include "transport_plaintext.h"
+#else
 #include "transport_mbedtls_pkcs11.h"
+#endif
 #include "demo_config.h"
 #include "mqtt_test.h"
 
@@ -44,9 +54,17 @@
 #include "semphr.h"
 #include "ota_config.h"
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+extern uint8_t CellularDisableSni;
+#endif
+
 struct NetworkContext
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    PlaintextTransportParams_t * pParams;
+#else
     TlsTransportParams_t * pParams;
+#endif
 };
 
 typedef struct TaskParam
@@ -68,18 +86,30 @@ void prvTransportTestDelay( uint32_t delayMs );
 #define mqttexampleMILLISECONDS_PER_SECOND           ( 1000U )
 #define mqttexampleMILLISECONDS_PER_TICK             ( mqttexampleMILLISECONDS_PER_SECOND / configTICK_RATE_HZ )
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
 static NetworkCredentials_t xNetworkCredentials = { 0 };
+#endif
 static TransportInterface_t xTransport = { 0 };
 static NetworkContext_t xSecondNetworkContext = { 0 };
 static NetworkContext_t xNetworkContext = { 0 };
 static uint32_t ulGlobalEntryTimeMs = 0;
 
 
-
 static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContext,
                                                           TestHostInfo_t * pxHostInfo,
                                                           void * pvNetworkCredentials )
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    PlaintextTransportStatus_t xStatus = PLAINTEXT_TRANSPORT_SUCCESS;
+    xStatus = Plaintext_FreeRTOS_Connect( pvNetworkContext,
+                                          pxHostInfo->pHostName,
+                                          pxHostInfo->port,
+                                          mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
+                                          mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+
+    configASSERT( PLAINTEXT_TRANSPORT_SUCCESS == xStatus );
+#else
     TlsTransportStatus_t xStatus = TLS_TRANSPORT_SUCCESS;
     xStatus = TLS_FreeRTOS_Connect( pvNetworkContext,
                                     pxHostInfo->pHostName,
@@ -89,13 +119,17 @@ static NetworkConnectStatus_t prvTransportNetworkConnect( void * pvNetworkContex
                                     mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
 
     configASSERT( TLS_TRANSPORT_SUCCESS == xStatus );
+#endif
     return NETWORK_CONNECT_SUCCESS;
 }
 
-
 static void prvTransportNetworkDisconnect( void * pNetworkContext )
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    Plaintext_FreeRTOS_Disconnect( pNetworkContext );
+#else
     TLS_FreeRTOS_Disconnect( pNetworkContext );
+#endif
 }
 
 static void ThreadWrapper( void * pParam )
@@ -117,10 +151,13 @@ static void ThreadWrapper( void * pParam )
 
 int FRTest_GenerateRandInt(void)
 {
-
-	uint32_t random_number = 0;
-	get_random_number( ( uint8_t * ) &random_number, sizeof( uint32_t ) );
-	return random_number;
+    uint32_t random_number = 0;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    xTrngGenerateRandomNumber( ( uint8_t * ) &random_number, sizeof( uint32_t ) );
+#else
+    get_random_number( ( uint8_t * ) &random_number, sizeof( uint32_t ) );
+#endif
+    return random_number;
 }
 
 /*-----------------------------------------------------------*/
@@ -143,7 +180,11 @@ FRTestThreadHandle_t FRTest_ThreadCreate( FRTestThreadFunction_t threadFunc,
 
     xReturned = xTaskCreate( ThreadWrapper,    /* Task code. */
                              "ThreadWrapper",  /* All tasks have same name. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+                             1200,             /* Task stack size. */
+#else
                              8192,             /* Task stack size. */
+#endif
                              pTaskParam,       /* Where the task writes its result. */
                              tskIDLE_PRIORITY, /* Task priority. */
                              &pTaskParam->taskHandle );
@@ -204,7 +245,11 @@ void * FRTest_MemoryAlloc( size_t size )
 
 void FRTest_MemoryFree( void * ptr )
 {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    vPortFree( ptr );
+#else
     return vPortFree( ptr );
+#endif
 }
 uint32_t FRTest_GetTimeMs(void)
 {
@@ -234,13 +279,33 @@ uint32_t MqttTestGetTimeMs( void )
 void SetupMqttTestParam( MqttTestParam_t * pTestParam )
 {
     configASSERT( pTestParam != NULL );
-	TlsTransportParams_t *xTlsTransportParams0 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
-	TlsTransportParams_t *xTlsTransportParams1 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    PlaintextTransportParams_t *xPlaintextTransportParams0 = ( PlaintextTransportParams_t * ) pvPortMalloc( sizeof( PlaintextTransportParams_t ) );
+    PlaintextTransportParams_t *xPlaintextTransportParams1 = ( PlaintextTransportParams_t * ) pvPortMalloc( sizeof( PlaintextTransportParams_t ) );
+    xNetworkContext.pParams = xPlaintextTransportParams0;
+    xSecondNetworkContext.pParams = xPlaintextTransportParams1;
+#else
+    TlsTransportParams_t *xTlsTransportParams0 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
+    TlsTransportParams_t *xTlsTransportParams1 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
     xNetworkContext.pParams = xTlsTransportParams0;
     xSecondNetworkContext.pParams = xTlsTransportParams1;
+#endif
     /* Initialization of timestamp for MQTT. */
     ulGlobalEntryTimeMs = MqttTestGetTimeMs();
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    /* Setup the transport interface. */
+    xTransport.send = Plaintext_FreeRTOS_send;
+    xTransport.recv = Plaintext_FreeRTOS_recv;
+    xTransport.writev = NULL;
+    prvWriteCertificateToModule((const uint8_t *)CFG_ROOT_CA_PEM1,
+                                strlen((const char *)CFG_ROOT_CA_PEM1),
+                                (const uint8_t *)MQTT_CLIENT_CERTIFICATE,
+                                strlen((const char *)MQTT_CLIENT_CERTIFICATE),
+                                (const uint8_t *)MQTT_CLIENT_PRIVATE_KEY,
+                                strlen((const char *)MQTT_CLIENT_PRIVATE_KEY));
+    CellularDisableSni = pdFALSE;
+#else
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_send;
     xTransport.recv = TLS_FreeRTOS_recv;
@@ -252,13 +317,17 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
     xNetworkCredentials.pPrivateKeyLabel = pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS;
     xNetworkCredentials.disableSni = pdFALSE;
 	xNetworkCredentials.pAlpnProtos = NULL;
+#endif
 
     pTestParam->pTransport = &xTransport;
     pTestParam->pNetworkContext = &xNetworkContext;
     pTestParam->pSecondNetworkContext = &xSecondNetworkContext;
     pTestParam->pNetworkConnect = prvTransportNetworkConnect;
     pTestParam->pNetworkDisconnect = prvTransportNetworkDisconnect;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
+#endif
     pTestParam->pGetTimeMs = MqttTestGetTimeMs;
 }
 #endif /* TRANSPORT_INTERFACE_TEST_ENABLED == 1 */
@@ -266,12 +335,33 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
 #if ( TRANSPORT_INTERFACE_TEST_ENABLED == 1 )
 void SetupTransportTestParam( TransportTestParam_t * pTestParam )
 {
-	TlsTransportParams_t *xTlsTransportParams0 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
-	TlsTransportParams_t *xTlsTransportParams1 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    PlaintextTransportParams_t *xPlaintextTransportParams0 = ( PlaintextTransportParams_t * ) pvPortMalloc( sizeof( PlaintextTransportParams_t ) );
+    PlaintextTransportParams_t *xPlaintextTransportParams1 = ( PlaintextTransportParams_t * ) pvPortMalloc( sizeof( PlaintextTransportParams_t ) );
+    xNetworkContext.pParams = xPlaintextTransportParams0;
+    xSecondNetworkContext.pParams = xPlaintextTransportParams1;
+#else
+    TlsTransportParams_t *xTlsTransportParams0 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
+    TlsTransportParams_t *xTlsTransportParams1 = ( TlsTransportParams_t * ) pvPortMalloc( sizeof( TlsTransportParams_t ) );
     xNetworkContext.pParams = xTlsTransportParams0;
     xSecondNetworkContext.pParams = xTlsTransportParams1;
+#endif
 
     configASSERT( pTestParam != NULL );
+
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    /* Setup the transport interface. */
+    xTransport.send = Plaintext_FreeRTOS_send;
+    xTransport.recv = Plaintext_FreeRTOS_recv;
+    xTransport.writev = NULL;
+    prvWriteCertificateToModule((const uint8_t *)ECHO_SERVER_ROOT_CA,
+                                strlen((const char *)ECHO_SERVER_ROOT_CA),
+                                (const uint8_t *)TRANSPORT_CLIENT_CERTIFICATE,
+                                strlen((const char *)TRANSPORT_CLIENT_CERTIFICATE),
+                                (const uint8_t *)TRANSPORT_CLIENT_PRIVATE_KEY,
+                                strlen((const char *)TRANSPORT_CLIENT_PRIVATE_KEY));
+    CellularDisableSni = pdTRUE;
+#else
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_send;
     xTransport.recv = TLS_FreeRTOS_recv;
@@ -283,13 +373,17 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
     xNetworkCredentials.pPrivateKeyLabel = pkcs11configLABEL_DEVICE_PRIVATE_KEY_FOR_TLS;
     xNetworkCredentials.disableSni = pdTRUE;
 //    xNetworkCredentials.pAlpnProtos = NULL;
+#endif
 
     pTestParam->pTransport = &xTransport;
     pTestParam->pNetworkContext = &xNetworkContext;
     pTestParam->pSecondNetworkContext = &xSecondNetworkContext;
     pTestParam->pNetworkConnect = prvTransportNetworkConnect;
     pTestParam->pNetworkDisconnect = prvTransportNetworkDisconnect;
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#else
     pTestParam->pNetworkCredentials = &xNetworkCredentials;
+#endif
 
 }
 #endif
