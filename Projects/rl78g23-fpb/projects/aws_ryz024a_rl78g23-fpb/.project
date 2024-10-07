@@ -123,7 +123,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1687008189312</id>
+			<id>1708923006499</id>
 			<name>Middleware</name>
 			<type>10</type>
 			<matcher>
@@ -132,7 +132,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1687008189345</id>
+			<id>1708923006505</id>
 			<name>Middleware</name>
 			<type>10</type>
 			<matcher>
@@ -141,12 +141,21 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1687008189380</id>
+			<id>1708923006512</id>
 			<name>Middleware</name>
 			<type>10</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-freertos_plus</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1708923006519</id>
+			<name>Middleware</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-wifi</arguments>
 			</matcher>
 		</filter>
 		<filter>
@@ -237,6 +246,15 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-true-.+\.(c|h|asm)</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1708923043009</id>
+			<name>src/modules</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-r_wifi_da16xxx</arguments>
 			</matcher>
 		</filter>
 		<filter>
@@ -381,6 +399,15 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-true-.+\.(c|h|asm)</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1708923055737</id>
+			<name>src/modules/r_config</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-r_wifi_da16xxx_config.h</arguments>
 			</matcher>
 		</filter>
 		<filter>

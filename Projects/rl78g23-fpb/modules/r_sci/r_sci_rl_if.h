@@ -245,6 +245,23 @@ sci_err_t R_SCI_Receive (sci_hdl_t const hdl, uint8_t *p_dst, uint16_t const len
 sci_err_t R_SCI_Control (sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args);
 sci_err_t R_SCI_Close (sci_hdl_t const hdl);
 uint32_t  R_SCI_GetVersion (void);
+void R_SCI_UART_Reset(uint32_t baudrate);
+
+#if (SCI_CFG_CH0_INCLUDED)
+void R_SCI_PinSet_SCI0(void);
+#endif
+
+#if (SCI_CFG_CH1_INCLUDED)
+void R_SCI_PinSet_SCI1(void);
+#endif
+
+#if (SCI_CFG_CH2_INCLUDED)
+void R_SCI_PinSet_SCI2(void);
+#endif
+
+#if (SCI_CFG_CH3_INCLUDED)
+void R_SCI_PinSet_SCI3(void);
+#endif
 
 #endif /* R_SCI_RL_IF_H */
 

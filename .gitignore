@@ -26,7 +26,7 @@ RemoteSystemsTempFiles/*
 *.crt
 
 ### Renesas e2 studio/CS+ specific ignore files/folders
-HardwareDebug/
+HardwareDebug*/
 DefaultBuild/
 trash/
 *.mtud

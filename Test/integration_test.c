@@ -55,7 +55,9 @@
 #include "ota_config.h"
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#if !defined(__DA16XXX_DEMO__)
 extern uint8_t CellularDisableSni;
+#endif
 #endif
 
 struct NetworkContext
@@ -304,7 +306,9 @@ void SetupMqttTestParam( MqttTestParam_t * pTestParam )
                                 strlen((const char *)MQTT_CLIENT_CERTIFICATE),
                                 (const uint8_t *)MQTT_CLIENT_PRIVATE_KEY,
                                 strlen((const char *)MQTT_CLIENT_PRIVATE_KEY));
+#if !defined(__DA16XXX_DEMO__)
     CellularDisableSni = pdFALSE;
+#endif
 #else
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_send;
@@ -360,7 +364,9 @@ void SetupTransportTestParam( TransportTestParam_t * pTestParam )
                                 strlen((const char *)TRANSPORT_CLIENT_CERTIFICATE),
                                 (const uint8_t *)TRANSPORT_CLIENT_PRIVATE_KEY,
                                 strlen((const char *)TRANSPORT_CLIENT_PRIVATE_KEY));
+#if !defined(__DA16XXX_DEMO__)
     CellularDisableSni = pdTRUE;
+#endif
 #else
     /* Setup the transport interface. */
     xTransport.send = TLS_FreeRTOS_send;
