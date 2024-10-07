@@ -112,7 +112,7 @@
  * this demo this can be a task number, when more than one tasks are publishing within a device.
  *
  */
-#define mqttexampleLOOPBACK_TOPIC_FORMAT                  "pubsub_demo/%s/task_%u"
+#define mqttexampleLOOPBACK_TOPIC_FORMAT                  "pubsub_demo/%s/task_%d"
 
 /**
  * @brief Format for the topic to which demo task sends PUBLISH messages to broker.

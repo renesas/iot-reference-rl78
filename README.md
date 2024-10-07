@@ -36,14 +36,17 @@ This reference supports the following boards:
 * [RL78/G23-128p Fast Prototyping Board(RL78/G23-128p FPB)](https://www.renesas.com/products/microcontrollers-microprocessors/rl78-low-power-8-16-bit-mcus/rtk7rlg230csn000bj-rl78g23-128p-fast-prototyping-board-rl78g23-128p-fpb) with:
   * Cellular(CAT M1)
     * [RYZ024A PMOD Expansion Board](https://www.renesas.com/products/wireless-connectivity/cellular-iot-modules/rtkyz024a0b00000be-pmod-expansion-board-ryz024a)
-
+  * Wi-Fi
+    * [DA16600MOD Ultra-Low-Power Wi-Fi + Bluetooth Low Energy Combo Pmod Board](https://www.renesas.com/en/products/wireless-connectivity/wi-fi/low-power-wi-fi/us159-da16600evz-ultra-low-power-wi-fi-bluetooth-low-energy-combo-pmod-board#overview)
 ### User Documents
 
 The documents for this reference are followings:
 
 * Getting Started Guide
-  * For RL78/G23-128p Fast Prototyping Board
-    * [Getting Started Guide for Connecting Amazon Web Services in LTE Communication: RL78/G23-128p Fast Prototyping Board + FreeRTOS](https://www.renesas.com/document/apn/rl78g23-getting-started-guide-connecting-amazon-web-services-lte-communication-rl78g23-128p-fast)
+  * For RL78/G23-128p Fast Prototyping Board with Cellular (RYZ024A)
+      * [Getting Started Guide for Connecting Amazon Web Services in LTE Communication: RL78/G23-128p Fast Prototyping Board + FreeRTOS](https://www.renesas.com/document/apn/rl78g23-getting-started-guide-connecting-amazon-web-services-lte-communication-rl78g23-128p-fast)
+  * For RL78/G23-128p Fast Prototyping Board with Wi-Fi (DA16600)
+      * [Getting Started Guide for Connecting Amazon Web Services in Wi-Fi Communication: RL78/G23-128p Fast Prototyping Board + FreeRTOS](https://www.renesas.com/document/apn/getting-started-guide-connecting-amazon-web-services-wi-fi-communication-rl78g23-128p-fast)
 
 ### Open Source Software (OSS) Components
 
@@ -91,7 +94,7 @@ The following table indicates drivers provided by Renesas, that are Software Int
 * However, each projects is evaluated only with preset values, including configuration values that have not been changed from the default values.
 * If changed, the program may not work properly.
 
-#### RL78/G23-128p FPB Cellular-RYZ024A Projects
+#### RL78/G23-128p FPB Cellular-RYZ024A Projects and RL78/G23-128p FPB Wi-Fi - DA16600 Projects
 
   | Component | Config name | Default Value | Project value | Reason for change |
   |-----------|-------------|---------------|---------------|-------------------|

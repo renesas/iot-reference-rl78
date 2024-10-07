@@ -90,6 +90,34 @@ static uint8_t  ch3_rx_buf[SCI_CFG_CH3_RX_BUFSIZ];
 
 extern const sci_hdl_t SCI_FAR g_handles[SCI_NUM_CH];
 
+#if (SCI_CFG_CH0_INCLUDED)
+void R_SCI_PinSet_SCI0(void)
+{
+    ;
+}
+#endif
+
+#if (SCI_CFG_CH1_INCLUDED)
+void R_SCI_PinSet_SCI1(void)
+{
+    ;
+}
+#endif
+
+#if (SCI_CFG_CH2_INCLUDED)
+void R_SCI_PinSet_SCI2(void)
+{
+    ;
+}
+#endif
+
+#if (SCI_CFG_CH3_INCLUDED)
+void R_SCI_PinSet_SCI3(void)
+{
+    ;
+}
+#endif
+
 /**********************************************************************************************************************
  * Function Name: R_SCI_Open
  * Description  : Initializes an SCI channel for a particular mode.
@@ -843,6 +871,7 @@ void eri_handler(sci_hdl_t const hdl)
 sci_err_t R_SCI_Control(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
 {
     sci_err_t   err = SCI_SUCCESS;
+    sci_baud_t  *baud;
 
     /* Check parameters */
 #if (SCI_CFG_PARAM_CHECKING_ENABLE ==1)
@@ -869,6 +898,11 @@ sci_err_t R_SCI_Control(sci_hdl_t const hdl, sci_cmd_t const cmd, void *p_args)
     switch (cmd)
     {
         case (SCI_CMD_CHANGE_BAUD):
+			/* Casting void* type is valid */
+			baud = (sci_baud_t *)p_args;
+
+			R_SCI_UART_Reset(baud->rate);
+			break;
         case (SCI_CMD_EN_CTS_IN):
             /* Not supported. */
             break;
@@ -932,4 +966,141 @@ uint32_t  R_SCI_GetVersion(void)
 {
     uint32_t const version = ((uint32_t)SCI_VERSION_MAJOR << 16) | SCI_VERSION_MINOR;
     return version;
+}
+
+/***********************************************************************************************************************
+ * Function Name: SCI_UART_Reset
+ * Description  : Change the baud rate of UART.
+ * Arguments    : baudrate      - baud rate value for resetting
+ * Return Value : None
+ ***********************************************************************************************************************/
+void R_SCI_UART_Reset(uint32_t baudrate)
+{
+#if (SCI_CFG_CH0_INCLUDED)
+    if (0 != SE0L_bit.no0 || 0 != SE0L_bit.no1)
+    {
+        R_Config_UART0_Stop();
+        NOP();
+    }
+
+    SPS0 &= 0x00F0;         /* clear clock */
+
+    if (115200 == baudrate)
+    {
+        SPS0 |= 0x0001;     /* fclk/2 */
+        SDR00 = 0x8800;     /* transmit */
+        SDR01 = 0x8800;     /* receive */
+    }
+    else if (230400 == baudrate)
+    {
+        SPS0 |= 0x0000;     /* fclk */
+        SDR00 = 0x8800;     /* transmit */
+        SDR01 = 0x8800;     /* receive */
+    }
+    else if (460800 == baudrate)
+    {
+        SPS0 |= 0x0000;     /* fclk */
+        SDR00 = 0x4400;     /* transmit */
+        SDR01 = 0x4400;     /* receive */
+    }
+
+    R_Config_UART0_Start();
+    NOP();
+#endif
+
+#if (SCI_CFG_CH1_INCLUDED)
+    if (0 != SE0L_bit.no2 || 0 != SE0L_bit.no3)
+    {
+        R_Config_UART1_Stop();
+        NOP();
+    }
+
+    SPS0 &= 0x00F0;         /* clear clock */
+
+    if (115200 == baudrate)
+    {
+        SPS0 |= 0x0001;     /* fclk/2 */
+        SDR02 = 0x8800;     /* transmit */
+        SDR03 = 0x8800;     /* receive */
+    }
+    else if (230400 == baudrate)
+    {
+        SPS0 |= 0x0000;     /* fclk */
+        SDR02 = 0x8800;     /* transmit */
+        SDR03 = 0x8800;     /* receive */
+    }
+    else if (460800 == baudrate)
+    {
+        SPS0 |= 0x0000;     /* fclk */
+        SDR02 = 0x4400;     /* transmit */
+        SDR03 = 0x4400;     /* receive */
+    }
+
+    R_Config_UART1_Start();
+    NOP();
+#endif
+
+#if (SCI_CFG_CH2_INCLUDED)
+    if (0 != SE1L_bit.no0 || 0 != SE1L_bit.no1)
+    {
+        R_Config_UART2_Stop();
+        NOP();
+    }
+
+    SPS1 &= 0x000F;         /* clear clock */
+
+    if (115200 == baudrate)
+    {
+        SPS1 |= 0x0010;     /* fclk/2 */
+        SDR10 = 0x8800;     /* transmit */
+        SDR11 = 0x8800;     /* receive */
+    }
+    else if (230400 == baudrate)
+    {
+        SPS1 |= 0x0000;     /* fclk */
+        SDR10 = 0x8800;     /* transmit */
+        SDR11 = 0x8800;     /* receive */
+    }
+    else if (460800 == baudrate)
+    {
+        SPS1 |= 0x0000;     /* fclk */
+        SDR10 = 0x4400;     /* transmit */
+        SDR11 = 0x4400;     /* receive */
+    }
+
+    R_Config_UART2_Start();
+    NOP();
+#endif
+
+#if (SCI_CFG_CH3_INCLUDED)
+    if (0 != SE1L_bit.no2 || 0 != SE1L_bit.no3)
+    {
+        R_Config_UART3_Stop();
+        NOP();
+    }
+
+    SPS1 &= 0x000F;         /* clear clock */
+
+    if (115200 == baudrate)
+    {
+        SPS1 |= 0x0010;     /* fclk/2 */
+        SDR12 = 0x8800;     /* transmit */
+        SDR13 = 0x8800;     /* receive */
+    }
+    else if (230400 == baudrate)
+    {
+        SPS1 |= 0x0000;     /* fclk */
+        SDR12 = 0x8800;     /* transmit */
+        SDR13 = 0x8800;     /* receive */
+    }
+    else if (460800 == baudrate)
+    {
+        SPS1 |= 0x0000;     /* fclk */
+        SDR12 = 0x4400;     /* transmit */
+        SDR13 = 0x4400;     /* receive */
+    }
+
+    R_Config_UART3_Start();
+    NOP();
+#endif
 }
