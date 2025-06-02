@@ -31,7 +31,7 @@
 
 #include "test_execution_config.h"
 #include "qualification_test.h"
-#include "ota_pal_test.h"
+//#include "ota_pal_test.h"
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #include "trng_helper.h"
 #include "cert_profile_helper.h"

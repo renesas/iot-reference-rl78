@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #/*
-# * FreeRTOS Kernel V10.5.1
-# * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+# * FreeRTOS Kernel V11.1.0
+# * Copyright (C) 2024 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # *
 # * SPDX-License-Identifier: MIT
 # *
@@ -36,7 +36,9 @@ from common.header_checker import HeaderChecker
 KERNEL_IGNORED_FILES = [
     'FreeRTOS-openocd.c',
     'Makefile',
-    '.DS_Store'
+    '.DS_Store',
+    'cspell.config.yaml',
+    '.clang-format'
 ]
 
 KERNEL_IGNORED_EXTENSIONS = [
@@ -61,7 +63,8 @@ KERNEL_IGNORED_EXTENSIONS = [
     '.bat',
     '.sh',
     '.txt',
-    '.cmake'
+    '.cmake',
+    '.config'
 ]
 
 KERNEL_ASM_EXTENSIONS = [
@@ -87,7 +90,13 @@ KERNEL_IGNORED_PATTERNS = [
     r'.*\.git.*',
     r'.*portable/IAR/AtmelSAM7S64/.*AT91SAM7.*',
     r'.*portable/GCC/ARM7_AT91SAM7S/.*',
-    r'.*portable/MPLAB/PIC18F/stdio.h'
+    r'.*portable/MPLAB/PIC18F/stdio.h',
+    r'.*portable/ThirdParty/xClang/XCOREAI/*',
+    r'.*IAR/ARM_C*',
+    r'.*IAR/78K0R/*',
+    r'.*CCS/MSP430X/*',
+    r'.*portable/template/*',
+    r'.*template_configuration/*'
 ]
 
 KERNEL_THIRD_PARTY_PATTERNS = [
@@ -99,8 +108,8 @@ KERNEL_THIRD_PARTY_PATTERNS = [
 
 KERNEL_HEADER = [
     '/*\n',
-    ' * FreeRTOS Kernel V10.5.1\n',
-    ' * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.\n',
+    ' * FreeRTOS Kernel V11.1.0\n',
+    ' * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.\n',
     ' *\n',
     ' * SPDX-License-Identifier: MIT\n',
     ' *\n',
@@ -127,12 +136,16 @@ KERNEL_HEADER = [
     ' */\n',
 ]
 
+
+FREERTOS_COPYRIGHT_REGEX = r"^(;|#)?( *(\/\*|\*|#|\/\/))? Copyright \(C\) 20\d\d Amazon.com, Inc. or its affiliates. All Rights Reserved\.( \*\/)?$"
+
 def main():
     parser = HeaderChecker.configArgParser()
     args   = parser.parse_args()
 
     # Configure the checks then run
     checker = HeaderChecker(KERNEL_HEADER,
+                            copyright_regex=FREERTOS_COPYRIGHT_REGEX,
                             ignored_files=KERNEL_IGNORED_FILES,
                             ignored_ext=KERNEL_IGNORED_EXTENSIONS,
                             ignored_patterns=KERNEL_IGNORED_PATTERNS,
@@ -149,4 +162,3 @@ def main():
 
 if __name__ == '__main__':
     exit(main())
-

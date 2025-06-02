@@ -1,7 +1,7 @@
  /*
- * FreeRTOS Kernel V10.5.1
+ * FreeRTOS Kernel V11.1.0
  * Copyright (C) 2015-2019 Cadence Design Systems, Inc.
- * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
  *
@@ -68,4 +68,3 @@ void _xt_tick_divisor_init(void)
 }
 
 #endif /* XT_RTOS_TIMER_INT */
-
