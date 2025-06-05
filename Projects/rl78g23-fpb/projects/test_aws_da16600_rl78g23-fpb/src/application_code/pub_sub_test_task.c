@@ -190,9 +190,13 @@ static void prvIncomingPublishCallback( void * pvIncomingPublishCallbackContext,
  * does not support QoS2.
  * @param[in] pcTopicFilter Pointer to the topic filter string to subscribe for.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
-                                         char * pcTopicFilter );
-
+										 char __far * pcTopicFilter );
+#else
+static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
+										 char * pcTopicFilter );
+#endif
 
 
 /**
@@ -210,10 +214,17 @@ static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
  * @param[in] pucPayload The payload blob to be published.
  * @param[in] xPayloadLength Length of the payload blob to be published.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
-                                       char * pcTopic,
+									   char __far * pcTopic,
                                        uint8_t * pucPayload,
                                        size_t xPayloadLength );
+#else
+static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
+									   char * pcTopic,
+                                       uint8_t * pucPayload,
+                                       size_t xPayloadLength );
+#endif
 
 /**
  * @brief The function that implements the task demonstrated by this file.
@@ -296,9 +307,13 @@ static void prvIncomingPublishCallback( void * pvIncomingPublishCallbackContext,
 }
 
 /*-----------------------------------------------------------*/
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
-                                         char * pcTopicFilter )
+										 char __far * pcTopicFilter )
+#else
+static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
+										 char * pcTopicFilter )
+#endif
 {
     MQTTStatus_t xMQTTStatus;
     BaseType_t xNotifyStatus = pdFALSE;
@@ -360,11 +375,17 @@ static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
 }
 /*-----------------------------------------------------------*/
 
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
+                                       char __far * pcTopic,
+                                       uint8_t * pucPayload,
+                                       size_t xPayloadLength )
+#else
 static MQTTStatus_t prvPublishToTopic( MQTTQoS_t xQoS,
                                        char * pcTopic,
                                        uint8_t * pucPayload,
                                        size_t xPayloadLength )
+#endif
 {
     MQTTPublishInfo_t xPublishInfo = { MQTTQoS0, 0, };
     MQTTAgentCommandContext_t xCommandContext = { 0 };
@@ -476,9 +497,8 @@ void vSubscribePublishTestTask( void * pvParameters )
     if( xStatus == pdPASS )
     {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-        snprintf( cPayloadBuf, confgPUBLISH_BUFFER_LENGTH, configSUBSCRIBE_TOPIC_FORMAT);
         xMQTTStatus = prvSubscribeToTopic( MQTTQoS1,
-                                           cPublishBuf );
+										   (char __far *)configSUBSCRIBE_TOPIC_FORMAT );
 #else
         xMQTTStatus = prvSubscribeToTopic( MQTTQoS1,
                                            configSUBSCRIBE_TOPIC_FORMAT );
@@ -516,11 +536,10 @@ void vSubscribePublishTestTask( void * pvParameters )
                        xPayloadLength,
                        ( char * ) cPayloadBuf ) );
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            snprintf( cPublishBuf, confgPUBLISH_BUFFER_LENGTH, configPUBLISH_TOPIC_FORMAT);
             xMQTTStatus = prvPublishToTopic( xQoS,
-                                             cPublishBuf,
-                                             ( uint8_t * ) cPayloadBuf,
-                                             xPayloadLength );
+											 (char __far *)configPUBLISH_TOPIC_FORMAT,
+											 ( uint8_t * ) cPayloadBuf,
+											 xPayloadLength );
 #else
             xMQTTStatus = prvPublishToTopic( xQoS,
                                              configPUBLISH_TOPIC_FORMAT,
