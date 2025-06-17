@@ -52,7 +52,7 @@ typedef struct xSOCKETContext
 {
     uint32_t ulSendTimeout;
     uint32_t ulRecvTimeout;
-    uint32_t socket_no;
+    uint8_t socket_no;
 } SSOCKETContext_t, * SSOCKETContextPtr_t;
 
 /**
@@ -67,7 +67,7 @@ typedef struct xSOCKETContext
 #define NO_FORCE_RESET  0
 static volatile uint32_t count_module_comm = 0;
 static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset );
-static wifi_err_t CloseSocket(uint32_t socket_number);
+static wifi_err_t CloseSocket(uint8_t socket_number);
 
 #if (0 == USER_TCP_HOOK_ENABLED)
 static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
@@ -125,7 +125,7 @@ static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
 }
 #endif
 
-static wifi_err_t CloseSocket(uint32_t socket_number)
+static wifi_err_t CloseSocket(uint8_t socket_number)
 {
     uint8_t count;
     wifi_err_t ret;
@@ -158,7 +158,7 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
 {
     SSOCKETContextPtr_t pxContext = NULL;
     wifi_err_t ret;
-    uint32_t socketId = 0;
+    uint8_t socketId = 0;
     uint8_t ipAddress[4] = { 0 };
     wifi_tls_cert_info_t cert_infor = { 0 };
     BaseType_t retConnect = TCP_SOCKETS_ERRNO_NONE;
