@@ -42,7 +42,7 @@
 
 /* Version Number of API. */
 #define WIFI_VERSION_MAJOR  (1)
-#define WIFI_VERSION_MINOR  (30)
+#define WIFI_VERSION_MINOR  (31)
 
 /**********************************************************************************************************************
  Global Typedef definitions
@@ -356,7 +356,7 @@ wifi_err_t R_WIFI_DA16XXX_Ping (uint8_t *ip_address, uint16_t count);
  *                WIFI_ERR_MODULE_COM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_Scan (wifi_scan_result_t * ap_results, uint32_t max_networks);
+wifi_err_t R_WIFI_DA16XXX_Scan (wifi_scan_result_t * ap_results, uint8_t max_networks);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_Connect
@@ -451,7 +451,7 @@ wifi_err_t R_WIFI_DA16XXX_SntpTimeZoneSet (int8_t utc_offset_in_hours);
  *                WIFI_ERR_MODULE_COM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_LocalTimeGet (uint8_t * local_time, uint32_t size_string);
+wifi_err_t R_WIFI_DA16XXX_LocalTimeGet (uint8_t * local_time, uint8_t size_string);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_SetDnsServerAddress
@@ -507,7 +507,7 @@ uint32_t R_WIFI_DA16XXX_GetVersion(void);
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetAvailableSocket (uint32_t * socket_id);
+wifi_err_t R_WIFI_DA16XXX_GetAvailableSocket (uint8_t * socket_id);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_GetSocketStatus
@@ -519,7 +519,7 @@ wifi_err_t R_WIFI_DA16XXX_GetAvailableSocket (uint32_t * socket_id);
  *                WIFI_ERR_NOT_OPEN
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetSocketStatus (uint32_t socket_number, wifi_socket_status_t *socket_status);
+wifi_err_t R_WIFI_DA16XXX_GetSocketStatus (uint8_t socket_number, wifi_socket_status_t *socket_status);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_CreateSocket
@@ -532,7 +532,7 @@ wifi_err_t R_WIFI_DA16XXX_GetSocketStatus (uint32_t socket_number, wifi_socket_s
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CreateSocket (uint32_t socket_number, wifi_socket_type_t type, uint8_t ip_version);
+wifi_err_t R_WIFI_DA16XXX_CreateSocket (uint8_t socket_number, wifi_socket_type_t type, uint8_t ip_version);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_TcpConnect
@@ -547,7 +547,7 @@ wifi_err_t R_WIFI_DA16XXX_CreateSocket (uint32_t socket_number, wifi_socket_type
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TcpConnect (uint32_t socket_number, uint8_t * ip_address, uint16_t port);
+wifi_err_t R_WIFI_DA16XXX_TcpConnect (uint8_t socket_number, uint8_t * ip_address, uint16_t port);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_SendSocket
@@ -564,8 +564,8 @@ wifi_err_t R_WIFI_DA16XXX_TcpConnect (uint32_t socket_number, uint8_t * ip_addre
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-int32_t R_WIFI_DA16XXX_SendSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
-                                   uint32_t length, uint32_t timeout_ms);
+int16_t R_WIFI_DA16XXX_SendSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+                                   uint16_t length, uint32_t timeout_ms);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_ReceiveSocket
@@ -579,8 +579,8 @@ int32_t R_WIFI_DA16XXX_SendSocket (uint32_t socket_number, uint8_t WIFI_FAR * da
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-int32_t R_WIFI_DA16XXX_ReceiveSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
-                                      uint32_t length, uint32_t timeout_ms);
+int16_t R_WIFI_DA16XXX_ReceiveSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+                                      uint16_t length, uint32_t timeout_ms);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_CloseSocket
@@ -592,7 +592,7 @@ int32_t R_WIFI_DA16XXX_ReceiveSocket (uint32_t socket_number, uint8_t WIFI_FAR *
  *                WIFI_ERR_MODULE_TIMEOUT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CloseSocket (uint32_t socket_number);
+wifi_err_t R_WIFI_DA16XXX_CloseSocket (uint8_t socket_number);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_TcpReconnect
@@ -605,7 +605,7 @@ wifi_err_t R_WIFI_DA16XXX_CloseSocket (uint32_t socket_number);
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TcpReconnect (uint32_t socket_number);
+wifi_err_t R_WIFI_DA16XXX_TcpReconnect (uint8_t socket_number);
 #endif /* WIFI_CFG_TCP_SUPPORT */
 
 /**********************************************************************************************************************
@@ -728,7 +728,7 @@ wifi_err_t R_WIFI_DA16XXX_MqttClose (void);
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint32_t * socket_id);
+wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint8_t * socket_id);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_GetTlsSocketStatus
@@ -740,7 +740,7 @@ wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint32_t * socket_id);
  *                WIFI_ERR_NOT_OPEN
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint32_t socket_number, wifi_socket_status_t *socket_status);
+wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint8_t socket_number, wifi_socket_status_t *socket_status);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_CreateTlsSocket
@@ -753,7 +753,7 @@ wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint32_t socket_number, wifi_socke
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint32_t socket_number, wifi_socket_type_t type, uint8_t ip_version);
+wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint8_t socket_number, wifi_socket_type_t type, uint8_t ip_version);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_TlsConnect
@@ -768,7 +768,7 @@ wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint32_t socket_number, wifi_socket_t
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint32_t socket_number, uint8_t WIFI_FAR * ip_address, uint16_t port);
+wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint8_t socket_number, uint8_t WIFI_FAR * ip_address, uint16_t port);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_SendTlsSocket
@@ -785,8 +785,8 @@ wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint32_t socket_number, uint8_t WIFI_FAR *
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
-                                      uint32_t length, uint32_t timeout_ms);
+int16_t R_WIFI_DA16XXX_SendTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+                                      uint16_t length, uint32_t timeout_ms);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_ReceiveTlsSocket
@@ -800,8 +800,8 @@ int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR *
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-int32_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
-                                         uint32_t length, uint32_t timeout_ms);
+int16_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+                                         uint16_t length, uint32_t timeout_ms);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_CloseTlsSocket
@@ -813,7 +813,7 @@ int32_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint32_t socket_number, uint8_t WIFI_FA
  *                WIFI_ERR_MODULE_TIMEOUT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint32_t socket_number);
+wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint8_t socket_number);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_TlsReconnect
@@ -826,7 +826,7 @@ wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint32_t socket_number);
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint32_t socket_number);
+wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint8_t socket_number);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_ConfigTlsSocket
@@ -845,8 +845,8 @@ wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
                                           wifi_tls_cert_info_t * cert_info,
                                           uint8_t WIFI_FAR * sni_name,
                                           uint8_t ser_valid,
-                                          uint32_t trans_buf_size,
-                                          uint32_t recv_buf_size,
+                                          uint16_t trans_buf_size,
+                                          uint16_t recv_buf_size,
                                           uint32_t timeout);
 
 /**********************************************************************************************************************
@@ -865,7 +865,7 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
                                                   wifi_tls_cert_info_t * cert_info,
                                                   uint8_t WIFI_FAR * sni_name,
                                                   uint8_t ser_valid,
-                                                  uint32_t trans_buf_size, uint32_t recv_buf_size);
+                                                  uint16_t trans_buf_size, uint16_t recv_buf_size);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_RequestTlsSocket
@@ -875,7 +875,7 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint32_t socket_number);
+wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint8_t socket_number);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_GetServerCertificate
@@ -902,7 +902,7 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
 wifi_err_t R_WIFI_DA16XXX_WriteCertificate(const uint8_t WIFI_FAR * name, wifi_tls_key_type_t type_key,
-                                           const uint8_t WIFI_FAR * p_data, uint32_t len);
+                                           const uint8_t WIFI_FAR * p_data, uint16_t len);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_DeleteCertificate

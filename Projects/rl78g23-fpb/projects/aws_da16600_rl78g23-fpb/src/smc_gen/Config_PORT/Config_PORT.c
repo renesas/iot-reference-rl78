@@ -14,12 +14,12 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2021, 2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2021, 2025 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
 * File Name        : Config_PORT.c
-* Component Version: 1.4.0
+* Component Version: 1.7.0
 * Device(s)        : R7F100GSNxFB
 * Description      : This file implements device driver for Config_PORT.
 ***********************************************************************************************************************/
@@ -54,7 +54,7 @@ void R_Config_PORT_Create(void)
 {
     volatile uint16_t w_count;
 
-    CCDE = _00_P51_OUTPUT_CURRENT_OFF | _00_P50_OUTPUT_CURRENT_OFF;
+    CCDE = _00_P50_OUTPUT_CURRENT_OFF | _00_P51_OUTPUT_CURRENT_OFF;
 
     /* Wait for stable time (10us) */
     for (w_count = 0U; w_count < PORT_STABLE_WAITTIME; w_count++)
@@ -71,7 +71,7 @@ void R_Config_PORT_Create(void)
     PMCA0 = _F3_PMCA0_DEFAULT | _08_PMCAn3_NOT_USE | _04_PMCAn2_NOT_USE;
     PMCT0 = _00_PMCTn6_NOT_USE | _00_PMCTn5_NOT_USE | _00_PMCTn3_NOT_USE | _00_PMCTn2_NOT_USE | _00_PMCTn1_NOT_USE | 
             _00_PMCTn0_DIGITAL_ON;
-    PMCE0 = _00_PMCEn1_NOT_USE;
+    PMCE0 = _00_PMCEn1_DIGITAL_ON;
     PM0 = _80_PMn7_NOT_USE | _40_PMn6_NOT_USE | _20_PMn5_NOT_USE | _10_PMn4_NOT_USE | _08_PMn3_NOT_USE | 
           _04_PMn2_NOT_USE | _02_PMn1_NOT_USE | _00_PMn0_MODE_OUTPUT;
     /* Set PORT5 registers */
@@ -81,7 +81,7 @@ void R_Config_PORT_Create(void)
               _00_PDIDISn2_INPUT_BUFFER_ON | _00_PDIDISn0_INPUT_BUFFER_ON;
     POM5 = _00_POMn5_NCH_OFF | _00_POMn4_NCH_OFF | _00_POMn3_NCH_OFF | _00_POMn2_NCH_OFF | _00_POMn0_NCH_OFF;
     PMCT5 = _00_PMCTn0_DIGITAL_ON;
-    PMCE5 = _00_PMCEn1_NOT_USE | _00_PMCEn0_DIGITAL_ON;
+    PMCE5 = _00_PMCEn1_DIGITAL_ON | _00_PMCEn0_DIGITAL_ON;
     PM5 = _80_PMn7_NOT_USE | _40_PMn6_NOT_USE | _20_PMn5_NOT_USE | _10_PMn4_NOT_USE | _08_PMn3_NOT_USE | 
           _04_PMn2_NOT_USE | _02_PMn1_NOT_USE | _00_PMn0_MODE_OUTPUT;
     /* Set PORT14 registers */

@@ -344,7 +344,7 @@ e_rslt_code_t at_exec_wo_mutex (const char *cmd, ...);
  * Return Value : 0     : data not found
  *                other : data found
  *********************************************************************************************************************/
-e_atcmd_read_t at_read (const char *response_fmt, ...);
+e_atcmd_read_t at_read (const char WIFI_FAR *response_fmt, ...);
 
 /**********************************************************************************************************************
  * Function Name: at_read_wo_prefix
