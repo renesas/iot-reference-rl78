@@ -53,7 +53,7 @@
         <listEntry value="0xff4600"/>
     </listAttribute>
     <booleanAttribute key="com.renesas.hardwaredebug.e1rl78-uRelayBreak=" value="false"/>
-    <booleanAttribute key="com.renesas.hardwaredebug.e1rl78.allowRRMDMM" value="false"/>
+    <booleanAttribute key="com.renesas.hardwaredebug.e1rl78.allowRRMDMM" value="true"/>
     <booleanAttribute key="com.renesas.hardwaredebug.e1rl78.e1_pwr" value="false"/>
     <booleanAttribute key="com.renesas.hardwaredebug.e1rl78.enable.hot.plug" value="false"/>
     <booleanAttribute key="com.renesas.hardwaredebug.e1rl78.eraseFlash" value="true"/>
