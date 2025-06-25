@@ -281,4 +281,14 @@
 
 #define OUTGOING_PUBLISH_RECORD_COUNT                    ( 10 )
 #define INCOMING_PUBLISH_RECORD_COUNT                    ( 10 )
+/**
+ * @brief Timeout for MQTT_ProcessLoop() function in milliseconds.
+ * The timeout value is appropriately chosen for receiving an incoming
+ * PUBLISH message and ack responses for QoS 1 and QoS 2 communications
+ * with the broker.
+ *
+ * #define MQTT_TEST_PROCESS_LOOP_TIMEOUT_MS  ( 700 )
+ */
+#define MQTT_TEST_PROCESS_LOOP_TIMEOUT_MS  ( 10000 )
+
 #endif /* TEST_PARAM_CONFIG_H */
