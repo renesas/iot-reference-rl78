@@ -80,7 +80,7 @@ void uart_string_printf(RL78_FAR char *pString)
     uint16_t str_length;
     uint16_t transmit_length;
 
-    str_length = (uint16_t) strlen(pString);
+    str_length = (uint16_t)strlen(pString);    /* Cast to (uint16_t) */
 
     while ((retry > 0) && (str_length > 0))
     {
@@ -91,7 +91,7 @@ void uart_string_printf(RL78_FAR char *pString)
             transmit_length = str_length;
         }
 
-        sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR*) pString, transmit_length);
+        sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR*)pString, transmit_length);
         if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
         {
             /* retry if previous transmission still in progress or tx buffer is insufficient. */
@@ -100,7 +100,7 @@ void uart_string_printf(RL78_FAR char *pString)
         else
         {
             str_length -= transmit_length;
-            pString += transmit_length;
+            pString    += transmit_length;
         }
     }
 
@@ -126,17 +126,19 @@ void uart_printf(RL78_FAR char *pString, ...)
 {
     sci_err_t sci_error;
 
-    uint16_t retry = 0xffff;
-    uint16_t str_length;
-    uint16_t transmit_length;
+    uint16_t  retry = 0xffff;
+    uint16_t  str_length;
+    uint16_t  transmit_length;
     uint8_t * p_cmd_buf = s_cmd_buf;
-    va_list  args;
+    va_list   args;
 
     va_start(args, pString);
-    vsnprintf((char __far *)p_cmd_buf, sizeof(p_cmd_buf), pString, args);
+    vsnprintf((char __far *)p_cmd_buf, sizeof(p_cmd_buf), pString, args);   /* Cast to (char __far *) */
     va_end(args);
 
-    str_length = (uint16_t) strlen((const char __far *)p_cmd_buf);
+    /* Cast first params to (char __far *) */
+    /* Cast return of strlen() to (uint16_t) */
+    str_length = (uint16_t)strlen((const char __far *)p_cmd_buf);
 
     while ((retry > 0) && (str_length > 0))
     {
@@ -147,7 +149,7 @@ void uart_printf(RL78_FAR char *pString, ...)
             transmit_length = str_length;
         }
 
-        sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR *) p_cmd_buf, transmit_length);
+        sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR *)p_cmd_buf, transmit_length);
         if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
         {
             /* retry if previous transmission still in progress or tx buffer is insufficient. */
@@ -156,7 +158,7 @@ void uart_printf(RL78_FAR char *pString, ...)
         else
         {
             str_length -= transmit_length;
-            p_cmd_buf += transmit_length;
+            p_cmd_buf  += transmit_length;
         }
     }
 
@@ -177,12 +179,12 @@ void uart_printf(RL78_FAR char *pString, ...)
  *********************************************************************************************************************/
 RL78_FAR_FUNC int putchar(int c)
 {
-    while(0 != (REG_SSR & 0x20))
+    while (0 != (REG_SSR & 0x20))
     {
         NOP();
     }
     REG_STMK = 0;
-    REG_TXD = (unsigned char)c;
+    REG_TXD  = (unsigned char)c; /* Cast to (unsigned char) */
     REG_STMK = 1;
     return c;
 }

@@ -44,13 +44,14 @@
  **********************************************************************************************************************/
 void Kernel_Object_init (void);
 void Object_init_manual (void);
+
 /***********************************************************************************************************************
  * Function Name: Kernel_Object_init
  * Description  : This function initializes FreeRTOS objects.
  * Arguments    : None.
  * Return Value : None.
  **********************************************************************************************************************/
-void Kernel_Object_init (void)
+void Kernel_Object_init(void)
 {
     /************** task creation ****************************/
 
@@ -74,7 +75,7 @@ void Kernel_Object_init (void)
  * Arguments     : None.
  * Return value  : None.
  **********************************************************************************************************************/
-void Object_init_manual (void)
+void Object_init_manual(void)
 {
     /************** task creation ****************************/
 } /* End of function Object_init_manual()*/

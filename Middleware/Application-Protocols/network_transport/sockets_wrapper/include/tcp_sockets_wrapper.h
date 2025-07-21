@@ -49,8 +49,8 @@
     #define LIBRARY_LOG_LEVEL    LOG_INFO
 #endif
 
-extern void vLoggingPrintf( const char * pcFormatString,
-                            ... );
+extern void vLoggingPrintf (const char * pcFormatString,
+                            ...);
 
 #include "logging_stack.h"
 
@@ -61,7 +61,7 @@ extern void vLoggingPrintf( const char * pcFormatString,
 #include "FreeRTOS.h"
 
 /* Error codes. */
-#define TCP_SOCKETS_ERRNO_NONE                ( 0 )   /*!< No error. */
+#define TCP_SOCKETS_ERRNO_NONE                (0)   /*!< No error. */
 #define TCP_SOCKETS_ERRNO_ERROR               ( -1 )  /*!< Catch-all sockets error code. */
 #define TCP_SOCKETS_ERRNO_EWOULDBLOCK         ( -2 )  /*!< A resource is temporarily unavailable. */
 #define TCP_SOCKETS_ERRNO_ENOMEM              ( -3 )  /*!< Memory allocation failed. */
@@ -74,7 +74,7 @@ extern void vLoggingPrintf( const char * pcFormatString,
 #define TCP_SOCKETS_ERRNO_ENOSPC              ( -10 ) /*!< No space left on device */
 #define TCP_SOCKETS_ERRNO_EINTR               ( -11 ) /*!< Interrupted system call */
 
-#define SOCKETS_INVALID_SOCKET      ( ( Socket_t ) ~0U )
+#define SOCKETS_INVALID_SOCKET      ((Socket_t)~0U)
 
 #ifndef SOCKET_T_TYPEDEFED
     struct xSOCKET;
@@ -94,18 +94,24 @@ extern void vLoggingPrintf( const char * pcFormatString,
  *
  * @return Non-zero value on error, 0 on success.
  */
-BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
+/**********************************************************************************************************************
+ * function name: TCP_Sockets_Connect
+ *********************************************************************************************************************/
+BaseType_t TCP_Sockets_Connect (Socket_t * pTcpSocket,
                                 const char * pHostName,
                                 uint16_t port,
                                 uint32_t receiveTimeoutMs,
-                                uint32_t sendTimeoutMs );
+                                uint32_t sendTimeoutMs);
 
 /**
  * @brief End connection to server.
  *
  * @param[in] tcpSocket The socket descriptor.
  */
-void TCP_Sockets_Disconnect( Socket_t tcpSocket );
+/**********************************************************************************************************************
+ * function name: TCP_Sockets_Disconnect
+ *********************************************************************************************************************/
+void TCP_Sockets_Disconnect (Socket_t tcpSocket);
 
 /**
  * @brief Transmit data to the remote socket.
@@ -120,9 +126,12 @@ void TCP_Sockets_Disconnect( Socket_t tcpSocket );
  * * On success, the number of bytes actually sent is returned.
  * * If an error occurred, a negative value is returned. @ref SocketsErrors
  */
-int32_t TCP_Sockets_Send( Socket_t xSocket,
-                          const void * pvBuffer,
-                          size_t xDataLength );
+/**********************************************************************************************************************
+ * function name: TCP_Sockets_Send
+ *********************************************************************************************************************/
+int32_t TCP_Sockets_Send (Socket_t xSocket,
+                        const void * pvBuffer,
+                        size_t xDataLength);
 
 /**
  * @brief Receive data from a TCP socket.
@@ -141,8 +150,11 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
  *   is set using @ref SOCKETS_SO_RCVTIMEO).
  * * If an error occurred, a negative value is returned. @ref SocketsErrors
  */
-int32_t TCP_Sockets_Recv( Socket_t xSocket,
-                          void * pvBuffer,
-                          size_t xBufferLength );
+/**********************************************************************************************************************
+ * function name: TCP_Sockets_Recv
+ *********************************************************************************************************************/
+int32_t TCP_Sockets_Recv (Socket_t xSocket,
+                        void * pvBuffer,
+                        size_t xBufferLength);
 
 #endif /* ifndef TCP_SOCKETS_WRAPPER_H */

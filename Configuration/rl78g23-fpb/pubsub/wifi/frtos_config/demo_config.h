@@ -87,7 +87,7 @@
 #define ENABLE_OTA_UPDATE_DEMO              (0)
 
 #if ((ENABLE_FLEET_PROVISIONING_DEMO == 1) || (ENABLE_OTA_UPDATE_DEMO ==1))
-	#error "Only PubSub demo is enabled in this phase!"
+    #error "Only PubSub demo is enabled in this phase!"
 #endif
 
 /**
@@ -213,7 +213,7 @@
  * the provisioning template name is "FleetProvisioningDemoTemplate".
  * However, if you used CloudFormation to set up the demo, the template name is "CF_FleetProvisioningDemoTemplate"
  */
- #define democonfigPROVISIONING_TEMPLATE_NAME    "...insert here..."
+#define democonfigPROVISIONING_TEMPLATE_NAME    "...insert here..."
 
 /**
  * @brief Subject name to use when creating the certificate signing request (CSR)
@@ -242,7 +242,7 @@
  */
 #define democonfigDEMO_TASK_PRIORITY    ( tskIDLE_PRIORITY + 1 )
 
-#define democonfigNETWORK_BUFFER_SIZE    ( configMINIMAL_STACK_SIZE * 3 )
+#define democonfigNETWORK_BUFFER_SIZE    ( configMINIMAL_STACK_SIZE * 3 ) /* Cast to proper datatype to avoid warning */
 
 #include "core_mqtt.h" /* Include coreMQTT header for MQTT_LIBRARY_VERSION macro. */
 #define democonfigMQTT_LIB    "core-mqtt@"MQTT_LIBRARY_VERSION
