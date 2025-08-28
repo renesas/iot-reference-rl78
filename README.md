@@ -124,7 +124,7 @@ The following table indicates drivers provided by Renesas, that are Software Int
 * Notes on bootloader to application transition.  
   When transitioning from the bootloader sample program to the application, the settings of the bootloader's peripheral functions are taken over by the application.  
   For more information, check chapter 7 of the following document.  
-  [RL78/G22, RL78/G23, RL78/G24 Firmware Update Module](https://www.renesas.com/document/apn/rl78g22-rl78g23-rl78g24-firmware-update-module-rev201)
+  [RL78/G22, RL78/G23, RL78/G24, RL78/L23 Firmware Update Module](https://www.renesas.com/en/document/apn/rl78g22-rl78g23-rl78g24-rl78l23-firmware-update-module)
 
 ## Contribution
 
