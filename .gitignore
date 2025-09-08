@@ -31,6 +31,7 @@ DefaultBuild/
 trash/
 *.mtud
 .settings/
+*.rcpc
 
 ### IAR Embedded Workbench specific ignore files/folders
 Debug/
