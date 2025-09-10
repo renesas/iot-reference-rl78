@@ -107,7 +107,7 @@
     <intAttribute key="org.eclipse.cdt.debug.gdbjtag.core.delay" value="0"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doHalt" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
-    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="C:\Work_Folder\RVC\LTS_3_RL78\git_repo\iot-reference-rl78\Projects\rl78g23-fpb\projects\aws_da16600_rl78g23-fpb\HardwareDebug\aws_da16600_rl78g23-fpb.x"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value="C:\Work_Folder\RVC\LTS_3_RL78\Step2\GitLab\iot-reference-rl78_8_9\Projects\rl78g23-fpb\projects\aws_da16600_rl78g23-fpb\HardwareDebug\aws_da16600_rl78g23-fpb.x"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value="0"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value=""/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
@@ -118,7 +118,7 @@
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
-    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="C:\Work_Folder\RVC\LTS_3_RL78\git_repo\iot-reference-rl78\Projects\rl78g23-fpb\projects\aws_da16600_rl78g23-fpb\HardwareDebug\aws_da16600_rl78g23-fpb.x"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value="C:\Work_Folder\RVC\LTS_3_RL78\Step2\GitLab\iot-reference-rl78_8_9\Projects\rl78g23-fpb\projects\aws_da16600_rl78g23-fpb\HardwareDebug\aws_da16600_rl78g23-fpb.x"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value="0"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="false"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForSymbols" value="false"/>

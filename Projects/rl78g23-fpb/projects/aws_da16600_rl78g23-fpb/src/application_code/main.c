@@ -107,6 +107,7 @@ void vApplicationDaemonTaskStartupHook (void);
  */
 void              prvMiscInitialization (void);
 static BaseType_t xPlatformNetworkUp (void);
+BaseType_t        OtaSelfTest(void);
 
 #if (ENABLE_AFR_IDT == 1)
 int RunDeviceAdvisorDemo( void )
@@ -406,3 +407,8 @@ static BaseType_t xPlatformNetworkUp(void)
 {
     return ((BaseType_t)setupWifi());
 }/* End of function xPlatformNetworkUp()*/
+
+BaseType_t OtaSelfTest(void)
+{
+	return pdTRUE;
+}

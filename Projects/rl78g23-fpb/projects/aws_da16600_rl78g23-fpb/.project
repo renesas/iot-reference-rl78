@@ -145,6 +145,15 @@
 			</matcher>
 		</filter>
 		<filter>
+			<id>1757393691563</id>
+			<name>Common/patches</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-true-FreeRTOS-Libraries-Integration-Tests|FreeRTOS-Plus-TCP</arguments>
+			</matcher>
+		</filter>
+		<filter>
 			<id>1687352285935</id>
 			<name>Demos/common</name>
 			<type>10</type>
@@ -181,12 +190,12 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1687008324206</id>
+			<id>1757321803308</id>
 			<name>Middleware/AWS</name>
 			<type>9</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-ota-for-aws-iot-embedded-sdk</arguments>
+				<arguments>1.0-name-matches-false-true-aws-iot-core-mqtt-file-streams-embedded-c|Jobs-for-AWS-IoT-embedded-sdk</arguments>
 			</matcher>
 		</filter>
 		<filter>
@@ -277,6 +286,42 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-wifi</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1757322854039</id>
+			<name>Middleware/AWS/Jobs-for-AWS-IoT-embedded-sdk</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-source</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1757322854044</id>
+			<name>Middleware/AWS/Jobs-for-AWS-IoT-embedded-sdk</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1757322819104</id>
+			<name>Middleware/AWS/aws-iot-core-mqtt-file-streams-embedded-c</name>
+			<type>9</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-source</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1757322819113</id>
+			<name>Middleware/AWS/aws-iot-core-mqtt-file-streams-embedded-c</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*</arguments>
 			</matcher>
 		</filter>
 		<filter>
@@ -385,6 +430,24 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-r_aws_cellular_config.h</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1757397974601</id>
+			<name>Middleware/AWS/Jobs-for-AWS-IoT-embedded-sdk/source</name>
+			<type>10</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-include</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1757397974611</id>
+			<name>Middleware/AWS/Jobs-for-AWS-IoT-embedded-sdk/source</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-jobs.c</arguments>
 			</matcher>
 		</filter>
 		<filter>

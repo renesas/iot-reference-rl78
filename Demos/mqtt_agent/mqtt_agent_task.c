@@ -115,6 +115,10 @@
 #include "store.h"
 #endif
 
+#if (ENABLE_OTA_UPDATE_DEMO == 1)
+    #include "mqtt_wrapper.h"
+#endif
+
 #ifndef democonfigMQTT_BROKER_ENDPOINT
     #define democonfigMQTT_BROKER_ENDPOINT    clientcredentialMQTT_BROKER_ENDPOINT
 #endif
@@ -241,6 +245,11 @@
  * state is set at anytime.
  */
 #define mqttexampleEVENT_BITS_ALL    ( ( EventBits_t ) ( ( 1ULL << MQTT_AGENT_NUM_STATES ) - 1U ) )
+
+/**
+ * @brief MQTT Agent task notification index
+ */
+#define MQTT_AGENT_NOTIFY_IDX        ( 3U )
 
 /**
  * @brief ThingName which is used as the client identifier for MQTT connection.
@@ -1477,6 +1486,97 @@ void vRemoveMQTTTopicFilterCallback(const char * pcTopicFilter,
     }
     xSemaphoreGive(xSubscriptionsMutex);
 }/* End of function vRemoveMQTTTopicFilterCallback()*/
+
+static void prvSubscribeRqCallback( MQTTAgentCommandContext_t * pxCommandContext,
+                                    MQTTAgentReturnInfo_t * pxReturnInfo )
+{
+    TaskHandle_t xTaskHandle = ( struct tskTaskControlBlock * ) pxCommandContext;
+
+    configASSERT( pxReturnInfo );
+
+    if( xTaskHandle != NULL )
+    {
+        uint32_t ulNotifyValue = ( pxReturnInfo->returnCode & 0xFFFFFF );
+
+        if( pxReturnInfo->pSubackCodes )
+        {
+            ulNotifyValue += ( pxReturnInfo->pSubackCodes[ 0 ] << 24 );
+        }
+
+        ( void ) xTaskNotifyIndexed( xTaskHandle,
+                                     MQTT_AGENT_NOTIFY_IDX,
+                                     ulNotifyValue,
+                                     eSetValueWithOverwrite );
+    }
+}
+/*-----------------------------------------------------------------*/
+
+MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
+                                      uint16_t uxTopicFilterLength,
+                                      MQTTQoS_t xRequestedQoS,
+                                      IncomingPubCallback_t pxCallback,
+                                      void * pvCallbackCtx )
+{
+    BaseType_t xMQTTCallbackAdded;
+    MQTTStatus_t xResult;
+
+    xMQTTCallbackAdded = xAddMQTTTopicFilterCallback( pcTopicFilter,
+                                                      uxTopicFilterLength,
+                                                      pxCallback,
+                                                      pvCallbackCtx,
+                                                      pdFALSE );
+
+    if( xMQTTCallbackAdded == pdTRUE )
+    {
+        MQTTSubscribeInfo_t xSubInfo =
+        {
+            .qos               = xRequestedQoS,
+            .pTopicFilter      = pcTopicFilter,
+            .topicFilterLength = uxTopicFilterLength
+        };
+
+        MQTTAgentSubscribeArgs_t xSubArgs =
+        {
+            .pSubscribeInfo   = &xSubInfo,
+            .numSubscriptions = 1
+        };
+
+        /* The block time can be 0 as the command loop is not running at this point. */
+        MQTTAgentCommandInfo_t xCommandParams =
+        {
+            .blockTimeMs                 = portMAX_DELAY,
+            .cmdCompleteCallback         = prvSubscribeRqCallback,
+            .pCmdCompleteCallbackContext = ( void * ) ( xTaskGetCurrentTaskHandle() )
+        };
+
+        ( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
+
+        /* Enqueue subscribe to the command queue. These commands will be processed only
+         * when command loop starts. */
+        xResult = MQTTAgent_Subscribe( &xGlobalMqttAgentContext, &xSubArgs, &xCommandParams );
+
+        if( xResult == MQTTSuccess )
+        {
+            uint32_t ulNotifyValue = 0;
+
+            if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
+                                        0x0,
+                                        0xFFFFFFFF,
+                                        &ulNotifyValue,
+                                        portMAX_DELAY ) )
+            {
+                xResult = ( ulNotifyValue & 0x00FFFFFF );
+            }
+            else
+            {
+                xResult = MQTTKeepAliveTimeout;
+            }
+        }
+    }
+
+    return 0;
+}
+
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #pragma section
 #endif
