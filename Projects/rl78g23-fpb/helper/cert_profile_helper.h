@@ -30,7 +30,7 @@
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
 #if defined(__DA16XXX_DEMO__)
-#include "string.h"
+#include <string.h>
 #include "r_wifi_da16xxx_if.h"
 #else
 #include "r_aws_cellular_if.h"
@@ -58,8 +58,11 @@
 /**********************************************************************************************************************
  Exported global functions
  *********************************************************************************************************************/
-void prvWriteCertificateToModule(const uint8_t *ca_data, uint32_t ca_size,
-                                 const uint8_t *clientcert_data, uint32_t clientcert_size,
-                                 const uint8_t *prvkey_data, uint32_t prvkey_size);
+/**********************************************************************************************************************
+ * function name: prvWriteCertificateToModule
+ *********************************************************************************************************************/
+void prvWriteCertificateToModule (const uint8_t * ca_data, uint32_t ca_size,
+                                const uint8_t * clientcert_data, uint32_t clientcert_size,
+                                const uint8_t * prvkey_data, uint32_t prvkey_size);
 
 #endif /* CERT_PROFILE_HELPER_H_ */

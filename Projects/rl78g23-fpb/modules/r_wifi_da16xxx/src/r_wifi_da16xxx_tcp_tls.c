@@ -40,14 +40,14 @@
 typedef struct st_sock_tbl
 {
     uint8_t                 ipaddr[4];
-    uint32_t                port;
+    uint16_t                port;
     wifi_socket_status_t    status;
     uint8_t                 ipver;
     wifi_socket_type_t      type;
     byteq_hdl_t             byteq_hdl;
-    uint32_t                put_err_cnt;
+    uint16_t                put_err_cnt;
     uint8_t                 recv_buf[TLS_BUF_MAX];
-    int32_t                 recv_len;
+    int16_t                 recv_len;
     st_wifi_timer           timer_tx;
     st_wifi_timer           timer_rx;
 } st_sock_tbl_t;
@@ -73,9 +73,9 @@ static volatile uint8_t g_rx_idx = 0;
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint32_t * socket_id)
+wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint8_t * socket_id)
 {
-    uint32_t i = 0;
+    uint8_t i = 0;
 
     /* Connected access point? */
     if (0 != R_WIFI_DA16XXX_IsConnected())
@@ -116,7 +116,7 @@ wifi_err_t R_WIFI_DA16XXX_GetAvailableTlsSocket (uint32_t * socket_id)
  *                WIFI_ERR_NOT_OPEN
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint32_t socket_number, wifi_socket_status_t *socket_status)
+wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint8_t socket_number, wifi_socket_status_t *socket_status)
 {
     /* Disconnected WiFi module? */
     if (0 != R_WIFI_DA16XXX_IsOpened())
@@ -155,7 +155,7 @@ wifi_err_t R_WIFI_DA16XXX_GetTlsSocketStatus (uint32_t socket_number, wifi_socke
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint32_t socket_number, wifi_socket_type_t type, uint8_t ip_version)
+wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint8_t socket_number, wifi_socket_type_t type, uint8_t ip_version)
 {
     static bool socket_init = false;
     wifi_err_t ret = WIFI_ERR_SOCKET_CREATE;
@@ -191,18 +191,18 @@ wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint32_t socket_number, wifi_socket_t
                                           TLS_BUF_MAX,
                                           &g_sock_tbl[socket_number].byteq_hdl))
         {
-            WIFI_LOG_INFO(("R_WIFI_DA16XXX_CreateTlsSocket: Creating socket %lu!", socket_number));
+            WIFI_LOG_INFO(("R_WIFI_DA16XXX_CreateTlsSocket: Creating socket %d!", socket_number));
             ret = WIFI_SUCCESS;
         }
         else
         {
-            WIFI_LOG_ERROR(("R_WIFI_DA16XXX_CreateTlsSocket: Cannot open BYTEQ for socket %lu!", socket_number));
+            WIFI_LOG_ERROR(("R_WIFI_DA16XXX_CreateTlsSocket: Cannot open BYTEQ for socket %d!", socket_number));
             ret = WIFI_ERR_BYTEQ_OPEN;
         }
     }
     else
     {
-        WIFI_LOG_WARN(("R_WIFI_DA16XXX_CreateTlsSocket: socket %lu has already created!", socket_number));
+        WIFI_LOG_WARN(("R_WIFI_DA16XXX_CreateTlsSocket: socket %d has already created!", socket_number));
     }
 
     return ret;
@@ -224,7 +224,7 @@ wifi_err_t R_WIFI_DA16XXX_CreateTlsSocket (uint32_t socket_number, wifi_socket_t
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint32_t socket_number, uint8_t WIFI_FAR * ip_address, uint16_t port)
+wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint8_t socket_number, uint8_t WIFI_FAR * ip_address, uint16_t port)
 {
     wifi_err_t  api_ret = WIFI_ERR_MODULE_COM;
 
@@ -244,29 +244,25 @@ wifi_err_t R_WIFI_DA16XXX_TlsConnect (uint32_t socket_number, uint8_t WIFI_FAR *
     /* socket created? */
     if (WIFI_SOCKET_STATUS_SOCKET != g_sock_tbl[socket_number].status)
     {
-        WIFI_LOG_ERROR(("R_WIFI_DA16XXX_TlsConnect: socket %lu is not created!", socket_number));
+        WIFI_LOG_ERROR(("R_WIFI_DA16XXX_TlsConnect: socket %d is not created!", socket_number));
         return WIFI_ERR_SOCKET_NUM;
     }
 
     at_set_timeout(DA16XXX_AT_TLS_CON_TIMEOUT);
 
-    if (AT_OK != at_exec("AT+TRSSLCO=%lu,%d.%d.%d.%d,%d\r",
+    if (AT_OK != at_exec("AT+TRSSLCO=%d,%d.%d.%d.%d,%d\r",
                          socket_number,ip_address[0], ip_address[1], ip_address[2], ip_address[3], port))
     {
         WIFI_LOG_ERROR(("R_WIFI_DA16XXX_TlsConnect: cannot connect to SSL server!"));
         api_ret = WIFI_ERR_MODULE_COM;
         goto RETURN_ERROR;
     }
-
-    g_sock_tbl[socket_number].ipaddr[0] = ip_address[0];
-    g_sock_tbl[socket_number].ipaddr[1] = ip_address[1];
-    g_sock_tbl[socket_number].ipaddr[2] = ip_address[2];
-    g_sock_tbl[socket_number].ipaddr[3] = ip_address[3];
+    memcpy(g_sock_tbl[socket_number].ipaddr, ip_address, sizeof(g_sock_tbl[socket_number].ipaddr));
     g_sock_tbl[socket_number].port = port;
     g_sock_tbl[socket_number].status = WIFI_SOCKET_STATUS_CONNECTED;
     g_sock_list[socket_number] = socket_number;
     api_ret = WIFI_SUCCESS;
-    WIFI_LOG_INFO(("R_WIFI_DA16XXX_TlsConnect: connected socket %lu to SSL server.", socket_number));
+    WIFI_LOG_INFO(("R_WIFI_DA16XXX_TlsConnect: connected socket %d to SSL server.", socket_number));
 
 RETURN_ERROR:
     at_set_timeout(ATCMD_RESP_TIMEOUT);
@@ -291,17 +287,17 @@ RETURN_ERROR:
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
-                                      uint32_t length, uint32_t timeout_ms)
+int16_t R_WIFI_DA16XXX_SendTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+                                      uint16_t length, uint32_t timeout_ms)
 {
-    uint32_t    send_idx = 0;
+    uint16_t    send_idx = 0;
     uint8_t     send_data[DA16XXX_AT_CMD_BUF_MAX] = {0};
-    uint32_t    send_length;
-    int32_t     api_ret = WIFI_SUCCESS;
+    uint16_t    send_length;
+    int16_t     api_ret = WIFI_SUCCESS;
     e_atcmd_err_t at_ret = ATCMD_OK;
     e_rslt_code_t rslt_ret = AT_OK;
     OS_TICK     tick_tmp;
-    uint32_t    tx_length;
+    uint16_t    tx_length;
 
     /* Connect access point? */
     if (0 != R_WIFI_DA16XXX_IsConnected())
@@ -319,7 +315,7 @@ int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR *
     /* Not connect? */
     if (WIFI_SOCKET_STATUS_CONNECTED != g_sock_tbl[socket_number].status)
     {
-        WIFI_LOG_ERROR(("R_WIFI_DA16XXX_SendTlsSocket: socket #%lu is not connected!", socket_number));
+        WIFI_LOG_ERROR(("R_WIFI_DA16XXX_SendTlsSocket: socket #%d is not connected!", socket_number));
         return WIFI_ERR_SOCKET_NUM;
     }
 
@@ -346,7 +342,7 @@ int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR *
         /* get prefix length */
         send_length = snprintf((char WIFI_FAR *) send_data,
                                DA16XXX_AT_CMD_BUF_MAX,
-                               "AT+TRSSLWR=%lu,%d.%d.%d.%d,%lu,r,%d,",
+                               "AT+TRSSLWR=%d,%d.%d.%d.%d,%d,r,%d,",
                                socket_number,
                                g_sock_tbl[socket_number].ipaddr[0],
                                g_sock_tbl[socket_number].ipaddr[1],
@@ -389,7 +385,7 @@ int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR *
         {
             if (AT_UNKNOWN == rslt_ret)
             {
-                WIFI_LOG_ERROR(("SendTlsSocket: socket %lu is disconnected (ret=%ld)!", socket_number, rslt_ret));
+                WIFI_LOG_ERROR(("SendTlsSocket: socket %d is disconnected (ret=%ld)!", socket_number, rslt_ret));
                 g_sock_tbl[socket_number].put_err_cnt = 0;
                 g_sock_tbl[socket_number].status = WIFI_SOCKET_STATUS_SOCKET;
                 api_ret = (int32_t) WIFI_ERR_SOCKET_NUM;
@@ -417,7 +413,7 @@ int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR *
     at_set_timeout(ATCMD_RESP_TIMEOUT);
     os_wrap_mutex_give(MUTEX_TX);
     tick_tmp = os_wrap_tickcount_get() - tick_tmp;
-    WIFI_LOG_INFO(("R_WIFI_DA16XXX_SendTlsSocket: socket %lu ret=%ld (%lu).", socket_number, api_ret, tick_tmp));
+    WIFI_LOG_INFO(("R_WIFI_DA16XXX_SendTlsSocket: socket %d ret=%ld (%lu).", socket_number, api_ret, tick_tmp));
     return api_ret;
 }
 /**********************************************************************************************************************
@@ -436,11 +432,11 @@ int32_t R_WIFI_DA16XXX_SendTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR *
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-int32_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint32_t socket_number, uint8_t WIFI_FAR * data,
-                                         uint32_t length, uint32_t timeout_ms)
+int16_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * data,
+                                         uint16_t length, uint32_t timeout_ms)
 {
-    int32_t     api_ret = WIFI_SUCCESS;
-    uint32_t    recv_cnt = 0;
+    int16_t     api_ret = WIFI_SUCCESS;
+    uint16_t    recv_cnt = 0;
     byteq_err_t byteq_ret;
     OS_TICK     tick_tmp = 0;
 
@@ -499,7 +495,7 @@ int32_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint32_t socket_number, uint8_t WIFI_FA
         return WIFI_ERR_SOCKET_NUM;
     }
 
-    WIFI_LOG_INFO(("R_WIFI_DA16XXX_ReceiveTlsSocket: socket %lu recv_cnt=%ld (%lu).", socket_number, recv_cnt, tick_tmp));
+    WIFI_LOG_INFO(("R_WIFI_DA16XXX_ReceiveTlsSocket: socket %d recv_cnt=%ld (%lu).", socket_number, recv_cnt, tick_tmp));
     api_ret = recv_cnt;
     return api_ret;
 }
@@ -517,7 +513,7 @@ int32_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint32_t socket_number, uint8_t WIFI_FA
  *                WIFI_ERR_MODULE_TIMEOUT
  *                WIFI_ERR_SOCKET_NUM
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint32_t socket_number)
+wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint8_t socket_number)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
     e_rslt_code_t at_rep = AT_OK;
@@ -541,7 +537,7 @@ wifi_err_t R_WIFI_DA16XXX_CloseTlsSocket (uint32_t socket_number)
     }
 
     at_set_timeout(5000);
-    at_rep = at_exec("AT+TRSSLCL=%lu\r", socket_number);
+    at_rep = at_exec("AT+TRSSLCL=%d\r", socket_number);
     if (AT_INTERNAL_TIMEOUT == at_rep)
     {
         api_ret = WIFI_ERR_MODULE_TIMEOUT;
@@ -562,7 +558,7 @@ CLOSE_SOCKET:
     g_sock_tbl[socket_number].put_err_cnt = 0;
     g_sock_tbl[socket_number].status = WIFI_SOCKET_STATUS_CLOSED;
     g_sock_list[socket_number] = UINT8_MAX;
-    WIFI_LOG_INFO(("R_WIFI_DA16XXX_CloseTlsSocket: socket %lu is closed!", socket_number));
+    WIFI_LOG_INFO(("R_WIFI_DA16XXX_CloseTlsSocket: socket %d is closed!", socket_number));
 
 RETURN_ERROR:
     at_set_timeout(ATCMD_RESP_TIMEOUT);
@@ -583,7 +579,7 @@ RETURN_ERROR:
  *                WIFI_ERR_SOCKET_NUM
  *                WIFI_ERR_TAKE_MUTEX
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint32_t socket_number)
+wifi_err_t R_WIFI_DA16XXX_TlsReconnect (uint8_t socket_number)
 {
     uint8_t cid;
 
@@ -626,12 +622,11 @@ wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
                                           wifi_tls_cert_info_t * cert_info,
                                           uint8_t WIFI_FAR * sni_name,
                                           uint8_t ser_valid,
-                                          uint32_t trans_buf_size,
-                                          uint32_t recv_buf_size,
+                                          uint16_t trans_buf_size,
+                                          uint16_t recv_buf_size,
                                           uint32_t timeout)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
-    uint8_t    cid = 0;
 
     /* Connected access point? */
     if (0 != R_WIFI_DA16XXX_IsConnected())
@@ -649,10 +644,9 @@ wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
     /* Initialize the SSL module. */
     if (AT_OK == at_exec("AT+TRSSLINIT=1\r"))
     {
-        if (DATA_FOUND == at_read("+TRSSLINIT:%hhu\r", &cid))
+        if (DATA_FOUND == at_read("+TRSSLINIT:%hhu\r", socket_num))
         {
-            WIFI_LOG_INFO(("R_WIFI_DA16XXX_RequestTlsSocket: Initialize the SSL module. Socket Section %d.", cid));
-            *socket_num = cid;
+            WIFI_LOG_INFO(("R_WIFI_DA16XXX_RequestTlsSocket: Initialize the SSL module. Socket Section %d.", *socket_num));
         }
         else
         {
@@ -666,59 +660,39 @@ wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
 
     /* Configure SSL connection */
     /* set SSL Certificate */
-    if (NULL != cert_info->cert_ca)
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,2,%s\r", *socket_num, cert_info->cert_ca))
     {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,2,%s\r", cid, cert_info->cert_ca))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
-    }
-    else
-    {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,2,%s\r", cid, WIFI_CFG_TLS_CERT_CA_NAME))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
+    	return WIFI_ERR_MODULE_COM;
     }
 
-    if (NULL != cert_info->cert_name)
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,3,%s\r", *socket_num, cert_info->cert_name))
     {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,3,%s\r", cid, cert_info->cert_name))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
-    }
-    else
-    {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,3,%s\r", cid, WIFI_CFG_TLS_CERT_CLIENT_NAME))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
+    	return WIFI_ERR_MODULE_COM;
     }
 
     /* set the SNI (supported only for TLS client) */
     if (NULL != sni_name)
     {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,6,%s\r", cid, (char WIFI_FAR *) sni_name))
+        if (AT_OK != at_exec("AT+TRSSLCFG=%d,6,%s\r", *socket_num, (char WIFI_FAR *) sni_name))
         {
             return WIFI_ERR_MODULE_COM;
         }
     }
 
     /* enable server validation */
-    if (AT_OK != at_exec("AT+TRSSLCFG=%d,9,%d\r", cid, ser_valid))
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,9,%d\r", *socket_num, ser_valid))
     {
         return WIFI_ERR_MODULE_COM;
     }
 
     /* set the Incoming buffer length */
-    if (AT_OK != at_exec("AT+TRSSLCFG=%d,10,%ld\r", cid, recv_buf_size))
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,10,%u\r", *socket_num, recv_buf_size))
     {
         return WIFI_ERR_MODULE_COM;
     }
 
     /* set the outgoing buffer length */
-    if (AT_OK != at_exec("AT+TRSSLCFG=%d,11,%ld\r", cid, trans_buf_size))
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,11,%u\r", *socket_num, trans_buf_size))
     {
         return WIFI_ERR_MODULE_COM;
     }
@@ -726,7 +700,7 @@ wifi_err_t R_WIFI_DA16XXX_ConfigTlsSocket(uint8_t * socket_num,
     /* set the DA TLS connection timeout */
     if (0 != timeout)
     {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,12,%ld\r", cid, timeout))
+        if (AT_OK != at_exec("AT+TRSSLCFG=%d,12,%lu\r", *socket_num, timeout))
         {
             return WIFI_ERR_MODULE_COM;
         }
@@ -754,8 +728,8 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
                                                   wifi_tls_cert_info_t * cert_info,
                                                   uint8_t WIFI_FAR * sni_name,
                                                   uint8_t ser_valid,
-                                                  uint32_t trans_buf_size,
-                                                  uint32_t recv_buf_size)
+                                                  uint16_t trans_buf_size,
+                                                  uint16_t recv_buf_size)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
 
@@ -779,34 +753,14 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
 
     /* Configure SSL connection */
     /* set SSL Certificate */
-    if (NULL != cert_info->cert_ca)
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,2,%s\r", socket_num, cert_info->cert_ca))
     {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,2,%s\r", socket_num, cert_info->cert_ca))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
-    }
-    else
-    {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,2,%s\r", socket_num, WIFI_CFG_TLS_CERT_CA_NAME))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
+    	return WIFI_ERR_MODULE_COM;
     }
 
-    if (NULL != cert_info->cert_name)
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,3,%s\r", socket_num, cert_info->cert_name))
     {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,3,%s\r", socket_num, cert_info->cert_name))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
-    }
-    else
-    {
-        if (AT_OK != at_exec("AT+TRSSLCFG=%d,3,%s\r", socket_num, WIFI_CFG_TLS_CERT_CLIENT_NAME))
-        {
-            return WIFI_ERR_MODULE_COM;
-        }
+    	return WIFI_ERR_MODULE_COM;
     }
 
     /* set the SNI (supported only for TLS client) */
@@ -825,13 +779,13 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
     }
 
     /* set the Incoming buffer length */
-    if (AT_OK != at_exec("AT+TRSSLCFG=%d,10,%ld\r", socket_num, recv_buf_size))
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,10,%u\r", socket_num, recv_buf_size))
     {
         return WIFI_ERR_MODULE_COM;
     }
 
     /* set the outgoing buffer length */
-    if (AT_OK != at_exec("AT+TRSSLCFG=%d,11,%ld\r", socket_num, trans_buf_size))
+    if (AT_OK != at_exec("AT+TRSSLCFG=%d,11,%u\r", socket_num, trans_buf_size))
     {
         return WIFI_ERR_MODULE_COM;
     }
@@ -850,7 +804,7 @@ wifi_err_t R_WIFI_DA16XXX_RegistServerCertificate(uint8_t socket_num,
  *                WIFI_ERR_NOT_CONNECT
  *                WIFI_ERR_SOCKET_CREATE
  *********************************************************************************************************************/
-wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint32_t socket_number)
+wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint8_t socket_number)
 {
     /* Connected access point? */
     if (0 != R_WIFI_DA16XXX_IsConnected())
@@ -910,8 +864,6 @@ wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint32_t socket_number)
 wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
-    uint8_t cert_ca_tmp[WIFI_CFG_TLS_CERT_MAX_NAME] = {0};
-    uint8_t certificate_client_tmp[WIFI_CFG_TLS_CERT_MAX_NAME] = {0};
     uint8_t certificate_key_tmp[WIFI_CFG_TLS_CERT_MAX_NAME] = {0};
 
     /* Disconnected WiFi module? */
@@ -933,11 +885,7 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 #if WIFI_CFG_TLS_USE_CA_CERT
     if (AT_OK == at_exec("AT+TRSSLCERTLIST=0\r"))
     {
-        if (DATA_FOUND == at_read("+TRSSLCERTLIST:0,%s\r", cert_ca_tmp))
-        {
-            memcpy(cert_info->cert_ca, cert_ca_tmp, sizeof(cert_ca_tmp));
-        }
-        else
+        if (DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:0,%s\r", cert_info->cert_ca))
         {
             memset(cert_info->cert_ca, 0, sizeof(cert_info->cert_ca));
         }
@@ -963,12 +911,8 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
     /* Get Client/Server Certificate */
     if (AT_OK == at_exec("AT+TRSSLCERTLIST=1\r"))
     {
-        if ((DATA_FOUND == at_read("+TRSSLCERTLIST:%*hhu,%[^,],%*hhu,%s",
-                                   certificate_client_tmp, certificate_key_tmp)))
-        {
-            memcpy(cert_info->cert_name, certificate_client_tmp, sizeof(certificate_client_tmp));
-        }
-        else
+        if ((DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:%*d,%[^,],%*d,%s",
+                                   cert_info->cert_name, certificate_key_tmp)))
         {
             memset(cert_info->cert_name, 0, sizeof(cert_info->cert_name));
         }
@@ -1000,7 +944,7 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 wifi_err_t R_WIFI_DA16XXX_WriteCertificate(const uint8_t WIFI_FAR * name,
                                            wifi_tls_key_type_t type_key,
                                            const uint8_t WIFI_FAR * p_data,
-                                           uint32_t len)
+                                           uint16_t len)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
     uint8_t send_data[TEMP_BUF_MAX] = {0};

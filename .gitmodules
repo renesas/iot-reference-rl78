@@ -37,9 +37,6 @@
 [submodule "Middleware/AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk"]
 	path = Middleware/AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk
 	url = https://github.com/aws/Fleet-Provisioning-for-AWS-IoT-embedded-sdk.git
-[submodule "Middleware/AWS/ota-for-aws-iot-embedded-sdk"]
-	path = Middleware/AWS/ota-for-aws-iot-embedded-sdk
-	url = https://github.com/aws/ota-for-AWS-IoT-embedded-sdk.git
 [submodule "Middleware/FreeRTOS/coreMQTT-Agent"]
 	path = Middleware/FreeRTOS/coreMQTT-Agent
 	url = https://github.com/FreeRTOS/coreMQTT-Agent.git
@@ -49,3 +46,6 @@
 [submodule "Test/FreeRTOS-Libraries-Integration-Tests"]
 	path = Test/FreeRTOS-Libraries-Integration-Tests
 	url = https://github.com/FreeRTOS/FreeRTOS-Libraries-Integration-Tests
+[submodule "Middleware/AWS/aws-iot-core-mqtt-file-streams-embedded-c"]
+	path = Middleware/AWS/aws-iot-core-mqtt-file-streams-embedded-c
+	url = https://github.com/aws/aws-iot-core-mqtt-file-streams-embedded-c

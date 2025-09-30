@@ -149,7 +149,7 @@
  * demo.
  */
 #ifndef democonfigMQTT_MAX_DEMO_COUNT
-    #define democonfigMQTT_MAX_DEMO_COUNT    ( 3 )
+    #define democonfigMQTT_MAX_DEMO_COUNT    (3)
 #endif
 
 /**
@@ -158,7 +158,7 @@
  * anticipated MQTT payload.
  */
 #ifndef MQTT_AGENT_NETWORK_BUFFER_SIZE
-#define MQTT_AGENT_NETWORK_BUFFER_SIZE    ( 5000 )
+#define MQTT_AGENT_NETWORK_BUFFER_SIZE    (5000)
 #endif
 
 /**
@@ -278,14 +278,14 @@ static char * pcRootCA = NULL;
 typedef struct TopicFilterSubscription
 {
     IncomingPubCallback_t pxIncomingPublishCallback;
-    void * pvIncomingPublishCallbackContext;
-    uint16_t usTopicFilterLength;
+    void *                pvIncomingPublishCallbackContext;
+    uint16_t              usTopicFilterLength;
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    const char __far * pcTopicFilter;
+    const char __far *    pcTopicFilter;
 #else
     const char * pcTopicFilter;
 #endif
-    BaseType_t xManageResubscription;
+    BaseType_t            xManageResubscription;
 } TopicFilterSubscription_t;
 
 /*-----------------------------------------------------------*/
@@ -302,7 +302,7 @@ static TlsTransportParams_t xTlsTransportParams;
  *
  * @return `MQTTSuccess` if the initialization succeeds, else `MQTTBadParameter`.
  */
-static MQTTStatus_t prvMQTTInit( void );
+static MQTTStatus_t prvMQTTInit (void);
 
 /**
  * @brief Sends an MQTT Connect packet over the already connected TCP socket.
@@ -311,7 +311,7 @@ static MQTTStatus_t prvMQTTInit( void );
  * @return `MQTTSuccess` if connection succeeds, else appropriate error code
  * from MQTT_Connect.
  */
-static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect );
+static MQTTStatus_t prvCreateMQTTConnection (bool xIsReconnect);
 
 /**
  * @brief Connect a TCP socket to the MQTT broker.
@@ -320,7 +320,7 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect );
  *
  * @return `pdPASS` if connection succeeds, else `pdFAIL`.
  */
-static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext );
+static BaseType_t prvCreateTLSConnection (NetworkContext_t * pxNetworkContext);
 
 /**
  * @brief Disconnect a TCP connection.
@@ -329,7 +329,7 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext );
  *
  * @return `pdPASS` if disconnect succeeds, else `pdFAIL`.
  */
-static BaseType_t prvDisconnectTLS( NetworkContext_t * pxNetworkContext );
+static BaseType_t prvDisconnectTLS (NetworkContext_t * pxNetworkContext);
 
 /**
  * @brief Function to attempt to resubscribe to the topics already present in the
@@ -343,7 +343,7 @@ static BaseType_t prvDisconnectTLS( NetworkContext_t * pxNetworkContext );
  * @return `MQTTSuccess` if adding subscribes to the command queue succeeds, else
  * appropriate error code from MQTTAgent_Subscribe.
  */
-static MQTTStatus_t prvHandleResubscribe( void );
+static MQTTStatus_t prvHandleResubscribe (void);
 
 /**
  * @brief The callback invoked by MQTT agent for a response to SUBSCRIBE request.
@@ -354,8 +354,8 @@ static MQTTStatus_t prvHandleResubscribe( void );
  * @param pxCommandContext Pointer to the command context passed from caller
  * @param pxReturnInfo Return Info containing the result of the subscribe command.
  */
-static void prvSubscriptionCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
-                                            MQTTAgentReturnInfo_t * pxReturnInfo );
+static void prvSubscriptionCommandCallback (MQTTAgentCommandContext_t * pxCommandContext,
+                                            MQTTAgentReturnInfo_t * pxReturnInfo);
 
 /**
  * @brief Fan out the incoming publishes to the callbacks registered by different
@@ -366,22 +366,35 @@ static void prvSubscriptionCommandCallback( MQTTAgentCommandContext_t * pxComman
  * @param[in] packetId Packet ID of publish.
  * @param[in] pxPublishInfo Info of incoming publish.
  */
-static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
+static void prvIncomingPublishCallback (MQTTAgentContext_t * pMqttAgentContext,
                                         uint16_t packetId,
-                                        MQTTPublishInfo_t * pxPublishInfo );
+                                        MQTTPublishInfo_t * pxPublishInfo);
 
+/**
+ * @fn prvMatchTopicFilterSubscriptions
+ *
+ * @brief Checks if the topic in the given publish information
+ * matches any of the existing MQTT topic filter subscriptions.
+ *
+ * @param[in] pxPublishInfo Pointer to the MQTT publish information containing the topic to be matched.
+ *
+ * @return true if a matching subscription is found; false otherwise.
+ */
+static bool prvMatchTopicFilterSubscriptions (MQTTPublishInfo_t * pxPublishInfo);
 
-static bool prvMatchTopicFilterSubscriptions( MQTTPublishInfo_t * pxPublishInfo );
-
-
-static void prvSetMQTTAgentState( MQTTAgentState_t xAgentState );
+/**
+ * @fn prvSetMQTTAgentState
+ *
+ * @brief Set MQTT Agent State.
+ */
+static void prvSetMQTTAgentState (MQTTAgentState_t xAgentState);
 
 /**
  * @brief The timer query function provided to the MQTT context.
  *
  * @return Time in milliseconds.
  */
-static uint32_t prvGetTimeMs( void );
+static uint32_t prvGetTimeMs (void);
 
 /**
  * @brief Connects a TCP socket to the MQTT broker, then creates and MQTT
@@ -390,7 +403,7 @@ static uint32_t prvGetTimeMs( void );
  * @return MQTTConnected if connection was successful, MQTTNotConnected if MQTT connection
  *         failed and all retries exhausted.
  */
-static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect );
+static MQTTConnectionStatus_t prvConnectToMQTTBroker (bool xIsReconnect);
 
 /**
  * @brief Get the string value for a key from the KV store.
@@ -403,7 +416,8 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect );
 static char * prvKVStoreGetString( KVStoreKey_t xKey );
 #endif
 
-static void prvMQTTAgentTask( void * pvParameters );
+static void prvMQTTAgentTask (void * pvParameters);
+
 /*-----------------------------------------------------------*/
 
 /**
@@ -431,11 +445,11 @@ static uint32_t ulGlobalEntryTimeMs;
 
 MQTTAgentContext_t xGlobalMqttAgentContext;
 
-static uint8_t xNetworkBuffer[ MQTT_AGENT_NETWORK_BUFFER_SIZE ];
+static uint8_t xNetworkBuffer[MQTT_AGENT_NETWORK_BUFFER_SIZE];
 
 static MQTTAgentMessageContext_t xCommandQueue;
 
-static TopicFilterSubscription_t xTopicFilterSubscriptions[ MQTT_AGENT_MAX_SUBSCRIPTIONS ];
+static TopicFilterSubscription_t xTopicFilterSubscriptions[MQTT_AGENT_MAX_SUBSCRIPTIONS];
 
 static SemaphoreHandle_t xSubscriptionsMutex;
 
@@ -450,18 +464,23 @@ static MQTTAgentState_t xState = MQTT_AGENT_STATE_NONE;
  */
 static EventGroupHandle_t xStateEventGrp;
 
-
-
-
 /*-----------------------------------------------------------*/
 
-static MQTTStatus_t prvMQTTInit( void )
+/**
+ * @fn prvMQTTInit
+ *
+ * @brief Initializes an MQTT context, including transport interface and
+ * network buffer.
+ *
+ * @return `MQTTSuccess` if the initialization succeeds, else `MQTTBadParameter`.
+ */
+static MQTTStatus_t prvMQTTInit(void)
 {
-	TransportInterface_t xTransport;
-    MQTTStatus_t xReturn;
-    MQTTFixedBuffer_t xFixedBuffer = { .pBuffer = xNetworkBuffer, .size = MQTT_AGENT_NETWORK_BUFFER_SIZE };
-    static uint8_t staticQueueStorageArea[ MQTT_AGENT_COMMAND_QUEUE_LENGTH * sizeof( MQTTAgentCommand_t * ) ];
-    static StaticQueue_t staticQueueStructure;
+    TransportInterface_t        xTransport;
+    MQTTStatus_t                xReturn;
+    MQTTFixedBuffer_t           xFixedBuffer = { .pBuffer = xNetworkBuffer, .size = MQTT_AGENT_NETWORK_BUFFER_SIZE };
+    static uint8_t              staticQueueStorageArea[MQTT_AGENT_COMMAND_QUEUE_LENGTH * sizeof(MQTTAgentCommand_t *)];
+    static StaticQueue_t        staticQueueStructure;
     MQTTAgentMessageInterface_t messageInterface =
     {
         .pMsgCtx        = NULL,
@@ -472,11 +491,11 @@ static MQTTStatus_t prvMQTTInit( void )
     };
 
     LogDebug( ( "Creating command queue." ) );
-    xCommandQueue.queue = xQueueCreateStatic( MQTT_AGENT_COMMAND_QUEUE_LENGTH,
-                                              sizeof( MQTTAgentCommand_t * ),
-                                              staticQueueStorageArea,
-                                              &staticQueueStructure );
-    configASSERT( xCommandQueue.queue );
+    xCommandQueue.queue = xQueueCreateStatic(MQTT_AGENT_COMMAND_QUEUE_LENGTH,
+                                            sizeof( MQTTAgentCommand_t * ),
+                                            staticQueueStorageArea,
+                                            &staticQueueStructure );
+    configASSERT(xCommandQueue.queue);
     messageInterface.pMsgCtx = &xCommandQueue;
 
     /* Initialize the command pool. */
@@ -494,28 +513,36 @@ static MQTTStatus_t prvMQTTInit( void )
     xTransport.writev = NULL;
 
     /* Initialize MQTT library. */
-    xReturn = MQTTAgent_Init( &xGlobalMqttAgentContext,
-                              &messageInterface,
-                              &xFixedBuffer,
-                              &xTransport,
-                              prvGetTimeMs,
-                              prvIncomingPublishCallback,
-                              /* Context to pass into the callback. Passing the pointer to subscription array. */
-                              NULL );
+    xReturn = MQTTAgent_Init(&xGlobalMqttAgentContext,
+                            &messageInterface,
+                            &xFixedBuffer,
+                            &xTransport,
+                            prvGetTimeMs,
+                            prvIncomingPublishCallback,
+                            NULL ); /* Context to pass into the callback. Passing the pointer to subscription array. */
 
     return xReturn;
 }
 
 /*-----------------------------------------------------------*/
 
-static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
+/**
+ * @fn prvCreateMQTTConnection
+ *
+ * @brief Sends an MQTT Connect packet over the already connected TCP socket.
+ *
+ * @param[in] xIsReconnect Boolean flag to indicate if this is a reconnection.
+ * @return `MQTTSuccess` if connection succeeds, else appropriate error code
+ * from MQTT_Connect.
+ */
+static MQTTStatus_t prvCreateMQTTConnection(bool xIsReconnect)
 {
-    MQTTStatus_t xResult;
+    MQTTStatus_t      xResult;
     MQTTConnectInfo_t xConnectInfo;
-    bool xSessionPresent = false;
+    bool              xSessionPresent = false;
 
     /* Many fields are not used in this demo so start with everything at 0. */
-    memset( &xConnectInfo, 0x00, sizeof( xConnectInfo ) );
+    memset(&xConnectInfo, 0x00, sizeof(xConnectInfo));
 
     /* Start with a clean session i.e. direct the MQTT broker to discard any
      * previous session data. Also, establishing a connection with clean session
@@ -534,8 +561,8 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
     /* The client identifier is used to uniquely identify this MQTT client to
      * the MQTT broker. In a production device the identifier can be something
      * unique, such as a device serial number. */
-    xConnectInfo.pClientIdentifier = pcThingName;
-    xConnectInfo.clientIdentifierLength = ( uint16_t ) strlen( pcThingName );
+    xConnectInfo.pClientIdentifier      = pcThingName;
+    xConnectInfo.clientIdentifierLength = (uint16_t)strlen(pcThingName); /* Cast to proper datatype to avoid warning */
 
     /* Set MQTT keep-alive period. It is the responsibility of the application
      * to ensure that the interval between Control Packets being sent does not
@@ -552,10 +579,11 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
     xConnectInfo.pPassword = democonfigCLIENT_PASSWORD;
     xConnectInfo.passwordLength = ( uint16_t ) strlen( democonfigCLIENT_PASSWORD );
 #else
-    xConnectInfo.pUserName = AWS_IOT_METRICS_STRING;
+    xConnectInfo.pUserName      = AWS_IOT_METRICS_STRING;
     xConnectInfo.userNameLength = AWS_IOT_METRICS_STRING_LENGTH;
+
     /* Password for authentication is not used. */
-    xConnectInfo.pPassword = NULL;
+    xConnectInfo.pPassword      = NULL;
     xConnectInfo.passwordLength = 0U;
 #endif
 #else /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
@@ -567,7 +595,7 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
 #endif /* ifdef democonfigCLIENT_USERNAME */
 #endif /* ifdef democonfigUSE_AWS_IOT_CORE_BROKER */
 
-    LogInfo( ( "Creating an MQTT connection to the broker." ) );
+    LogInfo(("Creating an MQTT connection to the broker."));
 
     /* Send MQTT CONNECT packet to broker. MQTT's Last Will and Testament feature
      * is not used in this demo, so it is passed as NULL. */
@@ -577,12 +605,12 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
                             mqttexampleCONNACK_RECV_TIMEOUT_MS,
                             &xSessionPresent );
 
-    if( ( xResult == MQTTSuccess ) && ( xIsReconnect == true ) )
+    if ((MQTTSuccess == xResult) && (true == xIsReconnect))
     {
-        LogInfo( ( "Resuming previous MQTT session with broker." ) );
-        xResult = MQTTAgent_ResumeSession( &xGlobalMqttAgentContext, xSessionPresent );
+        LogInfo(("Resuming previous MQTT session with broker."));
+        xResult = MQTTAgent_ResumeSession(&xGlobalMqttAgentContext, xSessionPresent);
 
-        if( ( xResult == MQTTSuccess ) && ( xSessionPresent == false ) )
+        if ((MQTTSuccess == xResult) && (false == xSessionPresent))
         {
             /* Resubscribe to all the subscribed topics. */
             xResult = prvHandleResubscribe();
@@ -590,24 +618,34 @@ static MQTTStatus_t prvCreateMQTTConnection( bool xIsReconnect )
     }
 
     return xResult;
-}
+}/* End of function prvCreateMQTTConnection()*/
+
 /*-----------------------------------------------------------*/
 
-static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
+/**
+ * @fn prvCreateTLSConnection
+ *
+ * @brief Connect a TCP socket to the MQTT broker.
+ *
+ * @param[in] pxNetworkContext Network context.
+ *
+ * @return `pdPASS` if connection succeeds, else `pdFAIL`.
+ */
+static BaseType_t prvCreateTLSConnection(NetworkContext_t * pxNetworkContext)
 {
     BaseType_t xConnected = pdFAIL;
 
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) /* @suppress("3.1c Compiler specific functions") */
     PlaintextTransportStatus_t xNetworkStatus = PLAINTEXT_TRANSPORT_CONNECT_FAILURE;
 #else
     TlsTransportStatus_t xNetworkStatus = TLS_TRANSPORT_CONNECT_FAILURE;
     NetworkCredentials_t xNetworkCredentials = { 0 };
 #endif
-    BackoffAlgorithmStatus_t xBackoffAlgStatus = BackoffAlgorithmSuccess;
-    BackoffAlgorithmContext_t xReconnectParams = { 0 };
-    uint16_t usNextRetryBackOff = 0U;
+    BackoffAlgorithmStatus_t  xBackoffAlgStatus  = BackoffAlgorithmSuccess;
+    BackoffAlgorithmContext_t xReconnectParams   = { 0 };
+    uint16_t                  usNextRetryBackOff = 0U;
 
-#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
+#if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__) /* @suppress("3.1c Compiler specific functions") */
 #ifdef democonfigUSE_AWS_IOT_CORE_BROKER
 
     /* ALPN protocols must be a NULL-terminated list of strings. Therefore,
@@ -642,128 +680,153 @@ static BaseType_t prvCreateTLSConnection( NetworkContext_t * pxNetworkContext )
      * the MQTT broker as specified in democonfigMQTT_BROKER_ENDPOINT and
      * democonfigMQTT_BROKER_PORT at the top of this file. */
     uint32_t ulRandomNum = 0;
-	do
-	{
-	LogInfo( ( "Creating a TLS connection to %s:%u.",
-			pcBrokerEndpoint,
-			democonfigMQTT_BROKER_PORT ) );
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    xNetworkStatus = Plaintext_FreeRTOS_Connect( pxNetworkContext,
-                                               pcBrokerEndpoint,
-                                               democonfigMQTT_BROKER_PORT,
-                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
-                                               mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+    do // @suppress("3.1c Compiler specific functions")
+    {
+        LogInfo( ( "Creating a TLS connection to %s:%u.",
+                pcBrokerEndpoint,
+                democonfigMQTT_BROKER_PORT ) );
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) /* @suppress("3.1c Compiler specific functions") */
+        xNetworkStatus = Plaintext_FreeRTOS_Connect( pxNetworkContext,
+                                                pcBrokerEndpoint,
+                                                democonfigMQTT_BROKER_PORT,
+                                                mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
+                                                mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
 
-    xConnected = ( xNetworkStatus == PLAINTEXT_TRANSPORT_SUCCESS ) ? pdPASS : pdFAIL;
+        xConnected = (PLAINTEXT_TRANSPORT_SUCCESS == xNetworkStatus) ? pdPASS : pdFAIL;
 #else
-	xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
-                                               pcBrokerEndpoint,
-                                               democonfigMQTT_BROKER_PORT,
-                                               &xNetworkCredentials,
-                                           mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
-                                           mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+    xNetworkStatus = TLS_FreeRTOS_Connect( pxNetworkContext,
+                                        pcBrokerEndpoint,
+                                        democonfigMQTT_BROKER_PORT,
+                                        &xNetworkCredentials,
+                                        mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
+                                        mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
 
     xConnected = ( xNetworkStatus == TLS_TRANSPORT_SUCCESS ) ? pdPASS : pdFAIL;
 #endif
 
-		if( !xConnected )
-		{
-			/* Get back-off value (in milliseconds) for the next connection retry. */
-#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-            if( xTrngGenerateRandomNumber( ( uint8_t * ) &ulRandomNum,
-                                               sizeof( ulRandomNum ) ) == pdPASS )
+        if (!xConnected)    /* @suppress("3.1c Compiler specific functions") */
+        {
+            /* Get back-off value (in milliseconds) for the next connection retry. */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL) /* @suppress("3.1c Compiler specific functions") */
+            /* Cast to proper datatype to avoid warning */
+            if (xTrngGenerateRandomNumber((uint8_t *)&ulRandomNum, sizeof(ulRandomNum)) == pdPASS)
 #else
-			if( xPkcs11GenerateRandomNumber( ( uint8_t * ) &ulRandomNum,
-												 sizeof( ulRandomNum ) ) == pdPASS )
+            if( xPkcs11GenerateRandomNumber( ( uint8_t * ) &ulRandomNum,
+                                            sizeof( ulRandomNum ) ) == pdPASS )
 #endif
-			{
-			xBackoffAlgStatus = BackoffAlgorithm_GetNextBackoff( &xReconnectParams, ulRandomNum, &usNextRetryBackOff );
-			}
+            {
+                xBackoffAlgStatus = BackoffAlgorithm_GetNextBackoff(&xReconnectParams,
+                        ulRandomNum,
+                        &usNextRetryBackOff);
+            }
 
-			if( xBackoffAlgStatus == BackoffAlgorithmSuccess )
-			{
-				LogWarn( ( "Connection to the broker failed. "
-						   "Retrying connection in %hu ms.",
-						   usNextRetryBackOff ) );
-				vTaskDelay( pdMS_TO_TICKS( usNextRetryBackOff ) );
-			}
-		}
+            if (BackoffAlgorithmSuccess == xBackoffAlgStatus)
+            {
+                LogWarn(("Connection to the broker failed. "
+                        "Retrying connection in %hu ms.",
+                        usNextRetryBackOff));
+                vTaskDelay(pdMS_TO_TICKS(usNextRetryBackOff));
+            }
+        }
 
-		if( xBackoffAlgStatus == BackoffAlgorithmRetriesExhausted )
-		{
-			LogError( ( "Connection to the broker failed, all attempts exhausted." ) );
-		}
-	} while( ( xConnected != pdPASS ) && ( xBackoffAlgStatus == BackoffAlgorithmSuccess ) );
+        if (BackoffAlgorithmRetriesExhausted == xBackoffAlgStatus)
+        {
+            LogError(("Connection to the broker failed, all attempts exhausted."));
+        }
+    } while ((pdPASS != xConnected) && (BackoffAlgorithmSuccess == xBackoffAlgStatus));
 
     return xConnected;
-}
+}/* End of function prvCreateTLSConnection()*/
 
 /*-----------------------------------------------------------*/
 
-static BaseType_t prvDisconnectTLS( NetworkContext_t * pxNetworkContext )
+/**
+ * @fn prvDisconnectTLS
+ *
+ * @brief Disconnect a TCP connection.
+ *
+ * @param[in] pxNetworkContext Network context.
+ *
+ * @return `pdPASS` if disconnect succeeds, else `pdFAIL`.
+ */
+static BaseType_t prvDisconnectTLS(NetworkContext_t * pxNetworkContext)
 {
-    LogInfo( ( "Disconnecting TLS connection.\n" ) );
+    LogInfo(("Disconnecting TLS connection.\n"));
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    Plaintext_FreeRTOS_Disconnect( pxNetworkContext );
+    Plaintext_FreeRTOS_Disconnect(pxNetworkContext);
 #else
     TLS_FreeRTOS_Disconnect( pxNetworkContext );
 #endif
     return pdPASS;
-}
+}/* End of function prvDisconnectTLS()*/
 
 /*-----------------------------------------------------------*/
 
-static MQTTStatus_t prvHandleResubscribe( void )
+/**
+ * @fn prvHandleResubscribe
+ *
+ * @brief Function to attempt to resubscribe to the topics already present in the
+ * subscription list.
+ *
+ * This function will be invoked when this demo requests the broker to
+ * reestablish the session and the broker cannot do so. This function will
+ * enqueue commands to the MQTT Agent queue and will be processed once the
+ * command loop starts.
+ *
+ * @return `MQTTSuccess` if adding subscribes to the command queue succeeds, else
+ * appropriate error code from MQTTAgent_Subscribe.
+ */
+static MQTTStatus_t prvHandleResubscribe(void)
 {
-    MQTTStatus_t xResult = MQTTBadParameter;
-    uint32_t ulIndex = 0U;
-    uint16_t usNumSubscriptions = 0U;
+    MQTTStatus_t xResult            = MQTTBadParameter;
+    uint32_t     ulIndex            = 0U;
+    uint16_t     usNumSubscriptions = 0U;
 
     /* These variables need to stay in scope until command completes. */
-    static MQTTAgentSubscribeArgs_t xSubArgs = { 0 };
-    static MQTTSubscribeInfo_t xSubInfo[ MQTT_AGENT_MAX_SUBSCRIPTIONS ] = { MQTTQoS0, NULL, 0 };
-    static MQTTAgentCommandInfo_t xCommandParams = { 0 };
+    static MQTTAgentSubscribeArgs_t xSubArgs                               = { 0 };
+    static MQTTSubscribeInfo_t      xSubInfo[MQTT_AGENT_MAX_SUBSCRIPTIONS] = { MQTTQoS0, NULL, 0 };
+    static MQTTAgentCommandInfo_t   xCommandParams                         = { 0 };
 
     /* Loop through each subscription in the subscription list and add a subscribe
      * command to the command queue. */
-    xSemaphoreTake( xSubscriptionsMutex, portMAX_DELAY );
+    xSemaphoreTake(xSubscriptionsMutex, portMAX_DELAY);
     {
-        for( ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++ )
+        for (ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++)
         {
             /* Check if there is a subscription in the subscription list. This demo
              * doesn't check for duplicate subscriptions. */
-            if( ( xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength > 0 ) &&
-                ( xTopicFilterSubscriptions[ ulIndex ].xManageResubscription == pdTRUE ) )
+            if ((xTopicFilterSubscriptions[ulIndex].usTopicFilterLength > 0) &&
+                (pdTRUE == xTopicFilterSubscriptions[ulIndex].xManageResubscription))
             {
-                xSubInfo[ usNumSubscriptions ].pTopicFilter = xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter;
-                xSubInfo[ usNumSubscriptions ].topicFilterLength = xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength;
+                xSubInfo[usNumSubscriptions].pTopicFilter      = xTopicFilterSubscriptions[ulIndex].pcTopicFilter;
+                xSubInfo[usNumSubscriptions].topicFilterLength = xTopicFilterSubscriptions[ulIndex].usTopicFilterLength;
 
                 /* QoS1 is used for all the subscriptions in this demo. */
-                xSubInfo[ usNumSubscriptions ].qos = MQTTQoS1;
+                xSubInfo[usNumSubscriptions].qos = MQTTQoS1;
 
-                LogInfo( ( "Resubscribe to the topic %.*s will be attempted.",
-                           xSubInfo[ usNumSubscriptions ].topicFilterLength,
-                           xSubInfo[ usNumSubscriptions ].pTopicFilter ) );
+                LogInfo(("Resubscribe to the topic %.*s will be attempted.",
+                        xSubInfo[usNumSubscriptions].topicFilterLength,
+                        xSubInfo[usNumSubscriptions].pTopicFilter));
 
                 usNumSubscriptions++;
             }
         }
     }
-    xSemaphoreGive( xSubscriptionsMutex );
+    xSemaphoreGive(xSubscriptionsMutex);
 
-    if( usNumSubscriptions > 0U )
+    if (usNumSubscriptions > 0U)
     {
-        xSubArgs.pSubscribeInfo = xSubInfo;
+        xSubArgs.pSubscribeInfo   = xSubInfo;
         xSubArgs.numSubscriptions = usNumSubscriptions;
 
         /* The block time can be 0 as the command loop is not running at this point. */
-        xCommandParams.blockTimeMs = 0U;
-        xCommandParams.cmdCompleteCallback = prvSubscriptionCommandCallback;
-        xCommandParams.pCmdCompleteCallbackContext = ( void * ) &xSubArgs;
+        xCommandParams.blockTimeMs                 = 0U;
+        xCommandParams.cmdCompleteCallback         = prvSubscriptionCommandCallback;
+        xCommandParams.pCmdCompleteCallbackContext = (void *) &xSubArgs;  /* Cast to proper datatype to avoid warning */
 
         /* Enqueue subscribe to the command queue. These commands will be processed only
          * when command loop starts. */
-        xResult = MQTTAgent_Subscribe( &xGlobalMqttAgentContext, &xSubArgs, &xCommandParams );
+        xResult = MQTTAgent_Subscribe(&xGlobalMqttAgentContext, &xSubArgs, &xCommandParams);
     }
     else
     {
@@ -771,32 +834,43 @@ static MQTTStatus_t prvHandleResubscribe( void )
         xResult = MQTTSuccess;
     }
 
-    if( xResult != MQTTSuccess )
+    if (MQTTSuccess != xResult)
     {
         LogError( ( "Failed to enqueue the MQTT subscribe command. xResult=%s.",
                     MQTT_Status_strerror( xResult ) ) );
     }
 
     return xResult;
-}
+}/* End of function prvHandleResubscribe()*/
 
 /*-----------------------------------------------------------*/
 
-static void prvSubscriptionCommandCallback( MQTTAgentCommandContext_t * pxCommandContext,
-                                            MQTTAgentReturnInfo_t * pxReturnInfo )
+/**
+ * @fn prvSubscriptionCommandCallback
+ *
+ * @brief The callback invoked by MQTT agent for a response to SUBSCRIBE request.
+ * Parameter indicates whether the request was successful or not. If subscribe was not successful
+ * then callback removes the topic from the subscription store and displays a warning log.
+ *
+ *
+ * @param pxCommandContext Pointer to the command context passed from caller
+ * @param pxReturnInfo Return Info containing the result of the subscribe command.
+ */
+static void prvSubscriptionCommandCallback(MQTTAgentCommandContext_t * pxCommandContext,
+                                            MQTTAgentReturnInfo_t * pxReturnInfo)
 {
-    uint32_t ulIndex = 0;
-    MQTTAgentSubscribeArgs_t * pxSubscribeArgs = ( MQTTAgentSubscribeArgs_t * ) pxCommandContext;
+    uint32_t                   ulIndex         = 0;
+    MQTTAgentSubscribeArgs_t * pxSubscribeArgs = (MQTTAgentSubscribeArgs_t *) pxCommandContext;
 
     /* If the return code is success, no further action is required as all the topic filters
      * are already part of the subscription list. */
-    if( pxReturnInfo->returnCode != MQTTSuccess )
+    if (MQTTSuccess != pxReturnInfo->returnCode)
     {
         /* Check through each of the suback codes and determine if there are any failures. */
-        for( ulIndex = 0; ulIndex < pxSubscribeArgs->numSubscriptions; ulIndex++ )
+        for (ulIndex = 0; ulIndex < pxSubscribeArgs->numSubscriptions; ulIndex++)
         {
             /* This demo doesn't attempt to resubscribe in the event that a SUBACK failed. */
-            if( pxReturnInfo->pSubackCodes[ ulIndex ] == MQTTSubAckFailure )
+            if (MQTTSubAckFailure == pxReturnInfo->pSubackCodes[ulIndex])
             {
                 LogError( ( "Failed to resubscribe to topic %.*s.",
                             pxSubscribeArgs->pSubscribeInfo[ ulIndex ].topicFilterLength,
@@ -806,73 +880,105 @@ static void prvSubscriptionCommandCallback( MQTTAgentCommandContext_t * pxComman
 
         /* Hit an assert as some of the tasks won't be able to proceed correctly without
          * the subscriptions. This logic will be updated with exponential backoff and retry.  */
-        configASSERT( pdTRUE );
+        configASSERT(pdTRUE);
     }
-}
+}/* End of function prvSubscriptionCommandCallback()*/
 
 /*-----------------------------------------------------------*/
 
-static void prvIncomingPublishCallback( MQTTAgentContext_t * pMqttAgentContext,
+/**
+ * @fn prvIncomingPublishCallback
+ *
+ * @brief Fan out the incoming publishes to the callbacks registered by different
+ * tasks. If there are no callbacks registered for the incoming publish, it will be
+ * passed to the unsolicited publish handler.
+ *
+ * @param[in] pMqttAgentContext Agent context.
+ * @param[in] packetId Packet ID of publish.
+ * @param[in] pxPublishInfo Info of incoming publish.
+ */
+static void prvIncomingPublishCallback(MQTTAgentContext_t * pMqttAgentContext,
                                         uint16_t packetId,
-                                        MQTTPublishInfo_t * pxPublishInfo )
+                                        MQTTPublishInfo_t * pxPublishInfo)
 {
     bool xPublishHandled = false;
-    char cOriginalChar, * pcLocation;
+    char cOriginalChar;
+    char * pcLocation;
 
-    ( void ) packetId;
+    (void) packetId;
 
     /* Fan out the incoming publishes to the callbacks registered using
      * subscription manager. */
-    xPublishHandled = prvMatchTopicFilterSubscriptions( pxPublishInfo );
+    xPublishHandled = prvMatchTopicFilterSubscriptions(pxPublishInfo);
 
     /* If there are no callbacks to handle the incoming publishes,
      * handle it as an unsolicited publish. */
-    if( xPublishHandled != true )
+    if (true != xPublishHandled)
     {
         /* Ensure the topic string is terminated for printing.  This will over-
          * write the message ID, which is restored afterwards. */
-        pcLocation = ( char * ) &( pxPublishInfo->pTopicName[ pxPublishInfo->topicNameLength ] );
+        pcLocation    = (char *) &(pxPublishInfo->pTopicName[pxPublishInfo->topicNameLength]);
         cOriginalChar = *pcLocation;
-        *pcLocation = 0x00;
-        LogWarn( ( "WARN:  Received an unsolicited publish from topic %s", pxPublishInfo->pTopicName ) );
+        *pcLocation   = 0x00;
+        LogWarn(("WARN:  Received an unsolicited publish from topic %s", pxPublishInfo->pTopicName));
         *pcLocation = cOriginalChar;
     }
-}
+}/* End of function prvIncomingPublishCallback()*/
 
 /*-----------------------------------------------------------*/
-void vStartMQTTAgent( configSTACK_DEPTH_TYPE uxStackSize,
-		              UBaseType_t uxPriority  )
-{
-    xTaskCreate( prvMQTTAgentTask,
-                  "MQTT",
-                  uxStackSize,
-                  NULL,
-                  uxPriority,
-                  NULL );
-}
 
-
-void prvMQTTAgentTask( void * pvParameters )
+/**
+ * @fn vStartMQTTAgent
+ *
+ * @brief Starts the MQTT agent task.
+ * MQTT agent task calls MQTTAgent_CommandLoop(), until MQTTAgent_Terminate()
+ * is called. If an error occurs in the command loop, then it will reconnect the
+ * TCP and MQTT connections.
+ *
+ * @param[in] uxStackSize Stack size for MQTT agent task.
+ * @param[in] uxPriority Priority of MQTT agent task.
+ */
+void vStartMQTTAgent(configSTACK_DEPTH_TYPE uxStackSize,
+                    UBaseType_t uxPriority)
 {
-    BaseType_t xStatus = pdPASS;
-    MQTTStatus_t xMQTTStatus = MQTTBadParameter;
-    MQTTContext_t * pMqttContext = &( xGlobalMqttAgentContext.mqttContext );
+    xTaskCreate(prvMQTTAgentTask,
+                "MQTT",
+                uxStackSize,
+                NULL,
+                uxPriority,
+                NULL);
+}/* End of function vStartMQTTAgent()*/
+
+/**
+ * @fn prvMQTTAgentTask
+ *
+ * @brief Get the string value for a key from the KV store.
+ * Memory allocated for the string should be freed by calling vPortFree.
+ *
+ * @return NULL if value not found, pointer to the NULL terminated string value
+ *         if found.
+ */
+void prvMQTTAgentTask(void * pvParameters)
+{
+    BaseType_t      xStatus      = pdPASS;
+    MQTTStatus_t    xMQTTStatus  = MQTTBadParameter;
+    MQTTContext_t * pMqttContext = &(xGlobalMqttAgentContext.mqttContext);
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
     extern KeyValueStore_t gKeyValueStore ;
 #endif
-    ( void ) pvParameters;
+    (void) pvParameters;
 
-    ( void ) xWaitForMQTTAgentState( MQTT_AGENT_STATE_INITIALIZED, portMAX_DELAY );
-    LogInfo( ( "---------Start MQTT Agent Task---------\r\n" ) );
+    (void)xWaitForMQTTAgentState(MQTT_AGENT_STATE_INITIALIZED, portMAX_DELAY);
+    LogInfo(("---------Start MQTT Agent Task---------\r\n"));
 
     /* Initialization of timestamp for MQTT. */
     ulGlobalEntryTimeMs = prvGetTimeMs();
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    pcThingName = clientcredentialIOT_THING_NAME ;
+    pcThingName      = clientcredentialIOT_THING_NAME;
     pcBrokerEndpoint = clientcredentialMQTT_BROKER_ENDPOINT;
-    pcRootCA = (char __far *)democonfigROOT_CA_PEM;
-#else
+    pcRootCA         = (char __far *)democonfigROOT_CA_PEM; /* Cast to proper datatype to avoid warning */
+#else   /* defined__CCRL__ || defined__ICCRL78__ || defined__RL */
 #if defined(__TEST__)
     pcThingName = clientcredentialIOT_THING_NAME ;
     pcBrokerEndpoint = clientcredentialMQTT_BROKER_ENDPOINT;
@@ -881,12 +987,13 @@ void prvMQTTAgentTask( void * pvParameters )
     /* Load broker endpoint and thing name for client connection, from the key store. */
     if (gKeyValueStore.table[ KVS_CORE_THING_NAME ].valueLength > 0)
     {
-    	pcThingName = GetStringValue(KVS_CORE_THING_NAME, gKeyValueStore.table[ KVS_CORE_THING_NAME ].valueLength);
+        pcThingName = GetStringValue(KVS_CORE_THING_NAME, gKeyValueStore.table[ KVS_CORE_THING_NAME ].valueLength);
     }
 
     if (gKeyValueStore.table[ KVS_CORE_MQTT_ENDPOINT ].valueLength > 0)
     {
-        pcBrokerEndpoint = GetStringValue(KVS_CORE_MQTT_ENDPOINT, gKeyValueStore.table[ KVS_CORE_MQTT_ENDPOINT ].valueLength);
+        pcBrokerEndpoint = GetStringValue(KVS_CORE_MQTT_ENDPOINT,
+                gKeyValueStore.table[ KVS_CORE_MQTT_ENDPOINT ].valueLength);
     }
 
     if (gKeyValueStore.table[KVS_ROOT_CA_ID].valueLength > 0)
@@ -901,48 +1008,48 @@ void prvMQTTAgentTask( void * pvParameters )
     }
 
 #endif
-#endif
+#endif  /* defined__CCRL__ || defined__ICCRL78__ || defined__RL */
 
     /* Initialize the MQTT context with the buffer and transport interface. */
-    if( xStatus == pdPASS )
+    if (pdPASS == xStatus)
     {
         xMQTTStatus = prvMQTTInit();
 
-        if( xMQTTStatus != MQTTSuccess )
+        if (MQTTSuccess != xMQTTStatus)
         {
-            LogError( ( "Failed to initialize MQTT with error %d.", xMQTTStatus ) );
+            LogError(("Failed to initialize MQTT with error %d.", xMQTTStatus));
         }
     }
 
-    if( xMQTTStatus == MQTTSuccess )
+    if (MQTTSuccess == xMQTTStatus)
     {
-        pMqttContext->connectStatus = prvConnectToMQTTBroker( false );
+        pMqttContext->connectStatus = prvConnectToMQTTBroker(false);
 
-        while( pMqttContext->connectStatus == MQTTConnected )
+        while (MQTTConnected == pMqttContext->connectStatus)
         {
             /* MQTTAgent_CommandLoop() is effectively the agent implementation.  It
              * will manage the MQTT protocol until such time that an error occurs,
              * which could be a disconnect.  If an error occurs the MQTT context on
              * which the error happened is returned so there is an attempt to
              * clean up and reconnect. */
-            prvSetMQTTAgentState( MQTT_AGENT_STATE_CONNECTED );
+            prvSetMQTTAgentState(MQTT_AGENT_STATE_CONNECTED);
 
-            xMQTTStatus = MQTTAgent_CommandLoop( &xGlobalMqttAgentContext );
+            xMQTTStatus = MQTTAgent_CommandLoop(&xGlobalMqttAgentContext);
 
             pMqttContext->connectStatus = MQTTNotConnected;
-            prvSetMQTTAgentState( MQTT_AGENT_STATE_DISCONNECTED );
+            prvSetMQTTAgentState(MQTT_AGENT_STATE_DISCONNECTED);
 
-            if( xMQTTStatus == MQTTSuccess )
+            if (MQTTSuccess == xMQTTStatus)
             {
                 /*
                  * On a graceful termination, MQTT agent loop returns success.
                  * Cancel all pending MQTT agent requests.
                  * Disconnect the socket and terminate MQTT agent loop.
                  */
-                LogInfo( ( "MQTT Agent loop terminated due to a graceful disconnect." ) );
+                LogInfo(("MQTT Agent loop terminated due to a graceful disconnect."));
 #if (DEVICE_ADVISOR_TEST_ENABLED == 0)
-                ( void ) MQTTAgent_CancelAll( &xGlobalMqttAgentContext );
-                ( void ) prvDisconnectTLS( &xNetworkContext );
+                (void)MQTTAgent_CancelAll(&xGlobalMqttAgentContext);
+                (void)prvDisconnectTLS(&xNetworkContext);
 #else
                 ( void ) prvDisconnectTLS( &xNetworkContext );
                 pMqttContext->connectStatus = prvConnectToMQTTBroker( true );
@@ -950,52 +1057,63 @@ void prvMQTTAgentTask( void * pvParameters )
             }
             else
             {
-                LogInfo( ( "MQTT Agent loop terminated due to abrupt disconnect. Retrying MQTT connection.." ) );
+                LogInfo(("MQTT Agent loop terminated due to abrupt disconnect. Retrying MQTT connection.."));
+
                 /* MQTT agent returned due to an underlying error, reconnect to the loop. */
-                ( void ) prvDisconnectTLS( &xNetworkContext );
-                pMqttContext->connectStatus = prvConnectToMQTTBroker( true );
+                (void)prvDisconnectTLS(&xNetworkContext);
+                pMqttContext->connectStatus = prvConnectToMQTTBroker(true);
             }
         }
     }
 
-    prvSetMQTTAgentState( MQTT_AGENT_STATE_TERMINATED );
+    prvSetMQTTAgentState(MQTT_AGENT_STATE_TERMINATED);
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #else
 #if !defined(__TEST__)
     if( pcThingName != NULL )
-   {
-	   vPortFree( pcThingName );
-	   pcThingName = NULL;
-   }
+    {
+        vPortFree( pcThingName );
+        pcThingName = NULL;
+    }
 
-   if( pcBrokerEndpoint != NULL )
-   {
-	   vPortFree( pcBrokerEndpoint );
-	   pcBrokerEndpoint = NULL;
-   }
+    if( pcBrokerEndpoint != NULL )
+    {
+        vPortFree( pcBrokerEndpoint );
+        pcBrokerEndpoint = NULL;
+    }
 
-   if (pcRootCA != NULL)
-   {
-       vPortFree( pcRootCA );
-       pcRootCA = NULL;
-   }
+    if (pcRootCA != NULL)
+    {
+        vPortFree( pcRootCA );
+        pcRootCA = NULL;
+    }
 #endif
 #endif
 
-   LogInfo( ( "---------MQTT Agent Task Finished---------\r\n" ) );
-   vTaskDelete( NULL );
-}
+    LogInfo(("---------MQTT Agent Task Finished---------\r\n"));
+    vTaskDelete(NULL);
+}/* End of function prvMQTTAgentTask()*/
 
 /*-----------------------------------------------------------*/
 
-static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect )
+/**
+ * @fn prvConnectToMQTTBroker
+ *
+ * @brief Connects a TCP socket to the MQTT broker, then creates and MQTT
+ * connection to the same.
+ * @param[in] xIsReconnect Boolean flag to indicate if its a reconnection.
+ * @return MQTTConnected if connection was successful, MQTTNotConnected if MQTT connection
+ *         failed and all retries exhausted.
+ */
+static MQTTConnectionStatus_t prvConnectToMQTTBroker(bool xIsReconnect)
 {
-    BaseType_t xStatus = pdFAIL;
-    MQTTStatus_t xMQTTStatus;
-    MQTTConnectionStatus_t xConnectionStatus = MQTTNotConnected;
-    BackoffAlgorithmStatus_t xBackoffAlgStatus = BackoffAlgorithmSuccess;
-    BackoffAlgorithmContext_t xReconnectParams = { 0 };
-    uint16_t usNextRetryBackOff = 0U;
+    BaseType_t                xStatus            = pdFAIL;
+    MQTTStatus_t              xMQTTStatus;
+    MQTTConnectionStatus_t    xConnectionStatus  = MQTTNotConnected;
+    BackoffAlgorithmStatus_t  xBackoffAlgStatus  = BackoffAlgorithmSuccess;
+    BackoffAlgorithmContext_t xReconnectParams   = { 0 };
+    uint16_t                  usNextRetryBackOff = 0U;
+
 /* Initialize network context. */
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     xNetworkContext.pParams = &xPlaintextTransportParams;
@@ -1007,10 +1125,10 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect )
      * jitter.  That is done to prevent a fleet of IoT devices all trying to
      * reconnect at exactly the same time should they become disconnected at
      * the same time. We initialize reconnect attempts and interval here. */
-    BackoffAlgorithm_InitializeParams( &xReconnectParams,
-                                       RETRY_BACKOFF_BASE_MS,
-                                       RETRY_MAX_BACKOFF_DELAY_MS,
-                                       RETRY_MAX_ATTEMPTS );
+    BackoffAlgorithm_InitializeParams(&xReconnectParams,
+                                    RETRY_BACKOFF_BASE_MS,
+                                    RETRY_MAX_BACKOFF_DELAY_MS,
+                                    RETRY_MAX_ATTEMPTS);
 
     /* Attempt to connect to MQTT broker. If connection fails, retry after a
      * timeout. Timeout value will exponentially increase until the maximum
@@ -1019,89 +1137,107 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker( bool xIsReconnect )
     do
     {
         /* Create a TLS connection to broker */
-        xStatus = prvCreateTLSConnection( &xNetworkContext );
+        xStatus = prvCreateTLSConnection(&xNetworkContext);
 
-        if( xStatus == pdPASS )
+        if (pdPASS == xStatus)
         {
-            xMQTTStatus = prvCreateMQTTConnection( xIsReconnect );
+            xMQTTStatus = prvCreateMQTTConnection(xIsReconnect);
 
-            if( xMQTTStatus != MQTTSuccess )
+            if (MQTTSuccess != xMQTTStatus)
             {
-                LogError( ( "Failed to connect to MQTT broker, error = %u", xMQTTStatus ) );
-                prvDisconnectTLS( &xNetworkContext );
+                LogError(("Failed to connect to MQTT broker, error = %u", xMQTTStatus));
+                prvDisconnectTLS(&xNetworkContext);
                 xStatus = pdFAIL;
             }
             else
             {
-                LogInfo( ( "Successfully connected to MQTT broker." ) );
+                LogInfo(("Successfully connected to MQTT broker."));
                 xConnectionStatus = MQTTConnected;
             }
         }
 
-        if( xStatus == pdFAIL )
+        if (pdFAIL == xStatus)
         {
             /* Get back-off value (in milliseconds) for the next connection retry. */
-            xBackoffAlgStatus = BackoffAlgorithm_GetNextBackoff( &xReconnectParams, xTaskGetTickCount(), &usNextRetryBackOff );
+            xBackoffAlgStatus = BackoffAlgorithm_GetNextBackoff(&xReconnectParams,
+                                                                xTaskGetTickCount(),
+                                                                &usNextRetryBackOff);
 
-            if( xBackoffAlgStatus == BackoffAlgorithmSuccess )
+            if (BackoffAlgorithmSuccess == xBackoffAlgStatus)
             {
-                LogWarn( ( "Connection to the broker failed. "
-                           "Retrying connection in %hu ms.",
-                           usNextRetryBackOff ) );
-                vTaskDelay( pdMS_TO_TICKS( usNextRetryBackOff ) );
+                LogWarn(("Connection to the broker failed. "
+                        "Retrying connection in %hu ms.",
+                        usNextRetryBackOff));
+                vTaskDelay(pdMS_TO_TICKS(usNextRetryBackOff));
             }
-            else if( xBackoffAlgStatus == BackoffAlgorithmRetriesExhausted )
+            else if (xBackoffAlgStatus == BackoffAlgorithmRetriesExhausted)
             {
-                LogError( ( "Connection to the broker failed, all attempts exhausted." ) );
+                LogError(("Connection to the broker failed, all attempts exhausted."));
             }
             else
             {
                 /* Empty Else. */
             }
         }
-    } while( ( xConnectionStatus == MQTTNotConnected ) && ( xBackoffAlgStatus == BackoffAlgorithmSuccess ) );
+    } while ((MQTTNotConnected == xConnectionStatus) && (BackoffAlgorithmSuccess == xBackoffAlgStatus));
 
     return xConnectionStatus;
-}
-/*-----------------------------------------------------------*/
+}/* End of function prvConnectToMQTTBroker()*/
 
-static uint32_t prvGetTimeMs( void )
+/**
+ * @fn prvGetTimeMs
+ *
+ * @brief The timer query function provided to the MQTT context.
+ *
+ * @return Time in milliseconds.
+ */
+static uint32_t prvGetTimeMs(void)
 {
     TickType_t xTickCount = 0;
-    uint32_t ulTimeMs = 0UL;
+    uint32_t   ulTimeMs   = 0UL;
 
     /* Get the current tick count. */
     xTickCount = xTaskGetTickCount();
 
     /* Convert the ticks to milliseconds. */
-    ulTimeMs = ( uint32_t ) xTickCount * mqttexampleMILLISECONDS_PER_TICK;
+    ulTimeMs = (uint32_t) xTickCount * mqttexampleMILLISECONDS_PER_TICK;
 
     /* Reduce ulGlobalEntryTimeMs from obtained time so as to always return the
      * elapsed time in the application. */
-    ulTimeMs = ( uint32_t ) ( ulTimeMs - ulGlobalEntryTimeMs );
+    ulTimeMs = (uint32_t) (ulTimeMs - ulGlobalEntryTimeMs);
 
     return ulTimeMs;
-}
-/*-----------------------------------------------------------*/
+}/* End of function prvGetTimeMs()*/
 
-static bool prvMatchTopicFilterSubscriptions( MQTTPublishInfo_t * pxPublishInfo )
+/**
+ * @fn prvMatchTopicFilterSubscriptions
+ *
+ * @brief Checks if the topic in the given publish information
+ * matches any of the existing MQTT topic filter subscriptions.
+ *
+ * @param[in] pxPublishInfo Pointer to the MQTT publish information containing the topic to be matched.
+ *
+ * @return true if a matching subscription is found; false otherwise.
+ */
+static bool prvMatchTopicFilterSubscriptions(MQTTPublishInfo_t * pxPublishInfo)
 {
-    uint32_t ulIndex = 0;
-    bool isMatched = false, publishHandled = false;
+    uint32_t ulIndex        = 0;
+    bool     isMatched      = false;
+    bool     publishHandled = false;
 
-    xSemaphoreTake( xSubscriptionsMutex, portMAX_DELAY );
+    xSemaphoreTake(xSubscriptionsMutex, portMAX_DELAY);
     {
-        for( ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++ )
+        for (ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++)
         {
-            if( xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength > 0 )
+            if (xTopicFilterSubscriptions[ulIndex].usTopicFilterLength > 0)
             {
-                MQTT_MatchTopic( pxPublishInfo->pTopicName,
-                                 pxPublishInfo->topicNameLength,
-                                 xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter,
-                                 xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength,
-                                 &isMatched );
+                MQTT_MatchTopic(pxPublishInfo->pTopicName,
+                                pxPublishInfo->topicNameLength,
+                                xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter,
+                                xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength,
+                                &isMatched);
 
-                if( isMatched == true )
+                if (true == isMatched)
                 {
                     xTopicFilterSubscriptions[ ulIndex ].pxIncomingPublishCallback( xTopicFilterSubscriptions[ ulIndex ].pvIncomingPublishCallbackContext,
                                                                                     pxPublishInfo );
@@ -1110,39 +1246,50 @@ static bool prvMatchTopicFilterSubscriptions( MQTTPublishInfo_t * pxPublishInfo 
             }
         }
     }
-    xSemaphoreGive( xSubscriptionsMutex );
+    xSemaphoreGive(xSubscriptionsMutex);
     return publishHandled;
-}
+}/* End of function prvMatchTopicFilterSubscriptions()*/
 
 /*-----------------------------------------------------------*/
 
-static void prvSetMQTTAgentState( MQTTAgentState_t xAgentState )
+/**
+ * @fn prvSetMQTTAgentState
+ *
+ * @brief Set MQTT Agent State.
+ */
+static void prvSetMQTTAgentState(MQTTAgentState_t xAgentState)
 {
     xState = xAgentState;
-    ( void ) xEventGroupClearBits( xStateEventGrp, mqttexampleEVENT_BITS_ALL );
-    ( void ) xEventGroupSetBits( xStateEventGrp, mqttexampleEVENT_BIT( xAgentState ) );
-}
+    (void)xEventGroupClearBits(xStateEventGrp, mqttexampleEVENT_BITS_ALL);
+    (void)xEventGroupSetBits(xStateEventGrp, mqttexampleEVENT_BIT(xAgentState));
+}/* End of function prvSetMQTTAgentState()*/
 
 /*-----------------------------------------------------------*/
 
-BaseType_t xMQTTAgentInit( void )
+/**
+ * @fn xMQTTAgentInit
+ *
+ * @brief Initialize the MQTT Agent.
+ * Create the semaphore and Event group.
+ */
+BaseType_t xMQTTAgentInit(void)
 {
     BaseType_t xResult = pdFAIL;
 
-    if( xState == MQTT_AGENT_STATE_NONE )
+    if (MQTT_AGENT_STATE_NONE == xState)
     {
         xSubscriptionsMutex = xSemaphoreCreateMutex();
 
-        if( xSubscriptionsMutex != NULL )
+        if (NULL != xSubscriptionsMutex)
         {
             xResult = pdPASS;
         }
 
-        if( xResult == pdPASS )
+        if (pdPASS == xResult)
         {
             xStateEventGrp = xEventGroupCreate();
 
-            if( xStateEventGrp == NULL )
+            if (NULL == xStateEventGrp)
             {
                 xResult = pdFAIL;
             }
@@ -1150,116 +1297,186 @@ BaseType_t xMQTTAgentInit( void )
     }
 
     return xResult;
-}
+}/* End of function xMQTTAgentInit()*/
 
 /*-----------------------------------------------------------*/
 
-MQTTAgentState_t xGetMQTTAgentState( void )
+/**
+ * @fn xGetMQTTAgentState
+ *
+ * @brief Get the current state of MQTT agent.
+ * MQTT agent task can be any of the states as defined by the state enum MQTTAgentState_t. The
+ * function can be used to poll for MQTT agent state from other application tasks
+ *
+ * @return State of the MQTT agent.
+ */
+MQTTAgentState_t xGetMQTTAgentState(void)
 {
     return xState;
-}
+}/* End of function xGetMQTTAgentState()*/
 
-void xSetMQTTAgentState( MQTTAgentState_t xAgentState )
+/**
+ * @fn xSetMQTTAgentState
+ *
+ * @brief Set the current state of MQTT agent.
+ * MQTT agent task can be any of the states as defined by the state enum MQTTAgentState_t. The
+ * function can be used to set the MQTT agent state from other application tasks
+ *
+ * @param[in] xAgentState State of the MQTT agent.
+ */
+void xSetMQTTAgentState(MQTTAgentState_t xAgentState)
 {
     prvSetMQTTAgentState(xAgentState);
-}
+}/* End of function xSetMQTTAgentState()*/
 
 /*-----------------------------------------------------------*/
 
-BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xState,
-                                   TickType_t xTicksToWait )
+/**
+ * @fn xWaitForMQTTAgentState
+ *
+ * @brief Wait for MQTT agent to reach the desired state.
+ * Function blocks caller task for a timeout period, until MQTT agent reaches the specified state. Function can be
+ * called from multiple tasks concurrently.
+ *
+ * @param[in] xStateToWait The desired MQTT agent state to reach.
+ * @param[in] xTicksToWait Ticks to wait for MQTT agent to reach the desired state. Provide portMAX_DELAY
+ *                         if the caller has to wait indefinitely.
+ * @return pdTRUE if the state is reached, pdFALSE if the timeout has reached waiting for the state.
+ */
+BaseType_t xWaitForMQTTAgentState(MQTTAgentState_t xState,
+                                TickType_t xTicksToWait)
 {
-    EventBits_t xBitsSet, xBitsToWaitFor;
-    BaseType_t xResult = pdFAIL;
+    EventBits_t xBitsSet;
+    EventBits_t xBitsToWaitFor;
+    BaseType_t  xResult = pdFAIL;
 
-    if( xState != MQTT_AGENT_STATE_NONE )
+    if (MQTT_AGENT_STATE_NONE != xState)
     {
-        xBitsToWaitFor = mqttexampleEVENT_BIT( xState );
-        xBitsSet = xEventGroupWaitBits( xStateEventGrp, xBitsToWaitFor, pdFALSE, pdFALSE, xTicksToWait );
+        xBitsToWaitFor = mqttexampleEVENT_BIT(xState);
+        xBitsSet       = xEventGroupWaitBits(xStateEventGrp, xBitsToWaitFor, pdFALSE, pdFALSE, xTicksToWait);
 
-        if( ( xBitsSet & xBitsToWaitFor ) != 0 )
+        if ((xBitsSet & xBitsToWaitFor) != 0)
         {
             xResult = pdTRUE;
         }
     }
 
     return xResult;
-}
+}/* End of function xWaitForMQTTAgentState()*/
 
 /*-----------------------------------------------------------------*/
 
-BaseType_t xAddMQTTTopicFilterCallback( const char * pcTopicFilter,
+/**
+ * @fn xAddMQTTTopicFilterCallback
+ *
+ * @brief Add a callback for the topic filter with MQTT agent.
+ * Function adds a local subscription for the given topic filter.
+ * Each incoming publish received on the connection, will be
+ * matched against the topic filter. The provided callback is invoked if
+ * the incoming publish topic matches the topic filter.
+ * An optional context parameter can be passed into this function from the caller,
+ * the context is passed back transparently when
+ * the publish callback is invoked. If a topic matches more than one registered topic filter,
+ * all matching topic filter callbacks are invoked.
+ * The function is thread safe and can be invoked from multiple application tasks once the MQTT agent is
+ * initialized.
+ *
+ *
+ * @param pcTopicFilter  Topic filter string for which the publish callback needs to be invoked.
+ * @param usTopicFilterLength  Length of the topic filter string.
+ * @param pxPublishCallback  Callback to be invoked whan a publish is received on topic filter.
+ * @param pvCallbackContext Context to be paased in transparently to the user.
+ * @param xManageResubscription  Whether its a managed subscription. Managed subscriptions are resubscribed by
+ *                               MQTT agent if the connection is lost and then reconnected.
+ * @return pdTRUE if the callback was added successfully. pdFALSE otherwise.
+ */
+BaseType_t xAddMQTTTopicFilterCallback(const char * pcTopicFilter,
                                         uint16_t usTopicFilterLength,
                                         IncomingPubCallback_t pxCallback,
                                         void * pvCallbackContext,
-                                        BaseType_t xManageResubscription )
+                                        BaseType_t xManageResubscription)
 {
-    BaseType_t xResult = pdFAIL;
-    uint32_t ulIndex = 0U, ulAvailableIndex = MQTT_AGENT_MAX_SUBSCRIPTIONS;
+    BaseType_t xResult          = pdFAIL;
+    uint32_t   ulIndex          = 0U;
+    uint32_t   ulAvailableIndex = MQTT_AGENT_MAX_SUBSCRIPTIONS;
 
-    xSemaphoreTake( xSubscriptionsMutex, portMAX_DELAY );
+    xSemaphoreTake(xSubscriptionsMutex, portMAX_DELAY);
     {
         /**
          * If this is a duplicate subscription for same topic filter do nothing and return a failure.
          * Else insert at the first available index;
          */
-        for( ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++ )
+        for (ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++)
         {
-            if( ( xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter == NULL ) &&
-                ( ulAvailableIndex == MQTT_AGENT_MAX_SUBSCRIPTIONS ) )
+            if ((NULL                         == xTopicFilterSubscriptions[ulIndex].pcTopicFilter) &&
+                (MQTT_AGENT_MAX_SUBSCRIPTIONS == ulAvailableIndex))
             {
                 ulAvailableIndex = ulIndex;
             }
-            else if( ( xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength == usTopicFilterLength ) &&
-                     ( strncmp( pcTopicFilter, xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter, ( size_t ) usTopicFilterLength ) == 0 ) )
+            else if ((xTopicFilterSubscriptions[ulIndex].usTopicFilterLength == usTopicFilterLength) &&
+                        (strncmp(pcTopicFilter, // @suppress("5.2e Data member alignment for assignments ")
+                                xTopicFilterSubscriptions[ulIndex].pcTopicFilter,
+                                (size_t)usTopicFilterLength) == 0)) /* Cast to proper datatype to avoid warning */
             {
                 /* If a subscription already exists, don't do anything. */
-                if( ( xTopicFilterSubscriptions[ ulAvailableIndex ].pxIncomingPublishCallback == pxCallback ) &&
-                    ( xTopicFilterSubscriptions[ ulAvailableIndex ].pvIncomingPublishCallbackContext == pvCallbackContext ) )
+                if ((xTopicFilterSubscriptions[ulAvailableIndex].pxIncomingPublishCallback        == pxCallback) &&
+                    (xTopicFilterSubscriptions[ulAvailableIndex].pvIncomingPublishCallbackContext == pvCallbackContext))
                 {
                     ulAvailableIndex = MQTT_AGENT_MAX_SUBSCRIPTIONS;
-                    xResult = pdPASS;
-                    break;
+                    xResult          = pdPASS;
+                    break; // @suppress("3.7d Break statement")
                 }
+            }
+            else
+            {
+
             }
         }
 
-        if( ulAvailableIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS )
+        if (ulAvailableIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS)
         {
-            xTopicFilterSubscriptions[ ulAvailableIndex ].pcTopicFilter = pcTopicFilter;
-            xTopicFilterSubscriptions[ ulAvailableIndex ].usTopicFilterLength = usTopicFilterLength;
-            xTopicFilterSubscriptions[ ulAvailableIndex ].pxIncomingPublishCallback = pxCallback;
-            xTopicFilterSubscriptions[ ulAvailableIndex ].pvIncomingPublishCallbackContext = pvCallbackContext;
-            xTopicFilterSubscriptions[ ulAvailableIndex ].xManageResubscription = xManageResubscription;
-            xResult = pdPASS;
+            xTopicFilterSubscriptions[ulAvailableIndex].pcTopicFilter                    = pcTopicFilter;
+            xTopicFilterSubscriptions[ulAvailableIndex].usTopicFilterLength              = usTopicFilterLength;
+            xTopicFilterSubscriptions[ulAvailableIndex].pxIncomingPublishCallback        = pxCallback;
+            xTopicFilterSubscriptions[ulAvailableIndex].pvIncomingPublishCallbackContext = pvCallbackContext;
+            xTopicFilterSubscriptions[ulAvailableIndex].xManageResubscription            = xManageResubscription;
+            xResult                                                                      = pdPASS;
         }
     }
-    xSemaphoreGive( xSubscriptionsMutex );
+    xSemaphoreGive(xSubscriptionsMutex);
 
     return xResult;
-}
-/*-----------------------------------------------------------------*/
+}/* End of function xAddMQTTTopicFilterCallback()*/
 
-void vRemoveMQTTTopicFilterCallback( const char * pcTopicFilter,
-                                     uint16_t usTopicFilterLength )
+/**
+ * @fn vRemoveMQTTTopicFilterCallback
+ *
+ * @brief Remove a topic filter callback from the MQTT agent.
+ * Function is thread safe and can be invoked by multiple application tasks.
+ *
+ * @param pcTopicFilter Topic filter string for which the callback needs to be removed.
+ * @param usTopicFilterLength Length of the topic filter string.
+ */
+void vRemoveMQTTTopicFilterCallback(const char * pcTopicFilter,
+                                    uint16_t usTopicFilterLength)
 {
     uint32_t ulIndex;
 
-    xSemaphoreTake( xSubscriptionsMutex, portMAX_DELAY );
+    xSemaphoreTake(xSubscriptionsMutex, portMAX_DELAY);
     {
-        for( ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++ )
+        for (ulIndex = 0U; ulIndex < MQTT_AGENT_MAX_SUBSCRIPTIONS; ulIndex++)
         {
-            if( xTopicFilterSubscriptions[ ulIndex ].usTopicFilterLength == usTopicFilterLength )
+            if (xTopicFilterSubscriptions[ulIndex].usTopicFilterLength == usTopicFilterLength)
             {
-                if( strncmp( xTopicFilterSubscriptions[ ulIndex ].pcTopicFilter, pcTopicFilter, usTopicFilterLength ) == 0 )
+                if (strncmp(xTopicFilterSubscriptions[ulIndex].pcTopicFilter, pcTopicFilter, usTopicFilterLength) == 0)
                 {
-                    memset( &( xTopicFilterSubscriptions[ ulIndex ] ), 0x00, sizeof( TopicFilterSubscription_t ) );
+                    memset(&(xTopicFilterSubscriptions[ ulIndex ]), 0x00, sizeof(TopicFilterSubscription_t));
                 }
             }
         }
     }
-    xSemaphoreGive( xSubscriptionsMutex );
-}
+    xSemaphoreGive(xSubscriptionsMutex);
+}/* End of function vRemoveMQTTTopicFilterCallback()*/
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #pragma section
 #endif

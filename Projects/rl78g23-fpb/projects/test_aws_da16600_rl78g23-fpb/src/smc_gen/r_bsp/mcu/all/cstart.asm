@@ -73,7 +73,7 @@ $ENDIF
 ; .SECTION .datafR, DATAF
 ; .SECTION .textfR, TEXTF
 
-;$IF (__RENESAS_VERSION__ < 0x01010000)  ; for CC-RL V1.00
+$IF (__RENESAS_VERSION__ < 0x01010000)  ; for CC-RL V1.00
 ;-----------------------------------------------------------------------------
 ;   stack area
 ;-----------------------------------------------------------------------------
@@ -83,7 +83,7 @@ $ENDIF
 _stackend:
     .DS     0x200
 _stacktop:
-;$ENDIF
+$ENDIF
 
 ;-----------------------------------------------------------------------------
 ;   RESET vector
@@ -122,20 +122,20 @@ $ENDIF
     ;--------------------------------------------------
     ; setting the stack pointer
     ;--------------------------------------------------
-;$IF (__RENESAS_VERSION__ >= 0x01010000)
-;    MOVW    SP,#LOWW(__STACK_ADDR_START)
-;$ELSE   ; for CC-RL V1.00
+$IF (__RENESAS_VERSION__ >= 0x01010000)
+    MOVW    SP,#LOWW(__STACK_ADDR_START)
+$ELSE   ; for CC-RL V1.00
     MOVW    SP,#LOWW(_stacktop)
-;$ENDIF
+$ENDIF
 
     ;--------------------------------------------------
     ; initializing stack area
     ;--------------------------------------------------
-;$IF (__RENESAS_VERSION__ >= 0x01010000)
-;    MOVW    AX,#LOWW(__STACK_ADDR_END)
-;$ELSE   ; for CC-RL V1.00
+$IF (__RENESAS_VERSION__ >= 0x01010000)
+    MOVW    AX,#LOWW(__STACK_ADDR_END)
+$ELSE   ; for CC-RL V1.00
     MOVW    AX,#LOWW(_stackend)
-;$ENDIF
+$ENDIF
     CALL    !!_stkinit
 
     ;--------------------------------------------------

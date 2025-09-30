@@ -209,7 +209,7 @@ void tick_count_stop (void);
  * Return Value : TICK_NOT_EXPIERD
  *                TICK_EXPIERD
  *********************************************************************************************************************/
-uint32_t tick_count_check (void);
+uint8_t tick_count_check (void);
 
 /**********************************************************************************************************************
  * Function Name: os_wrap_swdelay

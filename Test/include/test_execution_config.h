@@ -41,7 +41,9 @@
  * #define MQTT_TEST_ENABLED                 (0)
  */
 #define MQTT_TEST_ENABLED              ( 0 )
-
+#if (MQTT_TEST_ENABLED == 1)
+	#include "core_mqtt_config.h"
+#endif
 /**
  * @brief Configuration to enable the transport interface test.
  *

@@ -50,11 +50,11 @@
  *********************************************************************************************************************/
 void R_BSP_SoftwareReset(void)
 {
-    IAWCTL=0x80;                        // Unauthorized access detection enabled
+    IAWCTL = 0x80;                        // Unauthorized access detection enabled
 
-    *(__far volatile char *)0x00=0x00;  // White at address 0x00
+    *(__far volatile char *)0x00 = 0x00;  // White at address 0x00
     R_BSP_NOP();
-    while(1)
+    while (1)
     {
         ;                               // Reset occurs before coming here
     }

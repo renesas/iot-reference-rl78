@@ -263,33 +263,6 @@
         <option id="com.renesas.smc.code.type" value="Normal Folder"/>
     </tool>
     <tool id="SWComponent" version="1.0.0.0">
-        <configuration inuse="true" name="r_bsp">
-            <component description="依存モジュール: なし&#10;The r_bsp package provides a foundation for code to be built on top of. It provides startup code, iodefines, and MCU information for different boards. There are 2 folders that make up the r_bsp package. The 'mcu' folder contains files that are common to a MCU group. These files provide functionality such as easy register access, CPU functions, and a file named 'mcu_info.h' for each MCU group. The 'mcu_info.h' file has information about the MCU on the board and is configured based on the information given in r_bsp_config.h. The information in 'mcu_info.h' is used to help configure Renesas middleware that uses the r_bsp package. The 'board' folder has a folder with startup code for each supported board.  Which MCU and board is chosen is decided by the settings in 'platform.h'. The user can choose which board they are using by uncommenting the include path that applies to their board. For example, if you are using the RSK+RX64M then you would uncomment the #include &quot;./board/generic_rx64m/r_bsp.h&quot; include path. Users are encouraged to add their own boards to the 'board' directory. BSPs are configured by using the r_bsp_config.h file. Each board will have a reference configuration file named r_bsp_config_reference.h. The user should copy this file to their project, rename it to r_bsp_config.h, and use the options inside the file to configure the BSP for their project." detailDescription="Board Support Packages. - v1.60" display="r_bsp" id="r_bsp1.60" version="1.60">
-                <gridItem id="BSP_CFG_STARTUP_DISABLE" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_INVALID_MEMORY_ACCESS_DETECTION_ENABLE" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_RAM_GUARD_FUNC" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_PORT_FUNCTION_GUARD" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_INT_FUNCTION_GUARD" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_CHIP_STATE_CTRL_GUARD" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_DATA_FLASH_ACCESS_ENABLE" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_CONFIGURATOR_SELECT" selectedIndex="1"/>
-                <gridItem id="BSP_CFG_CLOCK_OPERATION_API_FUNCTIONS_DISABLE" selectedIndex="1"/>
-                <gridItem id="BSP_CFG_GET_FREQ_API_FUNCTIONS_DISABLE" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_SET_CLOCK_SOURCE_API_FUNCTIONS_DISABLE" selectedIndex="1"/>
-                <gridItem id="BSP_CFG_CHANGE_CLOCK_SETTING_API_FUNCTIONS_DISABLE" selectedIndex="1"/>
-                <gridItem id="BSP_CFG_SOFTWARE_DELAY_API_FUNCTIONS_DISABLE" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_PARAM_CHECKING_ENABLE" selectedIndex="1"/>
-                <gridItem id="BSP_CFG_USER_WARM_START_CALLBACK_PRE_INITC_ENABLED" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_USER_WARM_START_PRE_C_FUNCTION" selectedIndex="my_sw_warmstart_prec_function"/>
-                <gridItem id="BSP_CFG_USER_WARM_START_CALLBACK_POST_INITC_ENABLED" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_USER_WARM_START_POST_C_FUNCTION" selectedIndex="my_sw_warmstart_postc_function"/>
-                <gridItem id="BSP_CFG_WDT_REFRESH_ENABLE" selectedIndex="0"/>
-                <gridItem id="BSP_CFG_USER_WDT_REFRESH_INIT_FUNCTION" selectedIndex="my_sw_wdt_refresh_init_function"/>
-                <gridItem id="BSP_CFG_USER_WDT_REFRESH_SETTING_FUNCTION" selectedIndex="my_sw_wdt_refresh_setting_function"/>
-            </component>
-            <source description="RL78 Software Integration System" display="RL78 Software Integration System" id="com.renesas.smc.tools.swcomponent.rl78.sis.source"/>
-            <source description="RL78 Software Integration System" display="RL78 Software Integration System" id="com.renesas.smc.tools.swcomponent.rl78.sis.source"/>
-        </configuration>
         <configuration apiMode="FULL_API" id="5a576d21-a0e0-4f15-bdcf-0b9b2f6fc0a9" inuse="true" name="Config_PORT">
             <allocatable id="Port">
                 <allocatable id="PORT0_Check">
@@ -339,6 +312,10 @@
                         <option enabled="false" id="Output1" selection="Output1Unuse">
                             <item id="Output1Use" input="" vlaue="0"/>
                             <item id="Output1Unuse" input="" vlaue="0"/>
+                        </option>
+                        <option enabled="false" id="outputELCL" selection="outputELCLUnuse">
+                            <item id="outputELCLUse" input="" vlaue="0"/>
+                            <item id="outputELCLUnuse" input="" vlaue="0"/>
                         </option>
                     </allocatable>
                     <allocatable id="P02">
@@ -524,6 +501,10 @@
                             <item id="5mA" input="" vlaue="0"/>
                             <item id="10mA" input="" vlaue="0"/>
                         </option>
+                        <option enabled="true" id="outputELCL" selection="outputELCLUnuse">
+                            <item id="outputELCLUse" input="" vlaue="0"/>
+                            <item id="outputELCLUnuse" input="" vlaue="0"/>
+                        </option>
                     </allocatable>
                     <allocatable id="P51">
                         <option enabled="true" id="UseStatus" selection="Unuse">
@@ -545,6 +526,10 @@
                             <item id="2mA" input="" vlaue="0"/>
                             <item id="5mA" input="" vlaue="0"/>
                             <item id="10mA" input="" vlaue="0"/>
+                        </option>
+                        <option enabled="false" id="outputELCL" selection="outputELCLUnuse">
+                            <item id="outputELCLUse" input="" vlaue="0"/>
+                            <item id="outputELCLUnuse" input="" vlaue="0"/>
                         </option>
                     </allocatable>
                     <allocatable id="P52">
@@ -903,11 +888,11 @@
                     <item id="ReadDigitalOutputLevel" input="" vlaue="0"/>
                 </option>
             </allocatable>
-            <component description="ポートは、各端子を汎用入出力端子または内部IPの入出力機能として使用するように設定する機能です。" detailDescription="" display="ポート" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.port" version="1.4.0"/>
-            <allocator channelLevel0="" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="ポートの入出力構成" display="PORT" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.port.rl78g23.PORT" type="">
+            <component description="The ports is function that config each pin to be used as general input/output pin or input/output function of internal IP." detailDescription="" display="Ports" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.port" version="1.7.0"/>
+            <allocator channelLevel0="" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="Input output configuration of PORT" display="PORT" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.port.rl78g23.PORT" type="">
                 <context/>
             </allocator>
-            <source description="コード生成に対応したコンポーネントは、設定に応じた周辺ドライバのコードを小さなコードサイズで出力します。" display="コード生成" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
+            <source description="Code generator components provide peripheral drivers with customized generated source geared towards small code size" display="Code Generator" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
         </configuration>
         <configuration apiMode="FULL_API" id="9f08a0ac-ccc0-4da8-992c-c5b4cb40aac4" inuse="true" name="Config_UART3">
             <allocatable id="UART3">
@@ -1070,8 +1055,8 @@
                     <item id="both" input="" vlaue="0"/>
                 </option>
             </allocatable>
-            <component description="非同期式シリアル通信(UART)インタフェースは、調歩同期式通信機能です。" detailDescription="" display="UART通信" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.5.0"/>
-            <allocator channelLevel0="3" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART通信" display="UART3" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator3" type="UART">
+            <component description="The universal asynchronous receiver/transmitter(UART) interface supports serial communication." detailDescription="" display="UART Communication" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.9.0"/>
+            <allocator channelLevel0="3" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART Communication" display="UART3" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator3" type="UART">
                 <context>
                     <option enabled="true" id="Mode" selection="both">
                         <item enabled="true" id="transmit"/>
@@ -1080,7 +1065,7 @@
                     </option>
                 </context>
             </allocator>
-            <source description="コード生成に対応したコンポーネントは、設定に応じた周辺ドライバのコードを小さなコードサイズで出力します。" display="コード生成" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
+            <source description="Code generator components provide peripheral drivers with customized generated source geared towards small code size" display="Code Generator" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
         </configuration>
         <configuration apiMode="FULL_API" id="66056349-d305-4d6b-81f1-ccd492818701" inuse="true" name="Config_UART2">
             <allocatable id="UART2">
@@ -1245,8 +1230,8 @@
                     <item id="both" input="" vlaue="0"/>
                 </option>
             </allocatable>
-            <component description="非同期式シリアル通信(UART)インタフェースは、調歩同期式通信機能です。" detailDescription="" display="UART通信" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.5.0"/>
-            <allocator channelLevel0="2" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART通信" display="UART2" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator2" type="UART">
+            <component description="The universal asynchronous receiver/transmitter(UART) interface supports serial communication." detailDescription="" display="UART Communication" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart" version="1.9.0"/>
+            <allocator channelLevel0="2" channelLevel1="" channelLevel2="" channelLevel3="" channelLevel4="" channelLevel5="" description="UART Communication" display="UART2" id="com.renesas.smc.tools.swcomponent.codegenerator.rl78.uart.allocator2" type="UART">
                 <context>
                     <option enabled="true" id="Mode" selection="both">
                         <item enabled="true" id="transmit"/>
@@ -1255,7 +1240,34 @@
                     </option>
                 </context>
             </allocator>
-            <source description="コード生成に対応したコンポーネントは、設定に応じた周辺ドライバのコードを小さなコードサイズで出力します。" display="コード生成" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
+            <source description="Code generator components provide peripheral drivers with customized generated source geared towards small code size" display="Code Generator" id="com.renesas.smc.tools.swcomponent.codegenerator.source"/>
+        </configuration>
+        <configuration inuse="true" name="r_bsp">
+            <component description="Dependencies : None&#10;The r_bsp package provides a foundation for code to be built on top of. It provides startup code, iodefines, and MCU information for different boards. There are 2 folders that make up the r_bsp package. The 'mcu' folder contains files that are common to a MCU group. These files provide functionality such as easy register access, CPU functions, and a file named 'mcu_info.h' for each MCU group. The 'mcu_info.h' file has information about the MCU on the board and is configured based on the information given in r_bsp_config.h. The information in 'mcu_info.h' is used to help configure Renesas middleware that uses the r_bsp package. The 'board' folder has a folder with startup code for each supported board.  Which MCU and board is chosen is decided by the settings in 'platform.h'. The user can choose which board they are using by uncommenting the include path that applies to their board. For example, if you are using the RSK+RX64M then you would uncomment the #include &quot;./board/generic_rx64m/r_bsp.h&quot; include path. Users are encouraged to add their own boards to the 'board' directory. BSPs are configured by using the r_bsp_config.h file. Each board will have a reference configuration file named r_bsp_config_reference.h. The user should copy this file to their project, rename it to r_bsp_config.h, and use the options inside the file to configure the BSP for their project." detailDescription="Board Support Packages. - v1.90" display="r_bsp" id="r_bsp1.90" version="1.90">
+                <gridItem id="BSP_CFG_STARTUP_DISABLE" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_INVALID_MEMORY_ACCESS_DETECTION_ENABLE" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_RAM_GUARD_FUNC" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_PORT_FUNCTION_GUARD" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_INT_FUNCTION_GUARD" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_CHIP_STATE_CTRL_GUARD" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_DATA_FLASH_ACCESS_ENABLE" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_CONFIGURATOR_SELECT" selectedIndex="1"/>
+                <gridItem id="BSP_CFG_CLOCK_OPERATION_API_FUNCTIONS_DISABLE" selectedIndex="1"/>
+                <gridItem id="BSP_CFG_GET_FREQ_API_FUNCTIONS_DISABLE" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_SET_CLOCK_SOURCE_API_FUNCTIONS_DISABLE" selectedIndex="1"/>
+                <gridItem id="BSP_CFG_CHANGE_CLOCK_SETTING_API_FUNCTIONS_DISABLE" selectedIndex="1"/>
+                <gridItem id="BSP_CFG_SOFTWARE_DELAY_API_FUNCTIONS_DISABLE" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_PARAM_CHECKING_ENABLE" selectedIndex="1"/>
+                <gridItem id="BSP_CFG_USER_WARM_START_CALLBACK_PRE_INITC_ENABLED" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_USER_WARM_START_PRE_C_FUNCTION" selectedIndex="my_sw_warmstart_prec_function"/>
+                <gridItem id="BSP_CFG_USER_WARM_START_CALLBACK_POST_INITC_ENABLED" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_USER_WARM_START_POST_C_FUNCTION" selectedIndex="my_sw_warmstart_postc_function"/>
+                <gridItem id="BSP_CFG_WDT_REFRESH_ENABLE" selectedIndex="0"/>
+                <gridItem id="BSP_CFG_USER_WDT_REFRESH_INIT_FUNCTION" selectedIndex="my_sw_wdt_refresh_init_function"/>
+                <gridItem id="BSP_CFG_USER_WDT_REFRESH_SETTING_FUNCTION" selectedIndex="my_sw_wdt_refresh_setting_function"/>
+            </component>
+            <source description="RL78 Software Integration System" display="RL78 Software Integration System" id="com.renesas.smc.tools.swcomponent.rl78.sis.source"/>
+            <source description="RL78 Software Integration System" display="RL78 Software Integration System" id="com.renesas.smc.tools.swcomponent.rl78.sis.source"/>
         </configuration>
     </tool>
     <tool id="System">

@@ -53,10 +53,10 @@
 #define configUSE_PREEMPTION                       1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION    0
 #define configMAX_PRIORITIES                       (7)
-#define configTICK_RATE_HZ                         (( TickType_t ) 1000)
+#define configTICK_RATE_HZ                         ((TickType_t) 1000)
 #define configMINIMAL_STACK_SIZE                   (128)
 #define configTOTAL_HEAP_SIZE_N                    (24)
-#define configTOTAL_HEAP_SIZE                      (( size_t ) ( configTOTAL_HEAP_SIZE_N * 1024 ))
+#define configTOTAL_HEAP_SIZE                      ((size_t)(configTOTAL_HEAP_SIZE_N * 1024))
 #define configMAX_TASK_NAME_LEN                    (12)
 #define configUSE_TRACE_FACILITY                   1
 #define configUSE_16_BIT_TICKS                     0
@@ -73,9 +73,9 @@
 
 #define configUSE_DAEMON_TASK_STARTUP_HOOK 1
 
-#define configCPU_CLOCK_HZ				(BSP_ICLK_HZ)
-#define configPERIPHERAL_CLOCK_HZ		(BSP_PCLKB_HZ)
-#define configUSE_QUEUE_SETS			1
+#define configCPU_CLOCK_HZ                (BSP_ICLK_HZ)
+#define configPERIPHERAL_CLOCK_HZ         (BSP_PCLKB_HZ)
+#define configUSE_QUEUE_SETS              1
 
 /* Hook function related definitions. */
 #define configUSE_TICK_HOOK                        0
@@ -101,20 +101,22 @@ kernel is doing. */
 /* The peripheral used to generate the tick interrupt is configured as part of
 the application code.  This constant should be set to the vector number of the
 peripheral chosen.  As supplied this is CMT0. */
-#define configTICK_VECTOR						_CMT0_CMI0		//CMT0
-//#define configTICK_VECTOR						_CMT1_CMI1		//CMT1
-//#define configTICK_VECTOR						_CMT2_CMI2		//CMT2
-//#define configTICK_VECTOR						_CMT3_CMI3		//CMT3
+#define configTICK_VECTOR                        _CMT0_CMI0    /* CMT0 */
 
 /* Event group related definitions. */
 #define configUSE_EVENT_GROUPS                     1
 
 /* Run time stats gathering definitions. */
-unsigned long ulGetRunTimeCounterValue( void );
-void vConfigureTimerForRunTimeStats( void );
+/**********************************************************************************************************************
+* function name: ulGetRunTimeCounterValue
+*********************************************************************************************************************/
+unsigned long ulGetRunTimeCounterValue (void);
+
+/**********************************************************************************************************************
+* function name: vConfigureTimerForRunTimeStats
+*********************************************************************************************************************/
+void          vConfigureTimerForRunTimeStats (void);
 #define configGENERATE_RUN_TIME_STATS    0
-//#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()    vConfigureTimerForRunTimeStats()
-//#define portGET_RUN_TIME_COUNTER_VALUE()            ulGetRunTimeCounterValue()
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                   0
@@ -162,22 +164,30 @@ void vConfigureTimerForRunTimeStats( void );
 #define configASSERT( x ) ( ( void ) 0 )
 #else /* CONFIG_FREERTOS_ASSERT_FAIL_ABORT or nothing */
 /* Assert call defined for debug builds. */
-extern void vAssertCalled( void );
-#define configASSERT( x ) do { if( ( x ) == 0 ) vAssertCalled(); } while( 0 )
+extern void vAssertCalled (void);
+
+/* configASSERT MACRO declaration */
+#define configASSERT( x ) do { if ( (x) == 0 ) vAssertCalled(); } while ( 0 )
 #endif
 
 /* The function that implements FreeRTOS printf style output, and the macro
  * that maps the configPRINTF() macros to that function. */
-extern void vLoggingPrintf( const char * pcFormat, ... );
+extern void vLoggingPrintf (const char * pcFormat, ...);
+
+/* configPRINTF MACRO declaration */
 #define configPRINTF( X )    vLoggingPrintf X
 
 /* Non-format version thread-safe print */
-extern void vLoggingPrint( const char * pcMessage );
+extern void vLoggingPrint (const char * pcMessage);
+
+/* configPRINT MACRO declaration */
 #define configPRINT( X )     vLoggingPrint( X )
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-extern void uart_string_printf(__far char * pString );
-#define configPRINT_STRING( X )    uart_string_printf( X )
+extern void uart_string_printf (__far char * pString);
+
+/* configPRINT_STRING MACRO declaration */
+#define configPRINT_STRING(X)    uart_string_printf(X)
 #else
 extern void vOutputString( const char * pcMessage );
 /* Map the logging task's printf to the board specific output function. */
@@ -277,17 +287,21 @@ extern void vOutputString( const char * pcMessage );
 /* The UDP port to which print messages are sent. */
 #define configPRINT_PORT                     ( 15000 )
 
-#define configPROFILING                      ( 0 )
+#define configPROFILING                      (0)
 
 /* Pseudo random number generater used by some demo tasks. */
-uint32_t ulRand(void);
+/**********************************************************************************************************************
+* function name: ulRand
+*********************************************************************************************************************/
+uint32_t ulRand (void);
+
+/* configRAND32 MACRO declaration */
 #define configRAND32()    ulRand()
 
 /* The platform FreeRTOS is running on. */
 #define configPLATFORM_NAME    "RenesasRL78"
 
 /* Header required for the tracealyzer recorder library. */
-//#include "trcRecorder.h"
 
 /* When the FIT configurator or the Smart Configurator is used, platform.h has to be used. */
 #define configINCLUDE_PLATFORM_H_INSTEAD_OF_IODEFINE_H  1

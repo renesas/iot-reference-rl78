@@ -60,27 +60,27 @@ extern CellularHandle_t CellularHandle;
  * Return Value : none
  *********************************************************************************************************************/
 void prvWriteCertificateToModule(const uint8_t *ca_data, uint32_t ca_size,
-                                 const uint8_t *clientcert_data, uint32_t clientcert_size,
-                                 const uint8_t *prvkey_data, uint32_t prvkey_size)
+                                const uint8_t *clientcert_data, uint32_t clientcert_size,
+                                const uint8_t *prvkey_data, uint32_t prvkey_size)
 {
 #if !defined(__DA16XXX_DEMO__)
     /* CA Root */
     Cellular_WriteCertificate(CellularHandle, AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              ROOTCA_PEM2_NVM_IDX, (const uint8_t *)ca_data, ca_size);
+                            ROOTCA_PEM2_NVM_IDX, (const uint8_t *)ca_data, ca_size);
 
     /* Certificate */
     Cellular_WriteCertificate(CellularHandle, AWS_CELLULAR_NVM_TYPE_CERTIFICATE,
-                              CLIENT_CERT_NVM_IDX, (const uint8_t *)clientcert_data, clientcert_size);
+                            CLIENT_CERT_NVM_IDX, (const uint8_t *)clientcert_data, clientcert_size);
 
     /* Private key */
     Cellular_WriteCertificate(CellularHandle, AWS_CELLULAR_NVM_TYPE_PRIVATEKEY,
-                              CLIENT_PRIVATEKEY_NVM_IDX, (const uint8_t *)prvkey_data, prvkey_size);
+                            CLIENT_PRIVATEKEY_NVM_IDX, (const uint8_t *)prvkey_data, prvkey_size);
 #else
     /* Check existed Certificates */
     wifi_tls_cert_info_t cert_infor = {0};
     if (WIFI_SUCCESS == R_WIFI_DA16XXX_GetServerCertificate(&cert_infor))
     {
-        if (( NULL != cert_infor.cert_ca) || ( NULL != cert_infor.cert_name))
+        if ((NULL != cert_infor.cert_ca) || (NULL != cert_infor.cert_name))
         {
             /* Use when deleting all Certificates */
             /* CA */
@@ -108,7 +108,7 @@ void prvWriteCertificateToModule(const uint8_t *ca_data, uint32_t ca_size,
                                         (const uint8_t __far *)prvkey_data,
                                         prvkey_size);
     }
-#endif
+#endif /* !defined__DA16XXX_DEMO__ */
 }
 /**********************************************************************************************************************
  * End of Function prvWriteCertificateToModule

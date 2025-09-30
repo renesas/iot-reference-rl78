@@ -65,7 +65,7 @@
  * @brief Max number of WEP keys supported.
  */
 
-#define wificonfigMAX_WEPKEYS                  ( 4 )
+#define wificonfigMAX_WEPKEYS                  (4)
 
 /**
  * @brief Max WEP key length

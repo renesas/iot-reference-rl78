@@ -46,12 +46,12 @@ typedef struct st_da16xxx_http
     uint8_t                 alpn_count;                     ///< ALPN Protocols count. Max value is 3.
     wifi_http_tls_auth_t    tls_level;                      ///< HTTP TLS Authentication level.
     const char            * p_root_ca;                      ///< String representing a trusted server root certificate.
-    uint32_t                root_ca_size;                   ///< Size associated with root CA Certificate.
+    uint16_t                root_ca_size;                   ///< Size associated with root CA Certificate.
     const char            * p_client_cert;                  ///< String representing a Client certificate.
-    uint32_t                client_cert_size;               ///< Size associated with Client certificate.
+    uint16_t                client_cert_size;               ///< Size associated with Client certificate.
     const char            * p_client_private_key;           ///< String representing Client Private Key.
-    uint32_t                private_key_size;               ///< Size associated with Client Private Key.
-    uint32_t                open;                           ///< Flag to track HTTP status.
+    uint16_t                private_key_size;               ///< Size associated with Client Private Key.
+    uint8_t                 open;                           ///< Flag to track HTTP status.
     volatile uint8_t        request_status;                 ///< Flag to track HTTP request status.
 } st_da16xxx_http_t;
 
@@ -67,7 +67,7 @@ static char* g_http_init_rsp_buf = NULL;
  Private (static) variables and functions
  *********************************************************************************************************************/
 /* sub functions */
-static uint8_t get_alpn_number(void);
+static uint8_t get_http_alpn_number(void);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_HttpOpen
@@ -118,7 +118,7 @@ wifi_err_t R_WIFI_DA16XXX_HttpOpen(void)
     }
 
     /* Get ALPN number */
-    g_http_tbl.alpn_count = get_alpn_number();
+    g_http_tbl.alpn_count = get_http_alpn_number();
 
     /* Set ALPN settings */
     if (g_http_tbl.alpn_count != 0)
@@ -449,12 +449,12 @@ wifi_err_t R_WIFI_DA16XXX_HttpSend (wifi_http_request_t request, wifi_http_buffe
 
 
 /**********************************************************************************************************************
- * Function Name: get_alpn_number
+ * Function Name: get_http_alpn_number
  * Description  : Get the number of ALPN.
  * Arguments    : none
  * Return Value : number of ALPN
  *********************************************************************************************************************/
-static uint8_t get_alpn_number(void)
+static uint8_t get_http_alpn_number(void)
 {
     /* Count alpn */
     uint8_t count = 0;
@@ -476,7 +476,7 @@ static uint8_t get_alpn_number(void)
     return count;
 }
 /**********************************************************************************************************************
- * End of function get_alpn_number
+ * End of function get_http_alpn_number
  *********************************************************************************************************************/
 
 

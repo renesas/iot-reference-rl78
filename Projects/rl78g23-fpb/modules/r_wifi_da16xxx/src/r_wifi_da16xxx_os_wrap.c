@@ -343,9 +343,9 @@ void tick_count_stop(void)
  * Return Value : TICK_NOT_EXPIERD
  *                TICK_EXPIERD
  *********************************************************************************************************************/
-uint32_t tick_count_check(void)
+uint8_t tick_count_check(void)
 {
-    uint32_t ret = TICK_NOT_EXPIRED;
+    uint8_t ret = TICK_NOT_EXPIRED;
     OS_TICK tick_tmp;
 
     if (1 != s_exec_tick_count_flg)

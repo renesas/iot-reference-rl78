@@ -1,6 +1,6 @@
 /*
- * FreeRTOS Kernel V10.5.1
- * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS Kernel V11.1.0
+ * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
  *
@@ -138,7 +138,7 @@ definitions. */
  * for the function is as per the other ports:
  * StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters );
  *
- * As per the standard RISC-V ABI pxTopcOfStack is passed in in a0, pxCode in
+ * As per the standard RISC-V ABI pxTopOfStack is passed in in a0, pxCode in
  * a1, and pvParameters in a2.  The new top of stack is passed out in a0.
  *
  * RISC-V maps registers to ABI names as follows (X1 to X31 integer registers
@@ -158,7 +158,7 @@ definitions. */
  * x18-27        s2-11       Saved registers                   Callee
  * x28-31        t3-6        Temporaries                       Caller
  *
- * The RISC-V context is saved t FreeRTOS tasks in the following stack frame,
+ * The RISC-V context is saved to FreeRTOS tasks in the following stack frame,
  * where the global and thread pointers are currently assumed to be constant so
  * are not saved:
  *
@@ -208,12 +208,12 @@ pxPortInitialiseStack:
     store_x x0, 0(a0)                   /* Critical nesting count starts at 0 for every task. */
 
 #ifdef __riscv_32e
-    addi a0, a0, -(6 * portWORD_SIZE)   /* Space for registers x11-x15. */
+    addi a0, a0, -(6 * portWORD_SIZE)   /* Space for registers x10-x15. */
 #else
-    addi a0, a0, -(22 * portWORD_SIZE)  /* Space for registers x11-x31. */
+    addi a0, a0, -(22 * portWORD_SIZE)  /* Space for registers x10-x31. */
 #endif
     store_x a2, 0(a0)                   /* Task parameters (pvParameters parameter) goes into register X10/a0 on the stack. */
-    addi a0, a0, -(6 * portWORD_SIZE)   /* Space for registers x5-x9. */
+    addi a0, a0, -(6 * portWORD_SIZE)   /* Space for registers x5-x9 + taskReturnAddress. */
     load_x t0, xTaskReturnAddress
     store_x t0, 0(a0)                   /* Return address onto the stack. */
     addi t0, x0, portasmADDITIONAL_CONTEXT_SIZE /* The number of chip specific additional registers. */

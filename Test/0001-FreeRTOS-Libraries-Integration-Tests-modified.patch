@@ -1,0 +1,45 @@
+From 1f932c86f709f4ae07d7040ddface2d360d6942b Mon Sep 17 00:00:00 2001
+From: congthanhpham <thanh-cong.pham.cp@bp.renesas.com>
+Date: Tue, 3 Jun 2025 18:08:41 +0700
+Subject: [PATCH] FreeRTOS-Libraries-Integration-Tests-modified
+
+---
+ src/mqtt/mqtt_test.c                               | 4 ++++
+ src/transport_interface/transport_interface_test.c | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/src/mqtt/mqtt_test.c b/src/mqtt/mqtt_test.c
+index af1187e..1b9eb25 100644
+--- a/src/mqtt/mqtt_test.c
++++ b/src/mqtt/mqtt_test.c
+@@ -1617,7 +1617,11 @@ TEST( MqttTest, MQTT_SubUnsub_Multiple_Topics )
+ 
+ {
+     MQTTSubscribeInfo_t subscribeParams[ 5 ];
++#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
++    char __far * topicList[ 5 ];
++#else
+     char * topicList[ 5 ];
++#endif
+     size_t i;
+     const size_t topicCount = 5U;
+     MQTTQoS_t qos;
+diff --git a/src/transport_interface/transport_interface_test.c b/src/transport_interface/transport_interface_test.c
+index 32009dc..47d6b79 100644
+--- a/src/transport_interface/transport_interface_test.c
++++ b/src/transport_interface/transport_interface_test.c
+@@ -59,7 +59,11 @@
+  * verified to remain unchanged after each test.
+  */
+ #define TRANSPORT_TEST_BUFFER_PREFIX_GUARD_LENGTH    ( 32U )
++#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
++#define TRANSPORT_TEST_BUFFER_WRITABLE_LENGTH        ( 512U )
++#else
+ #define TRANSPORT_TEST_BUFFER_WRITABLE_LENGTH        ( 2048U )
++#endif
+ #define TRANSPORT_TEST_BUFFER_SUFFIX_GUARD_LENGTH    ( 32U )
+ #define TRANSPORT_TEST_BUFFER_TOTAL_LENGTH        \
+     ( TRANSPORT_TEST_BUFFER_PREFIX_GUARD_LENGTH + \
+-- 
+2.47.1.windows.2
+
