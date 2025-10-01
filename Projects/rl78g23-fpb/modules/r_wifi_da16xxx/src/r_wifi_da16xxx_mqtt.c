@@ -67,7 +67,7 @@ typedef struct st_da16xxx_mqtt
     /* MQTT Client identifier. Must be unique per client. */
     const char   * p_client_identifier;
     /* Length of the client identifier. */
-    uint16_t       client_identifier_length;
+    uint8_t       client_identifier_length;
     /* MQTT endpoint host name. */
     const char   * p_host_name;
     /* MQTT Port number. */
@@ -75,23 +75,23 @@ typedef struct st_da16xxx_mqtt
     /* MQTT user name. Set to NULL if not used. */
     const char   * p_mqtt_user_name;
     /* Length of MQTT user name. Set to 0 if not used. */
-    uint16_t       user_name_length;
+    uint8_t       user_name_length;
     /* MQTT password. Set to NULL if not used. */
     const char   * p_mqtt_password;
     /* Length of MQTT password. Set to 0 if not used. */
-    uint16_t       password_length;
+    uint8_t       password_length;
     /* String representing a trusted server root certificate. */
     const char   * p_root_ca;
     /* Size associated with root CA Certificate. */
-    uint32_t       root_ca_size;
+    uint16_t       root_ca_size;
     /* String representing a Client certificate. */
     const char   * p_client_cert;
     /* Size associated with Client certificate. */
-    uint32_t       client_cert_size;
+    uint16_t       client_cert_size;
     /* String representing Client Private Key. */
     const char   * p_client_private_key;
     /* Size associated with Client Private Key. */
-    uint32_t       private_key_size;
+    uint16_t       private_key_size;
     /* String representing Will Topic. */
     const char   * p_will_topic;
     /* String representing Will Message. */
@@ -129,7 +129,7 @@ void WIFI_CFG_MQTT_P_CALLBACK_FUNCTION_NAME(wifi_mqtt_callback_args_t * p_args);
  Private (static) variables and functions
  *********************************************************************************************************************/
 /* sub functions */
-static uint8_t get_alpn_number(void);
+static uint8_t get_mqtt_alpn_number(void);
 static uint8_t get_cipher_suites_number(void);
 
 /* WIFI MQTT on chip configuration */
@@ -137,7 +137,7 @@ static wifi_err_t r_wifi_da16xxx_mqtt_optional_init(void);
 static void r_wifi_da16xxx_mqtt_instance_init(void);
 
 /* receive data MQTT buffer */
-static uint32_t r_wifi_da16xxx_mqtt_buffer_recv(uint8_t * data, uint32_t length, uint32_t timeout);
+static uint16_t r_wifi_da16xxx_mqtt_buffer_recv(uint8_t * data, uint16_t length, uint32_t timeout);
 
 /* BYTEQ functions */
 static wifi_err_t mqtt_byteq_open(void);
@@ -890,7 +890,7 @@ static void r_wifi_da16xxx_mqtt_instance_init(void)
     g_mqtt_tbl.clean_session = WIFI_CFG_MQTT_CLEAN_SESSION;
 
     /* Assign ALPN */
-    g_mqtt_tbl.alpn_count = get_alpn_number();
+    g_mqtt_tbl.alpn_count = get_mqtt_alpn_number();
     g_mqtt_tbl.p_alpns[0] = WIFI_STRING_CONVERT(WIFI_CFG_MQTT_ALPN1);
     g_mqtt_tbl.p_alpns[1] = WIFI_STRING_CONVERT(WIFI_CFG_MQTT_ALPN2);
     g_mqtt_tbl.p_alpns[2] = WIFI_STRING_CONVERT(WIFI_CFG_MQTT_ALPN3);
@@ -973,18 +973,7 @@ static void r_wifi_da16xxx_mqtt_instance_init(void)
     g_mqtt_tbl.p_tls_cipher_suites[10] = (wifi_tls_cipher_suites_t) WIFI_CFG_MQTT_TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256;
     g_mqtt_tbl.p_tls_cipher_suites[11] = (wifi_tls_cipher_suites_t) WIFI_CFG_MQTT_TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384;
 #else
-    g_mqtt_tbl.p_tls_cipher_suites[0] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[1] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[2] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[3] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[4] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[5] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[6] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[7] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[8] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[9] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[10] = (wifi_tls_cipher_suites_t) 0;
-    g_mqtt_tbl.p_tls_cipher_suites[11] = (wifi_tls_cipher_suites_t) 0;
+    memset(g_mqtt_tbl.p_tls_cipher_suites, 0, sizeof(g_mqtt_tbl.p_tls_cipher_suites));
 #endif
     /* Assign number of cipher suites */
     g_mqtt_tbl.tls_cipher_count = get_cipher_suites_number();
@@ -1001,9 +990,9 @@ static void r_wifi_da16xxx_mqtt_instance_init(void)
  *                timeout
  * Return Value : Number of received data.
  *********************************************************************************************************************/
-static uint32_t r_wifi_da16xxx_mqtt_buffer_recv(uint8_t * data, uint32_t length, uint32_t timeout)
+static uint16_t r_wifi_da16xxx_mqtt_buffer_recv(uint8_t * data, uint16_t length, uint32_t timeout)
 {
-    uint32_t recv_cnt = 0;
+    uint16_t recv_cnt = 0;
     byteq_err_t byteq_ret;
     OS_TICK tick_tmp;
 
@@ -1053,12 +1042,12 @@ static uint32_t r_wifi_da16xxx_mqtt_buffer_recv(uint8_t * data, uint32_t length,
 
 
 /**********************************************************************************************************************
- * Function Name: get_alpn_number
+ * Function Name: get_mqtt_alpn_number
  * Description  : Get the number of ALPN.
  * Arguments    : none
  * Return Value : number of ALPN
  *********************************************************************************************************************/
-static uint8_t get_alpn_number(void)
+static uint8_t get_mqtt_alpn_number(void)
 {
     /* Count alpn */
     uint8_t count = 0;
@@ -1080,7 +1069,7 @@ static uint8_t get_alpn_number(void)
     return count;
 }
 /**********************************************************************************************************************
- * End of function get_alpn_number
+ * End of function get_mqtt_alpn_number
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************

@@ -73,6 +73,12 @@
 *         : 31.01.2023 1.50     Fixed typo in history.
 *         : 28.02.2023 1.60     Added the version number of Smart Configurator.
 *                               Modified the comment related to the version number of Smart Configurator.
+*         : 30.11.2023 1.62     Adjusted indentation of macro definitions.
+*         : 06.02.2025 1.90     Added notes to the following macro definitions.
+*                               - BSP_CFG_SUBWAITTIME
+*                               - BSP_CFG_FIHWAITTIME
+*                               - BSP_CFG_FIMWAITTIME
+*                               - BSP_CFG_FILWAITTIME
 ***********************************************************************************************************************/
 
 #ifndef R_BSP_CONFIG_REF_HEADER_FILE
@@ -912,7 +918,7 @@
    v1.3.0  : 1030
    v1.6.0  : 1060
 */
-#define BSP_CFG_CONFIGURATOR_VERSION    (1090) /* Generated value. Do not edit this manually */
+#define BSP_CFG_CONFIGURATOR_VERSION    (1130) /* Generated value. Do not edit this manually */
 
 /* API function disable(R_BSP_StartClock, R_BSP_StopClock)
  0 : Enable API functions
@@ -1169,7 +1175,11 @@
 #define BSP_CFG_RTOS_USED               (1)
 
 /* Loop count using the main system clock. */
-/* The loop count refers to a loop consisting of a "for" statement that executes a single NOP instruction. */
+/* The loop count refers to a loop consisting of a "for" statement that executes a single NOP instruction.
+   The loop count values are just example.
+   Since the actual number of cycles will differ according to factors such as the optimization option,
+   you will need to specify a setting that matches your environment. */
+
 /* Subsystem clock oscillation stabilization time.
    If the main system clock is 32 MHz, 800000 means 300 ms. */
 #define BSP_CFG_SUBWAITTIME              (800000U)
@@ -1195,10 +1205,10 @@
    my_sw_warmstart_postc_function just after the initialization of the C runtime environment by bsp_init_hardware.
 */
 #define BSP_CFG_USER_WARM_START_CALLBACK_PRE_INITC_ENABLED    (0)
-#define BSP_CFG_USER_WARM_START_PRE_C_FUNCTION     my_sw_warmstart_prec_function
+#define BSP_CFG_USER_WARM_START_PRE_C_FUNCTION                my_sw_warmstart_prec_function
 
 #define BSP_CFG_USER_WARM_START_CALLBACK_POST_INITC_ENABLED    (0)
-#define BSP_CFG_USER_WARM_START_POST_C_FUNCTION    my_sw_warmstart_postc_function
+#define BSP_CFG_USER_WARM_START_POST_C_FUNCTION                my_sw_warmstart_postc_function
 
 /* If the user sets the window open period of watchdog timer to 50%,
    set the following macro definition(BSP_CFG_WDT_REFRESH_ENABLE) to 2

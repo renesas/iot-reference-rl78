@@ -141,10 +141,11 @@ static const st_sci_conf_t s_sci_cfg[] =
 static uint8_t  s_cmd_buf[CMD_BUF_MAX];
 static uint8_t  s_resp_buf[RESP_BUF_MAX];
 static char     s_resp_prefix[PREFIX_LEN_MAX];
-static uint32_t s_rcv_cnt = 0;
-static uint32_t s_read_cnt = 0;
-static uint32_t s_start_pos = 0;
+static uint16_t s_rcv_cnt = 0;
+static uint16_t s_read_cnt = 0;
+static uint16_t s_start_pos = 0;
 static uint32_t s_atcmd_resp_timeout = ATCMD_RESP_TIMEOUT;
+static bool     s_atcmd_timeout_flag = false;
 
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 /**********************************************************************************************************************
@@ -211,7 +212,7 @@ void flow_ctrl_set (e_flow_ctrl_t flow)
  *********************************************************************************************************************/
 static st_sci_conf_t WIFI_FAR * get_port_config(void)
 {
-    uint16_t i = 0;
+    uint8_t i = 0;
     st_sci_conf_t WIFI_FAR * p_tbl = NULL;
 
     /* Set table pointer */
@@ -329,6 +330,7 @@ e_atcmd_err_t at_send_raw(uint8_t WIFI_FAR *data, uint16_t const length)
     flow_ctrl_set(RTS_OFF);
 #endif
 
+    s_atcmd_timeout_flag = true;
 #if WIFI_CFG_CTS_SW_CTRL == 0
     while ((index < length) && (ret == ATCMD_OK))
     {
@@ -412,6 +414,11 @@ e_atcmd_err_t at_send_raw(uint8_t WIFI_FAR *data, uint16_t const length)
     flow_ctrl_set(RTS_ON);
 #endif
 
+    if (ATCMD_OK != ret)
+    {
+        s_atcmd_timeout_flag = false;
+    }
+
     return ret;
 }
 /**********************************************************************************************************************
@@ -473,7 +480,7 @@ e_rslt_code_t at_recv(void)
 {
     byteq_err_t byteq_ret;
     uint8_t data;
-    uint32_t start_pos = 0;
+    uint16_t start_pos = 0;
     e_rslt_code_t  ret = AT_INTERNAL_ERROR;
 
     /* Initialize */
@@ -528,11 +535,13 @@ e_rslt_code_t at_recv(void)
                 if (NULL != strstr((const char *) &s_resp_buf[start_pos], AT_RETURN_TEXT_OK))
                 {
                     tick_count_stop();
+                    s_atcmd_timeout_flag = false;
                     return AT_OK;
                 }
                 else if (1 == sscanf((const char *) &s_resp_buf[start_pos], AT_RETURN_TEXT_ERR, (int *) &ret))
                 {
                     tick_count_stop();
+                    s_atcmd_timeout_flag = false;
                     return ret;
                 }
                 /* set pointer to next line */
@@ -540,6 +549,7 @@ e_rslt_code_t at_recv(void)
             }
         }
     }
+    s_atcmd_timeout_flag = false;
     return ret;
 }
 /**********************************************************************************************************************
@@ -640,7 +650,7 @@ e_rslt_code_t at_exec_wo_mutex (const char *cmd, ...)
  * Return Value : 0     : data not found
  *                other : data found
  *********************************************************************************************************************/
-e_atcmd_read_t at_read(const char *response_fmt, ...)
+e_atcmd_read_t at_read(const char WIFI_FAR *response_fmt, ...)
 {
     va_list   args = {0};
     e_atcmd_read_t  rtn = DATA_NOT_FOUND;
@@ -657,7 +667,7 @@ e_atcmd_read_t at_read(const char *response_fmt, ...)
     /* Make prefix */
     memset(s_resp_prefix, 0, sizeof(s_resp_prefix));
     strcpy(s_resp_prefix, response_fmt);
-    sp = strstr((const char *)response_fmt, (const char WIFI_FAR *) "%");
+    sp = strstr(response_fmt, (const char WIFI_FAR *) "%");
     if (0 != sp)
     {
         s_resp_prefix[(uint32_t)sp - (uint32_t)response_fmt] = 0;
@@ -893,7 +903,7 @@ void da16xxx_handle_incoming_uart_data(uint8_t data)
 {
     static uint32_t hash[2] = {0};
 
-    if (g_uart_tbl.socket_recv_state != WIFI_RECV_DATA)
+    if (s_atcmd_timeout_flag && (g_uart_tbl.socket_recv_state != WIFI_RECV_DATA))
     {
         if (BYTEQ_SUCCESS != R_BYTEQ_Put(g_uart_tbl.byteq_hdl, data))
         {

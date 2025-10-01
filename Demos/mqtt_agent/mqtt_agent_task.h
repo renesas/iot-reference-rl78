@@ -53,16 +53,20 @@ typedef enum MQTTAgentState
  * @param[in] pvIncomingPublishCallbackContext The incoming publish callback context.
  * @param[in] pxPublishInfo Deserialized publish information.
  */
-typedef void (* IncomingPubCallback_t )( void * pvIncomingPublishCallbackContext,
-					MQTTPublishInfo_t * pxPublishInfo );
+typedef void (* IncomingPubCallback_t)(void * pvIncomingPublishCallbackContext,
+                                        MQTTPublishInfo_t * pxPublishInfo);
 
 /**
+ * @fn xMQTTAgentInit
+ *
  * @brief Initialize the MQTT Agent.
  * Create the semaphore and Event group.
  */
-BaseType_t xMQTTAgentInit( void );
+BaseType_t xMQTTAgentInit (void);
 
 /**
+ * @fn vStartMQTTAgent
+ *
  * @brief Starts the MQTT agent task.
  * MQTT agent task calls MQTTAgent_CommandLoop(), until MQTTAgent_Terminate()
  * is called. If an error occurs in the command loop, then it will reconnect the
@@ -71,29 +75,35 @@ BaseType_t xMQTTAgentInit( void );
  * @param[in] uxStackSize Stack size for MQTT agent task.
  * @param[in] uxPriority Priority of MQTT agent task.
  */
-void vStartMQTTAgent( configSTACK_DEPTH_TYPE uxStackSize,
-        UBaseType_t uxPriority  );
+void vStartMQTTAgent (configSTACK_DEPTH_TYPE uxStackSize,
+        UBaseType_t uxPriority);
 
 
 /**
+ * @fn xGetMQTTAgentState
+ *
  * @brief Get the current state of MQTT agent.
  * MQTT agent task can be any of the states as defined by the state enum MQTTAgentState_t. The
  * function can be used to poll for MQTT agent state from other application tasks
  *
  * @return State of the MQTT agent.
  */
-MQTTAgentState_t xGetMQTTAgentState( void );
+MQTTAgentState_t xGetMQTTAgentState (void);
 
 /**
+ * @fn xSetMQTTAgentState
+ *
  * @brief Set the current state of MQTT agent.
  * MQTT agent task can be any of the states as defined by the state enum MQTTAgentState_t. The
  * function can be used to set the MQTT agent state from other application tasks
  *
  * @param[in] xAgentState State of the MQTT agent.
  */
-void xSetMQTTAgentState( MQTTAgentState_t xAgentState );
+void xSetMQTTAgentState (MQTTAgentState_t xAgentState);
 
 /**
+ * @fn xWaitForMQTTAgentState
+ *
  * @brief Wait for MQTT agent to reach the desired state.
  * Function blocks caller task for a timeout period, until MQTT agent reaches the specified state. Function can be
  * called from multiple tasks concurrently.
@@ -103,16 +113,22 @@ void xSetMQTTAgentState( MQTTAgentState_t xAgentState );
  *                         if the caller has to wait indefinitely.
  * @return pdTRUE if the state is reached, pdFALSE if the timeout has reached waiting for the state.
  */
-BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xStateToWait,
-                                   TickType_t xTicksToWait );
+BaseType_t xWaitForMQTTAgentState (MQTTAgentState_t xStateToWait,
+                                TickType_t xTicksToWait);
 
 /**
+ * @fn xAddMQTTTopicFilterCallback
+ *
  * @brief Add a callback for the topic filter with MQTT agent.
- * Function adds a local subscription for the given topic filter. Each incoming publish received on the connection, will be
- * matched against the topic filter. The provided callback is invoked if the incoming publish topic matches the topic filter.
- * An optional context parameter can be passed into this function from the caller, the context is passed back transparently when
- * the publish callback is invoked. If a topic matches more than one registered topic filter, all matching topic filter callbacks
- * are invoked. The function is thread safe and can be invoked from multiple application tasks once the MQTT agent is
+ * Function adds a local subscription for the given topic filter.
+ * Each incoming publish received on the connection, will be
+ * matched against the topic filter. The provided callback is invoked if
+ * the incoming publish topic matches the topic filter.
+ * An optional context parameter can be passed into this function from the caller,
+ * the context is passed back transparently when
+ * the publish callback is invoked. If a topic matches more than one registered topic filter,
+ * all matching topic filter callbacks are invoked.
+ * The function is thread safe and can be invoked from multiple application tasks once the MQTT agent is
  * initialized.
  *
  *
@@ -124,21 +140,23 @@ BaseType_t xWaitForMQTTAgentState( MQTTAgentState_t xStateToWait,
  *                               MQTT agent if the connection is lost and then reconnected.
  * @return pdTRUE if the callback was added successfully. pdFALSE otherwise.
  */
-BaseType_t xAddMQTTTopicFilterCallback( const char * pcTopicFilter,
+BaseType_t xAddMQTTTopicFilterCallback (const char * pcTopicFilter,
                                         uint16_t usTopicFilterLength,
                                         IncomingPubCallback_t pxPublishCallback,
                                         void * pvCallbackContext,
-                                        BaseType_t xManageResubscription );
+                                        BaseType_t xManageResubscription);
 
 /**
+ * @fn vRemoveMQTTTopicFilterCallback
+ *
  * @brief Remove a topic filter callback from the MQTT agent.
  * Function is thread safe and can be invoked by multiple application tasks.
  *
  * @param pcTopicFilter Topic filter string for which the callback needs to be removed.
  * @param usTopicFilterLength Length of the topic filter string.
  */
-void vRemoveMQTTTopicFilterCallback( const char * pcTopicFilter,
-                                     uint16_t usTopicFilterLength );
+void vRemoveMQTTTopicFilterCallback (const char * pcTopicFilter,
+                                    uint16_t usTopicFilterLength);
 
 
 #endif /* ifndef _MQTT_AGENT_TASK_H_ */

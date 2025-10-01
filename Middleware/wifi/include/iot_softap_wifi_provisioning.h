@@ -50,7 +50,10 @@ typedef enum
  *         false if the initialization failed.
  */
 /* @[declare_iotwifisoftapprov_init] */
-bool IotWifiSoftAPProv_Init( void );
+/**********************************************************************************************************************
+ * function name: IotWifiSoftAPProv_Init
+ *********************************************************************************************************************/
+bool IotWifiSoftAPProv_Init (void);
 
 /**
  * @brief Function which runs the process loop for Wifi provisioning.
@@ -62,7 +65,10 @@ bool IotWifiSoftAPProv_Init( void );
  *         to an error.
  */
 /* @[declare_iotwifisoftapprov_init] */
-bool IotWifiSoftAPProv_RunProcessLoop( void );
+/**********************************************************************************************************************
+ * function name: IotWifiSoftAPProv_RunProcessLoop
+ *********************************************************************************************************************/
+bool IotWifiSoftAPProv_RunProcessLoop (void);
 
 /**
  * @brief Gets the total number of provisioned networks.
@@ -70,7 +76,10 @@ bool IotWifiSoftAPProv_RunProcessLoop( void );
  * @return Number of provisioned networks
  */
 /* @[declare_iotwifisoftapprov_getnumnetworks] */
-uint32_t IotWifiSoftAPProv_GetNumNetworks( void );
+/**********************************************************************************************************************
+ * function name: IotWifiSoftAPProv_GetNumNetworks
+ *********************************************************************************************************************/
+uint32_t IotWifiSoftAPProv_GetNumNetworks (void);
 
 /**
  * @brief Connects to one of the saved networks in priority order.
@@ -78,7 +87,10 @@ uint32_t IotWifiSoftAPProv_GetNumNetworks( void );
  * @return Returns true if connection succeeded, else false.
  */
 /* @[declare_iotwifisoftapprov_connect] */
-bool IotWifiSoftAPProv_Connect( uint32_t networkIndex );
+/**********************************************************************************************************************
+ * function name: IotWifiSoftAPProv_Connect
+ *********************************************************************************************************************/
+bool IotWifiSoftAPProv_Connect (uint32_t networkIndex);
 
 /**
  * @brief Stop the WiFi provisionig process loop function.
@@ -87,13 +99,19 @@ bool IotWifiSoftAPProv_Connect( uint32_t networkIndex );
  * @return true if succesfully enqueued command to stop WiFi provisioning loop.
  */
 /* @[declare_iotwifisoftapprov_stop] */
-bool IotWifiSoftAPProv_Stop( void );
+/**********************************************************************************************************************
+ * function name: IotWifiSoftAPProv_Stop
+ *********************************************************************************************************************/
+bool IotWifiSoftAPProv_Stop (void);
 
 /**
  * @brief Tear down WIFI provisioning service
  *
  */
 /* @[declare_iotwifisoftprov_Deinit] */
-void IotWifiSoftAPProv_Deinit( void );
+/**********************************************************************************************************************
+ * function name: IotWifiSoftAPProv_Deinit
+ *********************************************************************************************************************/
+void IotWifiSoftAPProv_Deinit (void);
 
 #endif /* ifndef _AWS_SOFTAP_WIFI_PROVISIONING_H_ */

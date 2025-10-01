@@ -34,6 +34,8 @@
 *                               Changed the description of the return value BSP_ERROR1 of
 *                               the R_BSP_ChangeClockSetting function.
 *                               Removed description of return value BSP_ERROR3 of R_BSP_ChangeClockSetting function.
+*         : 07.06.2024 1.70     Changed the number of overhead cycles of
+*                               the R_BSP_SoftwareDelay function from 1000 to 2.
 ***********************************************************************************************************************/
 
 /*************************************************
@@ -44,8 +46,8 @@
 /*************************************************
  * Macro definitions
  *************************************************/
-#define BSP_PRV_OVERHEAD_CYCLES    (1000U)    /* R_BSP_SoftwareDelay() overhead per call */
-#define BSP_PRV_OVERHEAD_CYCLES_64 (1000U)    /* R_BSP_SoftwareDelay() overhead per call using 64-bit ints */
+#define BSP_PRV_OVERHEAD_CYCLES    (2U)    /* R_BSP_SoftwareDelay() overhead per call */
+#define BSP_PRV_OVERHEAD_CYCLES_64 (2U)    /* R_BSP_SoftwareDelay() overhead per call using 64-bit ints */
 #define BSP_CPU_CYCLES_PER_LOOP    (6U)
 
 /*************************************************

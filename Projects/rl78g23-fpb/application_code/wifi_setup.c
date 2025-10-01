@@ -31,7 +31,7 @@
  */
 
 /* FreeRTOS include. */
-#include <FreeRTOS.h>
+#include "FreeRTOS.h"
 #include "task.h"
 
 #include <stdbool.h>
@@ -48,14 +48,23 @@
 /* Write certificate */
 #include "cert_profile_helper.h"
 
-bool setupWifi (void);
-static bool _wifiConnectAccessPoint( void );
+bool        setupWifi (void);
+static bool _wifiConnectAccessPoint (void);
 
+/**
+ * @fn setupWifi
+ *
+ * @brief setup Wi-Fi Module
+ *
+ * @param[in] error        The socket error code
+ * @param[in] force_reset  Indicates whether a forced reset should be performed
+ * @return wifi_err_t      The result of the error handling process
+ */
 bool setupWifi(void)
 {
     bool ret = true;
 
-    if( WIFI_On() != eWiFiSuccess )
+    if (WIFI_On() != eWiFiSuccess)
     {
         return false;
     }
@@ -63,22 +72,30 @@ bool setupWifi(void)
     ret = _wifiConnectAccessPoint();
 
     return ret;
-}
+}/* End of function setupWifi()*/
 
-static bool _wifiConnectAccessPoint( void )
+/**
+ * @fn _wifiConnectAccessPoint
+ *
+ * @brief Connects to a Wi-Fi access point
+ *
+ * @return true if the connection is successful, false otherwise.
+ */
+static bool _wifiConnectAccessPoint(void)
 {
-    bool status = true;
+    bool                status = true;
     WIFINetworkParams_t xConnectParams;
-    size_t xSSIDLength, xPasswordLength;
-    const char * pcSSID = clientcredentialWIFI_SSID;
-    const char * pcPassword = clientcredentialWIFI_PASSWORD;
-    WIFISecurity_t xSecurity = clientcredentialWIFI_SECURITY;
+    size_t              xSSIDLength;
+    size_t              xPasswordLength;
+    const char *        pcSSID     = clientcredentialWIFI_SSID;
+    const char *        pcPassword = clientcredentialWIFI_PASSWORD;
+    WIFISecurity_t      xSecurity  = clientcredentialWIFI_SECURITY;
 
-    if( NULL != pcSSID )
+    if (NULL != pcSSID)
     {
-        xSSIDLength = sizeof(clientcredentialWIFI_SSID) - 1; // excluding NULL terminator
+        xSSIDLength = (sizeof(clientcredentialWIFI_SSID)) - 1; // excluding NULL terminator
 
-        if( ( 0 < xSSIDLength ) && ( wificonfigMAX_SSID_LEN > xSSIDLength ) )
+        if ((0 < xSSIDLength) && (wificonfigMAX_SSID_LEN > xSSIDLength))
         {
             xConnectParams.ucSSIDLength = xSSIDLength;
         }
@@ -93,15 +110,15 @@ static bool _wifiConnectAccessPoint( void )
     }
 
     xConnectParams.xSecurity = xSecurity;
-    switch( xSecurity )
+    switch (xSecurity)
     {
         case eWiFiSecurityWPA:
         case eWiFiSecurityWPA2:
-            if( NULL != pcPassword )
+            if (NULL != pcPassword)
             {
-                xPasswordLength = sizeof(clientcredentialWIFI_PASSWORD) - 1; // excluding NULL terminator
+                xPasswordLength = (sizeof(clientcredentialWIFI_PASSWORD)) - 1; // excluding NULL terminator
 
-                if( ( 0 < xPasswordLength ) && ( wificonfigMAX_PASSPHRASE_LEN > xPasswordLength ) )
+                if ((0 < xPasswordLength) && (wificonfigMAX_PASSPHRASE_LEN > xPasswordLength))
                 {
                     xConnectParams.xPassword.xWPA.ucLength = xPasswordLength;
                 }
@@ -116,25 +133,27 @@ static bool _wifiConnectAccessPoint( void )
             }
             break;
         case eWiFiSecurityOpen:
+
             /* Nothing to do. */
             break;
         case eWiFiSecurityWPA3:
         case eWiFiSecurityWPA2_ent:
         case eWiFiSecurityWEP:
         default:
-            configPRINT_STRING( "The configured WiFi security option is not supported." );
+            configPRINT_STRING("The configured WiFi security option is not supported.");
             status = false;
             break;
     }
 
-    if( status == true )
+    if (true == status)
     {
-        if( eWiFiSuccess != WIFI_ConnectAP( &( xConnectParams ), pcSSID, pcPassword ) )
+        /* Cast to proper datatype to avoid warning */
+        if (eWiFiSuccess != WIFI_ConnectAP(&(xConnectParams), (const uint8_t *)pcSSID, (const uint8_t *)pcPassword))
         {
             status = false;
         }
     }
 
     return status;
-}
+}/* End of function _wifiConnectAccessPoint()*/
 

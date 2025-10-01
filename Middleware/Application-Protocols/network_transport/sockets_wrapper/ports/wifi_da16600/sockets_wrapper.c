@@ -52,7 +52,7 @@ typedef struct xSOCKETContext
 {
     uint32_t ulSendTimeout;
     uint32_t ulRecvTimeout;
-    uint32_t socket_no;
+    uint8_t  socket_no;
 } SSOCKETContext_t, * SSOCKETContextPtr_t;
 
 /**
@@ -66,8 +66,9 @@ typedef struct xSOCKETContext
 #define FORCE_RESET     1
 #define NO_FORCE_RESET  0
 static volatile uint32_t count_module_comm = 0;
-static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset );
-static wifi_err_t CloseSocket(uint32_t socket_number);
+
+static wifi_err_t SocketErrorHook (wifi_err_t error, bool force_reset);
+static wifi_err_t CloseSocket (uint8_t socket_number);
 
 #if (0 == USER_TCP_HOOK_ENABLED)
 static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
@@ -76,11 +77,21 @@ static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
     return error;
 }
 #else
-static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
+
+/**
+ * @fn SocketErrorHook
+ *
+ * @brief Called when a socket error is detected.
+ *
+ * @param[in] error        The socket error code
+ * @param[in] force_reset  Indicates whether a forced reset should be performed
+ * @return wifi_err_t      The result of the error handling process
+ */
+static wifi_err_t SocketErrorHook(wifi_err_t error, bool force_reset)
 {
     uint32_t reconnect_tries = 0;
 
-    if (WIFI_ERR_MODULE_COM != error && WIFI_ERR_MODULE_TIMEOUT != error)
+    if ((WIFI_ERR_MODULE_COM != error) && (WIFI_ERR_MODULE_TIMEOUT != error))
     {
         count_module_comm = 0;
         return error;
@@ -99,18 +110,19 @@ static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
     }
     else
     {
-    	if (WIFI_ERR_MODULE_COM == error)
-    	{
+        if (WIFI_ERR_MODULE_COM == error)
+        {
             count_module_comm++;
             if (USER_COMM_ERROR_TRIES > count_module_comm)
             {
                 return WIFI_SUCCESS;
             }
-    	}
+        }
 
-    	if ((USER_COMM_ERROR_TRIES <= count_module_comm) || (WIFI_ERR_MODULE_COM != error))
-    	{
+        if ((USER_COMM_ERROR_TRIES <= count_module_comm) || (WIFI_ERR_MODULE_COM != error))
+        {
             count_module_comm = 0;
+
             for (reconnect_tries = 0; reconnect_tries < USER_RECONNECT_TRIES; reconnect_tries++)
             {
                 if (WIFI_SUCCESS == R_WIFI_DA16XXX_HardwareReset())
@@ -118,16 +130,24 @@ static wifi_err_t SocketErrorHook( wifi_err_t error, bool force_reset )
                     break;
                 }
             }
-    	}
+        }
 
         return error;
     }
-}
-#endif
+}/* End of function SocketErrorHook()*/
+#endif /* 0 == USER_TCP_HOOK_ENABLED */
 
-static wifi_err_t CloseSocket(uint32_t socket_number)
+/**
+ * @fn CloseSocket
+ *
+ * @brief Close the specified socket.
+ *
+ * @param[in] socket_number  The number of socket to be closed
+ * @return wifi_err_t      The result of the socket close operation
+ */
+static wifi_err_t CloseSocket(uint8_t socket_number)
 {
-    uint8_t count;
+    uint8_t    count;
     wifi_err_t ret;
 
     for (count = 0; count < USER_CLOSE_SOCKET_TRIES; count++)
@@ -138,7 +158,7 @@ static wifi_err_t CloseSocket(uint32_t socket_number)
         {
             break;
         }
-        LogInfo(( "Try to close in %d times.", count ));
+        LogInfo(("Try to close in %d times.", count));
     }
     if (WIFI_SUCCESS != ret)
     {
@@ -146,65 +166,78 @@ static wifi_err_t CloseSocket(uint32_t socket_number)
     }
 
     return ret;
-}
+}/* End of function CloseSocket()*/
 
 /*-----------------------------------------------------------*/
 
-BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
+/**
+ * @fn TCP_Sockets_Connect
+ *
+ * @brief Connects to the specified server using the given socket.
+ *
+ * @param[out] pTcpSocket        Pointer to the structure holding socket information
+ * @param[in]  pHostName         Pointer to the server hostName
+ * @param[in]  port              Port number to connect to on the server
+ * @param[in]  receiveTimeoutMs  Timeout (in milliseconds) for receiving data
+ * @param[in]  sendTimeoutMs     Timeout (in milliseconds) for sending data
+ * @return     BaseType_t        Result of the connection attempt
+ */
+BaseType_t TCP_Sockets_Connect(Socket_t * pTcpSocket,
                                 const char * pHostName,
                                 uint16_t port,
                                 uint32_t receiveTimeoutMs,
-                                uint32_t sendTimeoutMs )
+                                uint32_t sendTimeoutMs)
 {
-    SSOCKETContextPtr_t pxContext = NULL;
-    wifi_err_t ret;
-    uint32_t socketId = 0;
-    uint8_t ipAddress[4] = { 0 };
-    wifi_tls_cert_info_t cert_infor = { 0 };
-    BaseType_t retConnect = TCP_SOCKETS_ERRNO_NONE;
+    SSOCKETContextPtr_t  pxContext = NULL;
+    wifi_err_t           ret;
+    uint8_t              socketId     = 0;
+    uint8_t              ipAddress[4] = { 0 };
+    wifi_tls_cert_info_t cert_infor   = { 0 };
+    BaseType_t           retConnect   = TCP_SOCKETS_ERRNO_NONE;
 
     /* Register TSL Socket on DA16XXX */
     if (WIFI_SUCCESS == R_WIFI_DA16XXX_GetServerCertificate(&cert_infor))
     {
+        /* Cast to proper datatype to avoid warning */
         ret = R_WIFI_DA16XXX_ConfigTlsSocket(&socketId, &cert_infor, (uint8_t __far *)pHostName, 1, 8192, 8192, 1000);
         if (WIFI_SUCCESS == ret)
         {
             /* Create a new TLS socket. */
             ret = R_WIFI_DA16XXX_CreateTlsSocket(socketId, WIFI_SOCKET_TYPE_TLS, 4);
-            if(WIFI_SUCCESS != ret)
+            if (WIFI_SUCCESS != ret)
             {
-                LogError(( "Failed to create WiFi sockets. %d\r\n", ret ));
+                LogError(("Failed to create WiFi sockets. %d\r\n", ret));
                 retConnect = NO_SOCKET_CREATION_ERROR;
             }
         }
         else
         {
-            LogError(( "Failed to config Tls Socket on WiFi module.\r\n" ));
+            LogError(("Failed to config Tls Socket on WiFi module.\r\n"));
             retConnect = (BaseType_t) ret;
         }
     }
     else
     {
-        LogError(( "Failed to get stored server certificate on WiFi module.\r\n" ));
+        LogError(("Failed to get stored server certificate on WiFi module.\r\n"));
         retConnect = (BaseType_t) ret;
     }
 
     /* Allocate socket context. */
-    if( TCP_SOCKETS_ERRNO_NONE == retConnect )
+    if (TCP_SOCKETS_ERRNO_NONE == retConnect)
     {
-        pxContext = pvPortMalloc( sizeof( SSOCKETContext_t ) );
+        pxContext = pvPortMalloc(sizeof(SSOCKETContext_t));
 
-        if( NULL == pxContext )
+        if (NULL == pxContext)
         {
-            LogError(( "Failed to allocate new socket context." ));
-            ( void ) CloseSocket(socketId);
+            LogError(("Failed to allocate new socket context."));
+            (void)CloseSocket(socketId);
             retConnect = TCP_SOCKETS_ERRNO_ENOMEM;
         }
         else
         {
             /* Initialize the wrapped socket. */
-            LogDebug(( "Created new TCP Socket %p.", pxContext ));
-            ( void ) memset( pxContext, 0, sizeof( SSOCKETContext_t ) );
+            LogDebug(("Created new TCP Socket %p.", pxContext));
+            (void)memset(pxContext, 0, sizeof(SSOCKETContext_t));
             pxContext->socket_no     = socketId;
             pxContext->ulRecvTimeout = receiveTimeoutMs;
             pxContext->ulSendTimeout = sendTimeoutMs;
@@ -212,8 +245,9 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
     }
 
     /* Setup TLS socket */
-    if( TCP_SOCKETS_ERRNO_NONE == retConnect )
+    if (TCP_SOCKETS_ERRNO_NONE == retConnect)
     {
+        /* Cast to proper datatype to avoid warning */
         ret = R_WIFI_DA16XXX_DnsQuery((uint8_t __far *)pHostName, ipAddress);
         if (WIFI_SUCCESS != ret)
         {
@@ -224,10 +258,10 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
     }
 
     /* Wi-Fi socket connect. */
-    if( TCP_SOCKETS_ERRNO_NONE == retConnect )
+    if (TCP_SOCKETS_ERRNO_NONE == retConnect)
     {
         ret = R_WIFI_DA16XXX_TlsConnect(pxContext->socket_no, ipAddress, port);
-        if( WIFI_SUCCESS != ret )
+        if (WIFI_SUCCESS != ret)
         {
             LogError(( "Failed to connect to server: Connect failed: ReturnCode=%d,"
                         " Hostname=%u.%u.%u.%u, Port=%u.",
@@ -238,83 +272,102 @@ BaseType_t TCP_Sockets_Connect( Socket_t * pTcpSocket,
         }
     }
 
-    if( TCP_SOCKETS_ERRNO_NONE != retConnect )
+    if (TCP_SOCKETS_ERRNO_NONE != retConnect)
     {
-        (void) CloseSocket(socketId);
+        (void)CloseSocket(socketId);
 
         if (NULL != pxContext)
         {
-            vPortFree( pxContext );
+            vPortFree(pxContext);
             pxContext = NULL;
         }
-        SocketErrorHook((wifi_err_t) retConnect, FORCE_RESET);
-        LogError(( "Failed to create new socket." ));
+        SocketErrorHook((wifi_err_t)retConnect, FORCE_RESET);  /* Cast to proper datatype to avoid warning */
+        LogError(("Failed to create new socket."));
     }
 
     /* Set the socket. */
-    *pTcpSocket = pxContext;
+    *pTcpSocket = (Socket_t)pxContext;
 
     return retConnect;
-}
+}/* End of function TCP_Sockets_Connect()*/
 
 /*-----------------------------------------------------------*/
 
-void TCP_Sockets_Disconnect( Socket_t xSocket )
+/**
+ * @fn TCP_Sockets_Disconnect
+ *
+ * @brief Disconnects the given socket.
+ *
+ * @param[in] xSocket      The structure holding the socket information to be disconnected
+ */
+void TCP_Sockets_Disconnect(Socket_t xSocket)
 {
-    int32_t retClose = TCP_SOCKETS_ERRNO_NONE;
-    SSOCKETContextPtr_t pxContext   = ( SSOCKETContextPtr_t ) xSocket; /*lint !e9087 cast used for portability. */
+    int32_t             retClose    = TCP_SOCKETS_ERRNO_NONE;
+    SSOCKETContextPtr_t pxContext   = (SSOCKETContextPtr_t) xSocket; /*lint !e9087 cast used for portability. */
 
-    if( ( NULL == pxContext ) || ( SOCKETS_INVALID_SOCKET == xSocket ) || ( MAX_NUM_SSOCKETS <= pxContext->socket_no ))
+    if ((NULL == pxContext) || (SOCKETS_INVALID_SOCKET == xSocket) || (MAX_NUM_SSOCKETS <= pxContext->socket_no))
     {
-        LogError(( "Invalid xSocket %p", pxContext ));
+        LogError(("Invalid xSocket %p", pxContext));
         retClose = TCP_SOCKETS_ERRNO_EINVAL;
     }
 
-    if( TCP_SOCKETS_ERRNO_NONE == retClose )
+    if (TCP_SOCKETS_ERRNO_NONE == retClose)
     {
-        (void) CloseSocket(pxContext->socket_no);
+        (void)CloseSocket(pxContext->socket_no);
         vPortFree(pxContext);
         pxContext = NULL;
     }
 
     (void) retClose;
     LogDebug(( "Sockets close exit with code %d", retClose ));
-}
+}/* End of function TCP_Sockets_Disconnect()*/
 
 /*-----------------------------------------------------------*/
 
-int32_t TCP_Sockets_Recv( Socket_t xSocket,
-                          void * pvBuffer,
-                          size_t xBufferLength )
+/**
+ * @fn TCP_Sockets_Recv
+ *
+ * @brief Receives data from the given socket.
+ *
+ * @param[in]  xSocket       The structure holding the socket information
+ * @param[out] pvBuffer      The pointer to the buffer holding the receive data
+ * @param[in]  xBufferLength The length of the buffer in bytes
+ *
+ * @return     int32_t       The number of bytes received, or a negative value if an error occurred
+ */
+int32_t TCP_Sockets_Recv(Socket_t xSocket,
+                        void * pvBuffer,
+                        size_t xBufferLength)
 {
-    SSOCKETContextPtr_t pxContext = ( SSOCKETContextPtr_t ) xSocket; /*lint !e9087 cast used for portability. */
-    BaseType_t receive_byte = 0;
+    SSOCKETContextPtr_t pxContext    = (SSOCKETContextPtr_t) xSocket; /*lint !e9087 cast used for portability. */
+    BaseType_t          receive_byte = 0;
 
-    if( NULL == pxContext )
+    if (NULL == pxContext)
     {
-        LogError(( "Wi-Fi prvNetworkRecv Invalid xSocket %p", pxContext ));
-        receive_byte = ( BaseType_t ) TCP_SOCKETS_ERRNO_EINVAL;
+        LogError(("Wi-Fi prvNetworkRecv Invalid xSocket %p", pxContext));
+        receive_byte = (BaseType_t) TCP_SOCKETS_ERRNO_EINVAL;
     }
     else
     {
+        /* Cast to proper datatype to avoid warning */
         receive_byte = R_WIFI_DA16XXX_ReceiveTlsSocket(pxContext->socket_no, (uint8_t __far *) pvBuffer,
-                                                       xBufferLength, pxContext->ulRecvTimeout);
+                                                        xBufferLength, pxContext->ulRecvTimeout);
         if (0 > receive_byte)
         {
-            if ( (WIFI_ERR_NOT_CONNECT == receive_byte) || (WIFI_ERR_TAKE_MUTEX == receive_byte))
+            if ((WIFI_ERR_NOT_CONNECT == receive_byte) || (WIFI_ERR_TAKE_MUTEX == receive_byte))
             {
-                receive_byte = 0;
+                receive_byte      = 0;
                 count_module_comm = 0;
             }
-            else if ( WIFI_ERR_SOCKET_NUM == receive_byte )
+            else if (WIFI_ERR_SOCKET_NUM == receive_byte)
             {
-                receive_byte = ( BaseType_t ) TCP_SOCKETS_ERRNO_ERROR;
+                receive_byte      = (BaseType_t) TCP_SOCKETS_ERRNO_ERROR;
                 count_module_comm = 0;
-                (void) CloseSocket(pxContext->socket_no);
+                (void)CloseSocket(pxContext->socket_no);
             }
             else
             {
-                receive_byte = ( BaseType_t ) TCP_SOCKETS_ERRNO_ERROR;
+                receive_byte = (BaseType_t) TCP_SOCKETS_ERRNO_ERROR;
             }
         }
         else
@@ -324,42 +377,54 @@ int32_t TCP_Sockets_Recv( Socket_t xSocket,
     }
 
     return receive_byte;
-}
+}/* End of function TCP_Sockets_Recv()*/
 
 /*-----------------------------------------------------------*/
 
-int32_t TCP_Sockets_Send( Socket_t xSocket,
-                          const void * pvBuffer,
-                          size_t xDataLength )
+/**
+ * @fn TCP_Sockets_Send
+ *
+ * @brief Sends data from the given socket.
+ *
+ * @param[in]  xSocket       The structure holding the socket information
+ * @param[in]  pvBuffer      The pointer to the buffer containing the data to be sent
+ * @param[in]  xBufferLength The length of the buffer in bytes
+ *
+ * @return     int32_t       The number of bytes sent, or a negative value if an error occurred
+ */
+int32_t TCP_Sockets_Send(Socket_t xSocket,
+                        const void * pvBuffer,
+                        size_t xDataLength)
 {
-    BaseType_t send_byte = 0;
-    SSOCKETContextPtr_t pxContext = ( SSOCKETContextPtr_t ) xSocket; /*lint !e9087 cast used for portability. */
+    BaseType_t          send_byte = 0;
+    SSOCKETContextPtr_t pxContext = (SSOCKETContextPtr_t) xSocket; /*lint !e9087 cast used for portability. */
 
     if (NULL == pxContext)
     {
-        LogError(( "Wi-Fi Sockets_Send Invalid xSocket %p", pxContext ));
-        send_byte = ( BaseType_t ) TCP_SOCKETS_ERRNO_ERROR;
+        LogError(("Wi-Fi Sockets_Send Invalid xSocket %p", pxContext));
+        send_byte = (BaseType_t) TCP_SOCKETS_ERRNO_ERROR;
     }
     else
     {
+        /* Cast to proper datatype to avoid warning */
         send_byte = R_WIFI_DA16XXX_SendTlsSocket(pxContext->socket_no, (uint8_t __far *) pvBuffer,
-                                                 xDataLength, pxContext->ulSendTimeout);
-        if( 0 > send_byte )
+                                                xDataLength, pxContext->ulSendTimeout);
+        if (0 > send_byte)
         {
-            if( (WIFI_ERR_NOT_CONNECT == send_byte) || (WIFI_ERR_TAKE_MUTEX == send_byte) )
+            if ((WIFI_ERR_NOT_CONNECT == send_byte) || (WIFI_ERR_TAKE_MUTEX == send_byte))
             {
-                send_byte = 0;
+                send_byte         = 0;
                 count_module_comm = 0;
             }
-            else if ( (WIFI_ERR_SOCKET_NUM == send_byte) || ( WIFI_ERR_MODULE_COM == send_byte ) )
+            else if ((WIFI_ERR_SOCKET_NUM == send_byte) || (WIFI_ERR_MODULE_COM == send_byte))
             {
-                send_byte = ( BaseType_t ) TCP_SOCKETS_ERRNO_ERROR;
+                send_byte         = (BaseType_t) TCP_SOCKETS_ERRNO_ERROR;
                 count_module_comm = 0;
-                (void) CloseSocket(pxContext->socket_no);
+                (void)CloseSocket(pxContext->socket_no);
             }
             else
             {
-                send_byte = ( BaseType_t ) TCP_SOCKETS_ERRNO_ERROR;
+                send_byte = (BaseType_t) TCP_SOCKETS_ERRNO_ERROR;
             }
         }
         else
@@ -369,4 +434,4 @@ int32_t TCP_Sockets_Send( Socket_t xSocket,
     }
 
     return send_byte;
-}
+}/* End of function TCP_Sockets_Send()*/

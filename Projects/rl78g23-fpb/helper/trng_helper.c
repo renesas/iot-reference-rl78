@@ -45,6 +45,9 @@
  Private (static) variables and functions
  *********************************************************************************************************************/
 
+/**********************************************************************************************************************
+ * function name: xTrngGenerateRandomNumber
+ *********************************************************************************************************************/
 BaseType_t xTrngGenerateRandomNumber(uint8_t * pusRandomNumBuffer, size_t xBufferLength)
 {
     R_TRNG_GenerateRandomNumber();
@@ -55,11 +58,16 @@ BaseType_t xTrngGenerateRandomNumber(uint8_t * pusRandomNumBuffer, size_t xBuffe
     }
 
     return pdPASS;
-}
+}/* End of function xTrngGenerateRandomNumber()*/
 
+/**********************************************************************************************************************
+ * function name: uxRand
+ *********************************************************************************************************************/
 uint32_t uxRand(void)
 {
     static uint32_t ulRandomNum = 0;
+
+    /* Cast to proper datatype to avoid warning */
     xTrngGenerateRandomNumber((uint8_t *)&ulRandomNum, sizeof(ulRandomNum));
     return ulRandomNum;
-}
+}/* End of function uxRand()*/

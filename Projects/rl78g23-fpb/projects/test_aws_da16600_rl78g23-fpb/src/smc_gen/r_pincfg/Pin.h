@@ -14,7 +14,7 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2021, 2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2021, 2025 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -35,22 +35,17 @@ Macro definitions (Register bit)
 Macro definitions
 ***********************************************************************************************************************/
 
-/* User's guide for symbolic name.
- * The generated symbolic names can be used in the user application as follows: 
+/* User's guide for pin function assignment macros
+ * The generated macro definitions can be used in the user application as follows: 
  *
- * Example: Toggle LED1 at Pin P54.
- *  There are 2 ways to toggle LED1
- *   1) Using symbolic name macro
- *    Assuming the symbolic name for P54 is "LED1", the generated macro definition will be:
- *         #define LED1    5,4
- *
- *    To use this macro definition to toggle the LED1, call the symbolic name APIs:
- *         PIN_WRITE(LED1) = ~PIN_READ(LED1)
- *
- *   2) Not using symbolic name macro
- *    Call the symbolic name APIs directly
- *         PIN_WRITE(5,4) = ~PIN_READ(5,4)
+ * Example: Set SCLA0 port to 1U.
+ *  PIN_WRITE(SMC_PIN_TO02) = 1;
+ *  Xxx = PIN_READ(R_xxx_TI00_Pin);
  */
+
+/* PIOR pin function assignments */
+#define SMC_PIN_TxD2        1,3
+#define SMC_PIN_RxD2        1,4
 
 /* Pin write helper */
 #define PIN_WRITE_HELPER(x,y)                    ((P##x##_bit.no##y))

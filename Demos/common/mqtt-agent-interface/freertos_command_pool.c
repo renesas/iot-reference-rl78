@@ -48,15 +48,15 @@
 #include "demo_config.h"
 /*-----------------------------------------------------------*/
 
-#define QUEUE_NOT_INITIALIZED    ( 0U )
-#define QUEUE_INITIALIZED        ( 1U )
+#define QUEUE_NOT_INITIALIZED    (0U)
+#define QUEUE_INITIALIZED        (1U)
 
 /**
  * @brief The pool of command structures used to hold information on commands (such
  * as PUBLISH or SUBSCRIBE) between the command being created by an API call and
  * completion of the command by the execution of the command's callback.
  */
-static MQTTAgentCommand_t commandStructurePool[ MQTT_COMMAND_CONTEXTS_POOL_SIZE ];
+static MQTTAgentCommand_t commandStructurePool[MQTT_COMMAND_CONTEXTS_POOL_SIZE];
 
 /**
  * @brief The message context used to guard the pool of MQTTAgentCommand_t structures.
@@ -73,81 +73,94 @@ static volatile uint8_t initStatus = QUEUE_NOT_INITIALIZED;
 
 /*-----------------------------------------------------------*/
 
-void Agent_InitializePool( void )
+/**********************************************************************************************************************
+ * function name: Agent_InitializePool
+ *********************************************************************************************************************/
+void Agent_InitializePool(void)
 {
     size_t i;
-    MQTTAgentCommand_t * pCommand;
-    static uint8_t staticQueueStorageArea[ MQTT_COMMAND_CONTEXTS_POOL_SIZE * sizeof( MQTTAgentCommand_t * ) ];
-    static StaticQueue_t staticQueueStructure;
-    bool commandAdded = false;
 
-    if( initStatus == QUEUE_NOT_INITIALIZED )
+    MQTTAgentCommand_t * pCommand;
+    static uint8_t       staticQueueStorageArea[MQTT_COMMAND_CONTEXTS_POOL_SIZE * sizeof(MQTTAgentCommand_t *)];
+    static StaticQueue_t staticQueueStructure;
+
+    bool                 commandAdded = false;
+
+    if (QUEUE_NOT_INITIALIZED == initStatus)
     {
-        memset( ( void * ) commandStructurePool, 0x00, sizeof( commandStructurePool ) );
+        /* Cast to proper datatype to avoid warning */
+        memset((void *)commandStructurePool, 0x00, sizeof(commandStructurePool));
         commandStructMessageCtx.queue = xQueueCreateStatic( MQTT_COMMAND_CONTEXTS_POOL_SIZE,
                                                             sizeof( MQTTAgentCommand_t * ),
                                                             staticQueueStorageArea,
                                                             &staticQueueStructure );
-        configASSERT( commandStructMessageCtx.queue );
+        configASSERT(commandStructMessageCtx.queue);
 
         /* Populate the queue. */
-        for( i = 0; i < MQTT_COMMAND_CONTEXTS_POOL_SIZE; i++ )
+        for (i = 0; i < MQTT_COMMAND_CONTEXTS_POOL_SIZE; i++)
         {
             /* Store the address as a variable. */
-            pCommand = &commandStructurePool[ i ];
+            pCommand = &commandStructurePool[i];
+
             /* Send the pointer to the queue. */
-            commandAdded = Agent_MessageSend( &commandStructMessageCtx, &pCommand, 0U );
-            configASSERT( commandAdded );
+            commandAdded = Agent_MessageSend(&commandStructMessageCtx, &pCommand, 0U);
+            configASSERT(commandAdded);
         }
 
         initStatus = QUEUE_INITIALIZED;
     }
-}
+} /* End of function Agent_InitializePool()*/
 
 /*-----------------------------------------------------------*/
 
-MQTTAgentCommand_t * Agent_GetCommand( uint32_t blockTimeMs )
+/**********************************************************************************************************************
+ * function name: Agent_GetCommand
+ *********************************************************************************************************************/
+MQTTAgentCommand_t * Agent_GetCommand(uint32_t blockTimeMs)
 {
-    MQTTAgentCommand_t * structToUse = NULL;
-    bool structRetrieved = false;
+    MQTTAgentCommand_t * structToUse     = NULL;
+    bool                 structRetrieved = false;
 
     /* Check queue has been created. */
-    configASSERT( initStatus == QUEUE_INITIALIZED );
+    configASSERT(initStatus == QUEUE_INITIALIZED);
 
     /* Retrieve a struct from the queue. */
-    structRetrieved = Agent_MessageReceive( &commandStructMessageCtx, &( structToUse ), blockTimeMs );
+    structRetrieved = Agent_MessageReceive(&commandStructMessageCtx, &(structToUse), blockTimeMs);
 
-    if( !structRetrieved )
+    if (!structRetrieved)
     {
-        LogError( ( "No command structure available." ) );
+        LogError(("No command structure available."));
     }
 
     return structToUse;
-}
+} /* End of function Agent_GetCommand()*/
 
 /*-----------------------------------------------------------*/
 
-bool Agent_ReleaseCommand( MQTTAgentCommand_t * pCommandToRelease )
+/**********************************************************************************************************************
+ * function name: Agent_ReleaseCommand
+ *********************************************************************************************************************/
+bool Agent_ReleaseCommand(MQTTAgentCommand_t * pCommandToRelease)
 {
     bool structReturned = false;
 
-    configASSERT( initStatus == QUEUE_INITIALIZED );
+    configASSERT(initStatus == QUEUE_INITIALIZED);
 
     /* See if the structure being returned is actually from the pool. */
-    if( ( pCommandToRelease >= commandStructurePool ) &&
-        ( pCommandToRelease < ( commandStructurePool + MQTT_COMMAND_CONTEXTS_POOL_SIZE ) ) )
+    if ((pCommandToRelease >= commandStructurePool) &&
+        (pCommandToRelease < (commandStructurePool + MQTT_COMMAND_CONTEXTS_POOL_SIZE)))
     {
-        structReturned = Agent_MessageSend( &commandStructMessageCtx, &pCommandToRelease, 0U );
+        structReturned = Agent_MessageSend(&commandStructMessageCtx, &pCommandToRelease, 0U);
 
         /* The send should not fail as the queue was created to hold every command
          * in the pool. */
-        configASSERT( structReturned );
+        configASSERT(structReturned);
         LogDebug( ( "Returned Command Context %d to pool",
                     ( int ) ( pCommandToRelease - commandStructurePool ) ) );
     }
 
     return structReturned;
-}
+} /* End of function Agent_ReleaseCommand()*/
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #pragma section
 #endif

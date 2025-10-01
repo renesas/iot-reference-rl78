@@ -65,17 +65,17 @@ Private global variables and functions
  *********************************************************************************************************************/
 void vApplicationSetupTimerInterrupt(void)
 {
-    uint32_t usClockHz = R_BSP_GetFclkFreqHz (); /* Get peripheral clock. */
+    uint32_t       usClockHz      = R_BSP_GetFclkFreqHz (); /* Get peripheral clock. */
     const uint16_t usCompareMatch = (usClockHz / configTICK_RATE_HZ) - 1UL;
 
     /* Start 32-bits IT clock */
     TML32EN = (uint16_t) 1U;
 
     /* Stop 32-bit interval timer */
-    ITLCTL0 = 0x00U;
+    ITLCTL0  = 0x00U;
     ITLMKF0 |= 0x01U;
-    ITLS0 &= (uint16_t) ~0x01;
-    ITLEN00 = 0U;
+    ITLS0   &= (uint16_t) ~0x01;  /* Cast to proper datatype to avoid warning */
+    ITLEN00  = 0U;
 
     /* Disable INTITL interrupt */
     ITLMK = 1U;
@@ -88,17 +88,17 @@ void vApplicationSetupTimerInterrupt(void)
     ITLPR0 = 1U;
 
     /* 32-bit interval timer used as 16-bit timer */
-    ITLCTL0 = 0x40U;
-    ITLCSEL0 &= 0xF8U;
-    ITLCSEL0 |= 0x01U;
+    ITLCTL0    = 0x40U;
+    ITLCSEL0  &= 0xF8U;
+    ITLCSEL0  |= 0x01U;
     ITLFDIV00 &= 0xF8U;
     ITLFDIV00 |= 0x00U;
-    ITLCMP00 = usCompareMatch;
+    ITLCMP00   = usCompareMatch;
 
     /* Start interval timer */
-    ITLMK = 0U;
-    ITLMKF0 &= ~0x01U;
-    ITLEN00 = 1U;
+    ITLMK    = 0U;
+    ITLMKF0 &= (~0x01U);
+    ITLEN00  = 1U;
 } /* End of function vApplicationSetupTimerInterrupt() */
 
 /**********************************************************************************************************************
@@ -148,12 +148,12 @@ void vApplicationIdleHook(void)
 {
     /* Implement user-code for user own purpose. */
     static TickType_t xLastPrint = 0;
-    TickType_t xTimeNow;
-    const TickType_t xPrintFrequency = pdMS_TO_TICKS( 5000 );
+    TickType_t        xTimeNow;
+    const TickType_t  xPrintFrequency = pdMS_TO_TICKS(5000); /* Cast to proper datatype to avoid warning */
 
     xTimeNow = xTaskGetTickCount();
 
-    if( ( xTimeNow - xLastPrint ) > xPrintFrequency )
+    if ((xTimeNow - xLastPrint) > xPrintFrequency)
     {
         xLastPrint = xTimeNow;
     }
@@ -186,7 +186,7 @@ void Processing_Before_Start_Kernel(void)
      */
     if (pdPASS != xTaskCreate(main_task, "MAIN_TASK", 2000, NULL, 3, NULL))
     {
-        while(1)
+        while (1)
         {
             /* Failed! Task can not be created. */
         }

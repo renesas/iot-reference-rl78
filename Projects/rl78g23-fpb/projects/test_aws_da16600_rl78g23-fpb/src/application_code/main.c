@@ -50,11 +50,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 #endif
 
-extern void START_DEMO_FUNC( void );
-extern bool setupWifi( void );
+extern void START_DEMO_FUNC (void);
+extern bool setupWifi (void);
 #if (ENABLE_AFR_IDT == 1)
-extern void prvQualificationTestTask( void * pvParameters );
-extern void vSubscribePublishTestTask( void * pvParameters );
+extern void prvQualificationTestTask (void * pvParameters);
+extern void vSubscribePublishTestTask (void * pvParameters);
 #if (OTA_E2E_TEST_ENABLED == 1)
 extern vStartOtaDemo( void);
 #endif
@@ -86,25 +86,25 @@ extern vStartOtaDemo( void);
 #define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 
 #if (ENABLE_AFR_IDT == 1)
-#define appmainTEST_TASK_STACK_SIZE               ( 2000 )
+#define appmainTEST_TASK_STACK_SIZE               (2000)
 #define appmainTEST_TASK_PRIORITY                 ( tskIDLE_PRIORITY + 1 )
 #endif
 
 /* Logging Task Defines. */
 #define mainLOGGING_TASK_STACK_SIZE               ( configMINIMAL_STACK_SIZE * 2 )
-#define mainLOGGING_MESSAGE_QUEUE_LENGTH          ( 15 )
-#define LED_PORT                                  ( P5_bit.no0 )
+#define mainLOGGING_MESSAGE_QUEUE_LENGTH          (15)
+#define LED_PORT                                  (P5_bit.no0)
 
 /**
  * @brief Application task startup hook.
  */
-void vApplicationDaemonTaskStartupHook( void );
+void vApplicationDaemonTaskStartupHook (void);
 
 /**
  * @brief Initializes the board.
  */
-void prvMiscInitialization( void );
-static BaseType_t xPlatformNetworkUp( void );
+void              prvMiscInitialization (void);
+static BaseType_t xPlatformNetworkUp (void);
 
 #if (ENABLE_AFR_IDT == 1)
 #if (DEVICE_ADVISOR_TEST_ENABLED == 1)
@@ -127,16 +127,16 @@ int RunDeviceAdvisorDemo( void )
     if( xResult == pdPASS )
     {
         xResult = xTaskCreate( vSubscribePublishTestTask,
-                               "TEST",
-                               appmainTEST_TASK_STACK_SIZE,
-                               NULL,
-                               appmainTEST_TASK_PRIORITY,
-                               NULL );
+                            "TEST",
+                            appmainTEST_TASK_STACK_SIZE,
+                            NULL,
+                            appmainTEST_TASK_PRIORITY,
+                            NULL );
 
     }
     return ( xResult == pdPASS ) ? 0 : -1;
 }
-#endif
+#endif /* ENABLE_AFR_IDT == 1 */
 
 #if (OTA_E2E_TEST_ENABLED == 1)
 int RunOtaE2eDemo( void )
@@ -157,27 +157,33 @@ int RunOtaE2eDemo( void )
     return 0;
 }
 #endif
-#endif
-
+#endif /* ENABLE_AFR_IDT == 1 */
 /*-----------------------------------------------------------*/
 
 /**
  * @brief The application entry point from a power on reset is PowerON_Reset_PC()
  * in resetprg.c.
  */
-void main( void )
+/**********************************************************************************************************************
+* function name: main
+*********************************************************************************************************************/
+void main(void)
 {
     Processing_Before_Start_Kernel();
     vTaskStartScheduler();
 
-    while(1)
+    while (1)
     {
         ;
     }
 }
+
 /*-----------------------------------------------------------*/
 
-void main_task( void * pvParameters )
+/**********************************************************************************************************************
+* function name: main_task
+*********************************************************************************************************************/
+void main_task(void * pvParameters)
 {
 #if (ENABLE_AFR_IDT == 1)
     if (pdTRUE == xPlatformNetworkUp())
@@ -187,17 +193,17 @@ void main_task( void * pvParameters )
         RunOtaE2eDemo();
 #else
         xTaskCreate( prvQualificationTestTask,
-                     "TEST",
-                     appmainTEST_TASK_STACK_SIZE,
-                     NULL,
-                     appmainTEST_TASK_PRIORITY,
-                     NULL );
+                    "TEST",
+                    appmainTEST_TASK_STACK_SIZE,
+                    NULL,
+                    appmainTEST_TASK_PRIORITY,
+                    NULL );
 #endif
     }
 
-    while( 1 )
+    while (1)
     {
-    	vTaskSuspend( NULL );
+        vTaskSuspend(NULL);
     }
 #else
     if (pdTRUE == xPlatformNetworkUp())
@@ -223,14 +229,18 @@ void main_task( void * pvParameters )
 
     while( 1 )
     {
-    	LED_PORT ^= 1;
+        LED_PORT ^= 1;
         vTaskDelay(5000);
     }
 #endif
-}
+} /* End of function main_task()*/
+
 /*-----------------------------------------------------------*/
 
-void prvMiscInitialization( void )
+/**********************************************************************************************************************
+* function name: prvMiscInitialization
+*********************************************************************************************************************/
+void prvMiscInitialization(void)
 {
     /* Initialize UART for serial terminal. */
     uart_config();
@@ -241,28 +251,35 @@ void prvMiscInitialization( void )
                             tskIDLE_PRIORITY + 2,
                             mainLOGGING_MESSAGE_QUEUE_LENGTH );
 
-}
+} /* End of function prvMiscInitialization()*/
+
 /*-----------------------------------------------------------*/
 
-void vApplicationDaemonTaskStartupHook( void )
+/**********************************************************************************************************************
+* function name: vApplicationDaemonTaskStartupHook
+*********************************************************************************************************************/
+void vApplicationDaemonTaskStartupHook(void)
 {
     prvMiscInitialization();
-}
+} /* End of function vApplicationDaemonTaskStartupHook()*/
 
 /*-----------------------------------------------------------*/
 
 /* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
  * implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
  * used by the Idle task. */
-void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
+/**********************************************************************************************************************
+* function name: vApplicationGetIdleTaskMemory
+*********************************************************************************************************************/
+void vApplicationGetIdleTaskMemory(StaticTask_t ** ppxIdleTaskTCBBuffer,
                                     StackType_t ** ppxIdleTaskStackBuffer,
-                                    uint32_t * pulIdleTaskStackSize )
+                                    configSTACK_DEPTH_TYPE * puxIdleTaskStackSize)
 {
     /* If the buffers to be provided to the Idle task are declared inside this
      * function then they must be declared static - otherwise they will be allocated on
      * the stack and so not exists after this function exits. */
     static StaticTask_t xIdleTaskTCB;
-    static StackType_t uxIdleTaskStack[ IDLE_TASK_STACK_SIZE ];
+    static StackType_t  uxIdleTaskStack[IDLE_TASK_STACK_SIZE];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle
      * task's state will be stored. */
@@ -274,8 +291,9 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
     /* Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.
      * Note that, as the array is necessarily of type StackType_t,
      * configMINIMAL_STACK_SIZE is specified in words, not bytes. */
-    *pulIdleTaskStackSize = IDLE_TASK_STACK_SIZE;
-}
+    *puxIdleTaskStackSize = IDLE_TASK_STACK_SIZE;
+} /* End of function vApplicationGetIdleTaskMemory()*/
+
 /*-----------------------------------------------------------*/
 
 /**
@@ -285,15 +303,18 @@ void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
  * implementation of vApplicationGetTimerTaskMemory() to provide the memory that is
  * used by the RTOS daemon/time task.
  */
-void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
-                                     StackType_t ** ppxTimerTaskStackBuffer,
-                                     uint32_t * pulTimerTaskStackSize )
+/**********************************************************************************************************************
+* function name: vApplicationGetTimerTaskMemory
+*********************************************************************************************************************/
+void vApplicationGetTimerTaskMemory(StaticTask_t ** ppxTimerTaskTCBBuffer,
+                                    StackType_t ** ppxTimerTaskStackBuffer,
+                                    configSTACK_DEPTH_TYPE * puxTimerTaskStackSize)
 {
     /* If the buffers to be provided to the Timer task are declared inside this
      * function then they must be declared static - otherwise they will be allocated on
      * the stack and so not exists after this function exits. */
     static StaticTask_t xTimerTaskTCB;
-    static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+    static StackType_t  uxTimerTaskStack[configTIMER_TASK_STACK_DEPTH];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle
      * task's state will be stored. */
@@ -305,8 +326,9 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
     /* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
      * Note that, as the array is necessarily of type StackType_t,
      * configMINIMAL_STACK_SIZE is specified in words, not bytes. */
-    *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
-}
+    *puxTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+} /* End of function vApplicationGetTimerTaskMemory()*/
+
 /*-----------------------------------------------------------*/
 
 #ifndef iotconfigUSE_PORT_SPECIFIC_HOOKS
@@ -321,16 +343,19 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
  * configTOTAL_HEAP_SIZE configuration constant in FreeRTOSConfig.h.
  *
  */
-    void vApplicationMallocFailedHook( void )
+/**********************************************************************************************************************
+* function name: vApplicationMallocFailedHook
+*********************************************************************************************************************/
+    void vApplicationMallocFailedHook(void)
     {
-        configPRINT_STRING( ( "ERROR: Malloc failed to allocate memory\r\n" ) );
+        configPRINT_STRING(("ERROR: Malloc failed to allocate memory\r\n"));
         taskDISABLE_INTERRUPTS();
 
         /* Loop forever */
-        for( ; ; )
+        for (; ;)
         {
         }
-    }
+    } /* End of function vApplicationMallocFailedHook()*/
 
 /*-----------------------------------------------------------*/
 
@@ -345,25 +370,31 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
  * has occurred.
  *
  */
-    void vApplicationStackOverflowHook( TaskHandle_t xTask,
-                                        char * pcTaskName )
+/**********************************************************************************************************************
+* function name: vApplicationStackOverflowHook
+*********************************************************************************************************************/
+    void vApplicationStackOverflowHook(TaskHandle_t xTask,
+                                        char * pcTaskName)
     {
-        configPRINT_STRING( ( "ERROR: stack overflow\r\n" ) );
+        configPRINT_STRING(("ERROR: stack overflow\r\n"));
         portDISABLE_INTERRUPTS();
 
         /* Unused Parameters */
-        ( void ) xTask;
-        ( void ) pcTaskName;
+        (void) xTask;
+        (void) pcTaskName;
 
         /* Loop forever */
-        for( ; ; )
+        for (; ;)
         {
         }
-    }
+    } /* End of function vApplicationStackOverflowHook()*/
 #endif /* iotconfigUSE_PORT_SPECIFIC_HOOKS */
 /*-----------------------------------------------------------*/
 
-static BaseType_t xPlatformNetworkUp( void )
+/**********************************************************************************************************************
+* function name: xPlatformNetworkUp
+*********************************************************************************************************************/
+static BaseType_t xPlatformNetworkUp(void)
 {
-    return ( (BaseType_t)setupWifi() );
-}
+    return ((BaseType_t)setupWifi());
+} /* End of function xPlatformNetworkUp()*/
