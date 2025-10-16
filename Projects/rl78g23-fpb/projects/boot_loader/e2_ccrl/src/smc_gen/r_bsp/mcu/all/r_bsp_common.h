@@ -43,6 +43,10 @@
 *                               Added RL78/G24 resource to clock mode comment.
 *                               Removed ADCLK from the clock mode comment.
 *                               Removed ADCLK from e_clock_mode_t.
+*         : 07.06.2024 1.70     Added RL78/F25 resource to clock mode comment.
+*         : 06.11.2024 1.80     Added RL78/F22 resource to clock mode comment.
+*         : 29.11.2024 1.90     Added RL78/L23 resource to clock mode comment.
+*         : 15.04.2025 1.91     Changed the version of smart configurator to check to 1140.
 ***********************************************************************************************************************/
 
 /*************************************************
@@ -61,7 +65,7 @@
 #ifndef R_BSP_COMMON_H
 #define R_BSP_COMMON_H
 
-#if BSP_CFG_CONFIGURATOR_VERSION < 1060
+#if BSP_CFG_CONFIGURATOR_VERSION < 1140
 #error "Make sure that the value of BSP_CFG_CONFIGURATOR_VERSION defined in r_config/r_bsp_config.h matches the version of Smart Configurator you are using. If they do not match, change the settings. If they match, you need to upgrade your Smart Configurator. Please upgrade Smart Configurator."
 #endif
 
@@ -75,14 +79,14 @@
  * n = this clock may not be available depending on the number of terminals. 
  * RL78 MCU supported clocks
  *
- * Clock  G23 F24 F23 G15 G22 G16 G24
- * ------ --- --- --- --- --- --- ---
- * HIOCLK  X   X   X   X   X   X   X
- * SYSCLK  Xm  X   X   Xn  Xm  Xn  Xm
- * SXCLK   Xm  Xn  Xn      Xm  Xn  Xm
- * MIOCLK  X               X       X
- * LOCLK   X   X   X       X       X
- * PLLCLK      X   X               X
+ * Clock  G23 F24 F23 G15 G22 G16 G24 F25 F22 L23
+ * ------ --- --- --- --- --- --- --- --- --- ---
+ * HIOCLK  X   X   X   X   X   X   X   X   X   X
+ * SYSCLK  Xm  X   X   Xn  Xm  Xn  Xm  X   X   X
+ * SXCLK   Xm  Xn  Xn      Xm  Xn  Xm  X   Xn  X
+ * MIOCLK  X               X       X           X
+ * LOCLK   X   X   X       X       X   X   X   X
+ * PLLCLK      X   X               X   X   X
 */
 typedef enum
 {
@@ -137,4 +141,3 @@ e_bsp_err_t R_BSP_SoftwareDelay (uint32_t delay, e_bsp_delay_units_t units);
 #endif
 
 #endif /* #define R_BSP_COMMON_H */
-

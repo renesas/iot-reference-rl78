@@ -14,12 +14,12 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2021, 2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2021, 2025 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
 * File Name        : r_cg_port.h
-* Version          : 1.0.30
+* Version          : 1.0.51
 * Device(s)        : R7F100GSNxFB
 * Description      : General header file for PORT peripheral.
 ***********************************************************************************************************************/
@@ -266,27 +266,35 @@ Macro definitions (Register bit)
     Port Mode Control E Registers (PMCEn)
 */
 /* Selection of digital I/O or ELCL output function for Pn7 (PMCEn7) */
+#define _80_PMCEn7_ELCL_OUTPUT                  (0x80U)    /* ELCL output function */
 #define _00_PMCEn7_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn7_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn6 (PMCEn6) */
+#define _40_PMCEn6_ELCL_OUTPUT                  (0x40U)    /* ELCL output function */
 #define _00_PMCEn6_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn6_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn5 (PMCEn5) */
+#define _20_PMCEn5_ELCL_OUTPUT                  (0x20U)    /* ELCL output function */
 #define _00_PMCEn5_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn5_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn4 (PMCEn4) */
+#define _10_PMCEn4_ELCL_OUTPUT                  (0x10U)    /* ELCL output function */
 #define _00_PMCEn4_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn4_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn3 (PMCEn3) */
+#define _08_PMCEn3_ELCL_OUTPUT                  (0x08U)    /* ELCL output function */
 #define _00_PMCEn3_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn3_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn2 (PMCEn2) */
+#define _04_PMCEn2_ELCL_OUTPUT                  (0x04U)    /* ELCL output function */
 #define _00_PMCEn2_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn2_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn1 (PMCEn1) */
+#define _02_PMCEn1_ELCL_OUTPUT                  (0x02U)    /* ELCL output function */
 #define _00_PMCEn1_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn1_DIGITAL_ON                   (0x00U)    /* digital I/O */
 /* Selection of digital I/O or ELCL output function for Pn0 (PMCEn0) */
+#define _01_PMCEn0_ELCL_OUTPUT                  (0x01U)    /* ELCL output function */
 #define _00_PMCEn0_NOT_USE                      (0x00U)    /* not use digital I/O */
 #define _00_PMCEn0_DIGITAL_ON                   (0x00U)    /* digital I/O */
 
@@ -313,11 +321,11 @@ Macro definitions (Register bit)
 #define _00_P60_OUTPUT_CURRENT_OFF              (0x00U)    /* digital I/O */
 #define _10_P60_OUTPUT_CURRENT_ON               (0x10U)    /* current control function */
 /* Selection of digital I/O or output current control for CCD03 (CCDE03) */
-#define _00_P51_OUTPUT_CURRENT_OFF              (0x00U)    /* digital I/O */
-#define _08_P51_OUTPUT_CURRENT_ON               (0x08U)    /* current control function */
-/* Selection of digital I/O or output current control for CCD02 (CCDE02) */
 #define _00_P50_OUTPUT_CURRENT_OFF              (0x00U)    /* digital I/O */
-#define _04_P50_OUTPUT_CURRENT_ON               (0x04U)    /* current control function */
+#define _08_P50_OUTPUT_CURRENT_ON               (0x08U)    /* current control function */
+/* Selection of digital I/O or output current control for CCD02 (CCDE02) */
+#define _00_P51_OUTPUT_CURRENT_OFF              (0x00U)    /* digital I/O */
+#define _04_P51_OUTPUT_CURRENT_ON               (0x04U)    /* current control function */
 /* Selection of digital I/O or output current control for CCD01 (CCDE01) */
 #define _00_P17_OUTPUT_CURRENT_OFF              (0x00U)    /* digital I/O */
 #define _02_P17_OUTPUT_CURRENT_ON               (0x02U)    /* current control function */
@@ -387,3 +395,4 @@ Global functions
 /* Start user code for function. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 #endif
+

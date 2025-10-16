@@ -14,12 +14,12 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2021, 2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2021, 2025 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
 * File Name        : r_cg_sau_common.c
-* Version          : 1.0.30
+* Version          : 1.0.51
 * Device(s)        : R7F100GSNxFB
 * Description      : None
 ***********************************************************************************************************************/

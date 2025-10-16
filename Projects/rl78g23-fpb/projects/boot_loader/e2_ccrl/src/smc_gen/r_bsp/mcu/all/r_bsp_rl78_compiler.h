@@ -27,6 +27,7 @@
 *         : 04.08.2021 1.12     Added include guard.
 *         : 28.02.2022 1.20     Added macro definition for option byte(000C4H).
 *         : 11.11.2022 1.40     Split lines with too many characters into two lines.
+*         : 30.11.2023 1.62     Changed option byte comment.
 ***********************************************************************************************************************/
 
 /*************************************************
@@ -38,13 +39,7 @@
 
 /* Macro definition for option byte reference */
 /* 000C0H or 040C0H
- * Setting of watchdog timer operation
- * - Enabling or disabling of counter operation
- * - Enabling or stopping of counter operation in the HALT or STOP mode
- * Setting of overflow time of watchdog timer
- * Setting of window open period of watchdog timer
- * Setting of interval interrupt of watchdog timer
- * - Interval interrupt is used or not used
+ * For details, please refer to the option byte chapter of the user's manual.
  */
 #if defined(__CCRL__)
 #define OPTBYTE_C0    (*(volatile __far unsigned char *)0x000C0)
@@ -55,11 +50,7 @@
 #endif
 
 /* 000C1H or 040C1H
- * Setting of LVD0 operation mode
- * - Reset mode
- * - Interrupt mode
- * - -LVD0 off(by controlling the externally input reset signal on the RESET pin)
- * Setting of LVD0 detection level(VLVD0)
+ * For details, please refer to the option byte chapter of the user's manual.
  */
 #if defined(__CCRL__)
 #define OPTBYTE_C1    (*(volatile __far unsigned char *)0x000C1)
@@ -70,14 +61,7 @@
 #endif
 
 /* 000C2H or 040C2H
- * Setting of flash operation mode
- *  Make the setting depending on the main system clock frequency(fMAIN)
- *  and power supply voltage(VDD) to be used.
- *  - LS(low-speed main) mode
- *  - HS(high-speed main) mode
- *  - LP(low-power main) mode
- * Setting of the frequency of the high-speed on-chip oscillator
- * - Select from 1 MHz to 32 MHz
+ * For details, please refer to the option byte chapter of the user's manual.
  */
 #if defined(__CCRL__)
 #define OPTBYTE_C2    (*(volatile __far unsigned char *)0x000C2)
@@ -88,11 +72,7 @@
 #endif
 
 /* 000C3H or 040C3H
- * Control of on-chip debug operation
- * - On-chip debug operation is disabled or enabled.
- * Handling of data of flash memory in case of failure in security ID codes for on-chip debug authentication
- * - Data of flash memory is erased or not erased in case of failure in 
- *   security ID codes for on-chip debug authentication
+ * For details, please refer to the option byte chapter of the user's manual.
  */
 #if defined(__CCRL__)
 #define OPTBYTE_C3    (*(volatile __far unsigned char *)0x000C3)
@@ -103,8 +83,7 @@
 #endif
 
 /* 000C4H or 040C4H
- * Control of on-chip debug and flash serial programming security ID read
- * - On-chip debug and flash serial programming security ID read are disabled or enabled.
+ * For details, please refer to the option byte chapter of the user's manual.
  */
 #if defined(__CCRL__)
 #define OPTBYTE_C4    (*(volatile __far unsigned char *)0x000C4)

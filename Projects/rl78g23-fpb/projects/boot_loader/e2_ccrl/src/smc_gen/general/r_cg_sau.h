@@ -14,12 +14,12 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2021, 2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2021, 2025 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
 * File Name        : r_cg_sau.h
-* Version          : 1.0.30
+* Version          : 1.0.51
 * Device(s)        : R7F100GSNxFB
 * Description      : General header file for SAU peripheral.
 ***********************************************************************************************************************/
@@ -303,6 +303,24 @@ Macro definitions (Register bit)
 /*
     Input switch control register (ISC)
 */
+/* Selection of the serial clock input source of CSI01 (ISC7 - ISC6) */
+#define _00_SAU_CSI01_CLOCK_SCK01           (0x00U)    /* SCK01 (normal operation) */
+#define _40_SAU_CSI01_CLOCK_ELCL            (0x40U)    /* ELCL output signal */
+#define _80_SAU_CSI01_CLOCK_TO01            (0x80U)    /* TO01 output signal */
+#define _3F_SAU_CSI01_CLOCK_INPUT_CLEAR     (0x3FU)    /* clear */
+/* Selection of the serial data input source of CSI01 (ISC5) */
+#define _00_SAU_CSI01_DATA_SI01             (0x00U)    /* SI01 (normal operation) */
+#define _20_SAU_CSI01_DATA_ELCL             (0x20U)    /* ELCL output signal */
+#define _DF_SAU_CSI01_DATA_INPUT_CLEAR      (0xDFU)    /* clear */
+/* Selection of the serial clock input source of CSI00 (ISC4 - ISC3) */
+#define _00_SAU_CSI00_CLOCK_SCK00           (0x00U)    /* SCK00 (normal operation) */
+#define _08_SAU_CSI00_CLOCK_ELCL            (0x08U)    /* ELCL output signal */
+#define _10_SAU_CSI00_CLOCK_TO01            (0x10U)    /* TO01 output signal */
+#define _E7_SAU_CSI00_CLOCK_INPUT_CLEAR     (0xE7U)    /* clear */
+/* Selection of the serial data input source of CSI00 (ISC2) */
+#define _00_SAU_CSI00_DATA_SI00             (0x00U)    /* SI00 (normal operation) */
+#define _04_SAU_CSI00_DATA_ELCL             (0x04U)    /* ELCL output signal */
+#define _FB_SAU_CSI00_DATA_INPUT_CLEAR      (0xFBU)    /* clear */
 /* Channel 0 SSI00 input setting in CSI communication and slave mode (SSIE00) */
 #define _00_SAU_SSI00_UNUSED             (0x00U)    /* disables SSI00 pin input */
 #define _80_SAU_SSI00_USED               (0x80U)    /* enables SSI00 pin input */

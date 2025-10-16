@@ -24,7 +24,7 @@
 /***********************************************************************************************************************
 * History : DD.MM.YYYY Version  Description
 *         : 08.03.2021 1.00     First Release
-
+*         : 31.08.2023 1.61     Changed the setting method of the IAWCTL register.
 ***********************************************************************************************************************/
 /*************************************************
  * Includes  <System Includes> , "Project Includes"
@@ -71,15 +71,11 @@ void hdwinit(void)
     peripheral_modules_enable();
 
     /* Safety function setting */
-#if BSP_CFG_INVALID_MEMORY_ACCESS_DETECTION_ENABLE == 0
-    IAWCTL = 0x00U;
-#else
     IAWCTL = (BSP_CFG_INVALID_MEMORY_ACCESS_DETECTION_ENABLE << 7U) |
             (BSP_CFG_RAM_GUARD_FUNC << 4U) |
             (BSP_CFG_PORT_FUNCTION_GUARD << 2U) |
             (BSP_CFG_INT_FUNCTION_GUARD << 1U) |
             (BSP_CFG_CHIP_STATE_CTRL_GUARD);
-#endif
 
     /* Data flash access control */
 #if BSP_CFG_DATA_FLASH_ACCESS_ENABLE == 1
