@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_atcmd.c
  * Description  : AT command functions definition.
@@ -968,7 +955,17 @@ void da16xxx_handle_incoming_uart_data(uint8_t data)
 #endif
             break;
         }
-
+        case WIFI_RESP_NWOTADWSTART:
+        case WIFI_RESP_NWOTAREADFW:
+        {
+#if WIFI_CFG_OTA_SUPPORT == 1
+            da16xxx_handle_incoming_ota_data(&g_uart_tbl.at_resp_type, &g_uart_tbl.socket_recv_state, data);
+#else
+            g_uart_tbl.at_resp_type = WIFI_RESP_NONE;
+            g_uart_tbl.socket_recv_state = WIFI_RECV_PREFIX;
+#endif
+            break;
+        }
         default:
         {
             break;
@@ -1108,13 +1105,30 @@ void da16xxx_handle_incoming_uart_data(uint8_t data)
                         g_uart_tbl.at_resp_type = WIFI_RESP_NWHTCSTATUS;
                         g_uart_tbl.socket_recv_state = WIFI_RECV_PARAM_CID;
                     }
+                    else if (0x5C127C1F == hash[0] && 0x40B2CB99 == hash[1]) // NWOTAREADFW
+                    {
+                        g_uart_tbl.at_resp_type = WIFI_RESP_NWOTAREADFW;
+                        g_uart_tbl.socket_recv_state = WIFI_RECV_PARAM_STATUS;
+                    }
+                    else
+                    {
+                        g_uart_tbl.socket_recv_state = WIFI_RECV_PREFIX;
+                    }
+                }
+                else if (12 == g_rx_idx)
+                {
+                    if (0x5C127C11 == hash[0] && 0xF3485CAB == hash[1]) // NWOTADWSTART
+                    {
+                        g_uart_tbl.at_resp_type = WIFI_RESP_NWOTADWSTART;
+                        g_uart_tbl.socket_recv_state = WIFI_RECV_PARAM_STATUS;
+                    }
                     else
                     {
                         g_uart_tbl.socket_recv_state = WIFI_RECV_PREFIX;
                     }
                 }
             }
-            else if (g_rx_idx == 11)
+            else if (g_rx_idx == 12)
             {
                 g_uart_tbl.socket_recv_state = WIFI_RECV_PREFIX;
             }
@@ -1163,3 +1177,33 @@ void uart_port_set_baudrate (uint32_t rate_num)
 /**********************************************************************************************************************
  * End of function uart_port_set_baudrate
  *********************************************************************************************************************/
+
+#if WIFI_CFG_OTA_SUPPORT == 1
+/**********************************************************************************************************************
+ * Function Name: uart_set_recv_state
+ * Description  : set uart recv state
+ * Arguments    : state
+ * Return Value : none
+ *********************************************************************************************************************/
+void uart_set_recv_state(wifi_recv_state_t state)
+{
+    g_uart_tbl.socket_recv_state = state;
+}
+/**********************************************************************************************************************
+ * End of function uart_set_recv_state
+ *********************************************************************************************************************/
+
+/**********************************************************************************************************************
+ * Function Name: uart_set_recv_type
+ * Description  : set uart recv type
+ * Arguments    : type
+ * Return Value : none
+ *********************************************************************************************************************/
+void uart_set_recv_type(wifi_resp_type_t type)
+{
+    g_uart_tbl.at_resp_type = type;
+}
+/**********************************************************************************************************************
+ * End of function uart_set_recv_type
+ *********************************************************************************************************************/
+#endif

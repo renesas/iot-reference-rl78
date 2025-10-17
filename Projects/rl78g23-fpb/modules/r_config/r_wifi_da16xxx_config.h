@@ -1,22 +1,9 @@
 /* Generated configuration header file - do not edit */
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_config.h
  * Description  : DA16XXX WiFi driver Configuration.
@@ -467,7 +454,7 @@ Note2: List of board user's manual:
 /* Configures the receive buffer size for the socket.
     Set this value in range from 1 to 4096.
  */
-#define WIFI_CFG_TLS_SOCKET_RECEIVE_BUFFER_SIZE (2048)
+#define WIFI_CFG_TLS_SOCKET_RECEIVE_BUFFER_SIZE (1024)
 
 /* Flag to use CA certificates.
     0 = Unused.
@@ -549,6 +536,45 @@ Note2: List of board user's manual:
 #endif
 
 /* End HTTP macro definitions */
+
+/* Start OTA macro definitions */
+
+#define WIFI_CFG_OTA_SUPPORT                   (0)
+
+#if WIFI_CFG_OTA_SUPPORT == 1
+/*
+ * @brief Block size for OTA data write.
+ *
+ * Defines the size (in bytes) of each data block written to flash memory
+ * during the OTA (Over-the-Air) update process. This value determines how
+ * much data is written per write operation.
+ */
+#define WIFI_CFG_OTA_BLK_SIZE                  (128)
+
+/* Configures the certificate verification mode.
+    0: None - No authentication required; accept connections without any form of authentication.
+    1: Optional - Allow both authenticated and unauthenticated connections.
+    2: Require - Demand authentication for connections.
+ */
+#define WIFI_CFG_OTA_TLS_AUTH                  (0)
+
+#if WIFI_CFG_OTA_TLS_AUTH != 0
+
+/* Name of header file that will contain certificates (macros).
+    User must create header file.
+    Example: "cert_storage.h"
+ */
+#define WIFI_CFG_OTA_CERTS_HEADER              ""
+
+/* Root CA
+    Links to user-defined macro of the same name for Root CA
+    which user must define in application header.
+ */
+#define WIFI_CFG_OTA_ROOT_CA                   /* Root CA */
+
+#endif /* End WIFI_CFG_OTA_TLS_AUTH != 0 */
+
+#endif /* End WIFI_CFG_OTA_SUPPORT == 1 */
 
 /**********************************************************************************************************************
  Global Typedef definitions

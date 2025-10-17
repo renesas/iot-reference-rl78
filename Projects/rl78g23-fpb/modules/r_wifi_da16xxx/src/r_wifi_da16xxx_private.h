@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_private.h
  * Description  : Private functions definition for DA16XXX.
@@ -65,6 +52,9 @@
 /* Minimum string size for getting local time string */
 #define DA16XXX_LOCAL_TIME_STR_SIZE             (25)
 #define DA16XXX_HOURS_IN_SECONDS                (3600)
+
+/* Prefix for OTA service */
+#define WIFI_OTA_TYPE_FW                   "mcu_fw"
 
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #define WIFI_RESET_DR_PREPROC(x, y)     ((PORT ## x .PODR.BIT.B ## y))
@@ -267,6 +257,12 @@ typedef enum
     DA16XXX_HTTP_CLOSE = 0,
     DA16XXX_HTTP_OPEN,
 } da16xxx_http_status_t;
+
+typedef enum
+{
+    DA16XXX_OTA_CLOSE = 0,
+    DA16XXX_OTA_OPEN,
+} da16xxx_ota_status_t;
 
 /**********************************************************************************************************************
  External global variables
@@ -522,7 +518,34 @@ void da16xxx_handle_incoming_mqtt_data(wifi_resp_type_t *type, wifi_recv_state_t
  *********************************************************************************************************************/
 void da16xxx_handle_incoming_http_data(wifi_resp_type_t *type, wifi_recv_state_t *state, uint8_t data);
 #endif /* WIFI_CFG_HTTP_SUPPORT */
+#if WIFI_CFG_OTA_SUPPORT == 1
+/**********************************************************************************************************************
+ * Function Name: da16xxx_handle_incoming_ota_data
+ * Description  : Handles incoming OTA data.
+ * Arguments    : type
+ *                state
+ *                data
+ * Return Value : none
+ *********************************************************************************************************************/
+void da16xxx_handle_incoming_ota_data (wifi_resp_type_t * type, wifi_recv_state_t * state, uint8_t data);
 
+/**********************************************************************************************************************
+ * Function Name: uart_set_recv_state
+ * Description  : set uart recv state
+ * Arguments    : state
+ * Return Value : none
+ *********************************************************************************************************************/
+void uart_set_recv_state (wifi_recv_state_t state);
+
+/**********************************************************************************************************************
+ * Function Name: uart_set_recv_type
+ * Description  : set uart recv type
+ * Arguments    : type
+ * Return Value : none
+ *********************************************************************************************************************/
+void uart_set_recv_type (wifi_resp_type_t type);
+
+#endif /* WIFI_CFG_OTA_SUPPORT */
 /**********************************************************************************************************************
  * Function Name: uart_port_set_baudrate
  * Description  : Set baud rate for serial port.

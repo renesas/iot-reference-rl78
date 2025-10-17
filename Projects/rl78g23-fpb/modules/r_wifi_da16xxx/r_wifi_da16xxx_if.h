@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_if.h
  * Description  : API functions definition for DA16XXX of RX65N.
@@ -42,7 +29,7 @@
 
 /* Version Number of API. */
 #define WIFI_VERSION_MAJOR  (1)
-#define WIFI_VERSION_MINOR  (31)
+#define WIFI_VERSION_MINOR  (40)
 
 /**********************************************************************************************************************
  Global Typedef definitions
@@ -59,7 +46,7 @@ typedef enum
     WIFI_ERR_MODULE_TIMEOUT     = -6,     // communicate with module timed out
     WIFI_ERR_NOT_CONNECT        = -7,     // not connect to access point
     WIFI_ERR_SOCKET_NUM         = -8,     // no available sockets
-    WIFI_ERR_SOCKET_CREATE      = -9,    // create socket failed
+    WIFI_ERR_SOCKET_CREATE      = -9,     // create socket failed
     WIFI_ERR_CHANGE_SOCKET      = -10,    // cannot change socket
     WIFI_ERR_SOCKET_CONNECT     = -11,    // cannot connect socket
     WIFI_ERR_BYTEQ_OPEN         = -12,    // cannot assigned BYTEQ
@@ -78,6 +65,12 @@ typedef enum
     WIFI_ERR_HTTP_ALREADY_OPEN  = -21,    // already WIFI HTTP opened
     WIFI_ERR_HTTP_NOT_OPEN      = -22,    // WIFI HTTP module is not opened
     WIFI_ERR_HTTP_INVALID_DATA  = -23,    // invalid data to send/receive
+
+    /* For OTA */
+    WIFI_ERR_OTA_FAIL           = -24,    // OTA common error
+    WIFI_ERR_OTA_NOT_OPEN       = -25,    // WIFI OTA service is not opened
+    WIFI_ERR_OTA_ALREADY_OPEN   = -26,    // already WIFI OTA opened
+    WIFI_ERR_OTA_NOT_IDLE       = -27     // OTA service state is not IDLE
 } wifi_err_t;
 
 /* Security type */
@@ -143,7 +136,9 @@ typedef enum
     WIFI_RESP_NWMQMSGSND,    // MQTT send message status
     WIFI_RESP_TRSSLDTC,      // incomming TLS socket data
     WIFI_RESP_NWHTCSTATUS,   // HTTP response status code
-    WIFI_RESP_NWHTCDATA      // HTTP response data
+    WIFI_RESP_NWHTCDATA,     // HTTP response data
+    WIFI_RESP_NWOTADWSTART,  // OTA Start response
+    WIFI_RESP_NWOTAREADFW    // OTA read firmware response
 } wifi_resp_type_t;
 
 /* Socket receive state */
@@ -156,6 +151,7 @@ typedef enum
     WIFI_RECV_PARAM_IP,       // ip parameter
     WIFI_RECV_PARAM_PORT,     // port parameter
     WIFI_RECV_PARAM_LEN,      // length parameter
+    WIFI_RECV_PARAM_STATUS,   // status parameter
     WIFI_RECV_DATA
 } wifi_recv_state_t;
 
@@ -287,11 +283,21 @@ typedef struct st_wifi_http_request
     uint32_t              length;             // HTTP request length
 } wifi_http_request_t;
 
+/* HTTP response buffer parameters */
 typedef struct st_wifi_http_buffer
 {
     char   * response_buffer;
     uint32_t resp_length;
 } wifi_http_buffer_t;
+
+/* OTA state */
+typedef enum
+{
+    WIFI_OTA_IDLE,
+    WIFI_OTA_DOWNLOAD_INPROGRESS,
+    WIFI_OTA_DOWNLOAD_FINISH,
+    WIFI_OTA_FAIL,
+} wifi_ota_state_t;
 
 /**********************************************************************************************************************
  External global variables
@@ -316,7 +322,7 @@ wifi_err_t R_WIFI_DA16XXX_Open (void);
 
 /**********************************************************************************************************************
  * Function Name: R_WIFI_DA16XXX_IsOpened
- * Description  : Check wifi is opened.
+ * Description  : Check Wi-Fi is opened.
  * Arguments    : none.
  * Return Value : 0  - opened
  *                -1 - not opened
@@ -958,5 +964,115 @@ wifi_err_t R_WIFI_DA16XXX_HttpClose(void);
  *********************************************************************************************************************/
 wifi_err_t R_WIFI_DA16XXX_HttpSend (wifi_http_request_t request, wifi_http_buffer_t *buffer);
 #endif /* WIFI_CFG_HTTP_SUPPORT */
+
+#if WIFI_CFG_OTA_SUPPORT == 1
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaOpen
+ * Description  : Initialize the DA16XXX on-chip OTA service.
+ * Arguments    : none
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_OTA_FAIL
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_PARAMETER
+ *                WIFI_ERR_NOT_CONNECT
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaOpen (void);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaClose
+ * Description  : Close the DA16XXX OTA service.
+ * Arguments    : none
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_OTA_FAIL
+ *                WIFI_ERR_OTA_NOT_OPEN
+ *                WIFI_ERR_MODULE_COM
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaClose (void);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaStart
+ * Description  : Start downloading firmware from an OTA server
+ * Arguments    : fw_url
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_OTA_FAIL
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_PARAMETER
+ *                WIFI_ERR_NOT_CONNECT
+ *                WIFI_ERR_OTA_NOT_IDLE
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaStart (const uint8_t * fw_url);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaGetProgress
+ * Description  : Get progress status of firmware download.
+ * Arguments    : progress
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_OTA_FAIL
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaGetProgress (uint8_t * progress);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaGetAddress
+ * Description  : Get the value set with NWOTASETADDR
+ * Arguments    : fw_addr
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_OTA_FAIL
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaGetAddress (uint32_t * fw_addr);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaFirmwareSize
+ * Description  : Get a size in the header of the MCU firmware
+ * Arguments    : fw_size
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_OTA_FAIL
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaFirmwareSize (uint32_t * fw_size);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaReadFirmwarebyBlock
+ * Description  : Read the MCU firmware as much as the size from the fw_addr and transmit it
+ * Arguments    : fw_addr
+ *                size
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_OTA_FAIL
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaReadFirmwarebyBlock (uint32_t fw_addr, uint32_t size);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaEraseFirmware
+ * Description  : Erase the MCU firmware stored in a serial flash of the DA16200/DA16600.
+ * Arguments    : none
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_NOT_OPEN
+ *                WIFI_ERR_OTA_FAIL
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaEraseFirmware (void);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaGetState
+ * Description  : Get state of OTA transfer.
+ * Arguments    : state
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_NOT_OPEN
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaGetState (wifi_ota_state_t * state);
+
+/**********************************************************************************************************************
+ * Function Name: R_WIFI_DA16XXX_OtaGetFirmware
+ * Description  : Get data in ota_fw_buf by size
+ * Arguments    : buffer
+ *                offset
+ *                size
+ * Return Value : WIFI_SUCCESS
+ *                WIFI_ERR_OTA_NOT_OPEN
+ *********************************************************************************************************************/
+wifi_err_t R_WIFI_DA16XXX_OtaGetFirmware (uint8_t * buffer, uint16_t offset, uint16_t size);
+
+#endif /* WIFI_CFG_OTA_SUPPORT == 1 */
 
 #endif /* R_WIFI_DA16XXX_CFG_IF_H */
