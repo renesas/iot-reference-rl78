@@ -331,13 +331,14 @@ R_RFD_FAR_FUNC e_rfd_ret_t R_RFD_SetFlashMemoryMode(e_rfd_flash_memory_mode_t i_
     /* Check mode */
     l_e_ret_value = R_RFD_CheckFlashMemoryMode(i_e_flash_mode);
     
-    /* Read from FSSET register */
-    l_u08_fsset_value = R_RFD_REG_U08_FSSET;
-    
     if (R_RFD_ENUM_RET_STS_OK == l_e_ret_value)
     {
-        if (R_RFD_ENUM_FLASH_MODE_UNPROGRAMMABLE != i_e_flash_mode)
+        if ((R_RFD_ENUM_FLASH_MODE_CODE_PROGRAMMING == i_e_flash_mode) 
+           || (R_RFD_ENUM_FLASH_MODE_DATA_PROGRAMMING == i_e_flash_mode))
         {
+            /* Read FSSET register */
+            l_u08_fsset_value = R_RFD_REG_U08_FSSET;
+            
             /* Set frequency */
             R_RFD_REG_U08_FSSET = (l_u08_fsset_value & R_RFD_VALUE_U08_MASK1_FSSET_TMSPMD_AND_TMBTSEL) 
                                   | g_u08_fset_cpu_frequency;

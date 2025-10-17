@@ -44,6 +44,36 @@
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/modules/r_fwup</locationURI>
 		</link>
+		<link>
+			<name>src/src/r_rfd_rl78_codeflash</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/modules/r_rfd_rl78_codeflash</locationURI>
+		</link>
+		<link>
+			<name>src/src/r_rfd_rl78_common</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/modules/r_rfd_rl78_common</locationURI>
+		</link>
+		<link>
+			<name>src/src/r_rfd_rl78_dataflash</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/modules/r_rfd_rl78_dataflash</locationURI>
+		</link>
+		<link>
+			<name>src/src/r_config/r_rfd_rl78_code_flash_config.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/modules/r_config/r_rfd_rl78_code_flash_config.h</locationURI>
+		</link>
+		<link>
+			<name>src/src/r_config/r_rfd_rl78_common_config.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/modules/r_config/r_rfd_rl78_common_config.h</locationURI>
+		</link>
+		<link>
+			<name>src/src/r_config/r_rfd_rl78_data_flash_config.h</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/modules/r_config/r_rfd_rl78_data_flash_config.h</locationURI>
+		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>

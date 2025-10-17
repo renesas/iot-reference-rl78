@@ -1,10 +1,10 @@
 /**********************************************************************************************************************
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
-    File Name       : r_rfd_extra_area_api.h
+    File Name       : r_rfd_rl78_code_flash_if.h
     Program Version : V1.20
     Device(s)       : RL78/G2x microcontroller
-    Description     : API definition of Extra Area Control
+    Description     : Public Interface Header File for Code Flash Control
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -24,25 +24,15 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2021-2024 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
-#ifndef R_RFD_EXTRA_AREA_API_H
-#define R_RFD_EXTRA_AREA_API_H
+#ifndef R_RFD_RL78_CODE_FLASH_IF_H
+#define R_RFD_RL78_CODE_FLASH_IF_H
 
-#include "r_rfd.h"
+#include "r_rfd_code_flash_api.h"
+#include "r_rfd_common_extension_api.h"
+#include "r_rfd_common_get_api.h"
 
-/**********************************************************************************************************************
- For Extra Area Control Component
- *********************************************************************************************************************/
+#endif /* end of R_RFD_RL78_CODE_FLASH_IF_H */
 
-/**********************************************************************************************************************
- Prototype declaration
- *********************************************************************************************************************/
-
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraBootAreaReq(e_rfd_boot_cluster_t i_e_boot_cluster);
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraFSWReq(uint16_t i_u16_start_block_number, 
-                                                uint16_t i_u16_end_block_number, 
-                                                e_rfd_fsw_mode_t i_e_fsw_mode);
-
-#endif /* end of R_RFD_EXTRA_AREA_API_H */

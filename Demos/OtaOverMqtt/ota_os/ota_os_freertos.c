@@ -38,7 +38,7 @@ static StaticQueue_t staticQueue;
 /* The queue control handle.  .*/
 static QueueHandle_t otaEventQueue = NULL;
 
-OtaOsStatus_t OtaInitEvent_FreeRTOS()
+OtaOsStatus_t OtaInitEvent_FreeRTOS( void )
 {
     OtaOsStatus_t otaOsStatus = OtaOsSuccess;
 
@@ -113,7 +113,7 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg )
     return otaOsStatus;
 }
 
-void OtaDeinitEvent_FreeRTOS()
+void OtaDeinitEvent_FreeRTOS(void)
 {
     vQueueDelete( otaEventQueue );
 

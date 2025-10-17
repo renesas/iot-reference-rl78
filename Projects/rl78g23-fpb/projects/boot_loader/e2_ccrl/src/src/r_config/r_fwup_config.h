@@ -1,30 +1,20 @@
-/***********************************************************************************************************************
-* DISCLAIMER
-* This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
-* other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
-* applicable laws, including copyright laws.
-* THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
-* THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
-* EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
-* SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
-* SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-* Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
-* this software. By using this software, you agree to the additional terms and conditions found by accessing the
-* following link:
-* http://www.renesas.com/disclaimer
+/*
+* Copyright (c) 2023-2025 Renesas Electronics Corporation and/or its affiliates
 *
-* Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
-***********************************************************************************************************************/
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /***********************************************************************************************************************
 * File Name     : r_fwup_config.h
 * Description   : Configures the Firmware update module.
 ************************************************************************************************************************
 * History : DD.MM.YYYY Version Description
 *         : 31.03.2023 2.00    First Release
-*         : 20.11.2023 2.01    Fixed log messages.
+*         : 20.11.2023 2.01    Added support RL78/G24
+*                              Fixed log messages.
 *                              Add parameter checking.
 *                              Added arguments to R_FWUP_WriteImageProgram API.
+*         : 18.04.2025 2.03    V203 Release.
+*         : 27.08.2025 2.04    V204 Release.
 ***********************************************************************************************************************/
 #include "platform.h"
 
@@ -61,7 +51,7 @@ Configuration Options
 
 /* Internal flash */
 #define FWUP_CFG_CF_BLK_SIZE                        (2048U)         /* Code flash block size       */
-#define FWUP_CFG_CF_W_UNIT_SIZE                     (128U)             /* Code flash write unit size  */
+#define FWUP_CFG_CF_W_UNIT_SIZE                     (128U)          /* Code flash write unit size  */
 
 /* External flash */
 #define FWUP_CFG_EXT_BUF_AREA_ADDR_L                (0x00000U)      /* External Buffer area Start address */
@@ -71,9 +61,8 @@ Configuration Options
 #define FWUP_CFG_DF_ADDR_L                          (0xF1000U)      /* DF Start address    */
 #define FWUP_CFG_DF_BLK_SIZE                        (256U)          /* DF Block size       */
 #define FWUP_CFG_DF_NUM_BLKS                        (32U)           /* DF number of blocks */
-
 /* FWUP v1 compatible */
-#define FWUP_CFG_FWUPV1_COMPATIBLE                  (0)             /* 0:Disable, 1:Enable */
+#define FWUP_CFG_FWUPV1_COMPATIBLE                  (0)                /* 0:Disable, 1:Enable */
 
 /* Select the algorithm of signature verification.
     0 = ECDSA. (default)
@@ -83,8 +72,8 @@ Configuration Options
 
 /* Disable Printf Output Setting.
     Disables the character output by printf to the terminal software.
-    0 = Enable (default)
-    1 = Disable.
+    0 = Enable
+    1 = Disable (default)
  */
 #define FWUP_CFG_PRINTF_DISABLE                     (0)
 

@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO THIS
- * SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2023-2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_fwup_private.h
  * Description  : Functions for using Firmware update.
@@ -25,6 +12,8 @@
  *         : 20.11.2023 2.01    Fixed log messages.
  *                              Add parameter checking.
  *                              Added arguments to R_FWUP_WriteImageProgram API.
+ *         : 18.04.2025 2.03    V203 Release.
+ *         : 27.08.2025 2.04    V204 Release.
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -41,24 +30,27 @@
 /**********************************************************************************************************************
  Macro definitions
  *********************************************************************************************************************/
-#if (BSP_CFG_RTOS_USED == 1)
-#include "FreeRTOS.h"
-#include "iot_logging_task.h"
-#define FWUP_PRINTF                 vLoggingPrintf
-#else
-#define FWUP_PRINTF                 printf
-#endif
-
 #if (FWUP_CFG_PRINTF_DISABLE == 1)
+#if defined(__llvm__)
 #define FWUP_LOG_ERR(...)
 #define FWUP_LOG_INFO(...)
 #define FWUP_LOG_DBG(...)
-#else
-#define FWUP_LOG_ERR                FWUP_PRINTF
-#define FWUP_LOG_INFO               FWUP_PRINTF
-#define FWUP_LOG_DBG                FWUP_PRINTF
+#else /* defined(__llvm__) */
+#define FWUP_LOG_ERR(...)
+#define FWUP_LOG_INFO(...)
+#define FWUP_LOG_DBG(...)
+#endif /* defined(__llvm__) */
+#else /* (FWUP_CFG_PRINTF_DISABLE == 1) */
+#if defined(__llvm__)
+#define FWUP_LOG_ERR                dbg_printf
+#define FWUP_LOG_INFO               dbg_printf
+#define FWUP_LOG_DBG                dbg_printf
+#else /* defined(__llvm__) */
+#define FWUP_LOG_ERR                printf
+#define FWUP_LOG_INFO               printf
+#define FWUP_LOG_DBG                printf
+#endif /* defined(__llvm__) */
 #endif /* (FWUP_CFG_PRINTF_DISABLE == 1) */
-
 
 #define FWUP_IMAGE_BLOCKS           (31)
 #define FWUP_MAGIC_CODE_LEN         (7)

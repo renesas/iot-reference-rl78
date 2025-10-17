@@ -1,10 +1,10 @@
 /**********************************************************************************************************************
     Program Name    : Renesas Flash Driver (RFD RL78 Type01)
     
-    File Name       : r_rfd_extra_area_security_api.h
+    File Name       : r_rfd_rl78_common_if.h
     Program Version : V1.20
     Device(s)       : RL78/G2x microcontroller
-    Description     : API definition of Extra Area Control
+    Description     : Public Interface Header File for Common Flash Control
 **********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -24,28 +24,20 @@
     found by accessing the following link:
     http://www.renesas.com/disclaimer
     
-    Copyright (C) 2020-2023 Renesas Electronics Corporation. All rights reserved.
+    Copyright (C) 2021-2024 Renesas Electronics Corporation. All rights reserved.
 **********************************************************************************************************************/
 
-#ifndef R_RFD_EXTRA_AREA_SECURITY_API_H
-#define R_RFD_EXTRA_AREA_SECURITY_API_H
+#ifndef R_RFD_RL78_COMMON_IF_H
+#define R_RFD_RL78_COMMON_IF_H
 
 #include "r_rfd.h"
+#include "r_rfd_compiler.h"
+#include "r_rfd_device.h"
+#include "r_rfd_types.h"
+#include "r_typedefs.h"
+#include "r_rfd_common_api.h"
+#include "r_rfd_common_control_api.h"
+#include "r_rfd_common_userown.h"
 
-/**********************************************************************************************************************
- For Extra Area Control Component
- *********************************************************************************************************************/
+#endif /* end of R_RFD_RL78_COMMON_IF_H */
 
-/**********************************************************************************************************************
- Prototype declaration
- *********************************************************************************************************************/
-
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraEraseProtectReq(void);
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraWriteProtectReq(void);
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraBootAreaProtectReq(void);
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraFSWProtectReq(void);
-extern R_RFD_FAR_FUNC void R_RFD_SetExtraSoftwareReadProtectAreaReq(uint16_t i_u16_start_block_number, 
-                                                                    uint16_t i_u16_end_block_number, 
-                                                                    e_rfd_protect_t i_e_protect_flag);
-
-#endif /* end of R_RFD_EXTRA_AREA_SECURITY_API_H */
