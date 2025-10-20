@@ -476,7 +476,7 @@ Note2: List of board user's manual:
 
 /* Configures Private certificate name.
  */
-#define WIFI_CFG_TLS_CERT_PRIVATE_NAME           "CERT_KEY"
+#define WIFI_CFG_TLS_CERT_PRIVATE_NAME          "CERT_KEY"
 
 /* Enables or disables HTTP on-chip protocol.
     0 = disabled

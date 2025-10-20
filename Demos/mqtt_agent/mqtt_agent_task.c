@@ -176,7 +176,7 @@
  * @brief Timeout for receiving CONNACK after sending an MQTT CONNECT packet.
  * Defined in milliseconds.
  */
-#define mqttexampleCONNACK_RECV_TIMEOUT_MS           ( 2000U )
+#define mqttexampleCONNACK_RECV_TIMEOUT_MS           ( 10000U )
 
 /**
  * @brief The maximum number of retries for network operation with server.
@@ -207,9 +207,14 @@
 #define mqttexampleKEEP_ALIVE_INTERVAL_SECONDS       ( 60U )
 
 /**
- * @brief Socket send and receive timeouts to use.  Specified in milliseconds.
+ * @brief Socket send timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 450 )
+#define mqttexampleTRANSPORT_SEND_TIMEOUT_MS         ( 60000 )
+
+/**
+ * @brief Socket receive timeouts to use.  Specified in milliseconds.
+ */
+#define mqttexampleTRANSPORT_RECV_TIMEOUT_MS         ( 450 )
 
 /**
  * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
@@ -698,8 +703,8 @@ static BaseType_t prvCreateTLSConnection(NetworkContext_t * pxNetworkContext)
         xNetworkStatus = Plaintext_FreeRTOS_Connect( pxNetworkContext,
                                                 pcBrokerEndpoint,
                                                 democonfigMQTT_BROKER_PORT,
-                                                mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS,
-                                                mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS );
+                                                (uint32_t)mqttexampleTRANSPORT_RECV_TIMEOUT_MS,
+                                                (uint32_t)mqttexampleTRANSPORT_SEND_TIMEOUT_MS );
 
         xConnected = (PLAINTEXT_TRANSPORT_SUCCESS == xNetworkStatus) ? pdPASS : pdFAIL;
 #else
@@ -915,6 +920,12 @@ static void prvIncomingPublishCallback(MQTTAgentContext_t * pMqttAgentContext,
     char * pcLocation;
 
     (void) packetId;
+    (void) pMqttAgentContext;
+
+#if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
+    extern void handleReceivedPublish( void * pvIncomingPublishCallbackContext,
+                                       MQTTPublishInfo_t * pxPublishInfo );
+#endif
 
     /* Fan out the incoming publishes to the callbacks registered using
      * subscription manager. */
@@ -924,13 +935,13 @@ static void prvIncomingPublishCallback(MQTTAgentContext_t * pMqttAgentContext,
      * handle it as an unsolicited publish. */
     if (true != xPublishHandled)
     {
-        /* Ensure the topic string is terminated for printing.  This will over-
-         * write the message ID, which is restored afterwards. */
-        pcLocation    = (char *) &(pxPublishInfo->pTopicName[pxPublishInfo->topicNameLength]);
-        cOriginalChar = *pcLocation;
-        *pcLocation   = 0x00;
-        LogWarn(("WARN:  Received an unsolicited publish from topic %s", pxPublishInfo->pTopicName));
-        *pcLocation = cOriginalChar;
+#if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
+        handleReceivedPublish(NULL, pxPublishInfo);
+    #endif
+    }
+    else
+    {
+        ;
     }
 }/* End of function prvIncomingPublishCallback()*/
 
@@ -1041,6 +1052,12 @@ void prvMQTTAgentTask(void * pvParameters)
              * which could be a disconnect.  If an error occurs the MQTT context on
              * which the error happened is returned so there is an attempt to
              * clean up and reconnect. */
+
+            #if (ENABLE_OTA_UPDATE_DEMO == 1)
+                /* Set the MQTT context to be used by the MQTT wrapper. */
+                mqttWrapper_setCoreMqttContext( &( xGlobalMqttAgentContext.mqttContext ) );
+            #endif
+
             prvSetMQTTAgentState(MQTT_AGENT_STATE_CONNECTED);
 
             xMQTTStatus = MQTTAgent_CommandLoop(&xGlobalMqttAgentContext);
@@ -1500,7 +1517,7 @@ static void prvSubscribeRqCallback( MQTTAgentCommandContext_t * pxCommandContext
 
         if( pxReturnInfo->pSubackCodes )
         {
-            ulNotifyValue += ( pxReturnInfo->pSubackCodes[ 0 ] << 24 );
+            ulNotifyValue += ( (uint32_t)pxReturnInfo->pSubackCodes[ 0 ] << 24 );
         }
 
         ( void ) xTaskNotifyIndexed( xTaskHandle,

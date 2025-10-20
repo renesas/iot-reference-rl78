@@ -14,7 +14,7 @@
 #include "mqtt_wrapper.h"
 #include "ota_demo.h"
 
-#define MQTT_AGENT_NOTIFY_IDX    (2)
+#define MQTT_AGENT_NOTIFY_IDX    ((uint32_t)2)
 
 static MQTTContext_t * globalCoreMqttContext = NULL;
 
@@ -68,7 +68,11 @@ void mqttWrapper_getThingName(char *   thingNameBuffer,
 {
     configASSERT(globalThingName[ 0 ] != 0);
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    memcpy(thingNameBuffer, (const void __far *)globalThingName, globalThingNameLength);
+#else
     memcpy(thingNameBuffer, globalThingName, globalThingNameLength);
+#endif
     thingNameBuffer[globalThingNameLength] = '\0';
     *thingNameLength                       = globalThingNameLength;
 }

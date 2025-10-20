@@ -131,5 +131,5 @@ bool otaDemo_handleIncomingMQTTMessage( char * topic,
                                         uint8_t * message,
                                         size_t messageLength );
 
-OtaState_t getOtaAgentState();
+OtaState_t getOtaAgentState(void);
 #endif /* ifndef OTA_DEMO_H */

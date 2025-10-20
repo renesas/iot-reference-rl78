@@ -71,6 +71,9 @@
 #define configNUM_THREAD_LOCAL_STORAGE_POINTERS    3      /* FreeRTOS+FAT requires 2 pointers if a CWD is supported. */
 #define configRECORD_STACK_HIGH_ADDRESS            1
 
+/* Task notification settings. */
+#define configTASK_NOTIFICATION_ARRAY_ENTRIES      4
+
 #define configUSE_DAEMON_TASK_STARTUP_HOOK 1
 
 #define configCPU_CLOCK_HZ				(BSP_ICLK_HZ)

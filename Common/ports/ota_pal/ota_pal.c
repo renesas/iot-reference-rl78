@@ -117,12 +117,28 @@ int16_t otaPal_WriteBlock(AfrOtaJobDocumentFields_t * const pFileContext,
                            uint8_t * const pData,
                            uint32_t ulBlockSize)
 {
-    LogDebug( ( "otaPal_WriteBlock is called." ) );
+	e_fwup_err_t eResult = FWUP_SUCCESS;
+	uint16_t usBlockIndx = ulOffset/ulBlockSize;
 
-    if (FWUP_ERR_FLASH == R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+512, ulBlockSize))
+	LogDebug(("otaPal_WriteBlock: receives OTA block #%d with size = %ld!", usBlockIndx, ulBlockSize));
+
+    if (0 == ulOffset)
     {
+        R_FWUP_Close();
+        R_FWUP_Open();
+
+        R_FWUP_EraseArea(FWUP_AREA_BUFFER);
+    }
+
+    eResult = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+(uint32_t)512, ulBlockSize);
+
+    if (FWUP_ERR_FLASH == eResult)
+    {
+    	LogDebug( ("otaPal_WriteBlock: index = %d, NG, error = %d\r\n", usBlockIndx, eResult) );
         return 0;
     }
+
+    LogDebug ( ("otaPal_WriteBlock: index = %d, OK, %ld bytes\r\n", usBlockIndx, ulBlockSize) );
     return ulBlockSize;
 }
 /**********************************************************************************************************************

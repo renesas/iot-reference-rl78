@@ -81,7 +81,7 @@ extern void vSubscribePublishTestTask( void * pvParameters );
  */
 #if (ENABLE_OTA_UPDATE_DEMO == 1)
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         (1200)
-#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 1 )
+#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 #else
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         (1200)
 #define appmainMQTT_AGENT_TASK_PRIORITY           (tskIDLE_PRIORITY + 2)
@@ -211,7 +211,7 @@ void main_task(void * pvParameters)
                                     strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
 #endif
 
-        configPRINT_STRING(("---------STARTING DEMO---------\r\n"));
+        configPRINTF(("---------STARTING DEMO---------\r\n"));
 
         xMQTTAgentInit();
         xSetMQTTAgentState(MQTT_AGENT_STATE_INITIALIZED);
@@ -243,7 +243,6 @@ void prvMiscInitialization(void)
 {
     /* Initialize UART for serial terminal. */
     uart_config();
-    configPRINT_STRING(("Hello World.\r\n"));
 
     /* Start logging task. */
     xLoggingTaskInitialize(mainLOGGING_TASK_STACK_SIZE,

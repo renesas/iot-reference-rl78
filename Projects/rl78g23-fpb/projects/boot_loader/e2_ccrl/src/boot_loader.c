@@ -272,6 +272,7 @@ void main(void)
 
         /* Jump to user program */
         printf(MSG_JUMP_TO_USER_PROG);
+        R_FWUP_SoftwareDelay(2000, FWUP_DELAY_MILLISECS);
         close_boot_loader();
         g_using_uservector = 1;
         R_FWUP_ExecImage();
@@ -329,6 +330,7 @@ void main(void)
 
     /* Jump to user program */
     printf(MSG_JUMP_TO_USER_PROG);
+    R_FWUP_SoftwareDelay(2000, FWUP_DELAY_MILLISECS);
     close_boot_loader();
     g_using_uservector = 1;
     R_FWUP_ExecImage();

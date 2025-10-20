@@ -102,7 +102,7 @@
 /**
  * @brief Maximum stack size of OTA agent task.
  */
-#define AGENT_TASK_STACK_SIZE          (4096 * 2)
+#define AGENT_TASK_STACK_SIZE          (2048 * 2)
 
 #define NUM_OF_BLOCKS_REQUESTED                  mqttFileDownloader_MAX_NUM_BLOCKS_REQUEST
 #define MAX_THING_NAME_SIZE                      (128U)
@@ -849,7 +849,11 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
 
         if (NULL != dataBuf)
         {
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        	memcpy(dataBuf->data, (const void __far *)message, messageLength);
+#else
             memcpy(dataBuf->data, message, messageLength);
+#endif
         }
         else
         {
@@ -883,7 +887,11 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
         if (handled)
         {
             /* Copy the job document to process in OtaAgentEventReceivedJobDocument event handler */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        	memcpy(jobDocBuffer.jobData, (const void __far *)message, messageLength);
+#else
             memcpy(jobDocBuffer.jobData, message, messageLength);
+#endif
             nextEvent.jobEvent         = &jobDocBuffer;
             jobDocBuffer.jobDataLength = messageLength;
             nextEvent.eventId          = OtaAgentEventReceivedJobDocument;
@@ -1446,8 +1454,8 @@ static void vOTAUpdateTask(void * pvParam)
     }
 
 #if defined(__TEST__)
-    pcThingName = clientcredentialIOT_THING_NAME;
-    xThingNameLength = strlen(pcThingName);
+    pcThingName = (char __far *)clientcredentialIOT_THING_NAME;
+    xThingNameLength = strlen((const char __far *)pcThingName);
 #else
     xThingNameLength = prvGetCacheEntryLength(KVS_CORE_THING_NAME);
 
@@ -1464,7 +1472,7 @@ static void vOTAUpdateTask(void * pvParam)
 #endif
     if (NULL != pcThingName)
     {
-        mqttWrapper_setThingName(pcThingName, xThingNameLength);
+        mqttWrapper_setThingName((const char __far *)pcThingName, xThingNameLength);
     }
 
     if (pdPASS == xResult)
