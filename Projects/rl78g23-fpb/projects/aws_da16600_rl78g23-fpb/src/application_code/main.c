@@ -194,6 +194,8 @@ void main_task(void * pvParameters)
         vTaskSuspend( NULL );
     }
 #else
+    configPRINTF(("Initializing Wi-Fi connection...\n"));
+
     if (pdTRUE == xPlatformNetworkUp())
     {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
@@ -216,6 +218,10 @@ void main_task(void * pvParameters)
         vStartMQTTAgent(appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
 
         START_DEMO_FUNC();
+    }
+    else
+    {
+    	configPRINTF(("Wi-Fi init failed"));
     }
 
     while (1)

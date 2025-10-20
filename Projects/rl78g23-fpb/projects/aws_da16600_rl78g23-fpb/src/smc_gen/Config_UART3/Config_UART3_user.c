@@ -40,7 +40,6 @@ Pragma directive
 #pragma interrupt r_Config_UART3_interrupt_receive(vect=INTSR3)
 #pragma interrupt r_Config_UART3_interrupt_error(vect=INTSRE3)
 /* Start user code for pragma. Do not edit comment generated here */
-#endif
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -52,6 +51,7 @@ extern volatile uint8_t * gp_uart3_rx_address;    /* uart3 receive buffer addres
 extern volatile uint16_t g_uart3_rx_count;        /* uart3 receive data number */
 extern uint16_t g_uart3_rx_length;                /* uart3 receive data length */
 /* Start user code for global. Do not edit comment generated here */
+#endif
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -63,6 +63,8 @@ extern uint16_t g_uart3_rx_length;                /* uart3 receive data length *
 void R_Config_UART3_Create_UserInit(void)
 {
     /* Start user code for user init. Do not edit comment generated here */
+}
+#ifdef DELETE
     /* End user code. Do not edit comment generated here */
 }
 
@@ -182,4 +184,5 @@ static void __near r_Config_UART3_interrupt_error(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+#endif
 /* End user code. Do not edit comment generated here */

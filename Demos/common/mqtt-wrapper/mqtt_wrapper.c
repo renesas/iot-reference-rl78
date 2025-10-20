@@ -24,7 +24,13 @@ static MQTTContext_t * globalCoreMqttContext = NULL;
 extern MQTTAgentContext_t xGlobalMqttAgentContext;
 
 #define MAX_THING_NAME_SIZE    128U
+
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static char __far globalThingName[MAX_THING_NAME_SIZE + 1];
+#else
 static char globalThingName[MAX_THING_NAME_SIZE + 1];
+#endif
+
 static size_t globalThingNameLength = 0U;
 
 /**
@@ -43,8 +49,13 @@ void mqttWrapper_setCoreMqttContext(MQTTContext_t * mqttContext)
     globalCoreMqttContext = mqttContext;
 }
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+void mqttWrapper_setThingName(const char __far * thingName,
+                              size_t thingNameLength)
+#else
 void mqttWrapper_setThingName(char * thingName,
                               size_t thingNameLength)
+#endif
 {
     configASSERT(thingNameLength <= MAX_THING_NAME_SIZE );
     memcpy(globalThingName, thingName, MAX_THING_NAME_SIZE);
@@ -142,7 +153,7 @@ bool mqttWrapper_publish(char *    topic,
         MQTTStatus_t mqttStatus = MQTTSuccess;
 
         /* TODO: This should be static or should we wait? */
-        static MQTTPublishInfo_t pubInfo      = { 0 };
+        static MQTTPublishInfo_t pubInfo      = { .qos = MQTTQoS0 };
         MQTTAgentContext_t *     xAgentHandle = &xGlobalMqttAgentContext;
 
         pubInfo.qos             = MQTTQoS0;
@@ -265,16 +276,21 @@ bool mqttWrapper_subscribe(char * topic,
  *              : topicLength : Length of the topic filter
  * Return Value : bool        : true if successful, false otherwise.
  *****************************************************************************/
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+bool mqttWrapper_unsubscribe(char __far * topic,
+                             size_t topicLength)
+#else
 bool mqttWrapper_unsubscribe(char * topic,
                              size_t topicLength)
+#endif
 {
 
     configASSERT(topic);
     configASSERT(topicLength > 0);
 
     MQTTAgentSubscribeArgs_t  xSubscribeArgs  = {0};
-    MQTTSubscribeInfo_t       xSubscribeInfo  = {0};
-    MQTTAgentCommandContext_t xCommandContext = {0UL};
+    MQTTSubscribeInfo_t       xSubscribeInfo  = {.qos = MQTTQoS0};
+    MQTTAgentCommandContext_t xCommandContext = {.xReturnStatus = MQTTSuccess};
     MQTTAgentCommandInfo_t    xCommandParams  = {0UL};
 
     /* Complete the subscribe information.  The topic string must persist for

@@ -162,7 +162,7 @@ Note2: List of board user's manual:
    1 = Using FreeRTOS logging stack for logging output.
    2 = Using serial port for logging output.
  */
-#define WIFI_CFG_LOGGING_OPTION                 1
+#define WIFI_CFG_LOGGING_OPTION                 0
 
 #if WIFI_CFG_LOGGING_OPTION == 2
 

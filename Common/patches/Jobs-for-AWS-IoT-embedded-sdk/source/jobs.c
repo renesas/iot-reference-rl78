@@ -52,7 +52,7 @@
 /**
  * @brief Table of topic API strings in JobsTopic_t order.
  */
-static const char * const apiTopic[10] =
+static const char * const apiTopic[] =
 {
     JOBS_API_JOBSCHANGED,
     JOBS_API_NEXTJOBCHANGED,
@@ -69,7 +69,7 @@ static const char * const apiTopic[10] =
 /**
  * @brief Table of topic API string lengths in JobsTopic_t order.
  */
-static const size_t apiTopicLength[10] =
+static const size_t apiTopicLength[] =
 {
     JOBS_API_JOBSCHANGED_LENGTH,
     JOBS_API_NEXTJOBCHANGED_LENGTH,

@@ -47,7 +47,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#if defined(__CCRX__)
+#if defined(__CCRX__) || defined(__CCRL__)
 #include "strnlen.h"
 #endif
 #include "ota_os_freertos.h"
@@ -286,7 +286,11 @@ const char * jobCancelTopic = "/cancellation_in_progress";
  * @brief The thing name used for creating OTA job topics.
  * Thing name is retrieved from a key value store.
  */
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+static char __far * pcThingName = NULL;
+#else
 static char * pcThingName      = NULL;
+#endif
 static size_t xThingNameLength = 0U;
 
 /******************************************************************************
@@ -1522,7 +1526,11 @@ static bool saveInitVersion(void)
     JobsUpdateRequest_t jobUpdateRequest;
     JobsStatus_t        jobStatusResult;
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    char __far * UPDATER_VERISON_PREFIX = "{\"updaterVersion\":\"0x";
+#else
     char * UPDATER_VERISON_PREFIX = "{\"updaterVersion\":\"0x";
+#endif
 
     mqttWrapper_getThingName(thingName, &thingNameLength);
 
@@ -1724,7 +1732,11 @@ static OtaPalJobDocProcessingResult_t verifyVersion(char * updaterVersion)
     char *   sEnd            = NULL;
     uint32_t unsignedVersion = 0;
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    unsignedVersion = strtol((const char __far *) updaterVersion, (char __far * __far *)&sEnd, 16);
+#else
     unsignedVersion = strtol(updaterVersion, &sEnd, 16);
+#endif
 
     if (appFirmwareVersion.u.unsignedVersion32 > unsignedVersion)
 

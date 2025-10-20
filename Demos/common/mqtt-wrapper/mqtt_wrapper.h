@@ -20,8 +20,13 @@
 
 void mqttWrapper_setCoreMqttContext(MQTTContext_t * mqttContext);
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+void mqttWrapper_setThingName(const char __far * thingName,
+                              size_t thingNameLength);
+#else
 void mqttWrapper_setThingName(char * thingName,
                               size_t thingNameLength);
+#endif
 
 void mqttWrapper_getThingName(char *   thingNameBuffer,
                               size_t * thingNameLength );
@@ -36,7 +41,12 @@ bool mqttWrapper_publish(char *    topic,
 bool mqttWrapper_subscribe(char * topic,
                            size_t topicLength);
 
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+bool mqttWrapper_unsubscribe(char __far * topic,
+                             size_t topicLength);
+#else
 bool mqttWrapper_unsubscribe(char * topic,
                              size_t topicLength);
+#endif
 
 #endif /* ifndef MQTT_WRAPPER_H */

@@ -47,7 +47,7 @@ PORTABILITY
  *              : n
  * Return Value : returns the character count or <[n]>.
  *********************************************************************************************************************/
-size_t strnlen(const char *str, size_t n)
+size_t strnlen(const char __far *str, size_t n)
 {
     const char *start = str;
 

@@ -1565,7 +1565,7 @@ MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
                                         &ulNotifyValue,
                                         portMAX_DELAY ) )
             {
-                xResult = ( ulNotifyValue & 0x00FFFFFF );
+                xResult = (MQTTStatus_t)( ulNotifyValue & 0x00FFFFFF );
             }
             else
             {
@@ -1574,7 +1574,7 @@ MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
         }
     }
 
-    return 0;
+    return MQTTSuccess;
 }
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)

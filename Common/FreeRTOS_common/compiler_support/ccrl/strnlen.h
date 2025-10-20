@@ -26,6 +26,6 @@
  *              : n
  * Return Value : returns the character count or <[n]>.
  *********************************************************************************************************************/
-size_t strnlen (const char *, size_t);
+size_t strnlen (const char __far *, size_t);
 
 #endif /* _STRNLEN_H_ */
