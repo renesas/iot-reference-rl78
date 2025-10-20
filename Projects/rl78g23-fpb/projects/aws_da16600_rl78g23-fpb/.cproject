@@ -15,7 +15,7 @@
 			</storageModule>
 			<storageModule moduleId="com.renesas.cdt.managedbuild.core.toolchainInfo">
 				<option id="toolchain.id" value="Renesas_CCRL"/>
-				<option id="toolchain.version" value="v1.15.00"/>
+				<option id="toolchain.version" value="v1.15.01"/>
 				<option id="toolchain.enable" value="true"/>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -96,6 +96,17 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/FreeRTOS/FreeRTOS-Kernel/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/FreeRTOS/FreeRTOS-Kernel/portable/Renesas/RL78G2x}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/logging/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/base64}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/flash}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/tinycrypt/lib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_codeflash/src/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_codeflash/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_common/src/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_common/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_common/src/include/rfd}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_dataflash/src/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_rfd_rl78_dataflash/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/application_code}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/frtos_startup}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/helper}&quot;"/>
@@ -107,9 +118,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_fwup/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_sci}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/RFD}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/RFD/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/RFD/include/rfd}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/etc/tinycrypt/lib/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Middleware/wifi/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/modules/r_wifi_da16xxx}&quot;"/>
@@ -235,6 +243,48 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.962672648" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.854335294" name="/" resourcePath="Configuration/rl78g23-fpb/test">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.694435867" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.428622003" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1713937910">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1198305952" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.505367131" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1150081554"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.553158469" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1700320804"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1161660235" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1844116524"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1814253461" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1689573117">
+								<inputType id="Base.Compiler.ccrl.C.inputType.1845014137" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.382529926" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1714143646" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1161152250">
+								<inputType id="Base.Assembler.ccrl.inputType.1114759659" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1290062611" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1636501060" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.962672648"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1615925275" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.1244557165" name="/" resourcePath="Configuration/rl78g23-fpb/ota">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.273320872" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.51129081" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1713937910">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1483709681" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.957823193" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1150081554"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.830311343" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1700320804"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.926035864" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1844116524"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.3909469" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1689573117">
+								<inputType id="Base.Compiler.ccrl.C.inputType.413295745" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.1734545578" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.574536603" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1161152250">
+								<inputType id="Base.Assembler.ccrl.inputType.1412984552" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1874521398" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.879717879" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.962672648"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1055850400" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+						</toolChain>
+					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Demos/mqtt_agent" name="/" resourcePath="Demos/mqtt_agent">
 						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1971072885" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform.1365933482" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
@@ -275,6 +325,27 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1292527343" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1229926035" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1560699725" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.1863074515" name="/" resourcePath="Demos/common/mqtt-wrapper">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.916260546" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.474633162" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1545417305">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1081157131" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1303439660" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.678474018"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.2037552823" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.358979575"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.661975560" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1555833590"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.623465140" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.556342742">
+								<inputType id="Base.Compiler.ccrl.C.inputType.1667679052" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.983949934" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1961447912" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.2043256435">
+								<inputType id="Base.Assembler.ccrl.inputType.1107016031" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.855775191" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1292527343"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1122434072" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1560699725"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.2133089931" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1229926035"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.Middleware/Application-Protocols/network_transport/sockets_wrapper/ports" name="/" resourcePath="Middleware/Application-Protocols/network_transport/sockets_wrapper/ports">
@@ -361,10 +432,31 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1582010554" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.1779544343" name="/" resourcePath="Common/patches">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1447086073" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.185400716" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1713937910">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.2004445310" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1604642487" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.1150081554"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1903907973" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1700320804"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.825950352" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1844116524"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1906869605" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.1689573117">
+								<inputType id="Base.Compiler.ccrl.C.inputType.1770176750" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.2053736398" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.829197352" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1161152250">
+								<inputType id="Base.Assembler.ccrl.inputType.2040977094" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.725358754" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1602735763"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1968827048" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.962672648"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.86833921" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.462811177"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry excluding="ports/ota_pal" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Common"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Configuration"/>
-						<entry excluding="OtaOverMqtt|common/Mqtt_Demo_Helpers|Fleet_Provisioning_With_CSR_Demo|dev_mode_key_provisioning|cli" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Demos"/>
+						<entry excluding="patches|ports/ota_pal" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Common"/>
+						<entry excluding="rl78g23-fpb/test|rl78g23-fpb/ota" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Configuration"/>
+						<entry excluding="common/mqtt-wrapper|OtaOverMqtt|common/Mqtt_Demo_Helpers|Fleet_Provisioning_With_CSR_Demo|dev_mode_key_provisioning|cli" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Demos"/>
 						<entry excluding="AWS|FreeRTOS/coreJSON|3rdparty|AWS/ota-for-aws-iot-embedded-sdk/source/portable/os/ota_os_posix.c|AWS/ota-for-aws-iot-embedded-sdk/source/ota_http.c|3rdparty/tinycbor/src/cborvalidation.c|3rdparty/tinycbor/src/cborpretty.c|3rdparty/tinycbor/src/cborpretty_stdio.c|3rdparty/tinycbor/src/cborerrorstrings.c|AWS/SigV4-for-AWS-IoT-embedded-sdk|AWS/Fleet-Provisioning-for-AWS-IoT-embedded-sdk|AWS/Device-Shadow-for-AWS-IoT-embedded-sdk|AWS/Device-Defender-for-AWS-IoT-embedded-sdk|3rdparty/mbedtls_utils|3rdparty/mbedtls_config|3rdparty/mbedtls|3rdparty/littlefs|FreeRTOS/coreMQTT-Agent/source/dependency|FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_5.c|FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_3.c|FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_2.c|FreeRTOS/FreeRTOS-Kernel/portable/MemMang/heap_1.c|Application-Protocols/network_transport/sockets_wrapper/ports/freertos_plus_tcp|Application-Protocols/network_transport/using_mbedtls_pkcs11|Application-Protocols/network_transport/using_mbedtls|FreeRTOS/FreeRTOS-Plus-TCP|FreeRTOS/coreSNTP|FreeRTOS/corePKCS11|FreeRTOS/coreHTTP|pkcs11|FreeRTOS-Plus-CLI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middleware"/>
 						<entry excluding="modules/etc/tinycrypt/tests|application_code/branch.asm|modules/etc/tinycrypt/lib/source/hmac.c|modules/etc/tinycrypt/lib/source/hmac_prng.c|modules/etc/tinycrypt/lib/source/ecc_platform_specific.c|modules/etc/tinycrypt/lib/source/ecc_dh.c|modules/etc/tinycrypt/lib/source/ctr_prng.c|modules/etc/tinycrypt/lib/source/ctr_mode.c|modules/etc/tinycrypt/lib/source/cmac_mode.c|modules/etc/tinycrypt/lib/source/ccm_mode.c|modules/etc/tinycrypt/lib/source/cbc_mode.c|modules/etc/tinycrypt/lib/source/aes_encrypt.c|modules/etc/tinycrypt/lib/source/aes_decrypt.c|modules/etc/tinycrypt/source/hmac.c|modules/etc/tinycrypt/source/hmac_prng.c|modules/etc/tinycrypt/source/ecc_platform_specific.c|modules/etc/tinycrypt/source/ecc_dh.c|modules/etc/tinycrypt/source/ctr_prng.c|modules/etc/tinycrypt/source/ctr_mode.c|modules/etc/tinycrypt/source/cmac_mode.c|modules/etc/tinycrypt/source/ccm_mode.c|modules/etc/tinycrypt/source/cbc_mode.c|modules/etc/tinycrypt/source/aes_encrypt.c|modules/etc/tinycrypt/source/aes_decrypt.c|modules/etc/RFD/source/extraarea|modules/etc/RFD/source/common/r_rfd_common_get_api.c|modules/etc/RFD/source/common/r_rfd_common_extension_api.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
