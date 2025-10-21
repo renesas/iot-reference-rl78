@@ -332,13 +332,6 @@ OtaPalStatus_t otaPal_ActivateNewImage(AfrOtaJobDocumentFields_t * const pFileCo
 {
     (void) pFileContext;
 
-    e_fwup_err_t eResult = R_FWUP_ActivateImage();
-
-    if (FWUP_SUCCESS != eResult)
-    {
-        return OtaPalActivateFailed;
-    }
-
     R_FWUP_SoftwareReset();
     return OtaPalSuccess;
 }
