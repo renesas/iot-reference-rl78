@@ -451,6 +451,15 @@
 			</matcher>
 		</filter>
 		<filter>
+			<id>1760951664562</id>
+			<name>Middleware/AWS/aws-iot-core-mqtt-file-streams-embedded-c/source</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-MQTTFileDownloader.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
 			<id>1686294352095</id>
 			<name>Middleware/FreeRTOS/FreeRTOS-Kernel/portable</name>
 			<type>9</type>

@@ -479,7 +479,7 @@
 			</storageModule>
 			<storageModule moduleId="com.renesas.cdt.managedbuild.core.toolchainInfo">
 				<option id="toolchain.id" value="Renesas_CCRL"/>
-				<option id="toolchain.version" value="v1.15.00"/>
+				<option id="toolchain.version" value="v1.15.01"/>
 				<option id="toolchain.enable" value="true"/>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -899,6 +899,27 @@
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.531249077" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1554406654"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.2067949534" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1552027367"/>
 							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1001641347" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian"/>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.154148219.1914719860" name="/" resourcePath="Middleware/AWS/aws-iot-core-mqtt-file-streams-embedded-c/source">
+						<toolChain id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain.1856497523" name="Renesas CCRL Toolchain" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.toolChain" unusedChildren="">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE" id="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform" isAbstract="false" name="targetPlatform" osList="win32" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.targetPlatform"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1328003287" name="SMS Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.smsasm.1018710851">
+								<inputType id="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType.1735655563" name="SMS Assembler Input" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.smsasm.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.88584815" name="DSP Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.dsp.532155164"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.666873863" name="FAA Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.faa.1734609676"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.46617276" name="Common" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.common.1102571622"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.2006599109" name="Compiler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.compiler.2119977017">
+								<inputType id="Base.Compiler.ccrl.C.inputType.1403454492" name="Compiler InputType" superClass="Base.Compiler.ccrl.C.inputType"/>
+								<inputType id="Base.Compiler.ccrl.Cpp.inputType.1899458823" name="Compiler Input CPP" superClass="Base.Compiler.ccrl.Cpp.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1182688091" name="Assembler" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.assembler.1290679211">
+								<inputType id="Base.Assembler.ccrl.inputType.1695173908" name="Assembler InputType" superClass="Base.Assembler.ccrl.inputType"/>
+							</tool>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.1518590375" name="Linker" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.linker.531249077"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.712953040" name="Library Generator" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.librarian.1001641347"/>
+							<tool id="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.1057011331" name="Converter" superClass="com.renesas.cdt.managedbuild.renesas.ccrl.base.converter.2067949534"/>
 						</toolChain>
 					</folderInfo>
 					<folderInfo id="com.renesas.cdt.managedbuild.renesas.ccrl.hardwaredebug.configuration.1878751415.585527518.154148219.Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os" name="/" resourcePath="Middleware/AWS/ota-for-aws-iot-embedded-sdk/source/portable/os">

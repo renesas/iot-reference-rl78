@@ -123,8 +123,8 @@
  };
 
 static MqttFileDownloaderContext_t mqttFileDownloaderContext = { 0 };
-static uint32_t numOfBlocksRemaining = 0;
-static uint32_t currentBlockOffset = 0;
+static uint16_t numOfBlocksRemaining = 0;
+static uint16_t currentBlockOffset = 0;
 static uint8_t currentFileId = 0;
 static uint32_t totalBytesReceived = 0;
 char globalJobId[ MAX_JOB_ID_LENGTH ] = { 0 };

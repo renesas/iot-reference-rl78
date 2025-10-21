@@ -30,6 +30,14 @@
 /**********************************************************************************************************************
  Macro definitions
  *********************************************************************************************************************/
+#if (BSP_CFG_RTOS_USED == 1)
+#include "FreeRTOS.h"
+#include "iot_logging_task.h"
+#define FWUP_PRINTF                 vLoggingPrintf
+#else
+#define FWUP_PRINTF                 printf
+#endif
+
 #if (FWUP_CFG_PRINTF_DISABLE == 1)
 #if defined(__llvm__)
 #define FWUP_LOG_ERR(...)
@@ -46,9 +54,9 @@
 #define FWUP_LOG_INFO               dbg_printf
 #define FWUP_LOG_DBG                dbg_printf
 #else /* defined(__llvm__) */
-#define FWUP_LOG_ERR                printf
-#define FWUP_LOG_INFO               printf
-#define FWUP_LOG_DBG                printf
+#define FWUP_LOG_ERR                FWUP_PRINTF
+#define FWUP_LOG_INFO               FWUP_PRINTF
+#define FWUP_LOG_DBG                FWUP_PRINTF
 #endif /* defined(__llvm__) */
 #endif /* (FWUP_CFG_PRINTF_DISABLE == 1) */
 
