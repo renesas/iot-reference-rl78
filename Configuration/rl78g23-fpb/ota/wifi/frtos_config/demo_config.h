@@ -273,7 +273,7 @@
  * on. The current value is given as an example. Please update for your specific
  * operating system version.
  */
-#define democonfigOS_VERSION    "V10.5.1"
+#define democonfigOS_VERSION    "V11.1.0"
 
 /**
  * @brief The name of the hardware platform the application is running on. The
@@ -380,7 +380,7 @@
  * @note Specified in bytes.  Must be large enough to hold the maximum
  * anticipated MQTT payload.
  */
-#define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 1400U )
+#define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 2400U )
 
 /**
  * @brief The length of the queue used to hold commands for the agent.

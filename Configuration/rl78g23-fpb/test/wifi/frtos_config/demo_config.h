@@ -273,7 +273,7 @@
  * on. The current value is given as an example. Please update for your specific
  * operating system version.
  */
-#define democonfigOS_VERSION    "V10.5.1"
+#define democonfigOS_VERSION    "V11.1.0"
 
 /**
  * @brief The name of the hardware platform the application is running on. The
