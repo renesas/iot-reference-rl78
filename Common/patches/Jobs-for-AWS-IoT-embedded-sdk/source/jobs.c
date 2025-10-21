@@ -37,6 +37,10 @@
 /* External Dependencies */
 #include "core_json.h"
 
+#if defined(__CCRL__)
+#include "strnlen.h"
+#endif
+
 /** @cond DO_NOT_DOCUMENT */
 
 /**

@@ -315,9 +315,9 @@ size_t mqttDownloader_createGetDataBlockRequest( DataType_t dataType,
                                "{"
                                "\"s\": 1,"
                                "\"f\": %u,"
-                               "\"l\": %u,"
+                               "\"l\": %lu,"
                                "\"o\": %u,"
-                               "\"n\": %u"
+                               "\"n\": %lu"
                                "}",
                                fileId,
                                blockSize,
