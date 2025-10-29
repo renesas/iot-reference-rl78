@@ -19,7 +19,7 @@
 
 /***********************************************************************************************************************
 * File Name        : Config_PORT_user.c
-* Component Version: 1.7.0
+* Component Version: 1.8.0
 * Device(s)        : R7F100GSNxFB
 * Description      : This file implements device driver for Config_PORT.
 ***********************************************************************************************************************/

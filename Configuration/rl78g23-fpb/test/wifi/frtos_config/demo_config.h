@@ -84,7 +84,7 @@
  * (0) : OTA demo is disabled
  * (1) : OTA over MQTT demo is enabled
  */
-#define ENABLE_OTA_UPDATE_DEMO              (1)
+#define ENABLE_OTA_UPDATE_DEMO              (0)
 
 /**
  * @brief Path of the file containing the provisioning claim certificate. This
@@ -380,7 +380,11 @@
  * @note Specified in bytes.  Must be large enough to hold the maximum
  * anticipated MQTT payload.
  */
-#define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 1400U )
+#if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 2500U )
+#else
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 1400U )
+#endif
 
 /**
  * @brief The length of the queue used to hold commands for the agent.

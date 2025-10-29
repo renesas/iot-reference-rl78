@@ -105,6 +105,7 @@ void vApplicationDaemonTaskStartupHook (void);
  */
 void              prvMiscInitialization (void);
 static BaseType_t xPlatformNetworkUp (void);
+BaseType_t        OtaSelfTest(void);
 
 #if (ENABLE_AFR_IDT == 1)
 #if (DEVICE_ADVISOR_TEST_ENABLED == 1)
@@ -186,6 +187,8 @@ void main(void)
 void main_task(void * pvParameters)
 {
 #if (ENABLE_AFR_IDT == 1)
+    configPRINTF(("Initializing Wi-Fi connection...\n"));
+
     if (pdTRUE == xPlatformNetworkUp())
     {
 #if ( OTA_E2E_TEST_ENABLED == 1)
@@ -199,6 +202,10 @@ void main_task(void * pvParameters)
                     appmainTEST_TASK_PRIORITY,
                     NULL );
 #endif
+    }
+    else
+    {
+        configPRINTF(("Wi-Fi init failed"));
     }
 
     while (1)
@@ -244,7 +251,6 @@ void prvMiscInitialization(void)
 {
     /* Initialize UART for serial terminal. */
     uart_config();
-    configPRINT_STRING(("Hello World.\r\n"));
 
     /* Start logging task. */
     xLoggingTaskInitialize( mainLOGGING_TASK_STACK_SIZE,
@@ -398,3 +404,8 @@ static BaseType_t xPlatformNetworkUp(void)
 {
     return ((BaseType_t)setupWifi());
 } /* End of function xPlatformNetworkUp()*/
+
+BaseType_t OtaSelfTest(void)
+{
+	return pdTRUE;
+}

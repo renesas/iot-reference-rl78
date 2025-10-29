@@ -115,7 +115,7 @@
 #include "store.h"
 #endif
 
-#if (ENABLE_OTA_UPDATE_DEMO == 1)
+#if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
     #include "mqtt_wrapper.h"
 #endif
 
@@ -223,7 +223,7 @@
  * will be stored by the broker and resend to device, when it comes back online.
  *
  */
-#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 0 )
+#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 1 )
 
 /**
  * @brief Used to convert times to/from ticks and milliseconds.
@@ -1053,7 +1053,7 @@ void prvMQTTAgentTask(void * pvParameters)
              * which the error happened is returned so there is an attempt to
              * clean up and reconnect. */
 
-            #if (ENABLE_OTA_UPDATE_DEMO == 1)
+            #if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
                 /* Set the MQTT context to be used by the MQTT wrapper. */
                 mqttWrapper_setCoreMqttContext( &( xGlobalMqttAgentContext.mqttContext ) );
             #endif

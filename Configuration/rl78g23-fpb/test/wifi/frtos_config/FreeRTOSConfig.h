@@ -55,7 +55,7 @@
 #define configMAX_PRIORITIES                       (7)
 #define configTICK_RATE_HZ                         ((TickType_t)1000)
 #define configMINIMAL_STACK_SIZE                   (128)
-#define configTOTAL_HEAP_SIZE_N                    (28)
+#define configTOTAL_HEAP_SIZE_N                    (24)
 #define configTOTAL_HEAP_SIZE                      ((size_t)(configTOTAL_HEAP_SIZE_N * 1024))
 #define configMAX_TASK_NAME_LEN                    (12)
 #define configUSE_TRACE_FACILITY                   1
@@ -70,6 +70,9 @@
 #define configUSE_ALTERNATIVE_API                  0
 #define configNUM_THREAD_LOCAL_STORAGE_POINTERS    3      /* FreeRTOS+FAT requires 2 pointers if a CWD is supported. */
 #define configRECORD_STACK_HIGH_ADDRESS            1
+
+/* Task notification settings. */
+#define configTASK_NOTIFICATION_ARRAY_ENTRIES      4
 
 #define configUSE_DAEMON_TASK_STARTUP_HOOK 1
 
