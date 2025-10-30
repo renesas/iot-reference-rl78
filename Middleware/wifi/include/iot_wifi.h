@@ -1,6 +1,7 @@
 /*
  * FreeRTOS WiFi V2.0.0
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -588,8 +589,7 @@ WIFIReturnCode_t WIFI_Off (void);
  * @see WIFINetworkParams_t
  */
 /* @[declare_wifi_wifi_connectap] */
-WIFIReturnCode_t WIFI_ConnectAP (const WIFINetworkParams_t * const pxNetworkParams,
-                                const uint8_t * ssid, const uint8_t * password);
+WIFIReturnCode_t WIFI_ConnectAP (const WIFINetworkParams_t * const pxNetworkParams);
 /* @[declare_wifi_wifi_connectap] */
 
 /**
