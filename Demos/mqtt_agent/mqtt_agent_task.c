@@ -223,7 +223,7 @@
  * will be stored by the broker and resend to device, when it comes back online.
  *
  */
-#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 1 )
+#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 0 )
 
 /**
  * @brief Used to convert times to/from ticks and milliseconds.
