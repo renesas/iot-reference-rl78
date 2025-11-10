@@ -19,6 +19,21 @@
 #define OTA_DATA_BLOCK_SIZE    mqttFileDownloader_CONFIG_BLOCK_SIZE
 #define JOB_DOC_SIZE           2048U
 
+/**
+ * @brief Allow update to same or lower version.
+ *
+ * Set this to 1 to allow downgrade or same version update.This configurations parameter
+ * disables version check and allows update to a same or lower version.This is provided for
+ * testing purpose and it is recommended to always update to higher version and keep this
+ * configuration disabled.
+ */
+#define otaconfigAllowDowngrade             (1U)
+
+#if otaconfigAllowDowngrade == 0
+#error "RL78/G23 does not support version rollback because it uses a single bank!\
+Please set otaconfigAllowDowngrade to 1."
+#endif
+
 typedef enum OtaEvent
 {
     OtaAgentEventStart = 0,           /*!< @brief Start the OTA state machine */

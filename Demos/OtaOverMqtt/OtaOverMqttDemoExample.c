@@ -1776,12 +1776,24 @@ static OtaPalJobDocProcessingResult_t verifyVersion(char * updaterVersion)
             return OtaPalNewImageSameVersionSelfTestNG;
         }
     }
-
+#if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+    else
+    {
+#if (otaconfigAllowDowngrade == 1U)
+    LogInfo(("OTA Config Allow Downgrade has been set to 1, bypassing version check, accepted!\n"));
+        return OtaPalNewImageBooted;
+#else /* if (otaconfigAllowDowngrade == 1U) */
+        LogError(("The image version is invalid\n"));
+        return OtaPalNewImageBootFailed;
+#endif
+    }
+#else
     else /* Current version is less than retrieved version from OTA Job */
     {
         LogError(("The image version is invalid\n"));
         return OtaPalNewImageBootFailed;
     }
+#endif
 }
 /******************************************************************************
  End of function verifyVersion
