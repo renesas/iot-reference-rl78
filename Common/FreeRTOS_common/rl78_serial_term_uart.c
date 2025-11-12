@@ -26,6 +26,12 @@
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
+/* Kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
+/* Renesas includes. */
 #include "rl78_serial_term_uart.h"
 
 /**********************************************************************************************************************
@@ -41,10 +47,16 @@
  *********************************************************************************************************************/
 sci_hdl_t sci_handle;
 
+const TickType_t xMaxBlockTime = pdMS_TO_TICKS( 5000 );
+
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
 static uint8_t  s_cmd_buf[256];
+
+/* Used to guard access to the UART in case messages are sent to the UART from
+more than one task. */
+static SemaphoreHandle_t xTransmitMutex = NULL;
 
 /**********************************************************************************************************************
  * Function Name: uart_config
@@ -60,6 +72,9 @@ void uart_config(void)
     {
         R_BSP_NOP();
     }
+
+    /* Create the semaphore used to access the UART Tx. */
+    xTransmitMutex = xSemaphoreCreateMutex();
 }
 /**********************************************************************************************************************
  * End of function uart_config
@@ -82,26 +97,34 @@ void uart_string_printf(RL78_FAR char *pString)
 
     str_length = (uint16_t)strlen(pString);    /* Cast to (uint16_t) */
 
-    while ((retry > 0) && (str_length > 0))
+    if(xSemaphoreTake(xTransmitMutex, xMaxBlockTime) == pdPASS)
     {
-        R_SCI_Control(sci_handle, SCI_CMD_TX_Q_BYTES_FREE, &transmit_length);
+        while ((retry > 0) && (str_length > 0))
+        {
+            R_SCI_Control(sci_handle, SCI_CMD_TX_Q_BYTES_FREE, &transmit_length);
 
-        if (transmit_length > str_length)
-        {
-            transmit_length = str_length;
-        }
+            if (transmit_length > str_length)
+            {
+                transmit_length = str_length;
+            }
 
-        sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR*)pString, transmit_length);
-        if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
-        {
-            /* retry if previous transmission still in progress or tx buffer is insufficient. */
-            retry--;
+            sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR*)pString, transmit_length);
+            if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
+            {
+                /* retry if previous transmission still in progress or tx buffer is insufficient. */
+                retry--;
+                continue;
+            }
+            else
+            {
+                str_length -= transmit_length;
+                pString    += transmit_length;
+            }
         }
-        else
-        {
-            str_length -= transmit_length;
-            pString    += transmit_length;
-        }
+        vTaskDelay(20);
+
+        /* Must ensure to give the mutex back. */
+        xSemaphoreGive(xTransmitMutex);
     }
 
     if (SCI_SUCCESS != sci_error)
