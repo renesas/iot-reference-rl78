@@ -46,10 +46,12 @@
 #define HALF_SIG_LENGTH (MAX_SIG_LENGTH/2)
 
 const char OTA_JsonFileSignatureKey[OTA_FILE_SIG_KEY_STR_MAX_LENGTH] = "sig-sha256-ecdsa";
+
 static OtaImageState_t OtaImageState;
-uint32_t receiving_count = 0;
+
+uint32_t   receiving_count      = 0;
 BaseType_t first_block_received = pdFALSE;
-uint8_t * first_ota_blocks[mqttFileDownloader_MAX_NUM_BLOCKS_REQUEST];
+uint8_t *  first_ota_blocks[mqttFileDownloader_MAX_NUM_BLOCKS_REQUEST];
 
 AfrOtaJobDocumentFields_t * pOTAFileContext = NULL;
 
@@ -117,8 +119,8 @@ int16_t otaPal_WriteBlock(AfrOtaJobDocumentFields_t * const pFileContext,
                            uint8_t * const pData,
                            uint32_t ulBlockSize)
 {
-	e_fwup_err_t eResult = FWUP_SUCCESS;
-	uint16_t usBlockIndx = ulOffset/ulBlockSize;
+	e_fwup_err_t eResult     = FWUP_SUCCESS;
+	uint16_t     usBlockIndx = ulOffset/ulBlockSize;
 
 	LogDebug(("otaPal_WriteBlock: receives OTA block #%d with size = %ld!", usBlockIndx, ulBlockSize));
 
@@ -130,7 +132,8 @@ int16_t otaPal_WriteBlock(AfrOtaJobDocumentFields_t * const pFileContext,
         R_FWUP_EraseArea(FWUP_AREA_BUFFER);
     }
 
-    eResult = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset+(uint32_t)512, ulBlockSize);
+    /* Cast to type appropriate datatype to be compatible with parameter type */
+    eResult = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset + (uint32_t)512, ulBlockSize);
 
     if (FWUP_ERR_FLASH == eResult)
     {
@@ -268,7 +271,7 @@ OtaPalStatus_t otaPal_CloseFile(AfrOtaJobDocumentFields_t * const pFileContext)
         OtaImageState = OtaImageStateTesting;
     }
 
-    if (pFileContext != NULL)
+    if (NULL != pFileContext)
     {
         pFileContext->fileId = 0;
     }

@@ -52,12 +52,14 @@
  */
 PUTCHAR_RL78_FAR_FUNC int putchar(int c)
 {
-    while(0 != (REG_SSR & 0x20))
+    while (0 != (REG_SSR & 0x20))
     {
         NOP();
     }
     REG_STMK = 0;
-    REG_TXD = (unsigned char)c;
+
+    /* Cast to type appropriate datatype to be compatible with parameter type */
+    REG_TXD  = (unsigned char)c;
     REG_STMK = 1;
     return c;
 }

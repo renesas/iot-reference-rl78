@@ -138,7 +138,7 @@
  *
  * #define democonfigUSE_AWS_IOT_CORE_BROKER    ( 1 )
  */
-#define democonfigUSE_AWS_IOT_CORE_BROKER    ( 1 )
+#define democonfigUSE_AWS_IOT_CORE_BROKER    (1)
 
 /**
  * @brief The unique ID used by the demo to differentiate instances.
@@ -313,7 +313,7 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainPROVISIONING_MODE                  (0)
 
 /**
  * @brief Certificate used for validating code signing signatures in the OTA PAL.
@@ -381,14 +381,14 @@
  * anticipated MQTT payload.
  */
 #if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
-    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 2500U )
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          (2500U)
 #else
-    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 1400U )
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          (1400U)
 #endif
 
 /**
  * @brief The length of the queue used to hold commands for the agent.
  */
-#define MQTT_AGENT_COMMAND_QUEUE_LENGTH         ( 25U )
+#define MQTT_AGENT_COMMAND_QUEUE_LENGTH         (25U)
 
 #endif /* DEMO_CONFIG_H */

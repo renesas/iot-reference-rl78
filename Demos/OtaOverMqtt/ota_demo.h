@@ -17,7 +17,7 @@
 #include "MQTTFileDownloader_config.h"
 
 #define OTA_DATA_BLOCK_SIZE    mqttFileDownloader_CONFIG_BLOCK_SIZE
-#define JOB_DOC_SIZE           2048U
+#define JOB_DOC_SIZE           (2048U)
 
 /**
  * @brief Allow update to same or lower version.
@@ -44,7 +44,7 @@ typedef enum OtaEvent
     OtaAgentEventReceivedFileBlock,   /*!< @brief Event to trigger when file block is received. */
     OtaAgentEventCloseFile,           /*!< @brief Event to trigger closing file. */
     OtaAgentEventActivateImage,       /*!< @brief Event to activate the new image. */
-    OtaAgentEventVersionCheck,	      /*!< @brief Event to verify the new image version. */
+    OtaAgentEventVersionCheck,        /*!< @brief Event to verify the new image version. */
     OtaAgentEventSuspend,             /*!< @brief Event to suspend ota task */
     OtaAgentEventResume,              /*!< @brief Event to resume suspended task */
     OtaAgentEventUserAbort,           /*!< @brief Event triggered by user to stop agent. */
@@ -82,15 +82,15 @@ typedef enum OtaState
 
 typedef struct OtaDataEvent
 {
-    uint8_t data[ OTA_DATA_BLOCK_SIZE * 2 ]; /*!< Buffer for storing event information. */
-    size_t dataLength;                       /*!< Total space required for the event. */
-    bool bufferUsed;                         /*!< Flag set when buffer is used otherwise cleared. */
+    uint8_t data[OTA_DATA_BLOCK_SIZE * 2]; /*!< Buffer for storing event information. */
+    size_t  dataLength;                       /*!< Total space required for the event. */
+    bool    bufferUsed;                         /*!< Flag set when buffer is used otherwise cleared. */
 } OtaDataEvent_t;
 
 typedef struct OtaJobEventData
 {
-    uint8_t jobData[ JOB_DOC_SIZE ];
-    size_t jobDataLength;
+    uint8_t jobData[JOB_DOC_SIZE];
+    size_t  jobDataLength;
 } OtaJobEventData_t;
 
 /**
@@ -108,9 +108,9 @@ typedef struct
         struct version
         {
             uint16_t build; /*!< @brief Build of the firmware (Z in firmware version Z.Y.X). */
-            uint8_t minor;  /*!< @brief Minor version number of the firmware (Y in firmware version Z.Y.X). */
+            uint8_t  minor;  /*!< @brief Minor version number of the firmware (Y in firmware version Z.Y.X). */
 
-            uint8_t major;  /*!< @brief Major version number of the firmware (X in firmware version Z.Y.X). */
+            uint8_t  major;  /*!< @brief Major version number of the firmware (X in firmware version Z.Y.X). */
         } x;                /*!< @brief Version number of the firmware. */
 #elif ( defined( __BYTE_ORDER__ ) && defined( __ORDER_BIG_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ ) || ( __big_endian__ == 1 ) || ( __BYTE_ORDER == __BIG_ENDIAN )
         struct version
@@ -124,7 +124,7 @@ typedef struct
 #error "Unable to determine byte order!"
 #endif /* if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) || ( __little_endian__ == 1 ) || WIN32 || ( __BYTE_ORDER == __LITTLE_ENDIAN ) */
         uint32_t unsignedVersion32;
-        int32_t signedVersion32;
+        int32_t  signedVersion32;
     } u; /*!< @brief Version based on configuration in big endian or little endian. */
 } AppVersion32_t;
 
@@ -134,17 +134,44 @@ typedef struct
  */
 typedef struct OtaEventMsg
 {
-    OtaDataEvent_t * dataEvent;   /*!< Data Event message. */
+    OtaDataEvent_t *    dataEvent;   /*!< Data Event message. */
     OtaJobEventData_t * jobEvent; /*!< Job Event message. */
-    OtaEvent_t eventId;           /*!< Identifier for the event. */
+    OtaEvent_t          eventId;           /*!< Identifier for the event. */
 } OtaEventMsg_t;
 
-void otaDemo_start( void );
+/******************************************************************************
+ * Function Name: otaDemo_start
+ * Description  : Starts the OTA demo
+ * Return Value : None
+ *****************************************************************************/
+void otaDemo_start (void);
 
-bool otaDemo_handleIncomingMQTTMessage( char * topic,
+/******************************************************************************
+ * Function Name: otaDemo_handleIncomingMQTTMessage
+ * Description  : Handles the received MQTT message
+ * Arguments    : topic
+ *              : topicLength
+ *              : message
+ *              : messageLength
+ * Return Value : true    Successful processing
+ *              : false   Failure
+ *****************************************************************************/
+bool otaDemo_handleIncomingMQTTMessage (char * topic,
                                         size_t topicLength,
                                         uint8_t * message,
-                                        size_t messageLength );
+                                        size_t messageLength);
 
-OtaState_t getOtaAgentState(void);
+/**
+ * @fn getOtaAgentState
+ *
+ * @brief Retrieves the current state of the OTA agent.
+ *
+ * This function returns the current operational state of the OTA (Over-the-Air) update agent.
+ * It can be used to monitor the OTA process, check whether an update is in progress,
+ * completed, or if the agent is idle.
+ *
+ * @return The current OTA agent state as an OtaState_t enum value.
+ */
+OtaState_t getOtaAgentState (void);
+
 #endif /* ifndef OTA_DEMO_H */

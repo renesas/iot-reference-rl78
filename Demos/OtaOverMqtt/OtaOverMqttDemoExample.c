@@ -123,21 +123,22 @@
  };
 
 static MqttFileDownloaderContext_t mqttFileDownloaderContext = { 0 };
-static uint16_t numOfBlocksRemaining = 0;
-static uint16_t currentBlockOffset = 0;
-static uint8_t currentFileId = 0;
-static uint32_t totalBytesReceived = 0;
-char globalJobId[ MAX_JOB_ID_LENGTH ] = { 0 };
+static uint16_t                    numOfBlocksRemaining      = 0;
+static uint16_t                    currentBlockOffset        = 0;
+static uint8_t                     currentFileId             = 0;
+static uint32_t                    totalBytesReceived        = 0;
+
+char globalJobId[MAX_JOB_ID_LENGTH] = { 0 };
 
 /* The topic buffer to wait for job event */
 char   jobEventTopicBuffer[TOPIC_BUFFER_SIZE+1] = { 0 };
 size_t jobEventTopicBufferLength                = 0U;
 
-static OtaDataEvent_t dataBuffers[MAX_NUM_OF_OTA_DATA_BUFFERS] = { 0 };
-static OtaJobEventData_t jobDocBuffer = { 0 };
-static AfrOtaJobDocumentFields_t jobFields = { 0 };
-static uint8_t OtaImageSingatureDecoded[OTA_MAX_SIGNATURE_SIZE] = { 0 };
-static SemaphoreHandle_t bufferSemaphore;
+static OtaDataEvent_t            dataBuffers[MAX_NUM_OF_OTA_DATA_BUFFERS]         = { 0 };
+static OtaJobEventData_t         jobDocBuffer                                     = { 0 };
+static AfrOtaJobDocumentFields_t jobFields                                        = { 0 };
+static uint8_t                   OtaImageSingatureDecoded[OTA_MAX_SIGNATURE_SIZE] = { 0 };
+static SemaphoreHandle_t         bufferSemaphore;
 
 static OtaState_t otaAgentState = OtaAgentStateInit;
 
@@ -639,7 +640,7 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler(OtaJobEventData
      * Extracting the job ID from the received OTA job document.
      */
     /* Cast to type "const char **" to be compatible with parameter type */
-    jobIdLength = Jobs_GetJobId((char *)jobDoc->jobData, jobDoc->jobDataLength, (const char **) jobIdptr);
+    jobIdLength = Jobs_GetJobId((char *)jobDoc->jobData, jobDoc->jobDataLength, (const char **)jobIdptr);
 
     if (jobIdLength)
     {
@@ -675,7 +676,7 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler(OtaJobEventData
                                &versionLen,
                                NULL);
     if ((JSONSuccess == jsonResult) && (NULL != updaterVersion))
-        {
+    {
         /* Start version checking */
         return verifyVersion(updaterVersion);
     }
@@ -850,6 +851,7 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
         if (NULL != dataBuf)
         {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        	/* Cast to type appropriate datatype to be compatible with parameter type */
         	memcpy(dataBuf->data, (const void __far *)message, messageLength);
 #else
             memcpy(dataBuf->data, message, messageLength);
@@ -888,6 +890,7 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
         {
             /* Copy the job document to process in OtaAgentEventReceivedJobDocument event handler */
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
+        	/* Cast to type appropriate datatype to be compatible with parameter type */
         	memcpy(jobDocBuffer.jobData, (const void __far *)message, messageLength);
 #else
             memcpy(jobDocBuffer.jobData, message, messageLength);
@@ -1114,6 +1117,7 @@ static void processOTAEvents(void)
              * we should wait for the MQTT connection to go up. */
             while (!mqttWrapper_isConnected())
             {
+            	/* Cast to type appropriate datatype to be compatible with parameter type */
                 vTaskDelay(pdMS_TO_TICKS(100));
             }
         }
@@ -1132,7 +1136,7 @@ static void processOTAEvents(void)
             LogInfo(("Received Job Document event Received \n"));
             LogInfo(("-------------------------------------\n"));
 
-            if ((OtaAgentStateSuspended == otaAgentState) ||
+            if ((OtaAgentStateSuspended   == otaAgentState) ||
                 (OtaAgentStateJobCanceled == otaAgentState))
             {
                 LogInfo(("OTA-Agent is in Suspend State or OTA job is canceled. Hence dropping Job Document.\n"));
@@ -1156,6 +1160,8 @@ static void processOTAEvents(void)
                 case OtaPalNewImageBootFailed:
                     LogError(("The new image cannot be booted, rollback to old image... \n"));
                     sendFailedMessage();
+
+                    /* Cast to type appropriate datatype to be compatible with parameter type */
                     vTaskDelay(pdMS_TO_TICKS(5000));
                     rollBackOldFirmware();
                     break;
@@ -1166,6 +1172,8 @@ static void processOTAEvents(void)
 
                     /*Set OTA Job status to FAILED */
                     sendFailedMessage();
+
+                    /* Cast to type appropriate datatype to be compatible with parameter type */
                     vTaskDelay(pdMS_TO_TICKS(5000));
 
                     /* Delete buffer area */
@@ -1174,6 +1182,8 @@ static void processOTAEvents(void)
 
                 case OtaPalNewImageSameVersionSelfTestNG:
                     LogInfo(("New image has same version, and self-test is failed. Resetting...\n"));
+
+                    /* Cast to type appropriate datatype to be compatible with parameter type */
                     vTaskDelay(pdMS_TO_TICKS(500));
                     otaPal_ResetDevice(&jobFields);
                     break;
@@ -1182,6 +1192,8 @@ static void processOTAEvents(void)
 
                     /* Change job status to FAILED */
                     sendFailedMessage();
+
+                    /* Cast to type appropriate datatype to be compatible with parameter type */
                     vTaskDelay(pdMS_TO_TICKS(5000));
                     LogError(("The job document cannot be parsed or corrupted!\n"));
                     break;
@@ -1199,6 +1211,8 @@ static void processOTAEvents(void)
                     /* Delete buffer area */
                     deleteBufferArea();
                     sendSuccessMessage();
+
+                    /* Cast to type appropriate datatype to be compatible with parameter type */
                     vTaskDelay(pdMS_TO_TICKS(5000));
                     break;
 
@@ -1227,7 +1241,7 @@ static void processOTAEvents(void)
             LogInfo(("---------------------------------------\n"));
 
             /* Skip remaining PUBLISH to MQTT Stream callback */
-            if ((OtaAgentStateSuspended == otaAgentState) ||
+            if ((OtaAgentStateSuspended   == otaAgentState) ||
                 (OtaAgentStateJobCanceled == otaAgentState))
             {
                 LogInfo(("OTA-Agent is in Suspend State or OTA Job is canceled. Hence dropping File Block. \n"));
@@ -1235,13 +1249,15 @@ static void processOTAEvents(void)
                 break;
             }
 
-            uint8_t decodedData[mqttFileDownloader_CONFIG_BLOCK_SIZE];
-            size_t decodedDataLength = 0;
+            uint8_t                    decodedData[mqttFileDownloader_CONFIG_BLOCK_SIZE];
+            size_t                     decodedDataLength = 0;
             MQTTFileDownloaderStatus_t xReturnStatus;
+
             int16_t result = -1;
             int32_t fileId;
             int32_t blockId;
             int32_t blockSize;
+
             static int32_t lastReceivedblockId = -1;
 
             /*
@@ -1281,7 +1297,7 @@ static void processOTAEvents(void)
             }
             else
             {
-                result = handleMqttStreamsBlockArrived(decodedData, decodedDataLength);
+                result              = handleMqttStreamsBlockArrived(decodedData, decodedDataLength);
                 lastReceivedblockId = blockId;
             }
 
@@ -1329,6 +1345,8 @@ static void processOTAEvents(void)
 
                 /* Change job status to FAILED */
                 sendFailedMessage();
+
+                /* Cast to type appropriate datatype to be compatible with parameter type */
                 vTaskDelay(pdMS_TO_TICKS(5000));
                 otaPal_ResetDevice(&jobFields);
             }
@@ -1341,6 +1359,7 @@ static void processOTAEvents(void)
 
             if (true == saveInitVersion())
             {
+                /* Cast to type appropriate datatype to be compatible with parameter type */
                 vTaskDelay(pdMS_TO_TICKS(5000));
                 nextEvent.eventId = OtaAgentEventVersionCheck;
                 OtaSendEvent_FreeRTOS(&nextEvent);
@@ -1388,6 +1407,7 @@ static void processOTAEvents(void)
 
             LogInfo(("Waiting for job cancellation to finalize in Jobs server... \n"));
 
+            /* Cast to type appropriate datatype to be compatible with parameter type */
             vTaskDelay(pdMS_TO_TICKS(5000));
 
             /* Reset Job document buffer, erase buffer flash bank, reset OtaFileContext */
@@ -1454,7 +1474,11 @@ static void vOTAUpdateTask(void * pvParam)
     }
 
 #if defined(__TEST__)
+
+    /* Cast to type "char __far *" to be compatible with parameter type */
     pcThingName = (char __far *)clientcredentialIOT_THING_NAME;
+
+    /* Cast to type appropriate datatype to be compatible with parameter type */
     xThingNameLength = strlen((const char __far *)pcThingName);
 #else
     xThingNameLength = prvGetCacheEntryLength(KVS_CORE_THING_NAME);
@@ -1472,6 +1496,7 @@ static void vOTAUpdateTask(void * pvParam)
 #endif
     if (NULL != pcThingName)
     {
+    	/* Cast to type "const char __far *" to be compatible with parameter type */
         mqttWrapper_setThingName((const char __far *)pcThingName, xThingNameLength);
     }
 
@@ -1741,7 +1766,8 @@ static OtaPalJobDocProcessingResult_t verifyVersion(char * updaterVersion)
     uint32_t unsignedVersion = 0;
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-    unsignedVersion = strtol((const char __far *) updaterVersion, (char __far * __far *)&sEnd, 16);
+    /* Cast to type appropriate datatype to be compatible with parameter type */
+    unsignedVersion = strtol((const char __far *)updaterVersion, (char __far * __far *)&sEnd, 16);
 #else
     unsignedVersion = strtol(updaterVersion, &sEnd, 16);
 #endif

@@ -62,6 +62,6 @@ int8_t R_TRNG_GenerateRandomNumber (void);
  * @retval        -1: TRNG_BUSY
  * @details       This function gets random numbers.
  *********************************************************************************************************************/
-int8_t R_TRNG_GetRandomNumber (uint8_t *random, uint16_t size);
+int8_t R_TRNG_GetRandomNumber (uint8_t * random, uint16_t size);
 
 #endif /* R_TRNG_H_ */

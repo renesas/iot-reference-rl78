@@ -67,36 +67,36 @@
 /**
  * @brief Delay for the synchronous publisher task between publishes.
  */
-#define mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    ( 2000U )
+#define mqttexampleDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    (2000U)
 
 /**
  * @brief Number of publishes done by each task in this demo.
  */
-#define mqttexamplePUBLISH_COUNT                          10
+#define mqttexamplePUBLISH_COUNT                          (10)
 
 /**
  * @brief Number of times a publish has to be retried if agent cannot send a QoS0 packet
  * or an ACK is not received for a QoS1 packet.
  */
-#define mqttexampleNUM_PUBLISH_RETRIES                    ( 3 )
+#define mqttexampleNUM_PUBLISH_RETRIES                    (3)
 
 /**
  * @brief The maximum amount of time in milliseconds to wait for the commands
  * to be posted to the MQTT agent should the MQTT agent's command queue be full.
  * Tasks wait in the Blocked state, so don't use any CPU time.
  */
-#define mqttexampleMAX_COMMAND_SEND_BLOCK_TIME_MS         ( 1000 )
+#define mqttexampleMAX_COMMAND_SEND_BLOCK_TIME_MS         (1000)
 
 /**
  * @brief Maximum length of the thing name as set by AWS IoT.
  * This is used to set the maximum size of topic buffer that needs to be allocated.
  */
-#define mqttexampleTHING_NAME_MAX_LENGTH                  ( 128 )
+#define mqttexampleTHING_NAME_MAX_LENGTH                  (128)
 
 /**
  * @brief Size of statically allocated buffers for holding payloads.
  */
-#define mqttexampleSTRING_BUFFER_LENGTH                   ( 100 )
+#define mqttexampleSTRING_BUFFER_LENGTH                   (100)
 
 /**
  * @brief Format of the loop-back topic.
@@ -146,7 +146,7 @@
  * to a topic, publishing messages to a topic and reporting the incoming messages on subscribed topic.
  * Number of subscribe publish demo tasks to be spawned is configurable.
  */
-#define appmainMQTT_NUM_PUBSUB_TASKS              ( 2 )
+#define appmainMQTT_NUM_PUBSUB_TASKS              (2)
 #define appmainMQTT_PUBSUB_TASK_STACK_SIZE        (1200)
 #define appmainMQTT_PUBSUB_TASK_PRIORITY          ( tskIDLE_PRIORITY + 1 )
 /*-----------------------------------------------------------*/
@@ -503,7 +503,7 @@ static MQTTStatus_t prvPublishToTopic(MQTTQoS_t xQoS,
                 xPublishInfo.dup = true;
             }
         }
-    } while ((MQTTSuccess != xCommandStatus) && (lNumRetries-- > 0));
+    } while ((MQTTSuccess != xCommandStatus) && ((lNumRetries--) > 0));
 
     return xCommandStatus;
 }/* End of function prvPublishToTopic()*/

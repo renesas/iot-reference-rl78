@@ -83,12 +83,13 @@ bool setupWifi(void)
  */
 static bool _wifiConnectAccessPoint(void)
 {
-    bool                status = true;
+    bool                status         = true;
     WIFINetworkParams_t xConnectParams = {.xEncryption = eWiFiEncryptionTKIP, .xSecurity = eWiFiSecurityOpen};
     size_t              xSSIDLength;
     size_t              xPasswordLength;
     WIFISecurity_t      xSecurity  = clientcredentialWIFI_SECURITY;
 
+    /* Cast to type "const char __far *" to be compatible with parameter type */
     xSSIDLength = strlen((const char __far *)clientcredentialWIFI_SSID);
 
     if ((0 < xSSIDLength) && (wificonfigMAX_SSID_LEN > xSSIDLength))
@@ -107,9 +108,11 @@ static bool _wifiConnectAccessPoint(void)
     {
         case eWiFiSecurityWPA:
         case eWiFiSecurityWPA2:
-        	xPasswordLength = strlen((const char __far *)clientcredentialWIFI_PASSWORD);
 
-        	if ((0 < xPasswordLength) && (wificonfigMAX_PASSPHRASE_LEN > xPasswordLength))
+            /* Cast to type "const char __far *" to be compatible with parameter type */
+            xPasswordLength = strlen((const char __far *)clientcredentialWIFI_PASSWORD);
+
+            if ((0 < xPasswordLength) && (wificonfigMAX_PASSPHRASE_LEN > xPasswordLength))
             {
                 xConnectParams.xPassword.xWPA.ucLength = xPasswordLength;
                 memcpy(

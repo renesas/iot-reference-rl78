@@ -169,31 +169,31 @@
  * @brief Maximum number of subscriptions maintained by the MQTT agent in the subscription store.
  */
 #ifndef MQTT_AGENT_MAX_SUBSCRIPTIONS
-#define MQTT_AGENT_MAX_SUBSCRIPTIONS    10U
+#define MQTT_AGENT_MAX_SUBSCRIPTIONS    (10U)
 #endif
 
 /**
  * @brief Timeout for receiving CONNACK after sending an MQTT CONNECT packet.
  * Defined in milliseconds.
  */
-#define mqttexampleCONNACK_RECV_TIMEOUT_MS           ( 10000U )
+#define mqttexampleCONNACK_RECV_TIMEOUT_MS           (10000U)
 
 /**
  * @brief The maximum number of retries for network operation with server.
  */
-#define RETRY_MAX_ATTEMPTS                           ( BACKOFF_ALGORITHM_RETRY_FOREVER )
+#define RETRY_MAX_ATTEMPTS                           (BACKOFF_ALGORITHM_RETRY_FOREVER)
 
 /**
  * @brief The maximum back-off delay (in milliseconds) for retrying failed operation
  *  with server.
  */
-#define RETRY_MAX_BACKOFF_DELAY_MS                   ( 5000U )
+#define RETRY_MAX_BACKOFF_DELAY_MS                   (5000U)
 
 /**
  * @brief The base back-off delay (in milliseconds) to use for network operation retry
  * attempts.
  */
-#define RETRY_BACKOFF_BASE_MS                        ( 500U )
+#define RETRY_BACKOFF_BASE_MS                        (500 )
 
 /**
  * @brief The maximum time interval in seconds which is allowed to elapse
@@ -204,17 +204,17 @@
  *  absence of sending any other Control Packets, the Client MUST send a
  *  PINGREQ Packet.
  *//*_RB_ Move to be the responsibility of the agent. */
-#define mqttexampleKEEP_ALIVE_INTERVAL_SECONDS       ( 60U )
+#define mqttexampleKEEP_ALIVE_INTERVAL_SECONDS       (60U)
 
 /**
  * @brief Socket send timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_TIMEOUT_MS         ( 60000 )
+#define mqttexampleTRANSPORT_SEND_TIMEOUT_MS         (60000)
 
 /**
  * @brief Socket receive timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_RECV_TIMEOUT_MS         ( 450 )
+#define mqttexampleTRANSPORT_RECV_TIMEOUT_MS         (450)
 
 /**
  * @brief Configuration is used to turn on or off persistent sessions with MQTT broker.
@@ -223,19 +223,19 @@
  * will be stored by the broker and resend to device, when it comes back online.
  *
  */
-#define mqttexamplePERSISTENT_SESSION_REQUIRED       ( 0 )
+#define mqttexamplePERSISTENT_SESSION_REQUIRED       (0)
 
 /**
  * @brief Used to convert times to/from ticks and milliseconds.
  */
-#define mqttexampleMILLISECONDS_PER_SECOND           ( 1000U )
+#define mqttexampleMILLISECONDS_PER_SECOND           (1000U)
 #define mqttexampleMILLISECONDS_PER_TICK             ( mqttexampleMILLISECONDS_PER_SECOND / configTICK_RATE_HZ )
 
 /**
  * @brief The MQTT agent manages the MQTT contexts.  This set the handle to the
  * context used by this demo.
  */
-#define mqttexampleMQTT_CONTEXT_HANDLE               ( ( MQTTContextHandle_t ) 0 ) ''
+#define mqttexampleMQTT_CONTEXT_HANDLE               ((MQTTContextHandle_t)0) ''
 
 /**
  * @brief Event Bit corresponding to an MQTT agent state.
@@ -254,7 +254,7 @@
 /**
  * @brief MQTT Agent task notification index
  */
-#define MQTT_AGENT_NOTIFY_IDX        ( 3U )
+#define MQTT_AGENT_NOTIFY_IDX        (3U)
 
 /**
  * @brief ThingName which is used as the client identifier for MQTT connection.
@@ -536,7 +536,7 @@ static MQTTStatus_t prvMQTTInit(void)
                             NULL ); /* Context to pass into the callback. Passing the pointer to subscription array. */
 
     return xReturn;
-}
+} /* End of function prvMQTTInit()*/
 
 /*-----------------------------------------------------------*/
 
@@ -915,16 +915,16 @@ static void prvIncomingPublishCallback(MQTTAgentContext_t * pMqttAgentContext,
                                         uint16_t packetId,
                                         MQTTPublishInfo_t * pxPublishInfo)
 {
-    bool xPublishHandled = false;
-    char cOriginalChar;
+    bool   xPublishHandled = false;
+    char   cOriginalChar;
     char * pcLocation;
 
     (void) packetId;
     (void) pMqttAgentContext;
 
 #if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
-    extern void handleReceivedPublish( void * pvIncomingPublishCallbackContext,
-                                       MQTTPublishInfo_t * pxPublishInfo );
+    extern void handleReceivedPublish (void * pvIncomingPublishCallbackContext,
+                                       MQTTPublishInfo_t * pxPublishInfo);
 #endif
 
     /* Fan out the incoming publishes to the callbacks registered using
@@ -1196,7 +1196,7 @@ static MQTTConnectionStatus_t prvConnectToMQTTBroker(bool xIsReconnect)
                         usNextRetryBackOff));
                 vTaskDelay(pdMS_TO_TICKS(usNextRetryBackOff));
             }
-            else if (xBackoffAlgStatus == BackoffAlgorithmRetriesExhausted)
+            else if (BackoffAlgorithmRetriesExhausted == xBackoffAlgStatus)
             {
                 LogError(("Connection to the broker failed, all attempts exhausted."));
             }
@@ -1504,20 +1504,33 @@ void vRemoveMQTTTopicFilterCallback(const char * pcTopicFilter,
     xSemaphoreGive(xSubscriptionsMutex);
 }/* End of function vRemoveMQTTTopicFilterCallback()*/
 
-static void prvSubscribeRqCallback( MQTTAgentCommandContext_t * pxCommandContext,
-                                    MQTTAgentReturnInfo_t * pxReturnInfo )
+/**
+ * @fn prvSubscribeRqCallback
+ *
+ * @brief Callback function invoked when a subscribe request completes.
+ *
+ * This function handles the result of a subscribe operation initiated by the MQTT agent.
+ * It is typically called internally by the agent when a response to a subscribe command
+ * is received from the broker.
+ *
+ * @param[in] pxCommandContext Pointer to the command context associated with the subscribe request.
+ * @param[in] pxReturnInfo     Pointer to the return information containing the result of the operation.
+ */
+static void prvSubscribeRqCallback(MQTTAgentCommandContext_t * pxCommandContext,
+                                    MQTTAgentReturnInfo_t * pxReturnInfo)
 {
-    TaskHandle_t xTaskHandle = ( struct tskTaskControlBlock * ) pxCommandContext;
+    TaskHandle_t xTaskHandle = (struct tskTaskControlBlock *) pxCommandContext;
 
-    configASSERT( pxReturnInfo );
+    configASSERT(pxReturnInfo);
 
-    if( xTaskHandle != NULL )
+    if (NULL != xTaskHandle)
     {
-        uint32_t ulNotifyValue = ( pxReturnInfo->returnCode & 0xFFFFFF );
+        uint32_t ulNotifyValue = (pxReturnInfo->returnCode & 0xFFFFFF);
 
-        if( pxReturnInfo->pSubackCodes )
+        if (pxReturnInfo->pSubackCodes)
         {
-            ulNotifyValue += ( (uint32_t)pxReturnInfo->pSubackCodes[ 0 ] << 24 );
+        	/* Cast to type "uint32_t" to be compatible with parameter type */
+            ulNotifyValue += ((uint32_t)pxReturnInfo->pSubackCodes[0] << 24);
         }
 
         ( void ) xTaskNotifyIndexed( xTaskHandle,
@@ -1525,16 +1538,33 @@ static void prvSubscribeRqCallback( MQTTAgentCommandContext_t * pxCommandContext
                                      ulNotifyValue,
                                      eSetValueWithOverwrite );
     }
-}
-/*-----------------------------------------------------------------*/
+}/* End of function prvSubscribeRqCallback()*/
 
-MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
+/**
+ * @fn MqttAgent_SubscribeSync
+ *
+ * @brief Sends a synchronous subscribe request and synchronizes with the MQTT agent task.
+ *
+ * This function sends a subscribe command to the MQTT broker and blocks until the operation
+ * completes. It is typically used when a task needs to ensure the subscription is established
+ * before proceeding. The function also registers a callback to handle incoming messages
+ * on the subscribed topic.
+ *
+ * @param[in] pcTopicFilter       Pointer to the topic filter string.
+ * @param[in] uxTopicFilterLength Length of the topic filter string in bytes.
+ * @param[in] xRequestedQoS       Requested Quality of Service (QoS) level.
+ * @param[in] pxCallback          Callback function for incoming published messages.
+ * @param[in] pvCallbackCtx       User-defined context passed to the callback.
+ *
+ * @return MQTTSuccess if the subscription succeeds; otherwise, an appropriate error code.
+ */
+MQTTStatus_t MqttAgent_SubscribeSync(const char * pcTopicFilter,
                                       uint16_t uxTopicFilterLength,
                                       MQTTQoS_t xRequestedQoS,
                                       IncomingPubCallback_t pxCallback,
-                                      void * pvCallbackCtx )
+                                      void * pvCallbackCtx)
 {
-    BaseType_t xMQTTCallbackAdded;
+    BaseType_t   xMQTTCallbackAdded;
     MQTTStatus_t xResult;
 
     xMQTTCallbackAdded = xAddMQTTTopicFilterCallback( pcTopicFilter,
@@ -1543,7 +1573,7 @@ MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
                                                       pvCallbackCtx,
                                                       pdFALSE );
 
-    if( xMQTTCallbackAdded == pdTRUE )
+    if (pdTRUE == xMQTTCallbackAdded)
     {
         MQTTSubscribeInfo_t xSubInfo =
         {
@@ -1563,26 +1593,28 @@ MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
         {
             .blockTimeMs                 = portMAX_DELAY,
             .cmdCompleteCallback         = prvSubscribeRqCallback,
+
+			/* Cast to type "void *" to be compatible with parameter type */
             .pCmdCompleteCallbackContext = ( void * ) ( xTaskGetCurrentTaskHandle() )
         };
 
-        ( void ) xTaskNotifyStateClearIndexed( NULL, MQTT_AGENT_NOTIFY_IDX );
+        (void)xTaskNotifyStateClearIndexed(NULL, MQTT_AGENT_NOTIFY_IDX);
 
         /* Enqueue subscribe to the command queue. These commands will be processed only
          * when command loop starts. */
-        xResult = MQTTAgent_Subscribe( &xGlobalMqttAgentContext, &xSubArgs, &xCommandParams );
+        xResult = MQTTAgent_Subscribe(&xGlobalMqttAgentContext, &xSubArgs, &xCommandParams);
 
-        if( xResult == MQTTSuccess )
+        if (MQTTSuccess == xResult)
         {
             uint32_t ulNotifyValue = 0;
 
-            if( xTaskNotifyWaitIndexed( MQTT_AGENT_NOTIFY_IDX,
+            if (xTaskNotifyWaitIndexed(MQTT_AGENT_NOTIFY_IDX,
                                         0x0,
                                         0xFFFFFFFF,
                                         &ulNotifyValue,
-                                        portMAX_DELAY ) )
+                                        portMAX_DELAY))
             {
-                xResult = (MQTTStatus_t)( ulNotifyValue & 0x00FFFFFF );
+                xResult = (MQTTStatus_t)(ulNotifyValue & 0x00FFFFFF);
             }
             else
             {
@@ -1592,7 +1624,7 @@ MQTTStatus_t MqttAgent_SubscribeSync( const char * pcTopicFilter,
     }
 
     return MQTTSuccess;
-}
+} /* End of function MqttAgent_SubscribeSync()*/
 
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
 #pragma section

@@ -39,7 +39,7 @@
 /* Flash Buffer */
 typedef struct st_bl_buf
 {
-    uint8_t  buf[FLASH_BUF_SIZE + 8];
+    uint8_t  buf[FLASH_BUF_SIZE+8];
     uint32_t cnt;
     uint32_t total;
 } st_flash_buf_t;
@@ -65,12 +65,13 @@ S_C_CH_FAR MSG_TEMPCOPY_OK[] = "copy to main area ... OK\r\n";
 S_C_CH_FAR MSG_TEMPCOPY_NG[] = "copy to main area ... NG\r\n";
 #endif /* (FWUP_CFG_UPDATE_MODE == 0) */
 
-static void open_boot_loader  (void);
-static void close_boot_loader (void);
-static void sample_buf_init   (void);
+static void         open_boot_loader  (void);
+static void         close_boot_loader (void);
+static void         sample_buf_init   (void);
 static e_fwup_err_t sample_write_image (e_fwup_area_t bank);
+
 static st_flash_buf_t s_flash_buf;
-static uint8_t s_err_flg = 0;
+static uint8_t        s_err_flg = 0;
 
 /**********************************************************************************************************************
 * Function Name: sample_buf_init
@@ -110,7 +111,7 @@ void sample_buffering(uint8_t rx_data)
     if (FLASH_BUF_SIZE == s_flash_buf.cnt)
     {
         file_size = R_FWUP_GetImageSize();
-        UART_RTS = 1;
+        UART_RTS  = 1;
     }
     else
     {
@@ -136,9 +137,9 @@ void sample_buffering(uint8_t rx_data)
 static e_fwup_err_t sample_write_image(e_fwup_area_t area)
 {
     e_fwup_err_t ret_val = FWUP_ERR_FAILURE;
-    uint32_t write_size;
+    uint32_t     write_size;
 
-    while(1)
+    while (1)
     {
         if (1 == UART_RTS)
         {
@@ -147,7 +148,7 @@ static e_fwup_err_t sample_write_image(e_fwup_area_t area)
 
             /* update firmware */
             write_size = (FLASH_BUF_SIZE < s_flash_buf.cnt) ? FLASH_BUF_SIZE : s_flash_buf.cnt;
-            ret_val = R_FWUP_WriteImage(area, &s_flash_buf.buf[0], write_size);
+            ret_val    = R_FWUP_WriteImage(area, &s_flash_buf.buf[0], write_size);
 
             /* there are received data during RTS=ON */
             if (FLASH_BUF_SIZE < s_flash_buf.cnt)
@@ -204,8 +205,8 @@ static void open_boot_loader(void)
     R_FWUP_SoftwareDelay(50, FWUP_DELAY_MILLISECS);
 
     g_using_uservector = 0;
-    UART_RTS = 0;
-    s_err_flg = 0;
+    UART_RTS           = 0;
+    s_err_flg          = 0;
     sample_buf_init();
     R_FWUP_Open();
 }
@@ -342,6 +343,6 @@ SW_RESET:
 END:
     printf(MSG_ERROR);
     s_err_flg = 1;
-    UART_RTS = 0;
+    UART_RTS  = 0;
     while (1);
 }/* End of function main */

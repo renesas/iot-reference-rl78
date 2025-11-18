@@ -44,8 +44,9 @@
 #include "r_wifi_da16xxx_if.h"
 #include "user_tcp_hook_config.h"
 
-#define MALLOC_SOCKET_CREATION_ERROR -50
-#define NO_SOCKET_CREATION_ERROR -51
+#define MALLOC_SOCKET_CREATION_ERROR (-50)
+
+#define NO_SOCKET_CREATION_ERROR 	 (-51)
 
 /*-----------------------------------------------------------*/
 typedef struct xSOCKETContext
@@ -63,8 +64,8 @@ typedef struct xSOCKETContext
 #define MAX_NUM_SSOCKETS    (WIFI_CFG_TLS_CREATABLE_SOCKETS)
 
 /*-----------------------------------------------------------*/
-#define FORCE_RESET     1
-#define NO_FORCE_RESET  0
+#define FORCE_RESET     (1)
+#define NO_FORCE_RESET  (0)
 static volatile uint32_t count_module_comm = 0;
 
 static wifi_err_t SocketErrorHook (wifi_err_t error, bool force_reset);

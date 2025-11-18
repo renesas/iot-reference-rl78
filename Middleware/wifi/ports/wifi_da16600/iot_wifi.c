@@ -213,7 +213,7 @@ WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParam
     {
         return eWiFiFailure;
     }
-    if ((pxNetworkParams->xSecurity != eWiFiSecurityOpen) &&
+    if ((eWiFiSecurityOpen != pxNetworkParams->xSecurity) &&
         (pxNetworkParams->xPassword.xWPA.ucLength > wificonfigMAX_PASSPHRASE_LEN))
     {
         return eWiFiFailure;
@@ -228,7 +228,9 @@ WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParam
     do
     {
         ret = R_WIFI_DA16XXX_Connect(
+        		/* Cast to type "const uint8_t *" to be compatible with parameter type */
                 (const uint8_t *)pxNetworkParams->ucSSID,
+				/* Cast to type "const uint8_t *" to be compatible with parameter type */
                 (const uint8_t *)pxNetworkParams->xPassword.xWPA.cPassphrase,
                 convert_security,
                 WIFI_ENCRYPTION_AES
@@ -245,7 +247,7 @@ WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParam
         {
             break;
         }
-    } while (0 < numRetries--);
+    } while (0 < (numRetries--));
 
     if (WIFI_SUCCESS != ret)
     {

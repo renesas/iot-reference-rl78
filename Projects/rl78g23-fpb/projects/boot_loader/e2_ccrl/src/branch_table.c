@@ -44,14 +44,14 @@
 #define FWUP_ISR_FUNC_NAME(x)  br_##x##_interrupt
 
 #define FWUP_BRANCH_FUNC(x)  \
-do {\
-    if(0 == g_using_uservector)\
+do{\
+    if (0 == g_using_uservector)\
     {\
         BL_ISR_##x();\
-        return;\
+        return ;\
     }\
-     jump_branch_interrupts(0x##x);\
-} while (0)
+    jump_branch_interrupts(0x##x);\
+}while (0)
 
 #define FWUP_ISR_FUNC(x)  BL_ISR_NEAR_FUNC static void  FWUP_ISR_FUNC_NAME(x)(void) {FWUP_BRANCH_FUNC(x);}
 
@@ -144,7 +144,11 @@ BL_NEAR_FUNC static void dummy_func(void)
 BL_NEAR_FUNC static void jump_branch_interrupts(uint32_t vectaddr)
 {
     uint32_t addr;
+
+    /* Cast to type appropriate datatype to be compatible with parameter type */
     addr = (uint32_t)BRANCH_TABLE_START + (vectaddr * 2);
+
+    /* Cast to type appropriate datatype to be compatible with parameter type */
     ((void (*)(void))addr)();
 }
 /**********************************************************************************************************************

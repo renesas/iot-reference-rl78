@@ -85,7 +85,7 @@ void     prvTransportTestDelay (uint32_t delayMs);
 /**
  * @brief Socket send and receive timeouts to use.  Specified in milliseconds.
  */
-#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    ( 1000U )
+#define mqttexampleTRANSPORT_SEND_RECV_TIMEOUT_MS    (1000U)
 #define mqttexampleMILLISECONDS_PER_SECOND           (1000U)
 #define mqttexampleMILLISECONDS_PER_TICK             ( mqttexampleMILLISECONDS_PER_SECOND / configTICK_RATE_HZ )
 

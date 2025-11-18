@@ -59,7 +59,7 @@
  *
  * #define MQTT_SERVER_PORT       (8883)
  */
-#define MQTT_SERVER_PORT        ( 8883 )
+#define MQTT_SERVER_PORT        (8883)
 
 /**
  * @brief Endpoint of the echo server to connect to in transport interface test.

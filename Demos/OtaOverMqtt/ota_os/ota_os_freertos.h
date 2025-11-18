@@ -52,6 +52,8 @@ typedef enum OtaOsStatus
 } OtaOsStatus_t;
 
 /**
+ * @fn OtaInitEvent_FreeRTOS
+ *
  * @brief Initialize the OTA events.
  *
  * This function initializes the OTA events mechanism for freeRTOS platforms.
@@ -61,9 +63,11 @@ typedef enum OtaOsStatus
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error
  * code on failure.
  */
-OtaOsStatus_t OtaInitEvent_FreeRTOS( void );
+OtaOsStatus_t OtaInitEvent_FreeRTOS (void);
 
 /**
+ * @fn OtaSendEvent_FreeRTOS
+ *
  * @brief Sends an OTA event.
  *
  * This function sends an event to OTA library event handler on FreeRTOS
@@ -79,9 +83,11 @@ OtaOsStatus_t OtaInitEvent_FreeRTOS( void );
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error
  * code on failure.
  */
-OtaOsStatus_t OtaSendEvent_FreeRTOS( const void * pEventMsg );
+OtaOsStatus_t OtaSendEvent_FreeRTOS (const void * pEventMsg);
 
 /**
+ * @fn OtaReceiveEvent_FreeRTOS
+ *
  * @brief Receive an OTA event.
  *
  * This function receives next event from the pending OTA events on FreeRTOS
@@ -96,9 +102,11 @@ OtaOsStatus_t OtaSendEvent_FreeRTOS( const void * pEventMsg );
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error
  * code on failure.
  */
-OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg );
+OtaOsStatus_t OtaReceiveEvent_FreeRTOS (void * pEventMsg);
 
 /**
+ * @fn OtaDeinitEvent_FreeRTOS
+ *
  * @brief Deinitialize the OTA Events mechanism.
  *
  * This function deinitialize the OTA events mechanism and frees any resources
@@ -109,6 +117,6 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg );
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error
  * code on failure.
  */
-void OtaDeinitEvent_FreeRTOS( void );
+void OtaDeinitEvent_FreeRTOS (void);
 
 #endif /* ifndef _OTA_OS_FREERTOS_H_ */

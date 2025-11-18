@@ -47,7 +47,7 @@
  *********************************************************************************************************************/
 sci_hdl_t sci_handle;
 
-const TickType_t xMaxBlockTime = pdMS_TO_TICKS( 5000 );
+const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5000);
 
 /**********************************************************************************************************************
  Private (static) variables and functions
@@ -97,7 +97,7 @@ void uart_string_printf(RL78_FAR char *pString)
 
     str_length = (uint16_t)strlen(pString);    /* Cast to (uint16_t) */
 
-    if(xSemaphoreTake(xTransmitMutex, xMaxBlockTime) == pdPASS)
+    if (xSemaphoreTake(xTransmitMutex, xMaxBlockTime) == pdPASS)
     {
         while ((retry > 0) && (str_length > 0))
         {
