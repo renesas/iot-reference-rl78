@@ -1,7 +1,7 @@
 /*
  * FreeRTOS V202111.00
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
+ * Modifications Copyright (C) 2024-2025 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -84,7 +84,7 @@
  * (0) : OTA demo is disabled
  * (1) : OTA over MQTT demo is enabled
  */
-#define ENABLE_OTA_UPDATE_DEMO              (0)
+#define ENABLE_OTA_UPDATE_DEMO              (1)
 
 /**
  * @brief Path of the file containing the provisioning claim certificate. This

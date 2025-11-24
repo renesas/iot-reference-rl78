@@ -1,5 +1,5 @@
 /*
- * FreeRTOS OTA PAL for Renesas RX65N V1.0.0
+ * FreeRTOS OTA PAL for Renesas RL78/G23 FPB 128-pin V1.0.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
  *
