@@ -262,11 +262,6 @@ static void deleteBufferArea (void);
 
 static void rollBackOldFirmware (void);
 
-/*
- * @brief Handle self-test for OTA image
- */
-extern BaseType_t OtaSelfTest (void);
-
 /**
  * @brief Structure used for encoding firmware version.
  */
@@ -1773,40 +1768,22 @@ static OtaPalJobDocProcessingResult_t verifyVersion(char * updaterVersion)
 #endif
 
     if (appFirmwareVersion.u.unsignedVersion32 > unsignedVersion)
-
     /* Current version is greater than retrieved version from OTA Job */
     {
-        if (pdTRUE == OtaSelfTest())
-        {
             LogInfo(("New image has higher version than current image, accepted!\n"));
             return OtaPalNewImageBooted;
-        }
-        else /* Self-test is failed */
-        {
-            LogInfo(("New image cannot pass self-test...\n"));
-            return OtaPalNewImageBootFailed;
-        }
     }
-
     else if (appFirmwareVersion.u.unsignedVersion32 == unsignedVersion)
     {
         LogInfo(("Version of new image is identical, or application has rolled-back to initial version.\n"));
-        if (pdTRUE == OtaSelfTest())
-        {
-            LogInfo(("Image self-test passed!\n"));
-            return OtaPalNewImageSameVersionSelfTestOK;
-        }
-        else /* Self-test is failed */
-        {
-            LogInfo(("New image cannot pass self-test...\n"));
-            return OtaPalNewImageSameVersionSelfTestNG;
-        }
+        LogInfo(("Image self-test passed!\n"));
+        return OtaPalNewImageSameVersionSelfTestOK;
     }
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
     else
     {
 #if (otaconfigAllowDowngrade == 1U)
-    LogInfo(("OTA Config Allow Downgrade has been set to 1, bypassing version check, accepted!\n"));
+        LogInfo(("OTA Config Allow Downgrade has been set to 1, bypassing version check, accepted!\n"));
         return OtaPalNewImageBooted;
 #else /* if (otaconfigAllowDowngrade == 1U) */
         LogError(("The image version is invalid\n"));

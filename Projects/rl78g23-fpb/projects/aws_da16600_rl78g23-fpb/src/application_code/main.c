@@ -107,7 +107,6 @@ void vApplicationDaemonTaskStartupHook (void);
  */
 void              prvMiscInitialization (void);
 static BaseType_t xPlatformNetworkUp (void);
-BaseType_t        OtaSelfTest (void);
 
 #if (ENABLE_AFR_IDT == 1)
 int RunDeviceAdvisorDemo( void )
@@ -412,15 +411,3 @@ static BaseType_t xPlatformNetworkUp(void)
 {
     return ((BaseType_t)setupWifi());
 }/* End of function xPlatformNetworkUp()*/
-
-/**********************************************************************************************************************
- * Function Name: OtaSelfTest
- * Description  : The test function executed during the self-check process during an OTA update
- * Return Value : pdTRUE (if the self-test was successful)
- *                pdFALSE (if the self-test was failed)
- *                Always return pdTRUE since the initial firmware was evaluated during the manufacturing process.
- *********************************************************************************************************************/
-BaseType_t OtaSelfTest(void)
-{
-	return pdTRUE;
-} /* End of function OtaSelfTest()*/
