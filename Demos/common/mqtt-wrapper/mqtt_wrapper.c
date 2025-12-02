@@ -369,7 +369,7 @@ bool mqttWrapper_subscribe(char * topic,
 
         mqttStatus = MqttAgent_SubscribeSync(topic,
                                             topicLength,
-                                            MQTTQoS0,
+                                            MQTTQoS1,
                                             handleReceivedPublish,
                                             NULL);
 
