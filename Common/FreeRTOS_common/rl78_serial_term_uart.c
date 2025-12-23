@@ -121,7 +121,6 @@ void uart_string_printf(RL78_FAR char *pString)
                 pString    += transmit_length;
             }
         }
-        vTaskDelay(20);
 
         /* Must ensure to give the mutex back. */
         xSemaphoreGive(xTransmitMutex);

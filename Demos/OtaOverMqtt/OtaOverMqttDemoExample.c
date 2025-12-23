@@ -3,6 +3,8 @@
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
  *
+ * SPDX-License-Identifier: MIT
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
@@ -97,7 +99,7 @@
 /**
  * @brief Task priority of OTA agent.
  */
-#define AGENT_TASK_PRIORITY            (tskIDLE_PRIORITY + 2)
+#define AGENT_TASK_PRIORITY            (tskIDLE_PRIORITY + 1)
 
 /**
  * @brief Maximum stack size of OTA agent task.
@@ -133,6 +135,10 @@ char globalJobId[MAX_JOB_ID_LENGTH] = { 0 };
 /* The topic buffer to wait for job event */
 char   jobEventTopicBuffer[TOPIC_BUFFER_SIZE+1] = { 0 };
 size_t jobEventTopicBufferLength                = 0U;
+
+/* The topic buffer for new job notifications */
+char   notifyTopicBuffer[TOPIC_BUFFER_SIZE+1] = {0};
+size_t notifyTopicBufferLength                = 0U;
 
 static OtaDataEvent_t            dataBuffers[MAX_NUM_OF_OTA_DATA_BUFFERS]         = { 0 };
 static OtaJobEventData_t         jobDocBuffer                                     = { 0 };
@@ -653,9 +659,41 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler(OtaJobEventData
     }
     else /* the OTA job does not exist */
     {
-        nextEvent.eventId = OtaAgentEventRequestJobDocument;
-        OtaSendEvent_FreeRTOS(&nextEvent);
-        xResult = OtaPalJobDocProcessingStateInvalid;
+        char   thingName[MAX_THING_NAME_SIZE+1] = {0};
+        size_t thingNameLength                  = 0U;
+        mqttWrapper_getThingName(thingName, &thingNameLength);
+
+        if (thingNameLength > 0)
+        {
+            /* Construct the jobs notify topic. */
+            JobsStatus_t jobsStatus = Jobs_GetTopic(notifyTopicBuffer,
+                                                    sizeof(notifyTopicBuffer),
+                                                    thingName,
+                                                    (uint16_t)thingNameLength,
+                                                    JobsJobsChanged,
+                                                    &notifyTopicBufferLength);
+
+            if (JobsSuccess == jobsStatus)
+            {
+                /* Subscribe to the notify topic to be informed when a new job is available. */
+                mqttWrapper_subscribe(notifyTopicBuffer, notifyTopicBufferLength);
+                LogInfo(("No pending jobs. Subscribed to %s for new job notifications.", notifyTopicBuffer));
+
+                /* Trigger the new wait event. */
+                nextEvent.eventId = OtaAgentEventWaitForJob;
+                OtaSendEvent_FreeRTOS(&nextEvent);
+                xResult = OtaPalJobDocProcessingStateInvalid;
+            }
+            else
+            {
+                LogError(("Failed to construct notify topic, falling back to polling."));
+
+                /* Fallback to original behavior if topic construction fails. */
+                nextEvent.eventId = OtaAgentEventRequestJobDocument;
+                OtaSendEvent_FreeRTOS(&nextEvent);
+                xResult = OtaPalJobDocProcessingStateInvalid;
+            }
+        }
     }
 
     /* Verify the image version */
@@ -666,7 +704,7 @@ static OtaPalJobDocProcessingResult_t receivedJobDocumentHandler(OtaJobEventData
                                jobDoc->jobDataLength,
                                "execution.statusDetails.updaterVersion",
                                strlen("execution.statusDetails.updaterVersion"),
-							   /* Cast to type "const char **" to be compatible with parameter type */
+                               /* Cast to type "const char **" to be compatible with parameter type */
                                (const char **)&updaterVersion,
                                &versionLen,
                                NULL);
@@ -846,8 +884,8 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
         if (NULL != dataBuf)
         {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-        	/* Cast to type appropriate datatype to be compatible with parameter type */
-        	memcpy(dataBuf->data, (const void __far *)message, messageLength);
+            /* Cast to type appropriate datatype to be compatible with parameter type */
+            memcpy(dataBuf->data, (const void __far *)message, messageLength);
 #else
             memcpy(dataBuf->data, message, messageLength);
 #endif
@@ -865,6 +903,24 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
     }
     else /* not the callback from MQTT File Stream */
     {
+        /* Check if this is a new job notification */
+        if ((notifyTopicBufferLength > 0) &&
+            (topicLength == notifyTopicBufferLength) &&
+            (strncmp(topic, notifyTopicBuffer, topicLength) == 0))
+        {
+            LogInfo(("Received new job notification on topic %.*s.", (int)topicLength, topic));
+
+            /* Send the UNSUBSCRIBE event to /notify topic */
+            nextEvent.eventId = OtaAgentEventNotifyCanceled;
+            OtaSendEvent_FreeRTOS(&nextEvent);
+
+            /* Request the job document for the new job. */
+            nextEvent.eventId = OtaAgentEventRequestJobDocument;
+            OtaSendEvent_FreeRTOS(&nextEvent);
+
+            return true; /* Message handled */
+        }
+
         mqttWrapper_getThingName(thingName, &thingNameLength);
         if (NULL == thingName)
         {
@@ -885,8 +941,8 @@ bool otaDemo_handleIncomingMQTTMessage(char * topic,
         {
             /* Copy the job document to process in OtaAgentEventReceivedJobDocument event handler */
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
-        	/* Cast to type appropriate datatype to be compatible with parameter type */
-        	memcpy(jobDocBuffer.jobData, (const void __far *)message, messageLength);
+            /* Cast to type appropriate datatype to be compatible with parameter type */
+            memcpy(jobDocBuffer.jobData, (const void __far *)message, messageLength);
 #else
             memcpy(jobDocBuffer.jobData, message, messageLength);
 #endif
@@ -1088,10 +1144,11 @@ static OtaDataEvent_t * getOtaDataEventBuffer(void)
  *****************************************************************************/
 static void processOTAEvents(void)
 {
-    OtaEventMsg_t     recvEvent       = { 0 };
-    OtaEvent_t        recvEventId     = OtaAgentEventStart;
-    static OtaEvent_t lastRecvEventId = OtaAgentEventStart;
-    OtaEventMsg_t     nextEvent       = { 0 };
+    OtaEventMsg_t     recvEvent           = { 0 };
+    OtaEvent_t        recvEventId         = OtaAgentEventStart;
+    static OtaEvent_t lastRecvEventId     = OtaAgentEventStart;
+    OtaEventMsg_t     nextEvent           = { 0 };
+    static int32_t    lastReceivedblockId = -1;
 
     OtaReceiveEvent_FreeRTOS(&recvEvent);
     recvEventId = recvEvent.eventId;
@@ -1100,31 +1157,70 @@ static void processOTAEvents(void)
     {
         lastRecvEventId = recvEventId;
     }
-    else
+    else /* There is no new event in the event queue */
     {
-        if (OtaAgentEventRequestFileBlock == lastRecvEventId)
+        if ((OtaAgentEventWaitForJob == lastRecvEventId) ||
+                (OtaAgentEventRequestJobDocument == lastRecvEventId))
+        {
+            /* A timeout occurred while waiting for a new job notification.
+             * This is a normal and expected event. We do nothing and simply
+             * continue the loop to wait again. */
+            LogInfo(("OTA Agent is waiting for new job..."));
+            return;
+        }
+
+        else if (OtaAgentEventRequestFileBlock == lastRecvEventId)
         {
             /* No current event and we have not received the new block
-             * since last timeout, try sending the request for block again. */
+             * trying sending request for new block again */
             recvEventId = lastRecvEventId;
 
             /* It is likely that the network was disconnected and reconnected,
              * we should wait for the MQTT connection to go up. */
             while (!mqttWrapper_isConnected())
             {
-            	/* Cast to type appropriate datatype to be compatible with parameter type */
+                /* Cast to type appropriate datatype to be compatible with parameter type */
                 vTaskDelay(pdMS_TO_TICKS(100));
             }
+        }
+        else
+        {
+            /* Add else case to do nothing, satisfy coding rule */
+            return;
         }
     }
 
     switch (recvEventId)
     {
+        /* Initial event of OTA orchestrator */
+        /* In most failure case, it will be reset to this event */
+        case OtaAgentEventStart:
+            nextEvent.eventId = lastRecvEventId;
+            OtaSendEvent_FreeRTOS(&nextEvent);
+            break;
+
         case OtaAgentEventRequestJobDocument:
             LogInfo(("Request Job Document event Received \n"));
             LogInfo(("-------------------------------------\n"));
             requestJobDocumentHandler();
             otaAgentState = OtaAgentStateRequestingJob;
+            break;
+
+        /* New case to handle the waiting state. */
+        case OtaAgentEventWaitForJob:
+            LogInfo(("Waiting for new job notification...\n"));
+            otaAgentState = OtaAgentStateWaitingForJob;
+            break;
+
+        /* New event to trigger the UNSUBSCRIBE */
+        case OtaAgentEventNotifyCanceled:
+            /* Unsubscribe from the /notify topic to prevent duplicate triggers. */
+            if (false == mqttWrapper_unsubscribe(notifyTopicBuffer, notifyTopicBufferLength))
+            {
+                LogWarn(("Failed to unsubscribe to /notify topic"));
+            }
+            /* Clear the length to indicate we are no longer subscribed */
+            notifyTopicBufferLength = 0;
             break;
 
         case OtaAgentEventReceivedJobDocument:
@@ -1143,6 +1239,7 @@ static void processOTAEvents(void)
             {
                 case OtaPalJobDocFileCreated:
                     LogInfo(("Received OTA Job. \n"));
+                    lastReceivedblockId = -1;
                     nextEvent.eventId = OtaAgentEventRequestFileBlock;
                     OtaSendEvent_FreeRTOS(&nextEvent);
                     otaAgentState = OtaAgentStateCreatingFile;
@@ -1253,8 +1350,6 @@ static void processOTAEvents(void)
             int32_t blockId;
             int32_t blockSize;
 
-            static int32_t lastReceivedblockId = -1;
-
             /*
              * MQTT streams Library:
              * Extracting and decoding the received data block from the incoming MQTT message.
@@ -1302,6 +1397,26 @@ static void processOTAEvents(void)
             {
                 numOfBlocksRemaining--;
                 currentBlockOffset++;
+            }
+            /* File block cannot be written */
+            else /* if (0 == result) */
+            {
+                LogError(("Failed to write the downloaded OTA file block, "
+                        "please check the format of the update firmware.\n"
+                        "Terminating the OTA job...\n"));
+
+                /* Reset block counters */
+                lastReceivedblockId = -1;
+                currentBlockOffset = 0;
+                totalBytesReceived = 0;
+
+                sendFailedMessage();
+                vTaskDelay(pdMS_TO_TICKS(5000));
+
+                /* Request new job document */
+                nextEvent.eventId = OtaAgentEventRequestJobDocument;
+                OtaSendEvent_FreeRTOS(&nextEvent);
+                break;
             }
 
             if ((numOfBlocksRemaining % 10) == 0)

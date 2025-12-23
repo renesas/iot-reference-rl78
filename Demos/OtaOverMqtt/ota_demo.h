@@ -37,6 +37,7 @@ Please set otaconfigAllowDowngrade to 1."
 typedef enum OtaEvent
 {
     OtaAgentEventStart = 0,           /*!< @brief Start the OTA state machine */
+    OtaAgentEventWaitForJob,          /*!< @brief Event to wait for Job notification */
     OtaAgentEventRequestJobDocument,  /*!< @brief Event for requesting job document. */
     OtaAgentEventReceivedJobDocument, /*!< @brief Event when job document is received. */
     OtaAgentEventCreateFile,          /*!< @brief Event to create a file. */
@@ -50,6 +51,7 @@ typedef enum OtaEvent
     OtaAgentEventUserAbort,           /*!< @brief Event triggered by user to stop agent. */
     OtaAgentEventJobCanceled,         /*!< @brief Event triggered by AWS that cancels the OTA job. */
     OtaAgentEventShutdown,            /*!< @brief Event to trigger ota shutdown */
+    OtaAgentEventNotifyCanceled,      /*!< @brief Event to Unsubscribe from Job topic */
     OtaAgentEventMax                  /*!< @brief Last event specifier */
 } OtaEvent_t;
 

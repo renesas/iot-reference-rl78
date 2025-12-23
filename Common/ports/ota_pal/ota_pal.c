@@ -119,10 +119,10 @@ int16_t otaPal_WriteBlock(AfrOtaJobDocumentFields_t * const pFileContext,
                            uint8_t * const pData,
                            uint32_t ulBlockSize)
 {
-	e_fwup_err_t eResult     = FWUP_SUCCESS;
-	uint16_t     usBlockIndx = ulOffset/ulBlockSize;
+    e_fwup_err_t eResult     = FWUP_SUCCESS;
+    uint16_t     usBlockIndx = ulOffset/ulBlockSize;
 
-	LogDebug(("otaPal_WriteBlock: receives OTA block #%d with size = %ld!", usBlockIndx, ulBlockSize));
+    LogDebug(("otaPal_WriteBlock: receives OTA block #%d with size = %d!", usBlockIndx, ulBlockSize));
 
     if (0 == ulOffset)
     {
@@ -130,19 +130,42 @@ int16_t otaPal_WriteBlock(AfrOtaJobDocumentFields_t * const pFileContext,
         R_FWUP_Open();
 
         R_FWUP_EraseArea(FWUP_AREA_BUFFER);
+
+        first_block_received = pdTRUE;
     }
 
-    /* Cast to type appropriate datatype to be compatible with parameter type */
-    eResult = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pData, ulOffset + (uint32_t)512, ulBlockSize);
-
-    if (FWUP_ERR_FLASH == eResult)
+    if ((ulBlockSize % FWUP_CFG_CF_W_UNIT_SIZE) != 0)
     {
-    	LogDebug( ("otaPal_WriteBlock: index = %d, NG, error = %d\r\n", usBlockIndx, eResult) );
+        uint32_t  paddingsize = FWUP_CFG_CF_W_UNIT_SIZE*((int32_t)(ulBlockSize/FWUP_CFG_CF_W_UNIT_SIZE)+1);
+        uint8_t * pBuffTmp    = pvPortMalloc(paddingsize);
+
+        memset(pBuffTmp, 0xFF, paddingsize);
+        (void)memcpy(pBuffTmp, pData, ulBlockSize);
+
+        eResult = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER, pBuffTmp,
+                ulOffset + sizeof(st_fw_header_t),
+                paddingsize);
+        vPortFree(pBuffTmp);
+        pBuffTmp = NULL;
+
+    }
+    else
+    {
+    /* Calculate the offset from top of RSU file */
+    uint32_t rsu_offset = ulOffset+sizeof(st_fw_header_t);
+
+    eResult = R_FWUP_WriteImageProgram(FWUP_AREA_BUFFER,
+                            pData, rsu_offset, ulBlockSize);
+    }
+
+    if ((FWUP_ERR_FLASH == eResult))
+    {
+        LogDebug(("otaPal_WriteBlock: index = %d, NG, error = %d\r\n", usBlockIndx, eResult));
         return 0;
     }
+    LogDebug (("otaPal_WriteBlock: index = %d, OK, %d bytes\r\n", usBlockIndx, ulBlockSize));
+    return (int16_t)ulBlockSize; // casting to the correct data type for return value
 
-    LogDebug ( ("otaPal_WriteBlock: index = %d, OK, %ld bytes\r\n", usBlockIndx, ulBlockSize) );
-    return ulBlockSize;
 }
 /**********************************************************************************************************************
  End of function otaPal_WriteBlock
