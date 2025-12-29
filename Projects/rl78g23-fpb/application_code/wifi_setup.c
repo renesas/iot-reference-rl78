@@ -1,7 +1,7 @@
 /*
  * FreeRTOS V202112.00
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2023 Renesas Electronics Corporation. or its affiliates.
+ * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -83,26 +83,19 @@ bool setupWifi(void)
  */
 static bool _wifiConnectAccessPoint(void)
 {
-    bool                status = true;
-    WIFINetworkParams_t xConnectParams;
+    bool                status         = true;
+    WIFINetworkParams_t xConnectParams = {.xEncryption = eWiFiEncryptionTKIP, .xSecurity = eWiFiSecurityOpen};
     size_t              xSSIDLength;
     size_t              xPasswordLength;
-    const char *        pcSSID     = clientcredentialWIFI_SSID;
-    const char *        pcPassword = clientcredentialWIFI_PASSWORD;
     WIFISecurity_t      xSecurity  = clientcredentialWIFI_SECURITY;
 
-    if (NULL != pcSSID)
-    {
-        xSSIDLength = (sizeof(clientcredentialWIFI_SSID)) - 1; // excluding NULL terminator
+    /* Cast to type "const char __far *" to be compatible with parameter type */
+    xSSIDLength = strlen((const char __far *)clientcredentialWIFI_SSID);
 
-        if ((0 < xSSIDLength) && (wificonfigMAX_SSID_LEN > xSSIDLength))
-        {
-            xConnectParams.ucSSIDLength = xSSIDLength;
-        }
-        else
-        {
-            status = false;
-        }
+    if ((0 < xSSIDLength) && (wificonfigMAX_SSID_LEN > xSSIDLength))
+    {
+        xConnectParams.ucSSIDLength = xSSIDLength;
+        memcpy(xConnectParams.ucSSID, (const void WIFI_FAR *)clientcredentialWIFI_SSID, xSSIDLength);
     }
     else
     {
@@ -110,22 +103,23 @@ static bool _wifiConnectAccessPoint(void)
     }
 
     xConnectParams.xSecurity = xSecurity;
+
     switch (xSecurity)
     {
         case eWiFiSecurityWPA:
         case eWiFiSecurityWPA2:
-            if (NULL != pcPassword)
-            {
-                xPasswordLength = (sizeof(clientcredentialWIFI_PASSWORD)) - 1; // excluding NULL terminator
 
-                if ((0 < xPasswordLength) && (wificonfigMAX_PASSPHRASE_LEN > xPasswordLength))
-                {
-                    xConnectParams.xPassword.xWPA.ucLength = xPasswordLength;
-                }
-                else
-                {
-                    status = false;
-                }
+            /* Cast to type "const char __far *" to be compatible with parameter type */
+            xPasswordLength = strlen((const char __far *)clientcredentialWIFI_PASSWORD);
+
+            if ((0 < xPasswordLength) && (wificonfigMAX_PASSPHRASE_LEN > xPasswordLength))
+            {
+                xConnectParams.xPassword.xWPA.ucLength = xPasswordLength;
+                memcpy(
+                        xConnectParams.xPassword.xWPA.cPassphrase,
+                        (const void WIFI_FAR *)clientcredentialWIFI_PASSWORD,
+                        xPasswordLength
+                        );
             }
             else
             {
@@ -133,8 +127,8 @@ static bool _wifiConnectAccessPoint(void)
             }
             break;
         case eWiFiSecurityOpen:
-
-            /* Nothing to do. */
+            xConnectParams.xPassword.xWPA.ucLength       = 0;
+            xConnectParams.xPassword.xWPA.cPassphrase[0] = '\0';
             break;
         case eWiFiSecurityWPA3:
         case eWiFiSecurityWPA2_ent:
@@ -148,7 +142,7 @@ static bool _wifiConnectAccessPoint(void)
     if (true == status)
     {
         /* Cast to proper datatype to avoid warning */
-        if (eWiFiSuccess != WIFI_ConnectAP(&(xConnectParams), (const uint8_t *)pcSSID, (const uint8_t *)pcPassword))
+        if (eWiFiSuccess != WIFI_ConnectAP(&(xConnectParams)))
         {
             status = false;
         }

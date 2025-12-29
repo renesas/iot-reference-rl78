@@ -1,7 +1,7 @@
 /*
  * coreMQTT v2.1.1
  * Copyright (C) 2022 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
+ * Modifications Copyright (C) 2024-2025 Renesas Electronics Corporation or its affiliates.
  *
  * SPDX-License-Identifier: MIT
  *
@@ -63,13 +63,13 @@
 * receiving an MQTT packet via the #MQTT_ProcessLoop or #MQTT_ReceiveLoop
 * API functions.
 */
-#define MQTT_RECV_POLLING_TIMEOUT_MS                 ( 1000U )
+#define MQTT_RECV_POLLING_TIMEOUT_MS                 (1000U)
 
 /**
  * @brief Maximum number of milliseconds to wait for a ping response to a ping
  * request as part of the keep-alive mechanism.
  */
-#define MQTT_PINGRESP_TIMEOUT_MS                     ( 240000U )
+#define MQTT_PINGRESP_TIMEOUT_MS                     (240000U)
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

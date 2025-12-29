@@ -1,7 +1,7 @@
 /*
  * FreeRTOS V202111.00
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
+ * Modifications Copyright (C) 2024-2025 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -138,7 +138,7 @@
  *
  * #define democonfigUSE_AWS_IOT_CORE_BROKER    ( 1 )
  */
-#define democonfigUSE_AWS_IOT_CORE_BROKER    ( 1 )
+#define democonfigUSE_AWS_IOT_CORE_BROKER    (1)
 
 /**
  * @brief The unique ID used by the demo to differentiate instances.
@@ -273,7 +273,7 @@
  * on. The current value is given as an example. Please update for your specific
  * operating system version.
  */
-#define democonfigOS_VERSION    "V10.5.1"
+#define democonfigOS_VERSION    "V11.1.0"
 
 /**
  * @brief The name of the hardware platform the application is running on. The
@@ -313,7 +313,7 @@
  * information for the device to connect to broker and perform OTA updates. Disabling the flag results
  * in disabling the CLI task and execution of the demo tasks in normal device operation mode.
  */
-#define appmainPROVISIONING_MODE                  ( 0 )
+#define appmainPROVISIONING_MODE                  (0)
 
 /**
  * @brief Certificate used for validating code signing signatures in the OTA PAL.
@@ -380,11 +380,15 @@
  * @note Specified in bytes.  Must be large enough to hold the maximum
  * anticipated MQTT payload.
  */
-#define MQTT_AGENT_NETWORK_BUFFER_SIZE          ( 1400U )
+#if (ENABLE_OTA_UPDATE_DEMO == 1) || (OTA_E2E_TEST_ENABLED == 1)
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          (2500U)
+#else
+    #define MQTT_AGENT_NETWORK_BUFFER_SIZE          (1400U)
+#endif
 
 /**
  * @brief The length of the queue used to hold commands for the agent.
  */
-#define MQTT_AGENT_COMMAND_QUEUE_LENGTH         ( 25U )
+#define MQTT_AGENT_COMMAND_QUEUE_LENGTH         (25U)
 
 #endif /* DEMO_CONFIG_H */

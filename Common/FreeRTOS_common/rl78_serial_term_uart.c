@@ -1,31 +1,24 @@
 /*
- * rl78_serial_term_uart.c
- * Copyright (C) Renesas Electronics Corporation and/or its affiliates.
- * All Rights Reserved.
- *
- * SPDX-License-Identifier: MIT
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
+* Copyright (c) 2023 - 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
+
+/***********************************************************************************************************************
+* File Name    : rl78_serial_term_uart.c
+* Description  : Header file for UART terminal interface on RL78, providing declarations for FreeRTOS entry functions
+*                and related serial communication routines
+***********************************************************************************************************************/
 
 /**********************************************************************************************************************
  Includes   <System Includes> , "Project Includes"
  *********************************************************************************************************************/
+/* Kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
+/* Renesas includes. */
 #include "rl78_serial_term_uart.h"
 
 /**********************************************************************************************************************
@@ -41,10 +34,16 @@
  *********************************************************************************************************************/
 sci_hdl_t sci_handle;
 
+const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5000);
+
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
 static uint8_t  s_cmd_buf[256];
+
+/* Used to guard access to the UART in case messages are sent to the UART from
+more than one task. */
+static SemaphoreHandle_t xTransmitMutex = NULL;
 
 /**********************************************************************************************************************
  * Function Name: uart_config
@@ -60,6 +59,9 @@ void uart_config(void)
     {
         R_BSP_NOP();
     }
+
+    /* Create the semaphore used to access the UART Tx. */
+    xTransmitMutex = xSemaphoreCreateMutex();
 }
 /**********************************************************************************************************************
  * End of function uart_config
@@ -82,26 +84,33 @@ void uart_string_printf(RL78_FAR char *pString)
 
     str_length = (uint16_t)strlen(pString);    /* Cast to (uint16_t) */
 
-    while ((retry > 0) && (str_length > 0))
+    if (xSemaphoreTake(xTransmitMutex, xMaxBlockTime) == pdPASS)
     {
-        R_SCI_Control(sci_handle, SCI_CMD_TX_Q_BYTES_FREE, &transmit_length);
+        while ((retry > 0) && (str_length > 0))
+        {
+            R_SCI_Control(sci_handle, SCI_CMD_TX_Q_BYTES_FREE, &transmit_length);
 
-        if (transmit_length > str_length)
-        {
-            transmit_length = str_length;
+            if (transmit_length > str_length)
+            {
+                transmit_length = str_length;
+            }
+
+            sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR*)pString, transmit_length);
+            if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
+            {
+                /* retry if previous transmission still in progress or tx buffer is insufficient. */
+                retry--;
+                continue;
+            }
+            else
+            {
+                str_length -= transmit_length;
+                pString    += transmit_length;
+            }
         }
 
-        sci_error = R_SCI_Send(sci_handle, (uint8_t SCI_FAR*)pString, transmit_length);
-        if ((SCI_ERR_XCVR_BUSY == sci_error) || (SCI_ERR_INSUFFICIENT_SPACE == sci_error))
-        {
-            /* retry if previous transmission still in progress or tx buffer is insufficient. */
-            retry--;
-        }
-        else
-        {
-            str_length -= transmit_length;
-            pString    += transmit_length;
-        }
+        /* Must ensure to give the mutex back. */
+        xSemaphoreGive(xTransmitMutex);
     }
 
     if (SCI_SUCCESS != sci_error)

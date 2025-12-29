@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_tcp_tls.c
  * Description  : TLS client API functions definition for DA16XXX.
@@ -413,7 +400,7 @@ int16_t R_WIFI_DA16XXX_SendTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR * 
     at_set_timeout(ATCMD_RESP_TIMEOUT);
     os_wrap_mutex_give(MUTEX_TX);
     tick_tmp = os_wrap_tickcount_get() - tick_tmp;
-    WIFI_LOG_INFO(("R_WIFI_DA16XXX_SendTlsSocket: socket %d ret=%ld (%lu).", socket_number, api_ret, tick_tmp));
+    WIFI_LOG_INFO(("R_WIFI_DA16XXX_SendTlsSocket: socket %d ret=%d (%lu).", socket_number, api_ret, tick_tmp));
     return api_ret;
 }
 /**********************************************************************************************************************
@@ -495,7 +482,7 @@ int16_t R_WIFI_DA16XXX_ReceiveTlsSocket (uint8_t socket_number, uint8_t WIFI_FAR
         return WIFI_ERR_SOCKET_NUM;
     }
 
-    WIFI_LOG_INFO(("R_WIFI_DA16XXX_ReceiveTlsSocket: socket %d recv_cnt=%ld (%lu).", socket_number, recv_cnt, tick_tmp));
+    WIFI_LOG_INFO(("R_WIFI_DA16XXX_ReceiveTlsSocket: socket %d recv_cnt=%d (%lu).", socket_number, recv_cnt, tick_tmp));
     api_ret = recv_cnt;
     return api_ret;
 }
@@ -864,7 +851,6 @@ wifi_err_t R_WIFI_DA16XXX_RequestTlsSocket(uint8_t socket_number)
 wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 {
     wifi_err_t api_ret = WIFI_SUCCESS;
-    uint8_t certificate_key_tmp[WIFI_CFG_TLS_CERT_MAX_NAME] = {0};
 
     /* Disconnected WiFi module? */
     if (0 != R_WIFI_DA16XXX_IsOpened())
@@ -885,7 +871,7 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
 #if WIFI_CFG_TLS_USE_CA_CERT
     if (AT_OK == at_exec("AT+TRSSLCERTLIST=0\r"))
     {
-        if (DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:0,%s\r", cert_info->cert_ca))
+        if (DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:0,%[^,\r]s", cert_info->cert_ca))
         {
             memset(cert_info->cert_ca, 0, sizeof(cert_info->cert_ca));
         }
@@ -911,8 +897,8 @@ wifi_err_t R_WIFI_DA16XXX_GetServerCertificate(wifi_tls_cert_info_t * cert_info)
     /* Get Client/Server Certificate */
     if (AT_OK == at_exec("AT+TRSSLCERTLIST=1\r"))
     {
-        if ((DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:%*d,%[^,],%*d,%s",
-                                   cert_info->cert_name, certificate_key_tmp)))
+        if ((DATA_NOT_FOUND == at_read("+TRSSLCERTLIST:1,%[^,\r]s",
+                                   cert_info->cert_name)))
         {
             memset(cert_info->cert_name, 0, sizeof(cert_info->cert_name));
         }
@@ -1066,14 +1052,14 @@ wifi_err_t R_WIFI_DA16XXX_DeleteCertificate(wifi_tls_key_type_t type_key,
     switch (type_key) {
         case WIFI_TLS_TYPE_CLIENT_CERT:
         case WIFI_TLS_TYPE_CLIENT_PRIVATE_KEY:
-            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=1,%s\r", cert_info->cert_name))
+            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=1,'%s'\r", cert_info->cert_name))
             {
                 api_ret = WIFI_ERR_MODULE_COM;
             }
             break;
 
         case WIFI_TLS_TYPE_CA_CERT:
-            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=0,%s\r", cert_info->cert_ca))
+            if (AT_OK != at_exec("AT+TRSSLCERTDELETE=0,'%s'\r", cert_info->cert_ca))
             {
                 api_ret = WIFI_ERR_MODULE_COM;
             }

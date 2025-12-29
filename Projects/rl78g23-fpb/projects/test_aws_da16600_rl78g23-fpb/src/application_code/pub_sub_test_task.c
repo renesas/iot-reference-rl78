@@ -64,7 +64,7 @@
 /**
  * @brief Delay for the synchronous publisher task between publishes.
  */
-#define configDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    ( 2000U )
+#define configDELAY_BETWEEN_PUBLISH_OPERATIONS_MS    (2000U)
 
 /**
  * @brief A test application which loops through subscribing to a topic and publishing message
@@ -72,7 +72,7 @@
  * verify that an application implemented using MQTT agent follows best practices in connecting
  * to AWS IoT core.
  */
-#define configMS_TO_WAIT_FOR_NOTIFICATION            ( 10000 )
+#define configMS_TO_WAIT_FOR_NOTIFICATION            (10000)
 
 
 /**
@@ -80,12 +80,12 @@
  * to be posted to the MQTT agent should the MQTT agent's command queue be full.
  * Tasks wait in the Blocked state, so don't use any CPU time.
  */
-#define configMAX_COMMAND_SEND_BLOCK_TIME_MS         ( 500 )
+#define configMAX_COMMAND_SEND_BLOCK_TIME_MS         (500)
 
 /**
  * @brief Size of statically allocated buffers for holding payloads.
  */
-#define confgPAYLOAD_BUFFER_LENGTH                   ( 100 )
+#define confgPAYLOAD_BUFFER_LENGTH                   (100)
 
 /**
  * @brief Format of topic used to publish outgoing messages.
@@ -108,7 +108,7 @@
 /**
  * @brief Size of statically allocated buffers for holding payloads.
  */
-#define confgPUBLISH_BUFFER_LENGTH                   ( 100 )
+#define confgPUBLISH_BUFFER_LENGTH                   (100)
 #endif
 
 #define CONSECUTIVE_SUCCESS_MAX                      (10)
@@ -127,7 +127,7 @@
 struct MQTTAgentCommandContext
 {
     TaskHandle_t xTaskToNotify;
-    void * pArgs;
+    void *       pArgs;
 };
 
 /*-----------------------------------------------------------*/
@@ -339,11 +339,13 @@ static void prvIncomingPublishCallback(void * pvIncomingPublishCallbackContext,
      * terminating the string first. */
     if (pxPublishInfo->payloadLength < confgPAYLOAD_BUFFER_LENGTH)
     {
+    	/* Cast to type appropriate datatype to be compatible with parameter type */
         memcpy((void *)cTerminatedString, pxPublishInfo->pPayload, pxPublishInfo->payloadLength);
         cTerminatedString[pxPublishInfo->payloadLength] = 0x00;
     }
     else
     {
+    	/* Cast to type appropriate datatype to be compatible with parameter type */
         memcpy((void *)cTerminatedString, pxPublishInfo->pPayload, confgPAYLOAD_BUFFER_LENGTH);
         cTerminatedString[confgPAYLOAD_BUFFER_LENGTH - 1] = 0x00;
     }
@@ -395,11 +397,13 @@ static MQTTStatus_t prvSubscribeToTopic( MQTTQoS_t xQoS,
      * This gets updated in the callback function so the variable must persist until
      * the callback executes. */
     xCommandContext.xTaskToNotify = xTaskGetCurrentTaskHandle();
-    xCommandContext.pArgs         = (void*)&xSubscribeArgs; /* Cast to proper datatype to avoid warning */
+    xCommandContext.pArgs         = (void*) &xSubscribeArgs; /* Cast to proper datatype to avoid warning */
 
     xCommandParams.blockTimeMs                 = configMAX_COMMAND_SEND_BLOCK_TIME_MS;
     xCommandParams.cmdCompleteCallback         = prvSubscribeCommandCallback;
-    xCommandParams.pCmdCompleteCallbackContext = (void *)&xCommandContext;
+
+    /* Cast to type appropriate datatype to be compatible with parameter type */
+    xCommandParams.pCmdCompleteCallbackContext = (void *) &xCommandContext;
 
     /* Loop in case the queue used to communicate with the MQTT agent is full and
      * attempts to post to it time out.  The queue will not become full if the

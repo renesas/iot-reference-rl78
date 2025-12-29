@@ -59,7 +59,7 @@
  *
  * #define MQTT_SERVER_PORT       (8883)
  */
-#define MQTT_SERVER_PORT        ( 8883 )
+#define MQTT_SERVER_PORT        (8883)
 
 /**
  * @brief Endpoint of the echo server to connect to in transport interface test.
@@ -277,7 +277,7 @@
 
 #define OTA_APP_VERSION_MINOR                            9
 
-#define OTA_APP_VERSION_BUILD                            1
+#define OTA_APP_VERSION_BUILD                            2
 
 #define OUTGOING_PUBLISH_RECORD_COUNT                    ( 10 )
 #define INCOMING_PUBLISH_RECORD_COUNT                    ( 10 )

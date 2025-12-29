@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2023 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2023-2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_fwup_wrap_flash.c
  * Description  : Functions for the Firmware update module.
@@ -25,6 +12,8 @@
  *         : 20.11.2023 2.01    Fixed log messages.
  *                              Add parameter checking.
  *                              Added arguments to R_FWUP_WriteImageProgram API.
+ *         : 18.04.2025 2.03    V203 Release.
+ *         : 27.08.2025 2.04    V204 Release.
  *********************************************************************************************************************/
 
 /**********************************************************************************************************************
@@ -39,6 +28,13 @@
 #include "r_flash_rx_if.h"
 #else
 #include "r_rfd_common_api.h"
+#include "r_rfd_data_flash_api.h"
+#if (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK)
+#include "r_rfd_common_get_api.h"
+#include "r_rfd_extra_area_control_api.h"
+#include "r_rfd_extra_area_api.h"
+#include "r_rfd_common_control_api.h"
+#endif /* (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK) */
 #endif /* defined(__RX) */
 /**** End user code   ****/
 
@@ -47,6 +43,29 @@
  *********************************************************************************************************************/
 /**** Start user code ****/
 /**** End user code   ****/
+/* Sector Erase busy timeout 200*1ms = 0.2s  */
+#define FLASH_SE_BUSY_WAIT      (200UL)
+/* Chip Erase busy timeout 600,000*1ms = 600s */
+#define FLASH_CE_BUSY_WAIT      (600000UL)
+/* Page Program time out 3*1ms = 3ms */
+#define FLASH_PP_BUSY_WAIT      (3UL)
+
+#define FLASH_PAGE_SIZE         (256)
+#define FLASH_TEST_BUF_SIZE     (FLASH_PAGE_SIZE * 2)
+#define TIMER_CH_FLG            (0)
+#define TIMER_CH_COUNT          (1)
+#define TIMER_CH_MAX_COUNT      (2)
+
+#if (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK)
+#define SAMPLE_VALUE_U16_MASK1_FLSEC_BTFLG                    (0x0100u)
+#define SAMPLE_VALUE_U08_MASK1_FSQ_STATUS_ERR_CFDF_SEQUENCER  (0x10u)
+#define SAMPLE_VALUE_U08_MASK1_FSQ_STATUS_ERR_EXTRA_SEQUENCER (0x20u)
+#define SAMPLE_VALUE_U08_MASK1_FSQ_STATUS_ERR_ERASE           (0x01u)
+#define SAMPLE_VALUE_U08_MASK1_FSQ_STATUS_ERR_WRITE           (0x02u)
+#define SAMPLE_VALUE_U08_MASK1_FSQ_STATUS_ERR_BLANKCHECK      (0x08u)
+#define SAMPLE_VALUE_U08_MASK0_8BIT                           (0x00u)
+#define SAMPLE_VALUE_U08_MASK1_8BIT                           (0xFFu)
+#endif
 
 /**********************************************************************************************************************
  Local Typedef definitions
@@ -58,12 +77,23 @@
  Exported global variables
  *********************************************************************************************************************/
 /**** Start user code ****/
+volatile uint32_t   g_timer_cnt[TIMER_CH_MAX_COUNT+1];
+uint32_t            g_cbuf1[FLASH_TEST_BUF_SIZE/sizeof(uint32_t)];
+uint32_t            g_cbuf2[FLASH_TEST_BUF_SIZE/sizeof(uint32_t)];
+uint32_t            g_addr;
+uint8_t             g_config[4];
+uint8_t             g_id[4];
+uint8_t             g_stat;
+uint8_t             g_scur;
 /**** End user code   ****/
 
 /**********************************************************************************************************************
  Private (static) variables and functions
  *********************************************************************************************************************/
 /**** Start user code ****/
+#if (FWUP_CFG_UPDATE_MODE == FWUP_SINGLE_BANK_W_BUFFER_EXT)
+static e_nor_flash_status_t ext_flash_busy_check (e_nor_flash_check_busy_t mode, uint32_t loop_cnt);
+#endif
 /**** End user code   ****/
 
 /*
@@ -154,6 +184,30 @@ e_fwup_err_t r_fwup_wrap_flash_erase(uint32_t addr, uint32_t num_blocks)
 #else
     uint32_t ret;
     uint32_t start_block;
+#if (BSP_MCU_GROUP_RL78L23)
+    uint32_t erase_length;
+
+    /* Convert Flash address to Flash block number */
+    if (FWUP_CFG_DF_ADDR_L > addr)
+    {
+        /* Code flash */
+        start_block = addr / FWUP_CFG_CF_BLK_SIZE;
+        /* Erase code flash memory. */
+        r_fwup_wrap_disable_interrupt();
+        ret = rfd_wrap_cf_erase((uint16_t)start_block, (uint16_t)num_blocks);
+        r_fwup_wrap_enable_interrupt();
+    }
+    else
+    {
+        /* Data flash */
+    	erase_length = addr - FWUP_CFG_DF_ADDR_L;
+        start_block  = erase_length / FWUP_CFG_DF_BLK_SIZE;
+        /* Erase data flash memory. */
+        r_fwup_wrap_disable_interrupt();
+        ret = rfd_wrap_df_erase(addr, erase_length, (uint16_t)start_block, (uint16_t)num_blocks);
+        r_fwup_wrap_enable_interrupt();
+    }
+#else
     uint8_t (FWUP_FAR_FUNC *pfunc)(uint16_t, uint16_t) = rfd_wrap_cf_erase;
 
     /* Convert Flash address to Flash block number */
@@ -173,6 +227,7 @@ e_fwup_err_t r_fwup_wrap_flash_erase(uint32_t addr, uint32_t num_blocks)
     r_fwup_wrap_disable_interrupt();
     ret = pfunc((uint16_t)start_block, (uint16_t)num_blocks);
     r_fwup_wrap_enable_interrupt();
+#endif /* BSP_MCU_GROUP_RL78L23 */
 
     if (0 != ret)
     {
@@ -265,7 +320,7 @@ e_fwup_err_t r_fwup_wrap_flash_read(uint32_t buf_addr, uint32_t src_addr, uint32
 e_fwup_err_t r_fwup_wrap_bank_swap(void)
 {
     /**** Start user code ****/
-
+#if defined(__RX)
     flash_err_t err;
 
     r_fwup_wrap_disable_interrupt();
@@ -276,8 +331,27 @@ e_fwup_err_t r_fwup_wrap_bank_swap(void)
     {
         return (FWUP_ERR_FLASH);
     }
-    return (FWUP_SUCCESS);
 
+    return (FWUP_SUCCESS);
+#else
+	e_fwup_err_t ret_code;
+
+    /* Set the user mode (Exit from the bank programming mode) */
+    FLMWEN = 1u;
+    FLMODE = FLMODE & 0xC0u;
+    FLMWEN = 0u;
+
+    if(0 == rfd_wrap_bank_swap())
+    {
+    	ret_code = FWUP_SUCCESS;
+    }
+    else
+    {
+    	ret_code = FWUP_ERR_FLASH;
+    }
+
+	return (ret_code);
+#endif
     /**** End user code   ****/
 }
 /**********************************************************************************************************************
@@ -286,9 +360,38 @@ e_fwup_err_t r_fwup_wrap_bank_swap(void)
 #endif /* (FWUP_CFG_UPDATE_MODE == FWUP_DUAL_BANK) */
 
 #if (FWUP_CFG_UPDATE_MODE == FWUP_SINGLE_BANK_W_BUFFER_EXT)
-/*
- * External flash
- */
+/**********************************************************************************************************************
+ * Function Name: ext_flash_busy_check
+ * Description  : Checks flash memory status.
+ * Arguments    : e_nor_flash_check_busy_t mode ;   Mode of error check
+ *              :                               ;   NOR_FLASH_MODE_REG_WRITE_BUSY
+ *              :                               ;   NOR_FLASH_MODE_PROG_BUSY
+ *              :                               ;   NOR_FLASH_MODE_ERASE_BUSY
+ *              : uint32_t loop_cnt             ;   loop count for 1ms
+ * Return Value : -
+ *********************************************************************************************************************/
+static e_nor_flash_status_t ext_flash_busy_check(e_nor_flash_check_busy_t mode, uint32_t loop_cnt)
+{
+    e_nor_flash_status_t ret = NOR_FLASH_SUCCESS_BUSY;
+
+    do
+    {
+        ret = R_NOR_FLASH_CheckBusy(mode);
+        if (NOR_FLASH_SUCCESS_BUSY != ret)
+        {
+            break;
+        }
+        loop_cnt--;
+        R_FWUP_SoftwareDelay(1, FWUP_DELAY_MILLISECS);
+    }
+    while (0 != loop_cnt);
+
+    return ret;
+}
+/**********************************************************************************************************************
+ End of function ext_flash_busy_check
+ *********************************************************************************************************************/
+
 /**********************************************************************************************************************
  * Function Name: r_fwup_wrap_ext_flash_open
  * Description  : wrapper function for opening external Flash.
@@ -301,8 +404,22 @@ e_fwup_err_t r_fwup_wrap_ext_flash_open(void)
     /**** Start user code ****/
 #if defined(__RX)
 #else
-    R_QSPI_FLASH_Init_Driver();
-    if (0 != R_QSPI_FLASH_Set_4byte_Address_Mode(FLASH_DEV0))
+    e_nor_flash_status_t ret = NOR_FLASH_SUCCESS;
+
+    ret = R_NOR_FLASH_Open();
+    if (NOR_FLASH_SUCCESS > ret)
+    {
+        return (FWUP_ERR_FLASH);
+    }
+
+    ret = ext_flash_busy_check(NOR_FLASH_MODE_ERASE_BUSY, FLASH_CE_BUSY_WAIT);
+    if (NOR_FLASH_SUCCESS != ret)
+    {
+        return (FWUP_ERR_FLASH);
+    }
+
+    ret = R_NOR_FLASH_Set4byteAddressMode();
+    if (NOR_FLASH_SUCCESS > ret)
     {
         return (FWUP_ERR_FLASH);
     }
@@ -325,6 +442,13 @@ void r_fwup_wrap_ext_flash_close(void)
     /**** Start user code ****/
 #if defined(__RX)
 #else
+    e_nor_flash_status_t ret = NOR_FLASH_SUCCESS;
+
+    ret = R_NOR_FLASH_Close();
+    if (NOR_FLASH_SUCCESS > ret)
+    {
+        while(1);
+    }
 #endif /* defined(__RX) */
     /**** End user code   ****/
 }
@@ -345,23 +469,28 @@ e_fwup_err_t r_fwup_wrap_ext_flash_erase(uint32_t addr, uint32_t num_sectors)
     /**** Start user code ****/
 #if defined(__RX)
 #else
-    int32_t  ret;
-    uint32_t sector_addr;
+    st_nor_flash_erase_info_t flash_info_e;
+    e_nor_flash_status_t      ret      = NOR_FLASH_SUCCESS;
     uint32_t sector_count;
 
     for (sector_count = 0; sector_count < num_sectors; sector_count++ )
     {
-        sector_addr = addr + (FWUP_CFG_EXT_BUF_AREA_BLK_SIZE * sector_count);
+    	flash_info_e.addr = addr + (FWUP_CFG_EXT_BUF_AREA_BLK_SIZE * sector_count);
+        flash_info_e.mode = NOR_FLASH_MODE_S_ERASE;
 
-        BSP_DISABLE_INTERRUPT();
-        ret = R_QSPI_FLASH_Erase(FLASH_DEV0, sector_addr, FLASH_MODE_S_ERASE);
-        BSP_ENABLE_INTERRUPT();
+        ret = R_NOR_FLASH_Erase(&flash_info_e);
+        if (NOR_FLASH_SUCCESS > ret)
+        {
+            return (FWUP_ERR_FLASH);
+        }
 
-        if (0 != ret)
+        ret = ext_flash_busy_check(NOR_FLASH_MODE_ERASE_BUSY, FLASH_SE_BUSY_WAIT);
+        if (NOR_FLASH_SUCCESS != ret)
         {
             return (FWUP_ERR_FLASH);
         }
     }
+
     return (FWUP_SUCCESS);
 #endif /* defined(__RX) */
     /**** End user code   ****/
@@ -384,21 +513,30 @@ e_fwup_err_t r_fwup_wrap_ext_flash_write(uint32_t src_addr, uint32_t dest_addr, 
     /**** Start user code ****/
 #if defined(__RX)
 #else
-    r_qspi_flash_info_t flash_info_w;
-    int32_t ret;
+    st_nor_flash_info_t       flash_info_w;
+    e_nor_flash_status_t      ret      = NOR_FLASH_SUCCESS;
 
-    flash_info_w.pData  = (uint8_t FAR *)src_addr;
-    flash_info_w.Cnt    = num_bytes;
-    flash_info_w.Addr   = dest_addr;
+    /* Write data */
+    flash_info_w.addr    = dest_addr;
+    flash_info_w.cnt     = (uint16_t)num_bytes;
+#if (__ICCRL78__)
+    flash_info_w.p_data  = (uint8_t *)(src_addr);
+#else
+    flash_info_w.p_data  = (uint8_t *)((uint16_t)(src_addr & 0xffff));
+#endif
 
-    BSP_DISABLE_INTERRUPT();
-    ret = R_QSPI_FLASH_Write_Data(FLASH_DEV0, &flash_info_w);
-    BSP_ENABLE_INTERRUPT();
-
-    if (0 != ret)
+    ret = R_NOR_FLASH_WriteDataPage(&flash_info_w);
+    if (NOR_FLASH_SUCCESS > ret)
     {
         return (FWUP_ERR_FLASH);
     }
+
+    ret = ext_flash_busy_check(NOR_FLASH_MODE_PROG_BUSY, FLASH_PP_BUSY_WAIT);
+    if (NOR_FLASH_SUCCESS != ret)
+    {
+        return (FWUP_ERR_FLASH);
+    }
+
     return (FWUP_SUCCESS);
 #endif /* defined(__RX) */
     /**** End user code   ****/
@@ -421,13 +559,19 @@ e_fwup_err_t r_fwup_wrap_ext_flash_read(uint32_t buf_addr, uint32_t src_addr, ui
     /**** Start user code ****/
 #if defined(__RX)
 #else
-    r_qspi_flash_info_t flash_info_r;
+    st_nor_flash_info_t       flash_info_r;
+    e_nor_flash_status_t      ret      = NOR_FLASH_SUCCESS;
 
-    flash_info_r.pData  = (uint8_t FAR *)buf_addr;
-    flash_info_r.Cnt    = size;
-    flash_info_r.Addr   = src_addr;
-
-    if (0 != R_QSPI_FLASH_Read_Data(FLASH_DEV0, &flash_info_r))
+    /* Read data */
+    flash_info_r.addr   = src_addr;
+    flash_info_r.cnt    = (uint16_t) size;
+#if (__ICCRL78__)
+    flash_info_r.p_data = (uint8_t *)(buf_addr);
+#else
+    flash_info_r.p_data = (uint8_t *)((uint16_t)(buf_addr & 0xffff));
+#endif
+    ret = R_NOR_FLASH_ReadData(&flash_info_r);
+    if (NOR_FLASH_SUCCESS > ret)
     {
         return (FWUP_ERR_FLASH);
     }

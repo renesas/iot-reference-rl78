@@ -1,6 +1,7 @@
 /*
  * FreeRTOS Wi-Fi V1.0.0
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -193,8 +194,7 @@ WIFIReturnCode_t WIFI_Off(void)
  *
  * @see WIFINetworkParams_t
  */
-WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParams,
-                                const uint8_t * ssid, const uint8_t * password)
+WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParams)
 {
     wifi_err_t      ret;
     wifi_security_t convert_security;
@@ -213,8 +213,8 @@ WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParam
     {
         return eWiFiFailure;
     }
-
-    if (pxNetworkParams->xPassword.xWPA.ucLength > wificonfigMAX_PASSPHRASE_LEN)
+    if ((eWiFiSecurityOpen != pxNetworkParams->xSecurity) &&
+        (pxNetworkParams->xPassword.xWPA.ucLength > wificonfigMAX_PASSPHRASE_LEN))
     {
         return eWiFiFailure;
     }
@@ -227,7 +227,15 @@ WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParam
     /* FIX ME. */
     do
     {
-        ret = R_WIFI_DA16XXX_Connect(ssid, password, convert_security, WIFI_ENCRYPTION_AES);
+        ret = R_WIFI_DA16XXX_Connect(
+        		/* Cast to type "const uint8_t *" to be compatible with parameter type */
+                (const uint8_t *)pxNetworkParams->ucSSID,
+				/* Cast to type "const uint8_t *" to be compatible with parameter type */
+                (const uint8_t *)pxNetworkParams->xPassword.xWPA.cPassphrase,
+                convert_security,
+                WIFI_ENCRYPTION_AES
+                );
+
         if ((WIFI_ERR_NOT_CONNECT == ret) || (WIFI_ERR_MODULE_COM == ret))
         {
             /* Start resetting due to error */
@@ -239,7 +247,7 @@ WIFIReturnCode_t WIFI_ConnectAP(const WIFINetworkParams_t * const pxNetworkParam
         {
             break;
         }
-    } while (0 < numRetries--);
+    } while (0 < (numRetries--));
 
     if (WIFI_SUCCESS != ret)
     {

@@ -1,21 +1,8 @@
-/**********************************************************************************************************************
- * DISCLAIMER
- * This software is supplied by Renesas Electronics Corporation and is only intended for use with Renesas products. No
- * other uses are authorized. This software is owned by Renesas Electronics Corporation and is protected under all
- * applicable laws, including copyright laws.
- * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
- * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED. TO THE MAXIMUM
- * EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES
- * SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY REASON RELATED TO
- * THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
- * Renesas reserves the right, without notice, to make changes to this software and to discontinue the availability of
- * this software. By using this software, you agree to the additional terms and conditions found by accessing the
- * following link:
- * http://www.renesas.com/disclaimer
- *
- * Copyright (C) 2024 Renesas Electronics Corporation. All rights reserved.
- *********************************************************************************************************************/
+/*
+* Copyright (c) 2025 Renesas Electronics Corporation and/or its affiliates
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /**********************************************************************************************************************
  * File Name    : r_wifi_da16xxx_common.c
  * Description  : Common API functions definition for DA16XXX.
@@ -223,6 +210,9 @@ wifi_err_t R_WIFI_DA16XXX_Open(void)
 
     /* Show version info */
     at_exec("AT+VER\r");
+
+    /* Show SDK version info */
+    at_exec("AT+SDKVER\r");
 
 #if defined(__CCRX__) || defined(__ICCRX__) || defined(__RX__)
 #if WIFI_CFG_DEBUG_LOG == LOG_DEBUG
@@ -1329,7 +1319,7 @@ static wifi_err_t da16xxx_sntp_service_init(void)
     uint8_t    ip_address_sntp_server[4];
 
     /* Set the SNTP server IP address */
-    if (4 != sscanf(WIFI_CFG_SNTP_SERVER_IP, "%d.%d.%d.%d",
+    if (4 != sscanf(WIFI_CFG_SNTP_SERVER_IP, "%hhd.%hhd.%hhd.%hhd",
                     &ip_address_sntp_server[0], &ip_address_sntp_server[1],
                     &ip_address_sntp_server[2], &ip_address_sntp_server[3]))
     {
