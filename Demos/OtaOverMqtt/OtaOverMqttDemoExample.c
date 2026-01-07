@@ -1,7 +1,7 @@
 /*
  * FreeRTOS V202112.00
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
+ * Modifications Copyright (C) 2023-2026 Renesas Electronics Corporation or its affiliates.
  *
  * SPDX-License-Identifier: MIT
  *
