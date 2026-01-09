@@ -1,7 +1,7 @@
 /*
  * AWS IoT Core MQTT File Streams Embedded C v1.1.0
  * Copyright (C) 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
- * Modifications Copyright (C) 2025 Renesas Electronics Corporation or its affiliates.
+ * Modifications Copyright (C) 2026 Renesas Electronics Corporation or its affiliates.
  * SPDX-License-Identifier: MIT
  *
  * Licensed under the MIT License. See the LICENSE accompanying this file

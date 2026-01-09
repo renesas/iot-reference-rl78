@@ -1,7 +1,7 @@
 /*
  * AWS IoT Jobs v1.5.1
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2025 Renesas Electronics Corporation or its affiliates.
+ * Modifications Copyright (C) 2026 Renesas Electronics Corporation or its affiliates.
  *
  * SPDX-License-Identifier: MIT
  *

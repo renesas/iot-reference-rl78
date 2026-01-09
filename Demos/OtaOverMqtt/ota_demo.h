@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. and its affiliates. All Rights Reserved.
-* Modifications Copyright (C) 2025 Renesas Electronics Corporation or its affiliates.
+ * Modifications Copyright (C) 2026 Renesas Electronics Corporation or its affiliates.
  * SPDX-License-Identifier: MIT
  *
  * Licensed under the MIT License. See the LICENSE accompanying this file
