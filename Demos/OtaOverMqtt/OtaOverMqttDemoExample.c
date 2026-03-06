@@ -1384,6 +1384,11 @@ static void processOTAEvents(void)
             {
                 /* Ignore this block. */
                 LogInfo(("Received file block #%d that received before (%d). Ignored this block\n", blockId, lastReceivedblockId));
+
+                freeOtaDataEventBuffer(recvEvent.dataEvent);
+                nextEvent.eventId = OtaAgentEventRequestFileBlock;
+                OtaSendEvent_FreeRTOS(&nextEvent);
+                break;
             }
             else
             {
