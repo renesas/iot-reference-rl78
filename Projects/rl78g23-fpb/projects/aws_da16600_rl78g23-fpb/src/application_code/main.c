@@ -1,7 +1,7 @@
 /*
 FreeRTOS
 Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
-Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
+Modifications Copyright (C) 2026 Renesas Electronics Corporation. or its affiliates.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -67,7 +67,7 @@ extern void vSubscribePublishTestTask( void * pvParameters );
 /**
  * @brief Stack size and priority for OTA Update task.
  */
-#define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    ( 1600 )
+#define appmainMQTT_OTA_UPDATE_TASK_STACK_SIZE    (1600)
 #define appmainMQTT_OTA_UPDATE_TASK_PRIORITY      ( tskIDLE_PRIORITY )
 
 #define IDLE_TASK_STACK_SIZE                      (configMINIMAL_STACK_SIZE * 2)
@@ -81,7 +81,7 @@ extern void vSubscribePublishTestTask( void * pvParameters );
  */
 #if (ENABLE_OTA_UPDATE_DEMO == 1)
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         (1200)
-#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 1 )
+#define appmainMQTT_AGENT_TASK_PRIORITY           ( tskIDLE_PRIORITY + 2 )
 #else
 #define appmainMQTT_AGENT_TASK_STACK_SIZE         (1200)
 #define appmainMQTT_AGENT_TASK_PRIORITY           (tskIDLE_PRIORITY + 2)
@@ -193,6 +193,8 @@ void main_task(void * pvParameters)
         vTaskSuspend( NULL );
     }
 #else
+    configPRINTF(("Initializing Wi-Fi connection...\n"));
+
     if (pdTRUE == xPlatformNetworkUp())
     {
 #if defined(__CCRL__) || defined(__ICCRL78__) || defined(__RL)
@@ -208,13 +210,17 @@ void main_task(void * pvParameters)
                                     strlen((const char *)keyCLIENT_PRIVATE_KEY_PEM));
 #endif
 
-        configPRINT_STRING(("---------STARTING DEMO---------\r\n"));
+        configPRINTF(("---------STARTING DEMO---------\r\n"));
 
         xMQTTAgentInit();
         xSetMQTTAgentState(MQTT_AGENT_STATE_INITIALIZED);
         vStartMQTTAgent(appmainMQTT_AGENT_TASK_STACK_SIZE, appmainMQTT_AGENT_TASK_PRIORITY);
 
         START_DEMO_FUNC();
+    }
+    else
+    {
+    	configPRINTF(("Wi-Fi init failed"));
     }
 
     while (1)
@@ -236,7 +242,6 @@ void prvMiscInitialization(void)
 {
     /* Initialize UART for serial terminal. */
     uart_config();
-    configPRINT_STRING(("Hello World.\r\n"));
 
     /* Start logging task. */
     xLoggingTaskInitialize(mainLOGGING_TASK_STACK_SIZE,

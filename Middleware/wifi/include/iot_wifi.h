@@ -1,6 +1,7 @@
 /*
  * FreeRTOS WiFi V2.0.0
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Modifications Copyright (C) 2023-2025 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -44,17 +45,17 @@
  *
  * @note This is the constant for IPV6 length in 32-bit words
  */
-#define IPV6_LENGTH                  4
+#define IPV6_LENGTH                  (4)
 
 /**
  * @brief Wi-Fi lower level supported feature mask.
  *
  * @see WIFICapabilityInfo_t.
  */
-#define WIFI_WPS_SUPPORTED           0x0001
-#define WIFI_ENTERPRISE_SUPPORTED    0x0002
-#define WIFI_P2P_SUPPORTED           0x0004
-#define WIFI_TDLS_SUPPORTED          0x0008
+#define WIFI_WPS_SUPPORTED           (0x0001)
+#define WIFI_ENTERPRISE_SUPPORTED    (0x0002)
+#define WIFI_P2P_SUPPORTED           (0x0004)
+#define WIFI_TDLS_SUPPORTED          (0x0008)
 
 /**
  * @brief Return code denoting API status.
@@ -194,13 +195,13 @@ typedef struct
  */
 typedef struct
 {
-    uint8_t ucSSID[wificonfigMAX_SSID_LEN];   /**< SSID of the Wi-Fi network (binary array, not C-string). */
-    uint8_t ucSSIDLength;                       /**< SSID length. */
-    uint8_t ucBSSID[wificonfigMAX_BSSID_LEN]; /**< BSSID of the Wi-Fi network (binary array, not C-string). */
-    WIFISecurity_t xSecurity;                   /**< Security type of the Wi-Fi network. */
+    uint8_t          ucSSID[wificonfigMAX_SSID_LEN];   /**< SSID of the Wi-Fi network (binary array, not C-string). */
+    uint8_t          ucSSIDLength;                       /**< SSID length. */
+    uint8_t          ucBSSID[wificonfigMAX_BSSID_LEN]; /**< BSSID of the Wi-Fi network (binary array, not C-string). */
+    WIFISecurity_t   xSecurity;                   /**< Security type of the Wi-Fi network. */
     WIFIEncryption_t xEncryption;               /**< Encryption type of the Wi-Fi network. */
-    int8_t cRSSI;                               /**< Signal strength of the Wi-Fi network. */
-    uint8_t ucChannel;                          /**< Channel of the Wi-Fi network. */
+    int8_t           cRSSI;                               /**< Signal strength of the Wi-Fi network. */
+    uint8_t          ucChannel;                          /**< Channel of the Wi-Fi network. */
 } WIFIScanResult_t;
 
 /**
@@ -223,12 +224,12 @@ typedef struct
  */
 typedef struct
 {
-    uint8_t ucSSID[wificonfigMAX_SSID_LEN];       /**< SSID of the Wi-Fi network to join with a NULL termination. */
-    uint8_t ucSSIDLength;                           /**< SSID length not including NULL termination. */
-    uint8_t ucBSSID[wificonfigMAX_BSSID_LEN];     /**< BSSID of the Wi-Fi network. */
-    char cPassword[wificonfigMAX_PASSPHRASE_LEN]; /**< Password needed to join the AP. */
-    uint8_t ucPasswordLength;                       /**< Password length not including null termination. */
-    WIFISecurity_t xSecurity;                       /**< Wi-Fi Security. @see WIFISecurity_t. */
+    uint8_t          ucSSID[wificonfigMAX_SSID_LEN];       /**< SSID of the Wi-Fi network to join with a NULL termination. */
+    uint8_t          ucSSIDLength;                           /**< SSID length not including NULL termination. */
+    uint8_t          ucBSSID[wificonfigMAX_BSSID_LEN];     /**< BSSID of the Wi-Fi network. */
+    char             cPassword[wificonfigMAX_PASSPHRASE_LEN]; /**< Password needed to join the AP. */
+    uint8_t          ucPasswordLength;                       /**< Password length not including null termination. */
+    WIFISecurity_t   xSecurity;                       /**< Wi-Fi Security. @see WIFISecurity_t. */
     WIFIEncryption_t xEncryption;                   /**< Wi-Fi Encryption. @see WIFIEncryption_t. */
 } WIFINetworkProfile_t;
 
@@ -248,7 +249,7 @@ typedef enum
 typedef struct
 {
     WIFIIPAddressType_t xType;         /**< IP address type (only eWiFiIPAddressTypeV4 is currently supported). */
-    uint32_t ulAddress[IPV6_LENGTH]; /**< IP address in binary form, use inet_ntop/inet_pton for conversion. */
+    uint32_t            ulAddress[IPV6_LENGTH]; /**< IP address in binary form, use inet_ntop/inet_pton for conversion. */
 } WIFIIPAddress_t;
 
 /**
@@ -270,12 +271,12 @@ typedef struct
  */
 typedef struct
 {
-    uint8_t ucSSID[wificonfigMAX_SSID_LEN];   /**< SSID of the Wi-Fi network (binary array, not C-string). */
-    uint8_t ucSSIDLength;                       /**< SSID length. */
-    uint8_t ucBSSID[wificonfigMAX_BSSID_LEN]; /**< BSSID of the Wi-Fi network (binary array, not C-string). */
-    WIFISecurity_t xSecurity;                   /**< Wi-Fi Security. */
+    uint8_t          ucSSID[wificonfigMAX_SSID_LEN];   /**< SSID of the Wi-Fi network (binary array, not C-string). */
+    uint8_t          ucSSIDLength;                       /**< SSID length. */
+    uint8_t          ucBSSID[wificonfigMAX_BSSID_LEN]; /**< BSSID of the Wi-Fi network (binary array, not C-string). */
+    WIFISecurity_t   xSecurity;                   /**< Wi-Fi Security. */
     WIFIEncryption_t xEncryption;               /**< Wi-Fi Encryption. */
-    uint8_t ucChannel;                          /**< Channel info. */
+    uint8_t          ucChannel;                          /**< Channel info. */
 } WIFIConnectionInfo_t;
 
 /**
@@ -581,15 +582,14 @@ WIFIReturnCode_t WIFI_Off (void);
  * xWifiStatus = WIFI_ConnectAP( &( xNetworkParams ) );
  * if(xWifiStatus == eWiFiSuccess)
  * {
- *     //Connected to AP.
+ *     Connected to AP.
  * }
  * @endcode
  *
  * @see WIFINetworkParams_t
  */
 /* @[declare_wifi_wifi_connectap] */
-WIFIReturnCode_t WIFI_ConnectAP (const WIFINetworkParams_t * const pxNetworkParams,
-                                const uint8_t * ssid, const uint8_t * password);
+WIFIReturnCode_t WIFI_ConnectAP (const WIFINetworkParams_t * const pxNetworkParams);
 /* @[declare_wifi_wifi_connectap] */
 
 /**
@@ -628,7 +628,7 @@ WIFIReturnCode_t WIFI_Reset (void);
  * xWifiStatus = WIFI_SetMode(eWiFiModeStation);
  * if(xWifiStatus == eWiFiSuccess)
  * {
- *     //device Set to station mode
+ *     device Set to station mode
  * }
  * @endcode
  *
@@ -652,7 +652,7 @@ WIFIReturnCode_t WIFI_SetMode (WIFIDeviceMode_t xDeviceMode);
  * xWifiStatus = WIFI_GetMode(&xDeviceMode);
  * if(xWifiStatus == eWiFiSuccess)
  * {
- *    //device mode is xDeviceMode
+ *    device mode is xDeviceMode
  * }
  * @endcode
  *
@@ -716,7 +716,7 @@ WIFIReturnCode_t WIFI_NetworkAdd (const WIFINetworkProfile_t * const pxNetworkPr
  * **Example**
  * @code
  * WIFINetworkProfile_t xNetworkProfile = {0};
- * uint16_t usIndex = 3;  //Get profile stored at index 3.
+ * uint16_t usIndex = 3;  Get profile stored at index 3.
  * WIFI_NetworkGet( &xNetworkProfile, usIndex );
  * @endcode
  */
@@ -744,7 +744,7 @@ WIFIReturnCode_t WIFI_NetworkGet (WIFINetworkProfile_t * pxNetworkProfile,
  *
  * **Example**
  * @code
- * uint16_t usIndex = 2; //Delete profile at index 2
+ * uint16_t usIndex = 2; Delete profile at index 2
  * WIFI_NetworkDelete( usIndex );
  * @endcode
  *
@@ -825,7 +825,7 @@ WIFIReturnCode_t WIFI_GetHostIP (char * pcHost,
  *
  * **Example**
  * @code
- * const uint8_t ucNumNetworks = 10; //Get 10 scan results
+ * const uint8_t ucNumNetworks = 10; Get 10 scan results
  * WIFIScanResult_t xScanResults[ ucNumNetworks ];
  * WIFI_Scan( xScanResults, ucNumNetworks );
  * @endcode

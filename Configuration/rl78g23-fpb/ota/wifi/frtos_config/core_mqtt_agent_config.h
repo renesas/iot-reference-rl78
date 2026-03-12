@@ -1,7 +1,7 @@
 /*
  * coreMQTT Agent v1.2.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
- * Modifications Copyright (C) 2024 Renesas Electronics Corporation. or its affiliates.
+ * Modifications Copyright (C) 2024-2026 Renesas Electronics Corporation or its affiliates.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -66,13 +66,13 @@
  * @brief Maximum time MQTT agent waits in the queue for any pending MQTT
  * operations.
  */
-#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME    ( 1000U )
+#define MQTT_AGENT_MAX_EVENT_QUEUE_WAIT_TIME    (50U)
 
 /**
  * @brief The number of command structures to allocate in the pool
  * for the agent.
  */
-#define MQTT_COMMAND_CONTEXTS_POOL_SIZE         ( 10U )
+#define MQTT_COMMAND_CONTEXTS_POOL_SIZE         (10U)
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

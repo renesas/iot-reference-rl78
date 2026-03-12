@@ -9,14 +9,14 @@ R01AN7321EU (English version)
 
 Version
 -------
-v1.31
+v1.40
 
 Overview
 --------------------------------------------------------------------------------
 The r_wifi_da16xxx module is a wifi driver.
 
 This driver is tested and works with the following toolchain:
-  Renesas Electronics C Compiler for RL78 Family V1.13.00
+  Renesas Electronics C Compiler for RL78 Family V1.15.01
 All API calls and their supporting interface definitions are located in r_wifi_da16xxx_if.h.
 
 Features
@@ -33,6 +33,7 @@ Features
 * TLS Client Sockets (up to 2 sockets)
 * On-chip MQTT (w/TLS) Support
 * On-chip HTTP client
+* On-chip OTA service
 * Supports FreeRTOS-based user application
 * Supports Bare metal-based user application
 
@@ -58,7 +59,7 @@ Please refer to the Adding Software Integration System Modules to Projects.
 
 Toolchain(s) Used
 -----------------
-* Renesas Electronics C Compiler for RL78 Family V1.13.00
+* Renesas Electronics C Compiler for RL78 Family V1.15.01
 
 File Structure
 --------------
@@ -77,6 +78,7 @@ r_wifi_da16xxx
         r_wifi_da16xxx_mqtt.c
         r_wifi_da16xxx_os_wrap.c
         r_wifi_da16xxx_os_wrap.h
+        r_wifi_da16xxx_ota.c
         r_wifi_da16xxx_private.h
         r_wifi_da16xxx_tcp.c
         r_wifi_da16xxx_tcp_tls.c

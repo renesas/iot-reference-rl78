@@ -46,6 +46,7 @@
 *         : 07.06.2024 1.70     Added RL78/F25 resource to clock mode comment.
 *         : 06.11.2024 1.80     Added RL78/F22 resource to clock mode comment.
 *         : 29.11.2024 1.90     Added RL78/L23 resource to clock mode comment.
+*         : 15.04.2025 1.91     Changed the version of smart configurator to check to 1140.
 ***********************************************************************************************************************/
 
 /*************************************************
@@ -64,7 +65,7 @@
 #ifndef R_BSP_COMMON_H
 #define R_BSP_COMMON_H
 
-#if BSP_CFG_CONFIGURATOR_VERSION < 1060
+#if BSP_CFG_CONFIGURATOR_VERSION < 1140
 #error "Make sure that the value of BSP_CFG_CONFIGURATOR_VERSION defined in r_config/r_bsp_config.h matches the version of Smart Configurator you are using. If they do not match, change the settings. If they match, you need to upgrade your Smart Configurator. Please upgrade Smart Configurator."
 #endif
 

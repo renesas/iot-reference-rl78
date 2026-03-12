@@ -19,7 +19,7 @@
 
 /***********************************************************************************************************************
 * File Name        : Config_UART2_user.c
-* Component Version: 1.9.0
+* Component Version: 1.10.0
 * Device(s)        : R7F100GSNxFB
 * Description      : This file implements device driver for Config_UART2.
 ***********************************************************************************************************************/
@@ -40,7 +40,6 @@ Pragma directive
 #pragma interrupt r_Config_UART2_interrupt_receive(vect=INTSR2)
 #pragma interrupt r_Config_UART2_interrupt_error(vect=INTSRE2)
 /* Start user code for pragma. Do not edit comment generated here */
-#endif
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -52,6 +51,7 @@ extern volatile uint8_t * gp_uart2_rx_address;    /* uart2 receive buffer addres
 extern volatile uint16_t g_uart2_rx_count;        /* uart2 receive data number */
 extern uint16_t g_uart2_rx_length;                /* uart2 receive data length */
 /* Start user code for global. Do not edit comment generated here */
+#endif
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -63,7 +63,9 @@ extern uint16_t g_uart2_rx_length;                /* uart2 receive data length *
 void R_Config_UART2_Create_UserInit(void)
 {
     /* Start user code for user init. Do not edit comment generated here */
-    /* End user code. Do not edit comment generated here */
+}
+#ifdef DELETE
+	/* End user code. Do not edit comment generated here */
 }
 
 /***********************************************************************************************************************
@@ -182,4 +184,5 @@ static void __near r_Config_UART2_interrupt_error(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+#endif
 /* End user code. Do not edit comment generated here */
